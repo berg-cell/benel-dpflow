@@ -1117,14 +1117,15 @@ function parseCSV(text) {
     return result;
   };
 
-  // Mapa de colunas PT -> EN
+  // Mapa de colunas PT -> EN (com e sem acento)
   const MAPA = {
     "matrícula": "chapa", "matricula": "chapa", "chapa": "chapa",
     "nome": "nome",
     "função": "funcao", "funcao": "funcao", "cargo": "funcao",
     "seção": "desc_cc", "secao": "desc_cc", "setor": "desc_cc", "desc_cc": "desc_cc",
     "cpf": "cpf",
-    "admissão": "data_admissao", "admissao": "data_admissao", "data_admissao": "data_admissao", "data admissão": "data_admissao",
+    "admissão": "data_admissao", "admissao": "data_admissao",
+    "data_admissao": "data_admissao", "data admissao": "data_admissao",
     "c. custo": "centro_custo", "centro_custo": "centro_custo", "centro custo": "centro_custo",
     "situação": "situacao", "situacao": "situacao", "status": "situacao",
   };
