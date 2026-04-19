@@ -140,4 +140,18 @@ export const api = {
 
   // ── Health ────────────────────────────────────────────────────────────────
   health: () => request("/health"),
+
+  // ── Ocorrências Disciplinares ─────────────────────────────────────────────────
+  listarOcorrencias: (qs = "") => request(`/ocorrencias${qs ? "?" + qs : ""}`),
+
+  criarOcorrencia: (data) =>
+    request("/ocorrencias", { method: "POST", body: JSON.stringify(data) }),
+
+  cancelarOcorrencia: (id) =>
+    request(`/ocorrencias/${id}/cancelar`, { method: "PUT", body: JSON.stringify({}) }),
+
+  exportarOcorrenciasUrl: () => `${BASE}/api/ocorrencias/exportar`,
+
+  getToken: () => _accessToken,
+
 };
