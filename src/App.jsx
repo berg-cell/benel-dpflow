@@ -1315,6 +1315,12 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
   const [modalForm, setModalForm] = useState(null);
   const [form, setForm] = useState({ chapa: "", nome: "", funcao: "", situacao: "Ativo", centro_custo: "", desc_cc: "", cpf: "", data_admissao: "" });
 
+  useEffect(() => {
+    api.listarColaboradores().then(data => {
+      if (data && data.length > 0) setColaboradores(data);
+    }).catch(() => {});
+  }, []);
+
   const lista = colaboradores.filter(c =>
     c.nome.toLowerCase().includes(busca.toLowerCase()) || c.chapa.includes(busca)
   );
@@ -1322,24 +1328,34 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
   const abrirNovo = () => { setForm({ chapa: "", nome: "", funcao: "", situacao: "Ativo", centro_custo: "", desc_cc: "", cpf: "", data_admissao: "" }); setModalForm("novo"); };
   const abrirEditar = (c) => { setForm({ ...c }); setModalForm("editar"); };
 
-  const salvar = () => {
+  const salvar = async () => {
     if (!form.chapa || !form.nome) { alert("Chapa e Nome são obrigatórios."); return; }
-    if (modalForm === "novo") {
-      if (colaboradores.find(c => c.chapa === form.chapa)) { alert("Chapa já cadastrada."); return; }
-      setColaboradores(p => [...p, { ...form, id: Date.now() }]);
-    } else {
-      setColaboradores(p => p.map(c => c.id === form.id ? { ...form } : c));
+    try {
+      if (modalForm === "novo") {
+        const novo = await api.criarColaborador(form);
+        setColaboradores(p => [...p, novo]);
+      } else {
+        await api.atualizarColaborador(form.id, form);
+        setColaboradores(p => p.map(c => c.id === form.id ? { ...c, ...form } : c));
+      }
+      setModalForm(null);
+    } catch (err) {
+      alert("Erro: " + err.message);
     }
-    setModalForm(null);
   };
 
-  const inativar = (id) => {
-    setColaboradores(p => p.map(c => c.id === id ? { ...c, situacao: c.situacao === "Ativo" ? "Inativo" : "Ativo" } : c));
+  const inativar = async (id) => {
+    const c = colaboradores.find(c => c.id === id);
+    if (!c) return;
+    const novaSituacao = c.situacao === "Ativo" ? "Inativo" : "Ativo";
+    try {
+      await api.atualizarColaborador(id, { situacao: novaSituacao });
+      setColaboradores(p => p.map(c => c.id === id ? { ...c, situacao: novaSituacao } : c));
+    } catch (err) { alert("Erro: " + err.message); }
   };
 
-  const onImportar = (rows) => {
-    const novos = rows.map((r, i) => ({
-      id: Date.now() + i,
+  const onImportar = async (rows) => {
+    const novos = rows.map(r => ({
       chapa:         r.chapa || "",
       nome:          r.nome || "",
       funcao:        r.funcao || "",
@@ -1347,17 +1363,19 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
       centro_custo:  r.centro_custo || "",
       desc_cc:       r.desc_cc || "",
       cpf:           r.cpf || "",
-      data_admissao: r.data_admissao || "",
+      data_admissao: r.data_admissao || null,
     })).filter(r => r.chapa && r.nome);
-    setColaboradores(p => {
-      const chapasExistentes = new Set(p.map(c => c.chapa));
-      const inseridos = novos.filter(n => !chapasExistentes.has(n.chapa));
-      const atualizados = p.map(c => {
-        const upd = novos.find(n => n.chapa === c.chapa);
-        return upd ? { ...c, ...upd } : c;
-      });
-      return [...atualizados, ...inseridos];
-    });
+
+    try {
+      // Salvar no banco via API
+      await api.importarColaboradores(novos);
+      // Recarregar do banco
+      const atualizados = await api.listarColaboradores();
+      if (atualizados && atualizados.length > 0) setColaboradores(atualizados);
+      alert(`✅ ${novos.length} colaborador(es) importado(s) com sucesso!`);
+    } catch (err) {
+      alert("Erro ao importar: " + err.message);
+    }
   };
 
   const colunas = [
@@ -1471,38 +1489,52 @@ function CadEventos({ eventos, setEventos }) {
   const [modalForm, setModalForm] = useState(null);
   const [form, setForm] = useState({ codigo: "", descricao: "", tipo: "provento", forma: "valor" });
 
+  useEffect(() => {
+    api.listarEventos().then(data => {
+      if (data && data.length > 0) setEventos(data);
+    }).catch(() => {});
+  }, []);
+
   const abrirNovo = () => { setForm({ codigo: "", descricao: "", tipo: "provento", forma: "valor" }); setModalForm("novo"); };
   const abrirEditar = (e) => { setForm({ ...e }); setModalForm("editar"); };
 
-  const salvar = () => {
+  const salvar = async () => {
     if (!form.codigo || !form.descricao) { alert("Código e Descrição são obrigatórios."); return; }
-    if (modalForm === "novo") {
-      if (eventos.find(e => e.codigo === form.codigo)) { alert("Código de evento já cadastrado."); return; }
-      setEventos(p => [...p, { ...form, id: Date.now() }]);
-    } else {
-      setEventos(p => p.map(e => e.id === form.id ? { ...form } : e));
-    }
-    setModalForm(null);
+    try {
+      if (modalForm === "novo") {
+        const novo = await api.criarEvento(form);
+        setEventos(p => [...p, novo]);
+      } else {
+        await api.atualizarEvento(form.id, form);
+        setEventos(p => p.map(e => e.id === form.id ? { ...form } : e));
+      }
+      setModalForm(null);
+    } catch (err) { alert("Erro: " + err.message); }
   };
 
-  const excluir = (id) => {
-    if (window.confirm("Deseja excluir este evento?")) setEventos(p => p.filter(e => e.id !== id));
+  const excluir = async (id) => {
+    if (!window.confirm("Deseja excluir este evento?")) return;
+    try {
+      await api.atualizarEvento(id, { ativo: false });
+      setEventos(p => p.filter(e => e.id !== id));
+    } catch (err) { alert("Erro: " + err.message); }
   };
 
-  const onImportar = (rows) => {
-    const novos = rows.map((r, i) => ({
-      id: Date.now() + i,
-      codigo: r.codigo || r.Codigo || "",
+  const onImportar = async (rows) => {
+    const novos = rows.map(r => ({
+      codigo:    r.codigo || r.Codigo || "",
       descricao: r.descricao || r.Descricao || "",
-      tipo: r.tipo || r.Tipo || "provento",
-      forma: r.forma || r.Forma || "valor",
+      tipo:      r.tipo || r.Tipo || "provento",
+      forma:     r.forma || r.Forma || "valor",
     })).filter(r => r.codigo && r.descricao);
-    setEventos(p => {
-      const codsExistentes = new Set(p.map(e => e.codigo));
-      const inseridos = novos.filter(n => !codsExistentes.has(n.codigo));
-      const atualizados = p.map(e => { const upd = novos.find(n => n.codigo === e.codigo); return upd ? { ...e, ...upd } : e; });
-      return [...atualizados, ...inseridos];
-    });
+    try {
+      for (const ev of novos) {
+        try { await api.criarEvento(ev); } catch (_) {}
+      }
+      const data = await api.listarEventos();
+      if (data) setEventos(data);
+      alert(`✅ ${novos.length} evento(s) importado(s)!`);
+    } catch (err) { alert("Erro: " + err.message); }
   };
 
   const colunas = [
@@ -1602,25 +1634,41 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
   const [modalForm, setModalForm] = useState(null);
   const [form, setForm] = useState({ gestor_id: "", superior_id: "", centro_custo: "", desc_cc: "" });
 
+  useEffect(() => {
+    api.listarHierarquia().then(data => {
+      if (data && data.length > 0) setHierarquia(data);
+    }).catch(() => {});
+  }, []);
+
   const gestores = usuarios.filter(u => u.perfil === "gestor" || u.perfil === "admin");
   const superiores = usuarios.filter(u => u.perfil === "superior" || u.perfil === "admin");
 
   const abrirNovo = () => { setForm({ gestor_id: "", superior_id: "", centro_custo: "", desc_cc: "" }); setModalForm("novo"); };
   const abrirEditar = (h) => { setForm({ ...h }); setModalForm("editar"); };
 
-  const salvar = () => {
+  const salvar = async () => {
     if (!form.gestor_id || !form.superior_id) { alert("Gestor e Superior são obrigatórios."); return; }
-    const g = usuarios.find(u => u.id === parseInt(form.gestor_id));
-    const s = usuarios.find(u => u.id === parseInt(form.superior_id));
-    if (modalForm === "novo") {
-      setHierarquia(p => [...p, { ...form, id: Date.now(), gestor_nome: g?.nome, superior_nome: s?.nome, ativo: true, gestor_id: parseInt(form.gestor_id), superior_id: parseInt(form.superior_id) }]);
-    } else {
-      setHierarquia(p => p.map(h => h.id === form.id ? { ...form, gestor_nome: g?.nome, superior_nome: s?.nome, gestor_id: parseInt(form.gestor_id), superior_id: parseInt(form.superior_id) } : h));
-    }
-    setModalForm(null);
+    const payload = { gestor_id: parseInt(form.gestor_id), superior_id: parseInt(form.superior_id), centro_custo: form.centro_custo, desc_cc: form.desc_cc };
+    try {
+      if (modalForm === "novo") {
+        const novo = await api.criarHierarquia(payload);
+        setHierarquia(p => [...p, novo]);
+      } else {
+        const upd = await api.atualizarHierarquia(form.id, { ...payload, ativo: form.ativo ?? true });
+        setHierarquia(p => p.map(h => h.id === form.id ? upd : h));
+      }
+      setModalForm(null);
+    } catch (err) { alert("Erro: " + err.message); }
   };
 
-  const toggleAtivo = (id) => setHierarquia(p => p.map(h => h.id === id ? { ...h, ativo: !h.ativo } : h));
+  const toggleAtivo = async (id) => {
+    const h = hierarquia.find(h => h.id === id);
+    if (!h) return;
+    try {
+      await api.atualizarHierarquia(id, { gestor_id: h.gestor_id, superior_id: h.superior_id, ativo: !h.ativo });
+      setHierarquia(p => p.map(h => h.id === id ? { ...h, ativo: !h.ativo } : h));
+    } catch (err) { alert("Erro: " + err.message); }
+  };
 
   const onImportar = (rows) => {
     const novos = rows.map((r, i) => ({
@@ -1751,22 +1799,38 @@ function CadAlcadas({ alcadas, setAlcadas, eventos }) {
   const [modalForm, setModalForm] = useState(null);
   const [form, setForm] = useState({ evento_id: "", num_alcadas: 1, exige_anexo: false });
 
+  useEffect(() => {
+    api.listarAlcadas().then(data => {
+      if (data && data.length > 0) setAlcadas(data);
+    }).catch(() => {});
+  }, []);
+
   const abrirNovo = () => { setForm({ evento_id: "", num_alcadas: 1, exige_anexo: false }); setModalForm("novo"); };
   const abrirEditar = (a) => { setForm({ ...a }); setModalForm("editar"); };
 
-  const salvar = () => {
+  const salvar = async () => {
     if (!form.evento_id) { alert("Selecione o evento."); return; }
-    const ev = eventos.find(e => e.id === parseInt(form.evento_id));
-    if (modalForm === "novo") {
-      if (alcadas.find(a => a.evento_id === parseInt(form.evento_id))) { alert("Regra já existe para este evento."); return; }
-      setAlcadas(p => [...p, { ...form, id: Date.now(), evento_id: parseInt(form.evento_id), evento_nome: ev?.descricao, num_alcadas: parseInt(form.num_alcadas), ativo: true }]);
-    } else {
-      setAlcadas(p => p.map(a => a.id === form.id ? { ...form, evento_id: parseInt(form.evento_id), evento_nome: ev?.descricao, num_alcadas: parseInt(form.num_alcadas) } : a));
-    }
-    setModalForm(null);
+    const payload = { evento_id: parseInt(form.evento_id), num_alcadas: parseInt(form.num_alcadas) || 1, exige_anexo: !!form.exige_anexo };
+    try {
+      if (modalForm === "novo") {
+        const nova = await api.criarAlcada(payload);
+        setAlcadas(p => [...p, nova]);
+      } else {
+        const upd = await api.atualizarAlcada(form.id, { ...payload, ativo: form.ativo ?? true });
+        setAlcadas(p => p.map(a => a.id === form.id ? upd : a));
+      }
+      setModalForm(null);
+    } catch (err) { alert("Erro: " + err.message); }
   };
 
-  const toggleAtivo = (id) => setAlcadas(p => p.map(a => a.id === id ? { ...a, ativo: !a.ativo } : a));
+  const toggleAtivo = async (id) => {
+    const a = alcadas.find(a => a.id === id);
+    if (!a) return;
+    try {
+      await api.atualizarAlcada(id, { evento_id: a.evento_id, num_alcadas: a.num_alcadas, exige_anexo: a.exige_anexo, ativo: !a.ativo });
+      setAlcadas(p => p.map(a => a.id === id ? { ...a, ativo: !a.ativo } : a));
+    } catch (err) { alert("Erro: " + err.message); }
+  };
 
   const onImportar = (rows) => {
     const novos = rows.map((r, i) => ({
@@ -3995,13 +4059,21 @@ export default function App() {
   // ── Carregar dados reais da API após login ────────────────────────────────
   const carregarDados = useCallback(async () => {
     try {
-      const [cols, evts, blcs] = await Promise.all([
+      const [cols, evts, blcs, usrs] = await Promise.all([
         api.listarColaboradores().catch(() => null),
         api.listarEventos().catch(() => null),
         api.listarBlocos().catch(() => null),
+        api.listarUsuarios().catch(() => null),
       ]);
       if (cols && cols.length > 0) setColaboradores(cols);
       if (evts && evts.length > 0) setEventos(evts);
+      if (usrs && usrs.length > 0) {
+        const comAvatar = usrs.map(u => ({
+          ...u,
+          avatar: u.nome.split(" ").map(p => p[0]).slice(0, 2).join("").toUpperCase()
+        }));
+        setUsuarios(comAvatar);
+      }
       if (blcs && blcs.length > 0) {
         const evtsRef = evts || MOCK_EVENTOS;
         const blocsNorm = blcs.map(b => ({
