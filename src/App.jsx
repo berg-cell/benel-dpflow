@@ -1335,7 +1335,7 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
-              {["Matrícula", "Nome", "Função", "CPF", "Admissão", "C. Custo", "Situação", "Ações"].map(h => (
+              {["Matrícula", "Nome", "Função", "Seção", "CPF", "Admissão", "C. Custo", "Situação", "Ações"].map(h => (
                 <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
@@ -1350,6 +1350,7 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
                 </td>
                 <td style={{ padding: "11px 16px", fontSize: 13, fontWeight: 600, color: "#111827" }}>{c.nome}</td>
                 <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{c.funcao || "—"}</td>
+                <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{c.desc_cc || "—"}</td>
                 <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151", fontFamily: "monospace" }}>{c.cpf || "—"}</td>
                 <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{c.data_admissao ? new Date(c.data_admissao).toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "—"}</td>
                 <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{c.centro_custo ? (c.centro_custo + " — " + c.desc_cc) : "—"}</td>
@@ -3559,7 +3560,7 @@ function Ocorrencias({ user, colaboradores }) {
     finally { setExportando(false); }
   };
 
-  const pendentesExportacao = lista.filter(o => o.status === "ATIVO" && !o.flag_exportado).length;
+  const pendentesExportacao = lista.filter(o => o.status !== "CANCELADO").length;
 
   const gerarPDF = (oc) => setModalPDF(oc);
 
