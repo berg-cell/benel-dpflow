@@ -1445,7 +1445,7 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
                 <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{c.funcao || "—"}</td>
                 <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{c.desc_cc || "—"}</td>
                 <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151", fontFamily: "monospace" }}>{c.cpf || "—"}</td>
-                <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{c.data_admissao ? new Date(c.data_admissao).toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "—"}</td>
+                <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{c.data_admissao ? new Date(c.data_admissao.split("T")[0]).toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "—"}</td>
                 <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{c.centro_custo ? (c.centro_custo + " — " + c.desc_cc) : "—"}</td>
                 <td style={{ padding: "11px 16px" }}>
                   <span style={{ padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: c.situacao === "Ativo" ? "#D1FAE5" : "#FEE2E2", color: c.situacao === "Ativo" ? "#065F46" : "#991B1B" }}>
@@ -1489,7 +1489,7 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <Input label="CPF" value={form.cpf || ""} onChange={v => setForm(p => ({ ...p, cpf: v }))} placeholder="000.000.000-00" />
-            <Input label="Data de Admissão" value={form.data_admissao || ""} onChange={v => setForm(p => ({ ...p, data_admissao: v }))} type="date" />
+            <Input label="Data de Admissão" value={form.data_admissao ? form.data_admissao.split("T")[0] : ""} onChange={v => setForm(p => ({ ...p, data_admissao: v }))} type="date" />
           </div>
           <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", paddingTop: 6, borderTop: "1px solid #F3F4F6" }}>
             <Button variant="secondary" onClick={() => setModalForm(null)}>Cancelar</Button>
@@ -3831,7 +3831,7 @@ function Ocorrencias({ user, colaboradores }) {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
             <Input label="CPF" value={form.cpf} onChange={v => setForm(f => ({ ...f, cpf: v }))} placeholder="000.000.000-00" />
             <Input label="Seção / Departamento" value={form.secao} onChange={v => setForm(f => ({ ...f, secao: v }))} placeholder="Ex: Logística" />
-            <Input label="Data de Admissão" value={form.admissao} onChange={v => setForm(f => ({ ...f, admissao: v }))} type="date" />
+            <Input label="Data de Admissão" value={form.admissao ? form.admissao.split("T")[0] : ""} onChange={v => setForm(f => ({ ...f, admissao: v }))} type="date" />
           </div>
 
           {/* Motivo */}
