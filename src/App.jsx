@@ -177,7 +177,7 @@ export function resetarRateLimit(identificador) {
 // ─── 5. SESSÃO COM EXPIRAÇÃO (JWT simulado) ────────────────────────────────────
 // Gera token de sessão com expiração — simula JWT no frontend
 const SESSION_DURATION_MS = 8 * 60 * 60 * 1000; // 8 horas
-const INACTIVITY_LIMIT_MS = 30 * 60 * 1000;      // 30 min inatividade
+const INACTIVITY_LIMIT_MS = 15 * 60 * 1000;      // 15 min inatividade
 
 export function criarSessao(user) {
   const agora = Date.now();
@@ -821,28 +821,14 @@ function Login({ onLogin }) {
             </Button>
           </div>
 
-          {/* Dica de acesso */}
+          {/* Suporte */}
           <div style={{
-            marginTop: 20, padding: "12px 14px", background: "#F8FAFC",
-            borderRadius: 8, border: "1px solid #E2E8F0"
+            marginTop: 20, padding: "10px 14px", background: "#F8FAFC",
+            borderRadius: 8, border: "1px solid #E2E8F0", textAlign: "center"
           }}>
-            <p style={{ margin: "0 0 6px", fontSize: 11, fontWeight: 700, color: "#475569", letterSpacing: 0.5, textTransform: "uppercase" }}>
-              Usuários de demonstração
+            <p style={{ margin: 0, fontSize: 11, color: "#94A3B8" }}>
+              Problemas de acesso? Contate o administrador do sistema.
             </p>
-            {MOCK_USERS.map(u => (
-              <div key={u.id} style={{
-                display: "flex", justifyContent: "space-between",
-                fontSize: 11, color: "#64748B", padding: "2px 0"
-              }}>
-                <span>{u.email}</span>
-                <span style={{
-                  background: PERFIL_CONFIG[u.perfil]?.color + "22",
-                  color: PERFIL_CONFIG[u.perfil]?.color,
-                  padding: "0 6px", borderRadius: 4, fontWeight: 600
-                }}>{PERFIL_CONFIG[u.perfil]?.label}</span>
-              </div>
-            ))}
-            <p style={{ margin: "6px 0 0", fontSize: 11, color: "#94A3B8" }}>Senha: <b>123</b></p>
           </div>
         </div>
       </div>
@@ -3418,7 +3404,7 @@ export default function App() {
         setUser(null);
         setSessao(null);
       } else {
-        const restante = 30 * 60 * 1000 - (Date.now() - s.ultimaAtividade);
+        const restante = 15 * 60 * 1000 - (Date.now() - s.ultimaAtividade);
         setSessaoAviso(restante < 5 * 60 * 1000);
       }
     }, 60000);
