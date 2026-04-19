@@ -852,8 +852,9 @@ const NAV_ITEMS = [
   { id: "solicitacoes",label: "Solicitações",           icon: "≡",  perfis: ["gestor","superior","dp","admin"] },
   { id: "aprovacoes",  label: "Aprovações",             icon: "✓",  perfis: ["gestor","superior","dp","admin"] },
   { id: "dashboard",   label: "Dashboard",              icon: "◉",  perfis: ["gestor","superior","dp","admin"] },
-  { id: "exportacao",  label: "Exportação TXT",         icon: "↓",  perfis: ["dp","admin"] },
-  { id: "auditoria",   label: "Auditoria",              icon: "📜", perfis: ["dp","admin"] },
+  { id: "exportacao",    label: "Exportação TXT",         icon: "↓",  perfis: ["dp","admin"] },
+  { id: "ocorrencias",   label: "Advertências/Suspensões", icon: "⚠️", perfis: ["gestor","dp","admin"] },
+  { id: "auditoria",     label: "Auditoria",              icon: "📜", perfis: ["dp","admin"] },
 ];
 
 
@@ -3341,6 +3342,445 @@ function Aprovacoes({ blocos, setBlocos, user }) {
 
 
 
+
+// ─── ADVERTÊNCIAS / SUSPENSÕES ────────────────────────────────────────────────
+function Ocorrencias({ user, colaboradores }) {
+  const [lista, setLista] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [modalForm, setModalForm] = useState(false);
+  const [modalPDF, setModalPDF] = useState(null);
+  const [filtros, setFiltros] = useState({ tipo: "", colaborador_id: "", data_inicio: "", data_fim: "" });
+  const [form, setForm] = useState({
+    tipo: "ADVERTENCIA", colaborador_id: "", chapa: "", nome_colaborador: "",
+    cpf: "", secao: "", admissao: "",
+    motivo: "", data_ocorrencia: "", data_inicio: "", dias_suspensao: ""
+  });
+  const [salvando, setSalvando] = useState(false);
+  const [exportando, setExportando] = useState(false);
+  const [msg, setMsg] = useState(null);
+
+  const carregarOcorrencias = async () => {
+    setLoading(true);
+    try {
+      const qs = new URLSearchParams(Object.fromEntries(Object.entries(filtros).filter(([,v]) => v))).toString();
+      const data = await api.listarOcorrencias(qs);
+      setLista(Array.isArray(data) ? data : []);
+    } catch (e) {
+      setMsg({ tipo: "erro", texto: "Erro ao carregar: " + e.message });
+    } finally { setLoading(false); }
+  };
+
+  useEffect(() => { carregarOcorrencias(); }, []);
+
+  const selecionarColaborador = (colab) => {
+    setForm(f => ({ ...f, colaborador_id: colab.id, chapa: colab.chapa, nome_colaborador: colab.nome, secao: colab.desc_cc || "" }));
+  };
+
+  const calcularDataFim = () => {
+    if (!form.data_inicio || !form.dias_suspensao) return "";
+    const d = new Date(form.data_inicio);
+    d.setDate(d.getDate() + parseInt(form.dias_suspensao) - 1);
+    return d.toISOString().split("T")[0];
+  };
+
+  const salvar = async () => {
+    if (!form.colaborador_id) { setMsg({ tipo: "erro", texto: "Selecione o colaborador." }); return; }
+    if (!form.motivo.trim())  { setMsg({ tipo: "erro", texto: "Informe o motivo." }); return; }
+    if (!form.data_ocorrencia) { setMsg({ tipo: "erro", texto: "Informe a data." }); return; }
+    if (form.tipo === "SUSPENSAO" && (!form.data_inicio || !form.dias_suspensao)) {
+      setMsg({ tipo: "erro", texto: "Informe data de início e quantidade de dias da suspensão." }); return;
+    }
+    setSalvando(true);
+    try {
+      await api.criarOcorrencia(form);
+      setMsg({ tipo: "ok", texto: "Ocorrência registrada com sucesso!" });
+      setModalForm(false);
+      setForm({ tipo: "ADVERTENCIA", colaborador_id: "", chapa: "", nome_colaborador: "", motivo: "", data_ocorrencia: "", data_inicio: "", dias_suspensao: "" });
+      carregarOcorrencias();
+    } catch (e) {
+      setMsg({ tipo: "erro", texto: e.message });
+    } finally { setSalvando(false); }
+  };
+
+  const cancelarOcorrencia = async (id) => {
+    if (!window.confirm("Deseja cancelar esta ocorrência?")) return;
+    try {
+      await api.cancelarOcorrencia(id);
+      setMsg({ tipo: "ok", texto: "Ocorrência cancelada." });
+      carregarOcorrencias();
+    } catch (e) { setMsg({ tipo: "erro", texto: e.message }); }
+  };
+
+  const exportarCSV = async () => {
+    setExportando(true);
+    try {
+      const url = api.exportarOcorrenciasUrl();
+      const resp = await fetch(url, { headers: { Authorization: `Bearer ${api.getToken()}` } });
+      if (!resp.ok) { const d = await resp.json(); throw new Error(d.message); }
+      const blob = await resp.blob();
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `anotacoes_rm_${new Date().toISOString().split("T")[0]}.csv`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      setMsg({ tipo: "ok", texto: "Exportação concluída! Registros marcados como exportados." });
+      carregarOcorrencias();
+    } catch (e) { setMsg({ tipo: "erro", texto: e.message }); }
+    finally { setExportando(false); }
+  };
+
+  const pendentesExportacao = lista.filter(o => o.status === "ATIVO" && !o.flag_exportado).length;
+
+  const gerarPDF = (oc) => setModalPDF(oc);
+
+  const formatarData = (d) => {
+    if (!d) return "—";
+    return new Date(d).toLocaleDateString("pt-BR", { timeZone: "UTC" });
+  };
+
+  return (
+    <div style={{ padding: 28 }}>
+      {/* Cabeçalho */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+        <div>
+          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: "#111827" }}>Advertências / Suspensões</h2>
+          <p style={{ margin: "4px 0 0", fontSize: 12, color: "#6B7280" }}>Registro de ocorrências disciplinares</p>
+        </div>
+        <div style={{ display: "flex", gap: 10 }}>
+          {(user.perfil === "dp" || user.perfil === "admin") && (
+            <Button variant="secondary" onClick={exportarCSV} disabled={exportando || pendentesExportacao === 0}>
+              {exportando ? "Exportando..." : `↓ Exportar RM (${pendentesExportacao})`}
+            </Button>
+          )}
+          <Button onClick={() => { setModalForm(true); setMsg(null); }}>+ Nova Ocorrência</Button>
+        </div>
+      </div>
+
+      {/* Mensagem */}
+      {msg && (
+        <div style={{
+          marginBottom: 16, padding: "10px 16px", borderRadius: 8, fontSize: 13,
+          background: msg.tipo === "ok" ? "#D1FAE5" : "#FEE2E2",
+          color: msg.tipo === "ok" ? "#065F46" : "#991B1B",
+          border: `1px solid ${msg.tipo === "ok" ? "#6EE7B7" : "#FCA5A5"}`
+        }}>
+          {msg.tipo === "ok" ? "✅" : "❌"} {msg.texto}
+        </div>
+      )}
+
+      {/* Filtros */}
+      <Card style={{ marginBottom: 16, padding: "14px 18px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr auto", gap: 12, alignItems: "flex-end" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+            <label style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>Tipo</label>
+            <select value={filtros.tipo} onChange={e => setFiltros(f => ({ ...f, tipo: e.target.value }))}
+              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "7px 10px", fontSize: 12, fontFamily: "inherit" }}>
+              <option value="">Todos</option>
+              <option value="ADVERTENCIA">Advertência</option>
+              <option value="SUSPENSAO">Suspensão</option>
+            </select>
+          </div>
+          <Input label="Data início" value={filtros.data_inicio} onChange={v => setFiltros(f => ({ ...f, data_inicio: v }))} type="date" />
+          <Input label="Data fim" value={filtros.data_fim} onChange={v => setFiltros(f => ({ ...f, data_fim: v }))} type="date" />
+          <div /> 
+          <Button variant="secondary" onClick={carregarOcorrencias}>🔍 Filtrar</Button>
+        </div>
+      </Card>
+
+      {/* Tabela */}
+      <Card style={{ padding: 0, overflow: "hidden" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead>
+            <tr style={{ background: "#F9FAFB" }}>
+              {["Colaborador", "Tipo", "Data", "Período/Dias", "Gestor", "Status", "Ações"].map(h => (
+                <th key={h} style={{ padding: "10px 14px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr><td colSpan={7} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Carregando...</td></tr>
+            ) : lista.length === 0 ? (
+              <tr><td colSpan={7} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Nenhuma ocorrência registrada</td></tr>
+            ) : lista.map((oc, i) => (
+              <tr key={oc.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
+                <td style={{ padding: "10px 14px" }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "#111827" }}>{oc.nome_colaborador}</div>
+                  <div style={{ fontSize: 10, color: "#6B7280" }}>Chapa: {oc.chapa}</div>
+                </td>
+                <td style={{ padding: "10px 14px" }}>
+                  <span style={{
+                    padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 700,
+                    background: oc.tipo === "ADVERTENCIA" ? "#FEF3C7" : "#FEE2E2",
+                    color: oc.tipo === "ADVERTENCIA" ? "#92400E" : "#991B1B"
+                  }}>
+                    {oc.tipo === "ADVERTENCIA" ? "⚠️ Advertência" : "🚫 Suspensão"}
+                  </span>
+                </td>
+                <td style={{ padding: "10px 14px", fontSize: 12, color: "#374151" }}>{formatarData(oc.data_ocorrencia)}</td>
+                <td style={{ padding: "10px 14px", fontSize: 12, color: "#374151" }}>
+                  {oc.tipo === "SUSPENSAO"
+                    ? <span>{formatarData(oc.data_inicio)} → {formatarData(oc.data_fim)}<br/><b>{oc.dias_suspensao} dia(s)</b></span>
+                    : "—"}
+                </td>
+                <td style={{ padding: "10px 14px", fontSize: 12, color: "#374151" }}>{oc.gestor_nome}</td>
+                <td style={{ padding: "10px 14px" }}>
+                  <span style={{
+                    padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600,
+                    background: oc.status === "ATIVO" ? "#D1FAE5" : oc.status === "EXPORTADO" ? "#DBEAFE" : "#FEE2E2",
+                    color: oc.status === "ATIVO" ? "#065F46" : oc.status === "EXPORTADO" ? "#1D4ED8" : "#991B1B"
+                  }}>{oc.status}</span>
+                </td>
+                <td style={{ padding: "10px 14px", display: "flex", gap: 6 }}>
+                  <Button variant="ghost" size="sm" onClick={() => gerarPDF(oc)}>📄 PDF</Button>
+                  {oc.status === "ATIVO" && (
+                    <Button variant="danger" size="sm" onClick={() => cancelarOcorrencia(oc.id)}>Cancelar</Button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Card>
+
+      {/* Modal Nova Ocorrência */}
+      <Modal open={modalForm} onClose={() => setModalForm(false)} title="Registrar Ocorrência Disciplinar" width={600}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          {msg && modalForm && (
+            <div style={{ padding: "8px 12px", borderRadius: 8, fontSize: 12, background: "#FEE2E2", color: "#991B1B" }}>❌ {msg.texto}</div>
+          )}
+
+          {/* Tipo */}
+          <div style={{ display: "flex", gap: 10 }}>
+            {["ADVERTENCIA", "SUSPENSAO"].map(t => (
+              <button key={t} onClick={() => setForm(f => ({ ...f, tipo: t }))} style={{
+                flex: 1, padding: "12px", borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
+                border: form.tipo === t ? "2px solid #1B3A6B" : "2px solid #E5E7EB",
+                background: form.tipo === t ? "#EFF6FF" : "#FAFAFA",
+                color: form.tipo === t ? "#1B3A6B" : "#6B7280",
+                fontWeight: form.tipo === t ? 700 : 400, fontSize: 13
+              }}>
+                {t === "ADVERTENCIA" ? "⚠️ Advertência" : "🚫 Suspensão"}
+              </button>
+            ))}
+          </div>
+
+          {/* Colaborador */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Colaborador *</label>
+            <ColabSelect colaboradores={colaboradores} onSelect={selecionarColaborador} selecionado={form.nome_colaborador} />
+          </div>
+
+          {/* Campos adicionais */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+            <Input label="CPF" value={form.cpf} onChange={v => setForm(f => ({ ...f, cpf: v }))} placeholder="000.000.000-00" />
+            <Input label="Seção / Departamento" value={form.secao} onChange={v => setForm(f => ({ ...f, secao: v }))} placeholder="Ex: Logística" />
+            <Input label="Data de Admissão" value={form.admissao} onChange={v => setForm(f => ({ ...f, admissao: v }))} type="date" />
+          </div>
+
+          {/* Motivo */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Motivo *</label>
+            <textarea value={form.motivo} onChange={e => setForm(f => ({ ...f, motivo: e.target.value }))}
+              placeholder="Descreva detalhadamente o motivo da ocorrência..." rows={4}
+              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 12px", fontSize: 13, fontFamily: "inherit", resize: "vertical" }} />
+          </div>
+
+          {/* Campos por tipo */}
+          {form.tipo === "ADVERTENCIA" ? (
+            <Input label="Data da Advertência *" value={form.data_ocorrencia}
+              onChange={v => setForm(f => ({ ...f, data_ocorrencia: v }))} type="date" required />
+          ) : (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+              <Input label="Data de Início *" value={form.data_inicio}
+                onChange={v => setForm(f => ({ ...f, data_inicio: v, data_ocorrencia: v }))} type="date" required />
+              <Input label="Quantidade de Dias *" value={form.dias_suspensao}
+                onChange={v => setForm(f => ({ ...f, dias_suspensao: v }))} type="number" placeholder="Ex: 3" required />
+              <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Data de Fim</label>
+                <div style={{ padding: "8px 12px", border: "1px solid #E5E7EB", borderRadius: 8, fontSize: 13, background: "#F9FAFB", color: "#374151" }}>
+                  {calcularDataFim() ? new Date(calcularDataFim()).toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "—"}
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", paddingTop: 6, borderTop: "1px solid #F3F4F6" }}>
+            <Button variant="secondary" onClick={() => setModalForm(false)}>Cancelar</Button>
+            <Button onClick={salvar} disabled={salvando}>{salvando ? "Salvando..." : "Registrar Ocorrência"}</Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Modal PDF */}
+      {modalPDF && (
+        <Modal open={!!modalPDF} onClose={() => setModalPDF(null)}
+          title={`Documento — ${modalPDF.tipo === "ADVERTENCIA" ? "Advertência" : "Suspensão"}`} width={700}>
+          <PDFOcorrencia oc={modalPDF} />
+        </Modal>
+      )}
+    </div>
+  );
+}
+
+// ─── SELECT DE COLABORADOR COM AUTOCOMPLETE ───────────────────────────────────
+function ColabSelect({ colaboradores, onSelect, selecionado }) {
+  const [busca, setBusca] = useState(selecionado || "");
+  const [sugestoes, setSugestoes] = useState([]);
+
+  const onBusca = (v) => {
+    setBusca(v);
+    if (v.length >= 2) {
+      setSugestoes(colaboradores.filter(c =>
+        c.nome.toLowerCase().includes(v.toLowerCase()) || c.chapa.includes(v)
+      ).slice(0, 8));
+    } else { setSugestoes([]); }
+  };
+
+  return (
+    <div style={{ position: "relative" }}>
+      <input value={busca} onChange={e => onBusca(e.target.value)}
+        placeholder="Digite nome ou matrícula..."
+        style={{ width: "100%", border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 12px", fontSize: 13, fontFamily: "inherit", boxSizing: "border-box" }} />
+      {sugestoes.length > 0 && (
+        <div style={{ position: "absolute", top: "100%", left: 0, right: 0, zIndex: 100, background: "#fff", border: "1px solid #D1D5DB", borderRadius: 8, boxShadow: "0 4px 16px rgba(0,0,0,0.12)", maxHeight: 200, overflowY: "auto" }}>
+          {sugestoes.map(c => (
+            <div key={c.id} onMouseDown={() => { onSelect(c); setBusca(c.nome); setSugestoes([]); }}
+              style={{ padding: "9px 14px", fontSize: 13, cursor: "pointer", borderBottom: "1px solid #F3F4F6", display: "flex", gap: 10 }}>
+              <span style={{ fontFamily: "monospace", fontSize: 11, color: "#6B7280", minWidth: 50 }}>{c.chapa}</span>
+              <span style={{ fontWeight: 600, color: "#111827" }}>{c.nome}</span>
+              <span style={{ fontSize: 11, color: "#9CA3AF", marginLeft: "auto" }}>{c.funcao}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── TEMPLATE PDF DE OCORRÊNCIA — fiel ao modelo Benel ───────────────────────
+function PDFOcorrencia({ oc }) {
+  const isAdv = oc.tipo === "ADVERTENCIA";
+  const fmt = (d) => d ? new Date(d).toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "___/___/______";
+  const hoje = new Date().toLocaleDateString("pt-BR");
+
+  const imprimir = () => {
+    const conteudo = document.getElementById("pdf-ocorrencia-benel").innerHTML;
+    const win = window.open("", "_blank");
+    win.document.write(`<!DOCTYPE html>
+<html><head><title>${isAdv ? "Advertência" : "Suspensão"} — ${oc.nome_colaborador}</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; font-size: 13px; color: #000; padding: 40px 50px; line-height: 1.5; }
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .logo-area img { height: 52px; }
+  .titulo { font-size: 20px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
+  .ficha { border: 1.5px solid #000; padding: 10px 14px; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; }
+  .ficha span { font-size: 12px; }
+  .suspensao-dias { font-size: 14px; font-weight: 700; margin-bottom: 16px; }
+  .motivo-titulo { font-size: 18px; font-weight: 900; margin: 20px 0 10px; }
+  .motivo-texto { text-align: justify; line-height: 1.7; margin-bottom: 20px; }
+  .data-centro { text-align: center; margin: 30px 0 20px; font-size: 14px; }
+  .assinaturas { margin-top: 40px; }
+  .ass-empresa { text-align: center; margin-bottom: 30px; }
+  .ass-linha { border-top: 1px solid #000; width: 320px; margin: 0 auto 6px; padding-top: 6px; font-weight: 700; font-size: 13px; }
+  .ass-sublabel { font-size: 12px; color: #333; text-align: center; }
+  .testemunhas { display: flex; justify-content: space-between; margin-top: 30px; }
+  .testemunha { display: flex; align-items: flex-end; gap: 8px; font-size: 13px; }
+  .testemunha-linha { border-bottom: 1px solid #000; width: 200px; height: 20px; }
+  @media print { body { padding: 20px 30px; } }
+</style></head>
+<body>${conteudo}</body></html>`);
+    win.document.close();
+    setTimeout(() => win.print(), 400);
+  };
+
+  return (
+    <div>
+      <div id="pdf-ocorrencia-benel" style={{ fontFamily: "Arial, sans-serif", fontSize: 13, color: "#000", lineHeight: 1.5, background: "#fff" }}>
+
+        {/* Cabeçalho: Logo + Título */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+          <img src={LOGO_BENEL} alt="Benel" style={{ height: 52 }} />
+          <div style={{ fontSize: 20, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, textAlign: "right" }}>
+            {isAdv ? "ADVERTÊNCIA DISCIPLINAR" : "SUSPENSÃO DISCIPLINAR"}
+          </div>
+        </div>
+
+        {/* Ficha do colaborador */}
+        <div style={{ border: "1.5px solid #000", padding: "10px 14px", marginBottom: 20, display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 20px" }}>
+          <div style={{ fontWeight: 700 }}>Sr. (a) {oc.nome_colaborador}</div>
+          <div style={{ fontWeight: 700 }}>{oc.chapa}{oc.secao ? `    SEÇÃO : ${oc.secao}` : ""}</div>
+          <div>C.P.F : {oc.cpf || "___.___.___-__"}</div>
+          <div>Admissão: {oc.admissao ? fmt(oc.admissao) : "__/__/____"}</div>
+        </div>
+
+        {/* Linha de tipo */}
+        {isAdv ? (
+          <div style={{ marginBottom: 16, fontWeight: 600 }}>Advertido Escrito:</div>
+        ) : (
+          <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 16 }}>
+            Suspensão de: {oc.dias_suspensao} DIA(S)
+          </div>
+        )}
+
+        {/* Motivo */}
+        <div style={{ fontSize: 18, fontWeight: 900, margin: "20px 0 10px" }}>MOTIVO:</div>
+        <div style={{ textAlign: "justify", lineHeight: 1.7, marginBottom: 24 }}>{oc.motivo}</div>
+
+        {/* Texto legal */}
+        {isAdv ? (
+          <div style={{ textAlign: "justify", fontSize: 12, color: "#333", marginBottom: 20 }}>
+            Esta advertência é aplicada em conformidade com as normas internas da empresa e a Consolidação das Leis do Trabalho (CLT).
+            Informamos que a reincidência poderá acarretar em penalidades mais severas, incluindo suspensão ou rescisão por justa causa.
+          </div>
+        ) : (
+          <div style={{ textAlign: "justify", fontSize: 12, color: "#333", marginBottom: 20 }}>
+            A presente suspensão disciplinar refere-se ao período de {fmt(oc.data_inicio)} a {fmt(oc.data_fim)}, totalizando {oc.dias_suspensao} dia(s),
+            aplicada em conformidade com o Art. 474 da CLT e as normas internas da empresa.
+            Durante o período de suspensão o colaborador não deverá comparecer ao trabalho, não fazendo jus à remuneração dos dias suspensos.
+          </div>
+        )}
+
+        {/* Data */}
+        <div style={{ textAlign: "center", margin: "28px 0 20px", fontSize: 14 }}>
+          {fmt(oc.data_ocorrencia)}
+        </div>
+
+        {/* Assinatura empresa */}
+        <div style={{ textAlign: "center", marginBottom: 28 }}>
+          <div style={{ borderTop: "1px solid #000", width: 320, margin: "0 auto 6px", paddingTop: 6, fontWeight: 700 }}>
+            BENEL TRANSPORTES E LOGISTICA LTDA-ES
+          </div>
+        </div>
+
+        {/* Assinatura colaborador */}
+        <div style={{ textAlign: "center", marginBottom: 28 }}>
+          <div style={{ borderTop: "1px solid #000", width: 320, margin: "0 auto 6px", paddingTop: 6, fontWeight: 700 }}>
+            {oc.nome_colaborador}
+          </div>
+          <div style={{ fontSize: 12 }}>Assinatura do Empregado</div>
+        </div>
+
+        {/* Testemunhas */}
+        <div style={{ display: "flex", justifyContent: "space-between", marginTop: 20 }}>
+          <div style={{ fontSize: 13 }}>
+            Testemunha 1 <span style={{ display: "inline-block", borderBottom: "1px solid #000", width: 180, marginLeft: 4 }}>&nbsp;</span>
+          </div>
+          <div style={{ fontSize: 13 }}>
+            Testemunha 2 <span style={{ display: "inline-block", borderBottom: "1px solid #000", width: 180, marginLeft: 4 }}>&nbsp;</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, paddingTop: 16, borderTop: "1px solid #F3F4F6", marginTop: 20 }}>
+        <Button variant="primary" onClick={imprimir}>🖨 Imprimir / Salvar PDF</Button>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [user, setUser] = useState(null);
   const [page, setPage] = useState("dashboard");
@@ -3422,6 +3862,7 @@ export default function App() {
     cad_alcadas:      { title: "Regras de Alçadas",       subtitle: "Cadastros › Alçadas" },
     cad_usuarios:     { title: "Usuários do Sistema",     subtitle: "Cadastros › Usuários" },
     auditoria:        { title: "Auditoria",               subtitle: "Log completo de ações" },
+    ocorrencias:      { title: "Advertências / Suspensões", subtitle: "Registro de ocorrências disciplinares" },
   };
 
   if (!user) return <Login onLogin={(u, s) => { setUser(u); setSessao(s); setPage("solicitacoes"); }} />;
@@ -3462,6 +3903,7 @@ export default function App() {
           {page === "cad_alcadas"       && <CadAlcadas alcadas={alcadas} setAlcadas={setAlcadas} eventos={eventos} />}
           {page === "cad_usuarios"      && <CadUsuarios usuarios={usuarios} setUsuarios={setUsuarios} />}
           {page === "auditoria"         && <Auditoria solicitacoes={solicitacoes} blocos={blocos} sessao={sessao} />}
+          {page === "ocorrencias"       && <Ocorrencias user={user} colaboradores={colaboradores} />}
         </div>
       </div>
     </div>
