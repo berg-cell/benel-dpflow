@@ -1393,8 +1393,7 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
     <div style={{ padding: 28 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
-          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: "#111827" }}>Colaboradores</h2>
-          <p style={{ margin: "3px 0 0", fontSize: 12, color: "#6B7280" }}>{colaboradores.length} colaborador(es) cadastrado(s)</p>
+          <p style={{ margin: 0, fontSize: 12, color: "#6B7280" }}>{colaboradores.length} colaborador(es) cadastrado(s)</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <Button variant="secondary" onClick={() => setModalImport(true)}>⬆ Importar CSV</Button>
@@ -1558,8 +1557,7 @@ function CadEventos({ eventos, setEventos }) {
     <div style={{ padding: 28 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
-          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: "#111827" }}>Eventos da Folha</h2>
-          <p style={{ margin: "3px 0 0", fontSize: 12, color: "#6B7280" }}>{eventos.length} evento(s) cadastrado(s)</p>
+          <p style={{ margin: 0, fontSize: 12, color: "#6B7280" }}>{eventos.length} evento(s) cadastrado(s)</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <Button variant="secondary" onClick={() => setModalImport(true)}>⬆ Importar CSV</Button>
@@ -1693,8 +1691,7 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
     <div style={{ padding: 28 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
-          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: "#111827" }}>Hierarquia de Aprovação</h2>
-          <p style={{ margin: "3px 0 0", fontSize: 12, color: "#6B7280" }}>Define quem aprova as solicitações de cada gestor</p>
+          <p style={{ margin: 0, fontSize: 12, color: "#6B7280" }}>Define quem aprova as solicitações de cada gestor</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <Button variant="secondary" onClick={() => setModalImport(true)}>⬆ Importar CSV</Button>
@@ -1853,8 +1850,7 @@ function CadAlcadas({ alcadas, setAlcadas, eventos }) {
     <div style={{ padding: 28 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
-          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: "#111827" }}>Regras de Alçadas</h2>
-          <p style={{ margin: "3px 0 0", fontSize: 12, color: "#6B7280" }}>Define quantas aprovações cada tipo de evento exige</p>
+          <p style={{ margin: 0, fontSize: 12, color: "#6B7280" }}>Define quantas aprovações cada tipo de evento exige</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <Button variant="secondary" onClick={() => setModalImport(true)}>⬆ Importar CSV</Button>
@@ -2061,8 +2057,7 @@ function CadUsuarios({ usuarios, setUsuarios }) {
     <div style={{ padding: 28 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
-          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: "#111827" }}>Usuários do Sistema</h2>
-          <p style={{ margin: "3px 0 0", fontSize: 12, color: "#6B7280" }}>{usuarios.length} usuário(s) cadastrado(s)</p>
+          <p style={{ margin: 0, fontSize: 12, color: "#6B7280" }}>{usuarios.length} usuário(s) cadastrado(s)</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <Button variant="secondary" onClick={() => setModalImport(true)}>⬆ Importar CSV</Button>
