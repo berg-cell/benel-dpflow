@@ -1330,7 +1330,13 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
   );
 
   const abrirNovo = () => { setForm({ chapa: "", nome: "", funcao: "", situacao: "Ativo", centro_custo: "", desc_cc: "", cpf: "", data_admissao: "" }); setModalForm("novo"); };
-  const abrirEditar = (c) => { setForm({ ...c }); setModalForm("editar"); };
+  const abrirEditar = (c) => {
+    const admissao = c.data_admissao
+      ? c.data_admissao.split("T")[0]
+      : "";
+    setForm({ ...c, data_admissao: admissao });
+    setModalForm("editar");
+  };
 
   const salvar = async () => {
     if (!form.chapa || !form.nome) { alert("Chapa e Nome são obrigatórios."); return; }
