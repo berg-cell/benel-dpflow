@@ -152,6 +152,12 @@ export const api = {
 
   exportarOcorrenciasUrl: () => `${BASE}/api/ocorrencias/exportar`,
 
+  resetarSenhaAdmin: (id, novaSenha) =>
+    request(`/usuarios/${id}/reset-senha`, {
+      method: "PUT",
+      body: JSON.stringify({ novaSenha }),
+    }),
+
   getToken: () => _accessToken,
 
 };
