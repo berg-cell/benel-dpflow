@@ -1175,7 +1175,12 @@ function ImportacaoModal({ open, onClose, titulo, colunas, exemplo, onImportar }
       const erros = [];
       const validos = [];
       rows.forEach((row, i) => {
-        const faltando = colunas.filter(c => c.obrigatorio && !row[c.campo]);
+        // Usar campo real (antes do "/") para validar
+        const faltando = colunas.filter(c => {
+          if (!c.obrigatorio) return false;
+          const campoReal = c.campo.split("/")[0].trim();
+          return !row[campoReal];
+        });
         if (faltando.length > 0) {
           erros.push({ linha: i + 2, msg: "Campos obrigatórios faltando: " + faltando.map(c => c.campo).join(", ") });
         } else {
@@ -1335,14 +1340,14 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
   const onImportar = (rows) => {
     const novos = rows.map((r, i) => ({
       id: Date.now() + i,
-      chapa: r.chapa || r.Chapa || "",
-      nome: r.nome || r.Nome || "",
-      funcao: r.funcao || r.Funcao || "",
-      situacao: r.situacao || r.Situacao || "Ativo",
-      centro_custo: r.centro_custo || r.CentroCusto || "",
-      desc_cc: r.desc_cc || r.DescCC || "",
-      cpf: r.cpf || r.CPF || r.Cpf || "",
-      data_admissao: r.data_admissao || r.DataAdmissao || r.admissao || "",
+      chapa:         r.chapa || "",
+      nome:          r.nome || "",
+      funcao:        r.funcao || "",
+      situacao:      r.situacao || "Ativo",
+      centro_custo:  r.centro_custo || "",
+      desc_cc:       r.desc_cc || "",
+      cpf:           r.cpf || "",
+      data_admissao: r.data_admissao || "",
     })).filter(r => r.chapa && r.nome);
     setColaboradores(p => {
       const chapasExistentes = new Set(p.map(c => c.chapa));
