@@ -141,6 +141,16 @@ export const api = {
   // ── Health ────────────────────────────────────────────────────────────────
   health: () => request("/health"),
 
+  // ── Hierarquia ────────────────────────────────────────────────────────────────
+  listarHierarquia: () => request("/hierarquia"),
+  criarHierarquia: (data) => request("/hierarquia", { method: "POST", body: JSON.stringify(data) }),
+  atualizarHierarquia: (id, data) => request(`/hierarquia/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+
+  // ── Alçadas ───────────────────────────────────────────────────────────────────
+  listarAlcadas: () => request("/alcadas"),
+  criarAlcada: (data) => request("/alcadas", { method: "POST", body: JSON.stringify(data) }),
+  atualizarAlcada: (id, data) => request(`/alcadas/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+
   // ── Ocorrências Disciplinares ─────────────────────────────────────────────────
   listarOcorrencias: (qs = "") => request(`/ocorrencias${qs ? "?" + qs : ""}`),
 
