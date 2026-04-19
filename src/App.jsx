@@ -1393,7 +1393,7 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
     <div style={{ padding: 28 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
-          <p style={{ margin: 0, fontSize: 12, color: "#6B7280" }}>{colaboradores.length} colaborador(es) cadastrado(s)</p>
+<p style={{ margin: 0, fontSize: 12, color: "#6B7280" }}>{colaboradores.length} colaborador(es) cadastrado(s)</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <Button variant="secondary" onClick={() => setModalImport(true)}>⬆ Importar CSV</Button>
@@ -2303,8 +2303,6 @@ function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user }
     <div style={{ padding: 28 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
-          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: "#111827" }}>Solicitações de Pagamento</h2>
-          <p style={{ margin: "4px 0 0", fontSize: 12, color: "#6B7280" }}>Registre e envie variáveis de pagamento para aprovação</p>
         </div>
         <Button onClick={abrirNovoBloco}>+ Nova Solicitação de Pagamento</Button>
       </div>
@@ -3020,10 +3018,7 @@ function Exportacao({ solicitacoes, blocos }) {
     <div style={{ padding: 28 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
         <div>
-          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: "#111827" }}>Exportação TOTVS RM Labore</h2>
-          <p style={{ margin: "4px 0 0", fontSize: 12, color: "#6B7280" }}>
-            Layout de Importação de Movimento — arquivo TXT posicional (81 caracteres/linha)
-          </p>
+
         </div>
         <Button variant="secondary" size="sm" onClick={() => setShowLayout(l => !l)}>
           {showLayout ? "Ocultar layout" : "📋 Ver layout RM"}
@@ -3224,8 +3219,6 @@ function Auditoria({ solicitacoes, blocos, sessao }) {
   return (
     <div style={{ padding: 28 }}>
       <div style={{ marginBottom: 20 }}>
-        <h2 style={{ margin: "0 0 4px", fontSize: 18, fontWeight: 700, color: "#111827" }}>Auditoria</h2>
-        <p style={{ margin: 0, fontSize: 12, color: "#6B7280" }}>Registro completo de todas as ações do sistema</p>
       </div>
 
       {/* Abas */}
@@ -3335,7 +3328,6 @@ function Auditoria({ solicitacoes, blocos, sessao }) {
 function Usuarios() {
   return (
     <div style={{ padding: 28 }}>
-      <h2 style={{ margin: "0 0 20px", fontSize: 18, fontWeight: 700, color: "#111827" }}>Usuários do Sistema</h2>
       <Card style={{ padding: 0 }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
@@ -3488,8 +3480,6 @@ function Aprovacoes({ blocos, setBlocos, user }) {
 
   return (
     <div style={{ padding: 28 }}>
-      <h2 style={{ margin: "0 0 6px", fontSize: 18, fontWeight: 700, color: "#111827" }}>Fila de Aprovações</h2>
-      <p style={{ margin: "0 0 20px", fontSize: 12, color: "#6B7280" }}>Aprovação por bloco completo de solicitações</p>
 
       {fila.length === 0 ? (
         <Card style={{ textAlign: "center", padding: "40px 0" }}>
@@ -3690,7 +3680,6 @@ function Ocorrencias({ user, colaboradores }) {
       {/* Cabeçalho */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
-          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: "#111827" }}>Advertências / Suspensões</h2>
           <p style={{ margin: "4px 0 0", fontSize: 12, color: "#6B7280" }}>Registro de ocorrências disciplinares</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
