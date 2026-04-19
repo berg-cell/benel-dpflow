@@ -1358,6 +1358,15 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
     } catch (err) { alert("Erro: " + err.message); }
   };
 
+  const fmtAdmissao = (v) => {
+    if (!v) return null;
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(v)) {
+      const [d, m, a] = v.split("/");
+      return `${a}-${m}-${d}`;
+    }
+    return v || null;
+  };
+
   const onImportar = async (rows) => {
     const novos = rows.map(r => ({
       chapa:         r.chapa || "",
@@ -1367,7 +1376,7 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
       centro_custo:  r.centro_custo || "",
       desc_cc:       r.desc_cc || "",
       cpf:           r.cpf || "",
-      data_admissao: r.data_admissao || null,
+      data_admissao: fmtAdmissao(r.data_admissao),
     })).filter(r => r.chapa && r.nome);
 
     try {
