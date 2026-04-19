@@ -3621,6 +3621,7 @@ function Ocorrencias({ user, colaboradores }) {
   useEffect(() => { carregarOcorrencias(); }, []);
 
   const selecionarColaborador = (colab) => {
+    const admissao = colab.data_admissao || colab.admissao || "";
     setForm(f => ({
       ...f,
       colaborador_id: colab.id,
@@ -3628,7 +3629,7 @@ function Ocorrencias({ user, colaboradores }) {
       nome_colaborador: colab.nome,
       cpf: colab.cpf || "",
       secao: colab.desc_cc || colab.secao || "",
-      admissao: colab.data_admissao || colab.admissao || "",
+      admissao: admissao ? admissao.split("T")[0] : "",
     }));
   };
 
