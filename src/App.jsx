@@ -1095,11 +1095,63 @@ function Sidebar({ active, onNav, user }) {
 
 // ─── HELPERS DE IMPORTAÇÃO ────────────────────────────────────────────────────
 function parseCSV(text) {
-  const lines = text.trim().split("\n");
-  const headers = lines[0].split(",").map(h => h.trim().replace(/"/g, ""));
-  return lines.slice(1).map(line => {
-    const vals = line.split(",").map(v => v.trim().replace(/"/g, ""));
-    return Object.fromEntries(headers.map((h, i) => [h, vals[i] || ""]));
+  const lines = text.trim().split(/\r?\n/);
+  if (lines.length < 2) return [];
+
+  // Detectar separador: ; ou ,
+  const sep = lines[0].includes(";") ? ";" : ",";
+
+  // Dividir linha respeitando aspas
+  const splitLine = (line) => {
+    const result = []; let cur = ""; let inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') { inQ = !inQ; continue; }
+      if (c === sep && !inQ) { result.push(cur.trim()); cur = ""; continue; }
+      cur += c;
+    }
+    result.push(cur.trim());
+    return result;
+  };
+
+  // Mapa de colunas PT -> EN
+  const MAPA = {
+    "matrícula": "chapa", "matricula": "chapa", "chapa": "chapa",
+    "nome": "nome",
+    "função": "funcao", "funcao": "funcao", "cargo": "funcao",
+    "seção": "desc_cc", "secao": "desc_cc", "setor": "desc_cc", "desc_cc": "desc_cc",
+    "cpf": "cpf",
+    "admissão": "data_admissao", "admissao": "data_admissao", "data_admissao": "data_admissao", "data admissão": "data_admissao",
+    "c. custo": "centro_custo", "centro_custo": "centro_custo", "centro custo": "centro_custo",
+    "situação": "situacao", "situacao": "situacao", "status": "situacao",
+  };
+
+  const rawHeaders = splitLine(lines[0]);
+  const headers = rawHeaders.map(h => MAPA[h.toLowerCase().trim()] || h.toLowerCase().trim());
+
+  // Converter data DD/MM/AAAA -> AAAA-MM-DD
+  const fmtData = (v) => {
+    if (!v) return "";
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(v)) {
+      const [d, m, a] = v.split("/");
+      return `${a}-${m}-${d}`;
+    }
+    return v;
+  };
+
+  // Extrair código do centro de custo "01.08 - DIRETORIA" -> "01.08"
+  const fmtCC = (v) => {
+    if (!v) return "";
+    return v.includes(" - ") ? v.split(" - ")[0].trim() : v.trim();
+  };
+
+  return lines.slice(1).filter(l => l.trim()).map(line => {
+    const vals = splitLine(line);
+    const row = Object.fromEntries(headers.map((h, i) => [h, vals[i] || ""]));
+    // Aplicar conversões
+    if (row.data_admissao) row.data_admissao = fmtData(row.data_admissao);
+    if (row.centro_custo) row.centro_custo = fmtCC(row.centro_custo);
+    return row;
   });
 }
 
@@ -1304,14 +1356,14 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
   };
 
   const colunas = [
-    { campo: "chapa", obrigatorio: true, exemplo: "0001" },
-    { campo: "nome", obrigatorio: true, exemplo: "João da Silva" },
-    { campo: "funcao", obrigatorio: false, exemplo: "Analista" },
-    { campo: "situacao", obrigatorio: false, exemplo: "Ativo" },
-    { campo: "centro_custo", obrigatorio: false, exemplo: "001" },
-    { campo: "desc_cc", obrigatorio: false, exemplo: "TI" },
-    { campo: "cpf", obrigatorio: false, exemplo: "000.000.000-00" },
-    { campo: "data_admissao", obrigatorio: false, exemplo: "2024-01-15" },
+    { campo: "chapa / Matrícula", obrigatorio: true, exemplo: "0001" },
+    { campo: "nome / Nome", obrigatorio: true, exemplo: "João da Silva" },
+    { campo: "funcao / Função", obrigatorio: false, exemplo: "Analista" },
+    { campo: "desc_cc / Seção", obrigatorio: false, exemplo: "BNL - CE FOR - ADM" },
+    { campo: "cpf / CPF", obrigatorio: false, exemplo: "64830730382" },
+    { campo: "data_admissao / Admissão", obrigatorio: false, exemplo: "01/02/2022" },
+    { campo: "centro_custo / C. Custo", obrigatorio: false, exemplo: "01.08 - DIRETORIA" },
+    { campo: "situacao / Situação", obrigatorio: false, exemplo: "Ativo" },
   ];
 
   return (
