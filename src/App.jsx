@@ -1838,9 +1838,25 @@ function CadUsuarios({ usuarios, setUsuarios }) {
   const [confirmaSenha, setConfirmaSenha] = useState("");
   const [msgReset, setMsgReset] = useState(null);
   const [salvandoReset, setSalvandoReset] = useState(false);
-  const [form, setForm] = useState({ nome: "", email: "", perfil: "gestor", senha: "", ativo: true });
+  const [salvando, setSalvando] = useState(false);
+  const [form, setForm] = useState({ nome: "", email: "", perfil: "gestor", senha: "Benel@2025", secao: "", ativo: true });
 
-  const abrirNovo = () => { setForm({ nome: "", email: "", perfil: "gestor", senha: "", ativo: true }); setModalForm("novo"); };
+  const carregarUsuarios = async () => {
+    try {
+      const data = await api.listarUsuarios();
+      if (data && data.length > 0) {
+        const comAvatar = data.map(u => ({
+          ...u,
+          avatar: u.nome.split(" ").map(p => p[0]).slice(0, 2).join("").toUpperCase()
+        }));
+        setUsuarios(comAvatar);
+      }
+    } catch (e) { console.warn("Erro ao carregar usuários:", e.message); }
+  };
+
+  useEffect(() => { carregarUsuarios(); }, []);
+
+  const abrirNovo = () => { setForm({ nome: "", email: "", perfil: "gestor", senha: "Benel@2025", secao: "", ativo: true }); setModalForm("novo"); };
   const abrirEditar = (u) => { setForm({ ...u, senha: "" }); setModalForm("editar"); };
 
   const abrirReset = (u) => {
@@ -1850,16 +1866,23 @@ function CadUsuarios({ usuarios, setUsuarios }) {
     setMsgReset(null);
   };
 
-  const salvar = () => {
+  const salvar = async () => {
     if (!form.nome || !form.email) { alert("Nome e E-mail são obrigatórios."); return; }
-    if (modalForm === "novo") {
-      if (usuarios.find(u => u.email === form.email)) { alert("E-mail já cadastrado."); return; }
-      const av = form.nome.split(" ").map(p => p[0]).slice(0, 2).join("").toUpperCase();
-      setUsuarios(p => [...p, { ...form, id: Date.now(), avatar: av, senha: form.senha || "123" }]);
-    } else {
-      setUsuarios(p => p.map(u => u.id === form.id ? { ...u, nome: form.nome, email: form.email, perfil: form.perfil, ativo: form.ativo } : u));
-    }
-    setModalForm(null);
+    if (modalForm === "novo" && !form.senha) { alert("Informe uma senha inicial."); return; }
+    setSalvando(true);
+    try {
+      if (modalForm === "novo") {
+        const novo = await api.criarUsuario({ nome: form.nome, email: form.email, perfil: form.perfil, senha: form.senha });
+        const av = form.nome.split(" ").map(p => p[0]).slice(0, 2).join("").toUpperCase();
+        setUsuarios(p => [...p, { ...novo, avatar: av }]);
+      } else {
+        await api.atualizarUsuario(form.id, { nome: form.nome, email: form.email, perfil: form.perfil, ativo: form.ativo });
+        setUsuarios(p => p.map(u => u.id === form.id ? { ...u, nome: form.nome, email: form.email, perfil: form.perfil, ativo: form.ativo } : u));
+      }
+      setModalForm(null);
+    } catch (err) {
+      alert("Erro: " + err.message);
+    } finally { setSalvando(false); }
   };
 
   const executarReset = async () => {
@@ -1883,7 +1906,15 @@ function CadUsuarios({ usuarios, setUsuarios }) {
     }
   };
 
-  const toggleAtivo = (id) => setUsuarios(p => p.map(u => u.id === id ? { ...u, ativo: u.ativo === false ? true : false } : u));
+  const toggleAtivo = async (id) => {
+    const u = usuarios.find(u => u.id === id);
+    if (!u) return;
+    const novoAtivo = u.ativo === false ? true : false;
+    try {
+      await api.atualizarUsuario(id, { ativo: novoAtivo });
+      setUsuarios(p => p.map(u => u.id === id ? { ...u, ativo: novoAtivo } : u));
+    } catch (err) { alert("Erro: " + err.message); }
+  };
 
   const onImportar = (rows) => {
     const novos = rows.map((r, i) => {
@@ -1976,13 +2007,14 @@ function CadUsuarios({ usuarios, setUsuarios }) {
                 <option value="admin">Admin</option>
               </select>
             </div>
-            {modalForm === "novo" && (
-              <Input label="Senha inicial" value={form.senha} onChange={v => setForm(p => ({ ...p, senha: v }))} type="password" placeholder="(padrão: 123)" />
-            )}
+            <Input label="Seção / Departamento" value={form.secao || ""} onChange={v => setForm(p => ({ ...p, secao: v }))} placeholder="Ex: Logística, RH..." />
           </div>
+          {modalForm === "novo" && (
+            <Input label="Senha inicial *" value={form.senha} onChange={v => setForm(p => ({ ...p, senha: v }))} type="password" placeholder="Ex: Benel@2025" required />
+          )}
           <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", paddingTop: 6, borderTop: "1px solid #F3F4F6" }}>
             <Button variant="secondary" onClick={() => setModalForm(null)}>Cancelar</Button>
-            <Button onClick={salvar}>{modalForm === "novo" ? "Criar" : "Salvar"}</Button>
+            <Button onClick={salvar} disabled={salvando}>{salvando ? "Salvando..." : modalForm === "novo" ? "Criar" : "Salvar"}</Button>
           </div>
         </div>
       </Modal>
