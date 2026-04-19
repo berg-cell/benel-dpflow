@@ -1256,13 +1256,13 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
   const [busca, setBusca] = useState("");
   const [modalImport, setModalImport] = useState(false);
   const [modalForm, setModalForm] = useState(null);
-  const [form, setForm] = useState({ chapa: "", nome: "", funcao: "", situacao: "Ativo", centro_custo: "", desc_cc: "" });
+  const [form, setForm] = useState({ chapa: "", nome: "", funcao: "", situacao: "Ativo", centro_custo: "", desc_cc: "", cpf: "", data_admissao: "" });
 
   const lista = colaboradores.filter(c =>
     c.nome.toLowerCase().includes(busca.toLowerCase()) || c.chapa.includes(busca)
   );
 
-  const abrirNovo = () => { setForm({ chapa: "", nome: "", funcao: "", situacao: "Ativo", centro_custo: "", desc_cc: "" }); setModalForm("novo"); };
+  const abrirNovo = () => { setForm({ chapa: "", nome: "", funcao: "", situacao: "Ativo", centro_custo: "", desc_cc: "", cpf: "", data_admissao: "" }); setModalForm("novo"); };
   const abrirEditar = (c) => { setForm({ ...c }); setModalForm("editar"); };
 
   const salvar = () => {
@@ -1289,6 +1289,8 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
       situacao: r.situacao || r.Situacao || "Ativo",
       centro_custo: r.centro_custo || r.CentroCusto || "",
       desc_cc: r.desc_cc || r.DescCC || "",
+      cpf: r.cpf || r.CPF || r.Cpf || "",
+      data_admissao: r.data_admissao || r.DataAdmissao || r.admissao || "",
     })).filter(r => r.chapa && r.nome);
     setColaboradores(p => {
       const chapasExistentes = new Set(p.map(c => c.chapa));
@@ -1308,6 +1310,8 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
     { campo: "situacao", obrigatorio: false, exemplo: "Ativo" },
     { campo: "centro_custo", obrigatorio: false, exemplo: "001" },
     { campo: "desc_cc", obrigatorio: false, exemplo: "TI" },
+    { campo: "cpf", obrigatorio: false, exemplo: "000.000.000-00" },
+    { campo: "data_admissao", obrigatorio: false, exemplo: "2024-01-15" },
   ];
 
   return (
@@ -1331,7 +1335,7 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
-              {["Matrícula", "Nome", "Função", "C. Custo", "Situação", "Ações"].map(h => (
+              {["Matrícula", "Nome", "Função", "CPF", "Admissão", "C. Custo", "Situação", "Ações"].map(h => (
                 <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
@@ -1346,6 +1350,8 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
                 </td>
                 <td style={{ padding: "11px 16px", fontSize: 13, fontWeight: 600, color: "#111827" }}>{c.nome}</td>
                 <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{c.funcao || "—"}</td>
+                <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151", fontFamily: "monospace" }}>{c.cpf || "—"}</td>
+                <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{c.data_admissao ? new Date(c.data_admissao).toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "—"}</td>
                 <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{c.centro_custo ? (c.centro_custo + " — " + c.desc_cc) : "—"}</td>
                 <td style={{ padding: "11px 16px" }}>
                   <span style={{ padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: c.situacao === "Ativo" ? "#D1FAE5" : "#FEE2E2", color: c.situacao === "Ativo" ? "#065F46" : "#991B1B" }}>
@@ -1386,6 +1392,10 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 12 }}>
             <Input label="Cód. Centro de Custo" value={form.centro_custo} onChange={v => setForm(p => ({ ...p, centro_custo: v }))} placeholder="001" />
             <Input label="Descrição CC" value={form.desc_cc} onChange={v => setForm(p => ({ ...p, desc_cc: v }))} placeholder="Ex: TI, RH, Logística..." />
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <Input label="CPF" value={form.cpf || ""} onChange={v => setForm(p => ({ ...p, cpf: v }))} placeholder="000.000.000-00" />
+            <Input label="Data de Admissão" value={form.data_admissao || ""} onChange={v => setForm(p => ({ ...p, data_admissao: v }))} type="date" />
           </div>
           <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", paddingTop: 6, borderTop: "1px solid #F3F4F6" }}>
             <Button variant="secondary" onClick={() => setModalForm(null)}>Cancelar</Button>
@@ -1823,10 +1833,22 @@ function CadAlcadas({ alcadas, setAlcadas, eventos }) {
 function CadUsuarios({ usuarios, setUsuarios }) {
   const [modalImport, setModalImport] = useState(false);
   const [modalForm, setModalForm] = useState(null);
+  const [modalReset, setModalReset] = useState(null);
+  const [novaSenha, setNovaSenha] = useState("");
+  const [confirmaSenha, setConfirmaSenha] = useState("");
+  const [msgReset, setMsgReset] = useState(null);
+  const [salvandoReset, setSalvandoReset] = useState(false);
   const [form, setForm] = useState({ nome: "", email: "", perfil: "gestor", senha: "", ativo: true });
 
   const abrirNovo = () => { setForm({ nome: "", email: "", perfil: "gestor", senha: "", ativo: true }); setModalForm("novo"); };
   const abrirEditar = (u) => { setForm({ ...u, senha: "" }); setModalForm("editar"); };
+
+  const abrirReset = (u) => {
+    setModalReset(u);
+    setNovaSenha("");
+    setConfirmaSenha("");
+    setMsgReset(null);
+  };
 
   const salvar = () => {
     if (!form.nome || !form.email) { alert("Nome e E-mail são obrigatórios."); return; }
@@ -1838,6 +1860,27 @@ function CadUsuarios({ usuarios, setUsuarios }) {
       setUsuarios(p => p.map(u => u.id === form.id ? { ...u, nome: form.nome, email: form.email, perfil: form.perfil, ativo: form.ativo } : u));
     }
     setModalForm(null);
+  };
+
+  const executarReset = async () => {
+    if (!novaSenha || novaSenha.length < 6) {
+      setMsgReset({ tipo: "erro", texto: "A senha deve ter no mínimo 6 caracteres." });
+      return;
+    }
+    if (novaSenha !== confirmaSenha) {
+      setMsgReset({ tipo: "erro", texto: "As senhas não coincidem." });
+      return;
+    }
+    setSalvandoReset(true);
+    try {
+      await api.resetarSenhaAdmin(modalReset.id, novaSenha);
+      setMsgReset({ tipo: "ok", texto: `Senha de ${modalReset.nome} redefinida com sucesso!` });
+      setTimeout(() => { setModalReset(null); setMsgReset(null); }, 1500);
+    } catch (err) {
+      setMsgReset({ tipo: "erro", texto: err.message || "Erro ao redefinir senha." });
+    } finally {
+      setSalvandoReset(false);
+    }
   };
 
   const toggleAtivo = (id) => setUsuarios(p => p.map(u => u.id === id ? { ...u, ativo: u.ativo === false ? true : false } : u));
@@ -1903,6 +1946,7 @@ function CadUsuarios({ usuarios, setUsuarios }) {
                 </td>
                 <td style={{ padding: "11px 16px", display: "flex", gap: 6 }}>
                   <Button variant="ghost" size="sm" onClick={() => abrirEditar(u)}>✏ Editar</Button>
+                  <Button variant="warning" size="sm" onClick={() => abrirReset(u)}>🔑 Senha</Button>
                   <Button variant={u.ativo !== false ? "secondary" : "success"} size="sm" onClick={() => toggleAtivo(u.id)}>
                     {u.ativo !== false ? "Inativar" : "Ativar"}
                   </Button>
@@ -1941,6 +1985,52 @@ function CadUsuarios({ usuarios, setUsuarios }) {
             <Button onClick={salvar}>{modalForm === "novo" ? "Criar" : "Salvar"}</Button>
           </div>
         </div>
+      </Modal>
+
+      {/* Modal Reset de Senha — somente Admin */}
+      <Modal open={!!modalReset} onClose={() => setModalReset(null)}
+        title="🔑 Redefinir Senha" width={420}>
+        {modalReset && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ background: "#FFF7ED", border: "1px solid #FCD34D", borderRadius: 8, padding: "10px 14px" }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#92400E" }}>Usuário</div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: "#111827" }}>{modalReset.nome}</div>
+              <div style={{ fontSize: 12, color: "#6B7280" }}>{modalReset.email}</div>
+            </div>
+            {msgReset && (
+              <div style={{
+                padding: "8px 12px", borderRadius: 8, fontSize: 12,
+                background: msgReset.tipo === "ok" ? "#D1FAE5" : "#FEE2E2",
+                color: msgReset.tipo === "ok" ? "#065F46" : "#991B1B",
+                border: `1px solid ${msgReset.tipo === "ok" ? "#6EE7B7" : "#FCA5A5"}`
+              }}>
+                {msgReset.tipo === "ok" ? "✅" : "❌"} {msgReset.texto}
+              </div>
+            )}
+            <Input
+              label="Nova Senha *"
+              value={novaSenha}
+              onChange={setNovaSenha}
+              type="password"
+              placeholder="Mínimo 6 caracteres"
+              required
+            />
+            <Input
+              label="Confirmar Nova Senha *"
+              value={confirmaSenha}
+              onChange={setConfirmaSenha}
+              type="password"
+              placeholder="Repita a nova senha"
+              required
+            />
+            <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", paddingTop: 6, borderTop: "1px solid #F3F4F6" }}>
+              <Button variant="secondary" onClick={() => setModalReset(null)}>Cancelar</Button>
+              <Button variant="warning" onClick={executarReset} disabled={salvandoReset}>
+                {salvandoReset ? "Salvando..." : "🔑 Redefinir Senha"}
+              </Button>
+            </div>
+          </div>
+        )}
       </Modal>
     </div>
   );
@@ -3373,7 +3463,15 @@ function Ocorrencias({ user, colaboradores }) {
   useEffect(() => { carregarOcorrencias(); }, []);
 
   const selecionarColaborador = (colab) => {
-    setForm(f => ({ ...f, colaborador_id: colab.id, chapa: colab.chapa, nome_colaborador: colab.nome, secao: colab.desc_cc || "" }));
+    setForm(f => ({
+      ...f,
+      colaborador_id: colab.id,
+      chapa: colab.chapa,
+      nome_colaborador: colab.nome,
+      cpf: colab.cpf || "",
+      secao: colab.desc_cc || colab.secao || "",
+      admissao: colab.data_admissao || colab.admissao || "",
+    }));
   };
 
   const calcularDataFim = () => {
@@ -3661,7 +3759,15 @@ function ColabSelect({ colaboradores, onSelect, selecionado }) {
 // ─── TEMPLATE PDF DE OCORRÊNCIA — fiel ao modelo Benel ───────────────────────
 function PDFOcorrencia({ oc }) {
   const isAdv = oc.tipo === "ADVERTENCIA";
-  const fmt = (d) => d ? new Date(d).toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "___/___/______";
+  const MESES_EXT = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+  const fmt = (d) => {
+    if (!d) return "___ de ________ de ____";
+    const dt = new Date(d);
+    const dia = dt.getUTCDate();
+    const mes = MESES_EXT[dt.getUTCMonth()];
+    const ano = dt.getUTCFullYear();
+    return `${dia} de ${mes} de ${ano}`;
+  };
   const hoje = new Date().toLocaleDateString("pt-BR");
 
   const imprimir = () => {
@@ -3712,7 +3818,7 @@ function PDFOcorrencia({ oc }) {
           <div style={{ fontWeight: 700 }}>Sr. (a) {oc.nome_colaborador}</div>
           <div style={{ fontWeight: 700 }}>{oc.chapa}{oc.secao ? `    SEÇÃO : ${oc.secao}` : ""}</div>
           <div>C.P.F : {oc.cpf || "___.___.___-__"}</div>
-          <div>Admissão: {oc.admissao ? fmt(oc.admissao) : "__/__/____"}</div>
+          <div>Admissão: {oc.admissao || oc.data_admissao ? fmt(oc.admissao || oc.data_admissao) : "__/__/____"}</div>
         </div>
 
         {/* Linha de tipo */}
