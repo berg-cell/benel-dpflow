@@ -2211,7 +2211,7 @@ const LINHA_VAZIA = () => ({
   valor: "", observacao: ""
 });
 
-function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user }) {
+function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user, colaboradores = [] }) {
   const [filtroStatus, setFiltroStatus] = useState("");
   const [modalNovoBloco, setModalNovoBloco] = useState(false);
   const [modalBloco, setModalBloco] = useState(null);
@@ -2413,6 +2413,7 @@ function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user }
           bloco={editandoBloco}
           setBloco={setEditandoBloco}
           onSalvar={salvarBloco}
+          colaboradores={colaboradores}
         />
       )}
 
@@ -2452,7 +2453,7 @@ const MESES = [
   { value: "032025", label: "Março/2025" },
 ];
 
-function CelulaColaborador({ linha, idx, updateLinha }) {
+function CelulaColaborador({ linha, idx, updateLinha, colaboradores = [] }) {
   const [buscaNome, setBuscaNome] = useState(linha.colaborador?.nome || "");
   const [buscaChapa, setBuscaChapa] = useState(linha.colaborador?.chapa || "");
   const [sugestoesNome, setSugestoesNome] = useState([]);
@@ -2473,7 +2474,7 @@ function CelulaColaborador({ linha, idx, updateLinha }) {
     updateLinha(idx, "colaborador", null);
     setBuscaChapa("");
     if (v.length >= 2) {
-      setSugestoesNome(MOCK_COLABORADORES.filter(c => c.nome.toLowerCase().includes(v.toLowerCase())));
+      setSugestoesNome(colaboradores.filter(c => c.nome.toLowerCase().includes(v.toLowerCase())).slice(0, 10));
     } else {
       setSugestoesNome([]);
     }
@@ -2485,7 +2486,7 @@ function CelulaColaborador({ linha, idx, updateLinha }) {
     updateLinha(idx, "colaborador", null);
     setBuscaNome("");
     if (v.length >= 2) {
-      setSugestoesChapa(MOCK_COLABORADORES.filter(c => c.chapa.includes(v)));
+      setSugestoesChapa(colaboradores.filter(c => c.chapa.includes(v)).slice(0, 10));
     } else {
       setSugestoesChapa([]);
     }
@@ -2551,7 +2552,7 @@ function CelulaColaborador({ linha, idx, updateLinha }) {
   );
 }
 
-function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar }) {
+function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradores = [] }) {
   const addLinha = () => setBloco(b => ({ ...b, linhas: [...b.linhas, LINHA_VAZIA()] }));
   const removeLinha = (idx) => setBloco(b => ({ ...b, linhas: b.linhas.filter((_, i) => i !== idx) }));
   const updateLinha = (idx, campo, val) => setBloco(b => ({
@@ -2591,7 +2592,23 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar }) {
               </label>
               <select
                 value={bloco.competencia}
-                onChange={e => setBloco(b => ({ ...b, competencia: e.target.value }))}
+                onChange={e => {
+                  const comp = e.target.value;
+                  // Calcular data predefinida: dia 05 do mês seguinte
+                  let dataPredef = "";
+                  if (comp && comp.length === 6) {
+                    const mes = parseInt(comp.slice(0, 2));
+                    const ano = parseInt(comp.slice(2));
+                    const proxMes = mes === 12 ? 1 : mes + 1;
+                    const proxAno = mes === 12 ? ano + 1 : ano;
+                    dataPredef = `${proxAno}-${String(proxMes).padStart(2,"0")}-05`;
+                  }
+                  setBloco(b => ({
+                    ...b,
+                    competencia: comp,
+                    linhas: b.linhas.map(l => ({ ...l, data: dataPredef || l.data }))
+                  }));
+                }}
                 style={{
                   border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 12px",
                   fontSize: 13, fontFamily: "inherit", background: "#fff", cursor: "pointer",
@@ -2717,7 +2734,7 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar }) {
                   <tr key={linha._id} style={{ borderBottom: "1px solid #F3F4F6", background: idx % 2 === 0 ? "#fff" : "#FAFAFA" }}>
                     {/* Matrícula + Nome autocompletados */}
                     <td style={{ padding: "6px 8px", minWidth: 260 }}>
-                      <CelulaColaborador linha={linha} idx={idx} updateLinha={updateLinha} />
+                      <CelulaColaborador linha={linha} idx={idx} updateLinha={updateLinha} colaboradores={colaboradores} />
                     </td>
                     <td style={{ padding: "6px 8px", minWidth: 120 }}>
                       <input type="date" value={linha.data} onChange={e => updateLinha(idx, "data", e.target.value)}
@@ -3601,7 +3618,8 @@ function Ocorrencias({ user, colaboradores }) {
   const [form, setForm] = useState({
     tipo: "ADVERTENCIA", colaborador_id: "", chapa: "", nome_colaborador: "",
     cpf: "", secao: "", admissao: "",
-    motivo: "", data_ocorrencia: "", data_inicio: "", dias_suspensao: ""
+    motivo: "", data_ocorrencia: "", data_inicio: "", dias_suspensao: "",
+    anexo_nome: "", anexo_base64: ""
   });
   const [salvando, setSalvando] = useState(false);
   const [exportando, setExportando] = useState(false);
@@ -3677,7 +3695,7 @@ function Ocorrencias({ user, colaboradores }) {
       const blob = await resp.blob();
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = `anotacoes_rm_${new Date().toISOString().split("T")[0]}.csv`;
+      a.download = `anotacoes_rm_${new Date().toISOString().split("T")[0]}.txt`;
       a.click();
       URL.revokeObjectURL(a.href);
       setMsg({ tipo: "ok", texto: "Exportação concluída! Registros marcados como exportados." });
@@ -3861,6 +3879,56 @@ function Ocorrencias({ user, colaboradores }) {
             </div>
           )}
 
+          {/* Anexo */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 14px", background: "#FFFBEB", border: "1px dashed #FCD34D", borderRadius: 8 }}>
+            <span style={{ fontSize: 18 }}>📎</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#92400E" }}>Anexo (opcional)</div>
+              {form.anexo_nome
+                ? <div style={{ fontSize: 12, color: "#065F46", marginTop: 2 }}>✓ {form.anexo_nome}</div>
+                : <div style={{ fontSize: 11, color: "#92400E", marginTop: 2 }}>Nenhum arquivo selecionado</div>}
+            </div>
+            <label style={{ padding: "6px 12px", background: "#F59E0B", color: "#fff", borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+              {form.anexo_nome ? "Trocar" : "Selecionar"}
+              <input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={e => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = ev => setForm(f => ({ ...f, anexo_nome: file.name, anexo_base64: ev.target.result }));
+                reader.readAsDataURL(file);
+              }} style={{ display: "none" }} />
+            </label>
+            {form.anexo_nome && (
+              <button onClick={() => setForm(f => ({ ...f, anexo_nome: "", anexo_base64: "" }))}
+                style={{ background: "none", border: "none", color: "#EF4444", cursor: "pointer", fontSize: 14 }}>✕</button>
+            )}
+          </div>
+
+          {/* Anexo */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 14px", background: "#FFFBEB", border: "1px dashed #FCD34D", borderRadius: 8 }}>
+            <span style={{ fontSize: 18 }}>📎</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#92400E" }}>Anexo (opcional)</div>
+              {form.anexo_nome
+                ? <div style={{ fontSize: 12, color: "#065F46", marginTop: 2 }}>✓ {form.anexo_nome}</div>
+                : <div style={{ fontSize: 11, color: "#92400E", marginTop: 2 }}>Nenhum arquivo selecionado</div>}
+            </div>
+            <label style={{ padding: "6px 12px", background: "#F59E0B", color: "#fff", borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+              {form.anexo_nome ? "Trocar" : "Selecionar"}
+              <input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={e => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = ev => setForm(f => ({ ...f, anexo_nome: file.name, anexo_base64: ev.target.result }));
+                reader.readAsDataURL(file);
+              }} style={{ display: "none" }} />
+            </label>
+            {form.anexo_nome && (
+              <button onClick={() => setForm(f => ({ ...f, anexo_nome: "", anexo_base64: "" }))}
+                style={{ background: "none", border: "none", color: "#EF4444", cursor: "pointer", fontSize: 14 }}>✕</button>
+            )}
+          </div>
+
           <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", paddingTop: 6, borderTop: "1px solid #F3F4F6" }}>
             <Button variant="secondary" onClick={() => setModalForm(false)}>Cancelar</Button>
             <Button onClick={salvar} disabled={salvando}>{salvando ? "Salvando..." : "Registrar Ocorrência"}</Button>
@@ -4028,6 +4096,14 @@ function PDFOcorrencia({ oc }) {
           <div style={{ fontSize: 12 }}>Assinatura do Empregado</div>
         </div>
 
+        {/* Anexo no PDF */}
+        {oc.anexo_base64 && (
+          <div style={{ marginTop: 20, textAlign: "center" }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "#374151", marginBottom: 8 }}>📎 ANEXO: {oc.anexo_nome}</div>
+            <img src={oc.anexo_base64} alt="Anexo" style={{ maxWidth: "100%", maxHeight: 300, border: "1px solid #E5E7EB", borderRadius: 4 }} />
+          </div>
+        )}
+
         {/* Testemunhas */}
         <div style={{ display: "flex", justifyContent: "space-between", marginTop: 20 }}>
           <div style={{ fontSize: 13 }}>
@@ -4037,6 +4113,14 @@ function PDFOcorrencia({ oc }) {
             Testemunha 2 <span style={{ display: "inline-block", borderBottom: "1px solid #000", width: 180, marginLeft: 4 }}>&nbsp;</span>
           </div>
         </div>
+
+        {/* Anexo no PDF */}
+        {oc.anexo_base64 && (
+          <div style={{ marginTop: 24, borderTop: "1px solid #E5E7EB", paddingTop: 16 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "#374151", marginBottom: 8 }}>📎 ANEXO: {oc.anexo_nome}</div>
+            <img src={oc.anexo_base64} alt="Anexo" style={{ maxWidth: "100%", maxHeight: 400, border: "1px solid #E5E7EB", borderRadius: 4 }} />
+          </div>
+        )}
 
       </div>
 
