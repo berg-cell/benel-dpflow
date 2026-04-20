@@ -2236,11 +2236,16 @@ function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user, 
     if (!editandoBloco.competencia) { alert("Selecione a Competência."); return; }
     if (linhasValidas.length === 0) { alert("Adicione ao menos uma linha com colaborador, data e valor."); return; }
 
-    const ts = new Date().toLocaleString("pt-BR");
-    const eventoObj = MOCK_EVENTOS.find(e => e.id === parseInt(editandoBloco.evento_id));
+    // Buscar evento da lista real
+    const eventoObj = eventos.find(e => e.id === parseInt(editandoBloco.evento_id))
+                   || MOCK_EVENTOS.find(e => e.id === parseInt(editandoBloco.evento_id));
+
+    // Descrição automática: Evento + Competência
+    const mesLabel = MESES.find(m => m.value === editandoBloco.competencia)?.label || editandoBloco.competencia;
+    const descricaoAuto = editandoBloco.descricao || `${eventoObj?.descricao || "Bloco"} — ${mesLabel}`;
 
     const payload = {
-      descricao: editandoBloco.descricao || ("Bloco " + new Date().toLocaleDateString("pt-BR")),
+      descricao: descricaoAuto,
       competencia: editandoBloco.competencia,
       evento_id: parseInt(editandoBloco.evento_id),
       linhas: linhasValidas.map(l => ({
@@ -2255,62 +2260,29 @@ function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user, 
 
     try {
       if (editandoBloco.id) {
-        // edição local por ora (backend não tem PUT /blocos/:id)
-        setBlocos(prev => prev.map(b => b.id === editandoBloco.id ? {
-          ...b,
-          competencia: editandoBloco.competencia,
-          descricao: editandoBloco.descricao,
-          evento_id: editandoBloco.evento_id,
-          evento: eventoObj,
-          anexo_nome: editandoBloco.anexo_nome,
-          anexo_tamanho: editandoBloco.anexo_tamanho,
-          linhas: linhasValidas.map(l => ({ ...l, evento: eventoObj, colaborador: l.colaborador || MOCK_COLABORADORES.find(c => c.id === parseInt(l.colaborador_id)) })),
-          historico: [...b.historico, { acao: "editado", usuario: user.nome, data: ts, obs: "Bloco editado pelo solicitante" }]
-        } : b));
+        await api.aprovarBloco(editandoBloco.id, "editar", "");
       } else {
         await api.criarBloco(payload);
-        // Recarregar blocos da API
-        const blcs = await api.listarBlocos();
-        const blocsNorm = blcs.map(b => ({
+      }
+      // Recarregar blocos do banco com colaboradores e eventos resolvidos
+      const blcs = await api.listarBlocos();
+      const blocsNorm = blcs.map(b => {
+        const ev = eventos.find(e => e.id === b.evento_id) || MOCK_EVENTOS.find(e => e.id === b.evento_id);
+        return {
           ...b,
-          linhas: b.linhas || [],
+          linhas: (b.linhas || []).map(l => ({
+            ...l,
+            colaborador: l.colaborador || colaboradores.find(c => c.id === l.colaborador_id),
+            evento: l.evento || ev,
+          })),
           historico: b.historico || [],
-          evento: eventoObj || MOCK_EVENTOS.find(e => e.id === b.evento_id),
+          evento: ev,
           solicitante: b.solicitante_nome || b.solicitante || user.nome,
-        }));
-        setBlocos(blocsNorm);
-      }
+        };
+      });
+      setBlocos(blocsNorm);
     } catch (err) {
-      console.warn("API indisponível, salvando localmente:", err.message);
-      if (editandoBloco.id) {
-        setBlocos(prev => prev.map(b => b.id === editandoBloco.id ? {
-          ...b,
-          competencia: editandoBloco.competencia,
-          descricao: editandoBloco.descricao,
-          evento_id: editandoBloco.evento_id,
-          evento: eventoObj,
-          anexo_nome: editandoBloco.anexo_nome,
-          anexo_tamanho: editandoBloco.anexo_tamanho,
-          linhas: linhasValidas.map(l => ({ ...l, evento: eventoObj, colaborador: l.colaborador || MOCK_COLABORADORES.find(c => c.id === parseInt(l.colaborador_id)) })),
-          historico: [...b.historico, { acao: "editado", usuario: user.nome, data: ts, obs: "Bloco editado pelo solicitante" }]
-        } : b));
-      } else {
-        setBlocos(prev => [...prev, {
-          id: Date.now(),
-          descricao: editandoBloco.descricao || ("Bloco " + new Date().toLocaleDateString("pt-BR")),
-          competencia: editandoBloco.competencia,
-          evento_id: editandoBloco.evento_id,
-          evento: eventoObj,
-          anexo_nome: editandoBloco.anexo_nome,
-          anexo_tamanho: editandoBloco.anexo_tamanho,
-          status: "pendente_gestor",
-          solicitante: user.nome,
-          solicitante_id: user.id,
-          criado_em: ts,
-          linhas: linhasValidas.map(l => ({ ...l, evento: eventoObj, colaborador: l.colaborador || MOCK_COLABORADORES.find(c => c.id === parseInt(l.colaborador_id)) })),
-          historico: [{ acao: "criado", usuario: user.nome, data: ts, obs: "Bloco enviado para aprovação" }]
-        }]);
-      }
+      alert("Erro ao salvar: " + err.message);
     }
     setModalNovoBloco(false);
     setEditandoBloco(null);
@@ -2579,10 +2551,10 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: 14 }}>
             <Input
-              label="Descrição do Bloco"
+              label="Descrição do Bloco (automática)"
               value={bloco.descricao}
               onChange={v => setBloco(b => ({ ...b, descricao: v }))}
-              placeholder="Ex: Horas extras — Operação Sul"
+              placeholder="Preenchido automaticamente..."
             />
 
             {/* Competência — select de meses */}
@@ -4166,13 +4138,21 @@ export default function App() {
       }
       if (blcs && blcs.length > 0) {
         const evtsRef = evts || MOCK_EVENTOS;
-        const blocsNorm = blcs.map(b => ({
-          ...b,
-          linhas: b.linhas || [],
-          historico: b.historico || [],
-          evento: evtsRef.find(e => e.id === b.evento_id) || null,
-          solicitante: b.solicitante_nome || b.solicitante || "",
-        }));
+        const colsRef = cols || [];
+        const blocsNorm = blcs.map(b => {
+          const ev = evtsRef.find(e => e.id === b.evento_id) || null;
+          return {
+            ...b,
+            linhas: (b.linhas || []).map(l => ({
+              ...l,
+              colaborador: l.colaborador || colsRef.find(c => c.id === l.colaborador_id),
+              evento: l.evento || ev,
+            })),
+            historico: b.historico || [],
+            evento: ev,
+            solicitante: b.solicitante_nome || b.solicitante || "",
+          };
+        });
         setBlocos(blocsNorm);
       }
     } catch (err) {
