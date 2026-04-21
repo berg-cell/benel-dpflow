@@ -2211,7 +2211,7 @@ const LINHA_VAZIA = () => ({
   valor: "", observacao: ""
 });
 
-function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user, colaboradores = [] }) {
+function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user, colaboradores = [], eventos = [], recarregarDados }) {
   const [filtroStatus, setFiltroStatus] = useState("");
   const [modalNovoBloco, setModalNovoBloco] = useState(false);
   const [modalBloco, setModalBloco] = useState(null);
@@ -2265,22 +2265,7 @@ function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user, 
         await api.criarBloco(payload);
       }
       // Recarregar blocos do banco com colaboradores e eventos resolvidos
-      const blcs = await api.listarBlocos();
-      const blocsNorm = blcs.map(b => {
-        const ev = eventos.find(e => e.id === b.evento_id) || MOCK_EVENTOS.find(e => e.id === b.evento_id);
-        return {
-          ...b,
-          linhas: (b.linhas || []).map(l => ({
-            ...l,
-            colaborador: l.colaborador || colaboradores.find(c => c.id === l.colaborador_id),
-            evento: l.evento || ev,
-          })),
-          historico: b.historico || [],
-          evento: ev,
-          solicitante: b.solicitante_nome || b.solicitante || user.nome,
-        };
-      });
-      setBlocos(blocsNorm);
+      if (recarregarDados) await recarregarDados();
     } catch (err) {
       alert("Erro ao salvar: " + err.message);
     }
@@ -3435,7 +3420,7 @@ const MOCK_BLOCOS_INIT = [
   },
 ];
 
-function Aprovacoes({ blocos, setBlocos, user }) {
+function Aprovacoes({ blocos, setBlocos, user, recarregarDados }) {
   const [justificativa, setJustificativa] = useState("");
   const [modalAcao, setModalAcao] = useState(null);
 
@@ -3478,6 +3463,7 @@ function Aprovacoes({ blocos, setBlocos, user }) {
 
     try {
       await api.aprovarBloco(bloco.id, acao, justificativa);
+      if (recarregarDados) await recarregarDados();
     } catch (err) {
       console.warn("API indisponível, ação aplicada localmente:", err.message);
     }
@@ -4232,8 +4218,8 @@ export default function App() {
         )}
         <div style={{ flex: 1, overflowY: "auto" }}>
           {page === "dashboard"         && <Dashboard solicitacoes={solsParaDashboard} blocos={blocos} user={user} />}
-          {page === "solicitacoes"      && <Solicitacoes solicitacoes={solicitacoes} setSolicitacoes={setSolicitacoes} blocos={blocos} setBlocos={setBlocos} user={user} colaboradores={colaboradores} eventos={eventos} />}
-          {page === "aprovacoes"        && <Aprovacoes blocos={blocos} setBlocos={setBlocos} user={user} />}
+          {page === "solicitacoes"      && <Solicitacoes solicitacoes={solicitacoes} setSolicitacoes={setSolicitacoes} blocos={blocos} setBlocos={setBlocos} user={user} colaboradores={colaboradores} eventos={eventos} recarregarDados={carregarDados} />}
+          {page === "aprovacoes"        && <Aprovacoes blocos={blocos} setBlocos={setBlocos} user={user} recarregarDados={carregarDados} />}
           {page === "exportacao"        && <Exportacao solicitacoes={solsParaExportacao} blocos={blocos.filter(b => b.status === "aprovado_final")} />}
           {page === "cad_colaboradores" && <CadColaboradores colaboradores={colaboradores} setColaboradores={setColaboradores} />}
           {page === "cad_eventos"       && <CadEventos eventos={eventos} setEventos={setEventos} />}
