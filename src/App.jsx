@@ -2231,7 +2231,7 @@ function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user, 
   };
 
   const salvarBloco = async () => {
-    const linhasValidas = editandoBloco.linhas.filter(l => l.colaborador_id && l.data && l.valor);
+    const linhasValidas = editandoBloco.linhas.filter(l => l.colaborador_id && String(l.colaborador_id) !== "" && l.data && parseFloat(l.valor) > 0);
     if (!editandoBloco.evento_id) { alert("Selecione o Evento do Bloco."); return; }
     if (!editandoBloco.competencia) { alert("Selecione a Competência."); return; }
     if (linhasValidas.length === 0) { alert("Adicione ao menos uma linha com colaborador, data e valor."); return; }
@@ -2249,7 +2249,7 @@ function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user, 
       competencia: editandoBloco.competencia,
       evento_id: parseInt(editandoBloco.evento_id),
       linhas: linhasValidas.map(l => ({
-        colaborador_id: parseInt(l.colaborador_id),
+        colaborador_id: parseInt(l.colaborador_id) || 0,
         data: l.data,
         hora: l.hora || null,
         valor: parseFloat(l.valor),
@@ -2421,7 +2421,7 @@ function CelulaColaborador({ linha, idx, updateLinha, colaboradores = [] }) {
     setBuscaChapa(colab.chapa);
     setSugestoesNome([]);
     setSugestoesChapa([]);
-    updateLinha(idx, "colaborador_id", colab.id);
+    updateLinha(idx, "colaborador_id", parseInt(colab.id));
     updateLinha(idx, "colaborador", colab);
   };
 
