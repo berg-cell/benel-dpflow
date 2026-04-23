@@ -2232,6 +2232,8 @@ function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user, 
 
   const salvarBloco = async () => {
     const linhasValidas = editandoBloco.linhas.filter(l => l.colaborador_id && String(l.colaborador_id) !== "" && l.data && parseFloat(l.valor) > 0);
+    console.log("DEBUG linhas:", JSON.stringify(editandoBloco.linhas));
+    console.log("DEBUG validas:", JSON.stringify(linhasValidas));
     if (!editandoBloco.evento_id) { alert("Selecione o Evento do Bloco."); return; }
     if (!editandoBloco.competencia) { alert("Selecione a Competência."); return; }
     if (linhasValidas.length === 0) { alert("Adicione ao menos uma linha com colaborador, data e valor."); return; }
