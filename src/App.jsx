@@ -2236,7 +2236,7 @@ function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user, 
     console.log("DEBUG validas:", JSON.stringify(linhasValidas));
     if (!editandoBloco.evento_id) { alert("Selecione o Evento do Bloco."); return; }
     if (!editandoBloco.competencia) { alert("Selecione a Competência."); return; }
-    if (linhasValidas.length === 0) { alert("Adicione ao menos uma linha com colaborador, data e valor."); return; }
+    alert("DEBUG: " + linhasValidas.length + " linhas | colab_id: " + linhasValidas[0]?.colaborador_id + " | data: " + linhasValidas[0]?.data + " | valor: " + linhasValidas[0]?.valor);
 
     // Buscar evento da lista real
     const eventoObj = eventos.find(e => e.id === parseInt(editandoBloco.evento_id))
