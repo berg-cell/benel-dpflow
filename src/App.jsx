@@ -4172,6 +4172,29 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     if (form.tipo === "antecipacao_contrato" && !form.justificativa)
       return "Justificativa obrigatória para antecipação de contrato.";
 
+    // Bloquear aviso trabalhado/indenizado para contratos dentro dos 90 dias
+    if (["aviso_trabalhado", "aviso_indenizado"].includes(form.tipo)) {
+      if (colaboradorSel?.data_admissao) {
+        const admissao = new Date(colaboradorSel.data_admissao.split("T")[0]);
+        const d90  = new Date(admissao); d90.setDate(d90.getDate() + 90);
+        const d45  = new Date(admissao); d45.setDate(d45.getDate() + 45);
+        const hoje = new Date(); hoje.setHours(0,0,0,0);
+        const fmtBR = (d) => d.toLocaleDateString("pt-BR", { timeZone: "UTC" });
+
+        if (hoje <= d90) {
+          return (
+            `Solicitação não permitida para este colaborador.\n` +
+            `Colaboradores em contrato de experiência (até 90 dias) não podem receber Aviso Prévio.\n\n` +
+            `Detalhes do contrato:\n` +
+            `• Início do contrato: ${fmtBR(admissao)}\n` +
+            `• Fim do 1º período (45 dias): ${fmtBR(d45)}\n` +
+            `• Fim do 2º período (90 dias): ${fmtBR(d90)}\n\n` +
+            `Use "Término de Contrato" ou "Antecipação de Término de Contrato".`
+          );
+        }
+      }
+    }
+
     if (form.tipo === "termino_contrato") {
       if (colaboradorSel?.data_admissao) {
         const admissao  = new Date(colaboradorSel.data_admissao.split("T")[0]);
