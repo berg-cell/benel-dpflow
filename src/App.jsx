@@ -4533,42 +4533,54 @@ function ModalPDFDesligamento({ sol, onClose }) {
     antecipacao_contrato: "RESCISÃO ANTECIPADA DO CONTRATO DE EXPERIÊNCIA PELO EMPREGADOR",
   };
   const titulo = TIPOS[sol.tipo] || "SOLICITAÇÃO DE DESLIGAMENTO";
-  const temDeclaracao = ["aviso_indenizado", "termino_contrato"].includes(sol.tipo);
+  const temDeclaracao = ["aviso_indenizado","termino_contrato"].includes(sol.tipo);
 
   const imprimir = () => {
     const conteudo = document.getElementById("pdf-desligamento-benel").innerHTML;
     const win = window.open("", "_blank");
     win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${titulo}</title>
     <style>
-      body { font-family: Arial, sans-serif; font-size: 13px; color: #000; line-height: 1.6; padding: 30px 40px; }
+      body { font-family: Arial, sans-serif; font-size: 13px; color: #000; line-height: 1.6; padding: 30px 40px; margin: 0; }
+      .ficha { border: 1.5px solid #000; padding: 10px 14px; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; }
+      .titulo { font-size: 18px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; text-align: center; }
+      .linha-assin { border-top: 1px solid #000; width: 320px; margin: 0 auto 4px; padding-top: 6px; font-weight: 700; text-align: center; }
+      .separador { border: none; border-top: 1px dotted #000; margin: 24px 0; }
       @media print { body { padding: 20px 30px; } }
     </style></head><body>${conteudo}</body></html>`);
     win.document.close();
     setTimeout(() => win.print(), 400);
   };
 
-  const FichaColaborador = () => (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 20px", marginBottom: 20, borderBottom: "1px solid #000", paddingBottom: 10 }}>
-      <div><b>Sr. (a): {sol.colaborador_nome}</b></div>
-      <div><b>{sol.chapa}{sol.desc_cc ? `    ${sol.desc_cc}` : ""}</b></div>
-      <div>Carteira Profissional: ____________</div>
-      <div>Admissão: ____________&nbsp;&nbsp; PIS: ____________</div>
+  // ── Ficha padrão (igual advertência/suspensão) ────────────────────────────
+  const Ficha = () => (
+    <div style={{ border: "1.5px solid #000", padding: "10px 14px", marginBottom: 20,
+      display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 20px" }}>
+      <div style={{ fontWeight: 700 }}>Sr. (a) &nbsp;{sol.colaborador_nome}</div>
+      <div style={{ fontWeight: 700 }}>{sol.chapa}{sol.desc_cc ? `    SEÇÃO : ${sol.desc_cc}` : ""}</div>
+      <div>C.P.F : &nbsp;{sol.cpf || "___.___.___-__"}</div>
+      <div>Admissão: &nbsp;{sol.data_admissao ? fmt(sol.data_admissao) : "__/__/____"}</div>
     </div>
   );
 
+  // ── Assinaturas (empresa centralizada + colaborador centralizado) ─────────
   const Assinaturas = () => (
     <>
-      <div style={{ marginBottom: 20 }}>Fortaleza</div>
-      <div style={{ marginBottom: 8 }}>
-        <img src={ASSINATURA_BENEL} alt="Assinatura" style={{ height: 70, display: "block", marginBottom: 4, objectFit: "contain" }} />
+      <div style={{ textAlign: "left", marginBottom: 8 }}>
+        {sol.cidade || "Fortaleza"}
+      </div>
+      <div style={{ marginBottom: 28 }}>
+        <img src={ASSINATURA_BENEL} alt="Assinatura"
+          style={{ height: 70, display: "block", marginBottom: 2, objectFit: "contain" }} />
         <div style={{ borderTop: "1px solid #000", width: 320, paddingTop: 4, fontWeight: 700 }}>
           BENEL TRANSPORTES E LOGISTICA LTDA
         </div>
       </div>
-      <div style={{ marginBottom: 24 }}><b>Ciente:</b> {fmt(sol.data_desligamento)}</div>
-      <div style={{ textAlign: "center" }}>
-        <div style={{ height: 50 }} />
-        <div style={{ borderTop: "1px solid #000", width: 320, margin: "0 auto 4px", paddingTop: 4, fontWeight: 700 }}>
+      <div style={{ marginBottom: 28 }}>
+        <strong>Ciente:</strong> &nbsp;{fmt(sol.data_desligamento)}
+      </div>
+      <div style={{ textAlign: "center", marginTop: 20 }}>
+        <div style={{ height: 56 }} />
+        <div style={{ borderTop: "1px solid #000", width: 320, margin: "0 auto 4px", paddingTop: 6, fontWeight: 700 }}>
           {sol.colaborador_nome}
         </div>
         <div style={{ fontSize: 12 }}>Assinatura do Empregado</div>
@@ -4576,23 +4588,24 @@ function ModalPDFDesligamento({ sol, onClose }) {
     </>
   );
 
-  const DeclaracaoCiencia = () => (
+  // ── Declaração de Ciência (aviso indenizado + término) ────────────────────
+  const Declaracao = () => (
     <>
-      <div style={{ margin: "24px 0", borderTop: "1px dotted #000" }} />
-      <div style={{ textAlign: "center", marginBottom: 16 }}>
-        <strong style={{ fontSize: 14 }}>DECLARAÇÃO DE CIÊNCIA DE PAGAMENTO</strong>
+      <hr style={{ border: "none", borderTop: "1px dotted #000", margin: "24px 0" }} />
+      <div style={{ textAlign: "center", fontWeight: 900, fontSize: 14, marginBottom: 16, textDecoration: "underline" }}>
+        DECLARAÇÃO DE CIÊNCIA DE PAGAMENTO
       </div>
       <p style={{ textAlign: "justify", marginBottom: 16 }}>
-        Estou ciente que devo comparecer a sede da empresa e/ou agente homologador, até o dia __/___/_____, para
-        confirmar o recebimento das minhas verbas rescisórias, feito dentro dos prazos legais. O não comparecimento na data
-        acima citada automaticamente dará a minha ciência.
+        Estou ciente que devo comparecer a sede da empresa e/ou agente homologador, até o dia __/___/_____,
+        para confirmar o recebimento das minhas verbas rescisórias, feito dentro dos prazos legais.
+        O não comparecimento na data acima citada automaticamente dará a minha ciência.
       </p>
-      <p style={{ marginBottom: 24, fontSize: 12 }}>
+      <p style={{ fontSize: 12, marginBottom: 24 }}>
         Obs.: Para homologação das verbas rescisórias a data, local e horário a combinar, dentro do prazo legal previsto na CLT.
       </p>
-      <div style={{ textAlign: "center" }}>
-        <div style={{ height: 50 }} />
-        <div style={{ borderTop: "1px solid #000", width: 320, margin: "0 auto 4px", paddingTop: 4, fontWeight: 700 }}>
+      <div style={{ textAlign: "center", marginTop: 20 }}>
+        <div style={{ height: 56 }} />
+        <div style={{ borderTop: "1px solid #000", width: 320, margin: "0 auto 4px", paddingTop: 6, fontWeight: 700 }}>
           {sol.colaborador_nome}
         </div>
         <div style={{ fontSize: 12 }}>Assinatura do Empregado</div>
@@ -4601,78 +4614,121 @@ function ModalPDFDesligamento({ sol, onClose }) {
   );
 
   return (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1100, overflowY: "auto", padding: "20px 0" }}>
-      <div style={{ background: "#fff", borderRadius: 16, width: "100%", maxWidth: 720, maxHeight: "92vh", overflowY: "auto", padding: 28 }}>
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex",
+      alignItems: "flex-start", justifyContent: "center", zIndex: 1100, overflowY: "auto", padding: "20px 0" }}>
+      <div style={{ background: "#fff", borderRadius: 16, width: "100%", maxWidth: 760,
+        margin: "auto", padding: 28 }}>
+
+        {/* Barra do modal */}
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
           <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Documento de Desligamento</h3>
-          <button onClick={onClose} style={{ background: "none", border: "none", fontSize: 20, cursor: "pointer" }}>×</button>
+          <button onClick={onClose} style={{ background: "none", border: "none", fontSize: 22, cursor: "pointer", lineHeight: 1 }}>×</button>
         </div>
 
-        <div id="pdf-desligamento-benel" style={{ fontFamily: "Arial, sans-serif", fontSize: 13, color: "#000", lineHeight: 1.6, background: "#fff" }}>
+        {/* Documento */}
+        <div id="pdf-desligamento-benel"
+          style={{ fontFamily: "Arial, sans-serif", fontSize: 13, color: "#000", lineHeight: 1.6, background: "#fff", padding: "0 4px" }}>
 
-          {/* Cabeçalho */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, borderBottom: "2px solid #000", paddingBottom: 10 }}>
+          {/* Cabeçalho: Logo esquerda + Título centralizado */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
             <img src={LOGO_BENEL} alt="Benel" style={{ height: 52 }} />
-            <div style={{ fontSize: 16, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1, textAlign: "right", maxWidth: "60%" }}>
+            <div style={{ fontSize: 18, fontWeight: 900, textTransform: "uppercase",
+              letterSpacing: 2, textAlign: "right", maxWidth: "55%" }}>
               {titulo}
             </div>
           </div>
 
-          <FichaColaborador />
+          {/* Ficha */}
+          <Ficha />
 
+          {/* ── AVISO TRABALHADO ──────────────────────────────────── */}
           {sol.tipo === "aviso_trabalhado" && (<>
             <p style={{ textAlign: "justify", marginBottom: 16 }}>
-              Pelo presente, notificamos que a partir desta data nossa parceria (Contrato de Trabalho), que foi construída ao longo da trajetória na <strong>BENEL TRANSPORTES E LOGISTICA LTDA</strong>, chegou ao fim, e por isso, vimos avisá-lo(la) que os efeitos do disposto art. 487, inc. II da CLT, deverá assinar umas das possibilidades abaixo:
+              Pelo presente, notificamos que a partir desta data nossa parceria (Contrato de Trabalho),
+              que foi construída ao longo da trajetória na <strong>BENEL TRANSPORTES E LOGISTICA LTDA</strong>,
+              chegou ao fim, e por isso, vimos avisá-lo(la) que os efeitos do disposto art. 487, inc. II da CLT,
+              deverá assinar umas das possibilidades abaixo:
             </p>
-            <p>( &nbsp;) Escolho reduzir minha jornada em duas horas, conforme determina o art. 488 da CLT.</p>
-            <p>( &nbsp;) Escolho faltar 07 (sete) dias corridos, sem prejuízo do salário, caso em que sua jornada diária de trabalho nos 30 dias restantes não será reduzida.</p>
-            <p style={{ marginTop: 12 }}>Favor marcar abaixo se concorda com o pedido da Empresa em reconsiderar o presente aviso prévio, conforme previsão do parágrafo único do art. 489 da CLT, em função da continuidade do contrato de trabalho.</p>
-            <p>( &nbsp;) Sim &nbsp;&nbsp;&nbsp;&nbsp; ( &nbsp;) Não</p>
-            <p style={{ marginTop: 12, fontStyle: "italic", fontSize: 12 }}>Agradecemos a cooperação prestada por V.Sa., pedimos a devolução do presente aviso com o seu ciente.</p>
-            <div style={{ marginTop: 16, marginBottom: 20 }}>
-              <strong>Início do Aviso:</strong> {sol.data_aviso ? fmt(sol.data_aviso) : "__/__/____"}
-              &nbsp;&nbsp;&nbsp;&nbsp;
-              <strong>Fim do Aviso:</strong> {fmt(sol.data_desligamento)}
+            <p style={{ marginBottom: 8 }}>
+              ( &nbsp;) &nbsp;Escolho reduzir minha jornada em duas horas, conforme determina o art. 488 da CLT.
+            </p>
+            <p style={{ marginBottom: 8 }}>
+              ( &nbsp;) &nbsp;Escolho faltar 07 (sete) dias corridos, sem prejuízo do salário, caso em que sua jornada
+              diária de trabalho nos 30 dias restantes não será reduzida.
+            </p>
+            <p style={{ marginTop: 12, marginBottom: 8 }}>
+              Favor marcar abaixo se concorda com o pedido da Empresa em reconsiderar o presente aviso prévio,
+              conforme previsão do parágrafo único do art. 489 da CLT, em função da continuidade do contrato de trabalho.
+            </p>
+            <p style={{ marginBottom: 16 }}>( &nbsp;) Sim &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( &nbsp;) Não</p>
+            <p style={{ fontStyle: "italic", fontSize: 12, marginBottom: 20 }}>
+              Agradecemos a cooperação prestada por V.Sa., pedimos a devolução do presente aviso com o seu ciente.
+            </p>
+            <div style={{ marginBottom: 20 }}>
+              <strong>Início do Aviso:</strong> &nbsp;{sol.data_aviso ? fmt(sol.data_aviso) : "__/__/____"}
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <strong>Fim do Aviso:</strong> &nbsp;{fmt(sol.data_desligamento)}
             </div>
-            {sol.reducao_jornada && <p><strong>Obs: Colaborador optou pela redução de jornada.</strong></p>}
             <Assinaturas />
           </>)}
 
+          {/* ── AVISO INDENIZADO ──────────────────────────────────── */}
           {sol.tipo === "aviso_indenizado" && (<>
             <p style={{ textAlign: "justify", marginBottom: 24 }}>
-              Comunicamos a V.Sa., nossa iniciativa de rescindir seu contrato de trabalho, para o que lhe damos o presente AVISO PRÉVIO que será indenizado pelo valor correspondente, conforme Artigo 487, parágrafo 1o. da Consolidação das Leis do Trabalho.
+              Comunicamos a V.Sa., nossa iniciativa de rescindir seu contrato de trabalho, para o que lhe damos
+              o presente AVISO PRÉVIO que será indenizado pelo valor correspondente, conforme Artigo 487,
+              parágrafo 1o. da Consolidação das Leis do Trabalho.
             </p>
-            {sol.justificativa && <p style={{ marginBottom: 16 }}><strong>Obs:</strong> {sol.justificativa}</p>}
+            {sol.justificativa && <p style={{ marginBottom: 20 }}><strong>Obs:</strong> {sol.justificativa}</p>}
             <Assinaturas />
-            <p style={{ fontSize: 12, marginTop: 16 }}>Obs.: Para homologação das verbas rescisórias a data, local e horário a combinar, dentro do prazo legal previsto na CLT.</p>
-            <DeclaracaoCiencia />
+            <p style={{ fontSize: 12, marginTop: 12 }}>
+              Obs.: Para homologação das verbas rescisórias a data, local e horário a combinar,
+              dentro do prazo legal previsto na CLT.
+            </p>
+            <Declaracao />
           </>)}
 
+          {/* ── TÉRMINO DE CONTRATO ───────────────────────────────── */}
           {sol.tipo === "termino_contrato" && (<>
             <p style={{ textAlign: "justify", marginBottom: 24 }}>
-              Comunicamos por meio desta, que seu contrato de trabalho por prazo determinado será rescindido no seu termo, em <strong>{fmt(sol.data_desligamento)}</strong>.
+              Comunicamos por meio desta, que seu contrato de trabalho por prazo determinado será rescindido
+              no seu termo, em <strong>{fmt(sol.data_desligamento)}</strong>.
             </p>
-            {sol.observacoes && <p><strong>Obs:</strong> {sol.observacoes}</p>}
+            {sol.observacoes && <p style={{ marginBottom: 20 }}><strong>Obs:</strong> {sol.observacoes}</p>}
             <Assinaturas />
-            <p style={{ fontSize: 12, marginTop: 16 }}>Obs.: Para homologação das verbas rescisórias a data, local e horário a combinar, dentro do prazo legal previsto na CLT.</p>
-            <DeclaracaoCiencia />
+            <p style={{ fontSize: 12, marginTop: 12 }}>
+              Obs.: Para homologação das verbas rescisórias a data, local e horário a combinar,
+              dentro do prazo legal previsto na CLT.
+            </p>
+            <Declaracao />
           </>)}
 
+          {/* ── ANTECIPAÇÃO DE CONTRATO ───────────────────────────── */}
           {sol.tipo === "antecipacao_contrato" && (<>
             <p style={{ textAlign: "justify", marginBottom: 24 }}>
-              Vimos pela presente comunicar-lhe que por não mais convir a esta empresa manter seu contrato de experiência{sol.data_fim_contrato ? `, cujo término estava previsto para o dia ${fmt(sol.data_fim_contrato)},` : ","} achamos por bem rescindi-lo antes do prazo acordado. Sendo assim, a partir de <strong>{fmt(sol.data_desligamento)}</strong>, não serão mais necessários seus serviços.
+              Vimos pela presente comunicar-lhe que por não mais convir a esta empresa manter seu contrato
+              de experiência{sol.data_fim_contrato
+                ? `, cujo término estava previsto para o dia ${fmt(sol.data_fim_contrato)},`
+                : ","} achamos por bem rescindi-lo antes do prazo acordado. Sendo assim, a partir
+              de <strong>{fmt(sol.data_desligamento)}</strong>, não serão mais necessários seus serviços.
             </p>
-            {sol.justificativa && <p><strong>Motivo:</strong> {sol.justificativa}</p>}
+            {sol.justificativa && <p style={{ marginBottom: 20 }}><strong>Motivo:</strong> {sol.justificativa}</p>}
             <Assinaturas />
           </>)}
 
         </div>
 
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, paddingTop: 16, borderTop: "1px solid #F3F4F6", marginTop: 20 }}>
-          <button onClick={onClose} style={{ padding: "9px 20px", borderRadius: 8, border: "1px solid #E5E7EB", background: "#fff", fontSize: 14, cursor: "pointer" }}>
+        {/* Botões */}
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: 10,
+          paddingTop: 16, borderTop: "1px solid #F3F4F6", marginTop: 20 }}>
+          <button onClick={onClose}
+            style={{ padding: "9px 20px", borderRadius: 8, border: "1px solid #E5E7EB",
+              background: "#fff", fontSize: 14, cursor: "pointer" }}>
             Fechar
           </button>
-          <button onClick={imprimir} style={{ padding: "9px 20px", borderRadius: 8, border: "none", background: "#0F2447", color: "#fff", fontSize: 14, cursor: "pointer", fontWeight: 600 }}>
+          <button onClick={imprimir}
+            style={{ padding: "9px 20px", borderRadius: 8, border: "none",
+              background: "#0F2447", color: "#fff", fontSize: 14, cursor: "pointer", fontWeight: 600 }}>
             🖨 Imprimir / Salvar PDF
           </button>
         </div>
@@ -4680,6 +4736,7 @@ function ModalPDFDesligamento({ sol, onClose }) {
     </div>
   );
 }
+
 
 export default function App() {
   const [user, setUser] = useState(null);
