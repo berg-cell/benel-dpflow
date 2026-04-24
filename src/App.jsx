@@ -4091,6 +4091,434 @@ function PDFOcorrencia({ oc }) {
   );
 }
 
+// ─── DESLIGAMENTOS ────────────────────────────────────────────────────────────
+const TIPOS_DESL = [
+  { value: "aviso_trabalhado",    label: "Aviso Prévio Trabalhado" },
+  { value: "aviso_indenizado",    label: "Aviso Prévio Indenizado" },
+  { value: "termino_contrato",    label: "Término de Contrato" },
+  { value: "antecipacao_contrato",label: "Antecipação de Término de Contrato" },
+];
+
+const STATUS_DESL = {
+  rascunho:           { label: "Rascunho",           color: "#6B7280" },
+  pendente_superior:  { label: "Pend. Superior",     color: "#F59E0B" },
+  pendente_dp:        { label: "Pend. DP",           color: "#3B82F6" },
+  aprovado:           { label: "Aprovado",           color: "#10B981" },
+  reprovado:          { label: "Reprovado",          color: "#EF4444" },
+  ajuste_solicitado:  { label: "Ajuste Solicitado",  color: "#8B5CF6" },
+  finalizado:         { label: "Finalizado",         color: "#0F2447" },
+};
+
+const ALCADA_DESL = {
+  pendente_superior: ["superior", "admin"],
+  pendente_dp:       ["dp", "admin"],
+  aprovado:          ["dp", "admin"],
+};
+
+function Desligamentos({ user, colaboradores, api, recarregarDados }) {
+  const [lista,          setLista]          = useState([]);
+  const [modalNovo,      setModalNovo]      = useState(false);
+  const [modalDetalhe,   setModalDetalhe]   = useState(null);
+  const [modalAcao,      setModalAcao]      = useState(null);
+  const [carregando,     setCarregando]     = useState(true);
+  const [salvando,       setSalvando]       = useState(false);
+  const [erro,           setErro]           = useState("");
+  const [filtroStatus,   setFiltroStatus]   = useState("");
+
+  const FORM_VAZIO = {
+    colaborador_id: "", tipo: "", data_desligamento: "",
+    data_aviso: "", reducao_jornada: false,
+    justificativa: "", observacoes: "",
+  };
+  const [form, setForm] = useState(FORM_VAZIO);
+  const [colaboradorSel, setColaboradorSel] = useState(null);
+  const [buscaColab, setBuscaColab] = useState("");
+  const [sugestoesColab, setSugestoesColab] = useState([]);
+
+  const carregar = async () => {
+    setCarregando(true);
+    try {
+      const r = await api.get("/desligamentos" + (filtroStatus ? `?status=${filtroStatus}` : ""));
+      setLista(r.data || []);
+    } catch (e) { setErro(e.message); }
+    finally { setCarregando(false); }
+  };
+
+  useEffect(() => { carregar(); }, [filtroStatus]);
+
+  const onBuscaColab = (v) => {
+    setBuscaColab(v);
+    setForm(f => ({ ...f, colaborador_id: "" }));
+    setColaboradorSel(null);
+    if (v.length >= 2) {
+      setSugestoesColab(colaboradores.filter(c =>
+        c.nome.toLowerCase().includes(v.toLowerCase()) || c.chapa.includes(v)
+      ));
+    } else setSugestoesColab([]);
+  };
+
+  const selecionarColab = (c) => {
+    setColaboradorSel(c);
+    setBuscaColab(c.nome);
+    setForm(f => ({ ...f, colaborador_id: c.id }));
+    setSugestoesColab([]);
+  };
+
+  const validarForm = () => {
+    if (!form.colaborador_id)       return "Selecione um colaborador.";
+    if (!form.tipo)                 return "Selecione o tipo de desligamento.";
+    if (!form.data_desligamento)    return "Informe a data de desligamento.";
+    if (form.tipo === "antecipacao_contrato" && !form.justificativa)
+                                    return "Justificativa obrigatória para antecipação.";
+    if (form.tipo === "termino_contrato" && colaboradorSel?.tipo_contrato !== "determinado")
+                                    return "Colaborador não possui contrato determinado.";
+    return null;
+  };
+
+  // Calcular data aviso (30 dias antes)
+  const calcularDataAviso = (dataDesl) => {
+    if (!dataDesl) return "";
+    const d = new Date(dataDesl);
+    d.setDate(d.getDate() - 30);
+    return d.toISOString().split("T")[0];
+  };
+
+  const salvar = async (enviar = false) => {
+    const errVal = validarForm();
+    if (errVal) { setErro(errVal); return; }
+    setSalvando(true); setErro("");
+    try {
+      const payload = { ...form };
+      if (form.tipo === "aviso_trabalhado" && !form.data_aviso)
+        payload.data_aviso = calcularDataAviso(form.data_desligamento);
+      const r = await api.post("/desligamentos", payload);
+      if (enviar) await api.put("/desligamentos/" + r.data.id + "/enviar", {});
+      await carregar();
+      setModalNovo(false);
+      setForm(FORM_VAZIO);
+      setColaboradorSel(null);
+      setBuscaColab("");
+    } catch (e) { setErro(e.message); }
+    finally { setSalvando(false); }
+  };
+
+  const executarAcao = async () => {
+    if (!modalAcao) return;
+    setSalvando(true);
+    try {
+      await api.put("/desligamentos/" + modalAcao.id + "/aprovar", {
+        acao: modalAcao.acao, observacao: modalAcao.observacao || "",
+      });
+      await carregar();
+      setModalAcao(null);
+    } catch (e) { setErro(e.message); }
+    finally { setSalvando(false); }
+  };
+
+  const abrirDetalhe = async (id) => {
+    try {
+      const r = await api.get("/desligamentos/" + id);
+      setModalDetalhe(r.data);
+    } catch (e) { setErro(e.message); }
+  };
+
+  const listaFiltrada = lista.filter(s => !filtroStatus || s.status === filtroStatus);
+
+  const podeAgir = (sol) => ALCADA_DESL[sol.status]?.includes(user.perfil);
+
+  return (
+    <div style={{ padding: 28 }}>
+      {/* Cabeçalho */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <select value={filtroStatus} onChange={e => setFiltroStatus(e.target.value)}
+            style={{ padding: "8px 12px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13 }}>
+            <option value="">Todos os status</option>
+            {Object.entries(STATUS_DESL).map(([v, d]) => (
+              <option key={v} value={v}>{d.label}</option>
+            ))}
+          </select>
+          <button onClick={() => setFiltroStatus("")}
+            style={{ padding: "8px 14px", borderRadius: 8, border: "1px solid #E5E7EB", background: "#fff", fontSize: 13, cursor: "pointer" }}>
+            Limpar
+          </button>
+        </div>
+        {["gestor","dp","admin"].includes(user.perfil) && (
+          <button onClick={() => { setModalNovo(true); setErro(""); setForm(FORM_VAZIO); setColaboradorSel(null); setBuscaColab(""); }}
+            style={{ padding: "10px 20px", background: "#0F2447", color: "#fff", border: "none", borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: "pointer" }}>
+            + Nova Solicitação
+          </button>
+        )}
+      </div>
+
+      {erro && <div style={{ background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, padding: "10px 16px", marginBottom: 16, color: "#DC2626", fontSize: 13 }}>⚠️ {erro}</div>}
+
+      {/* Lista */}
+      {carregando ? (
+        <div style={{ textAlign: "center", padding: 40, color: "#94A3B8" }}>Carregando...</div>
+      ) : listaFiltrada.length === 0 ? (
+        <div style={{ textAlign: "center", padding: 60, color: "#94A3B8" }}>
+          <div style={{ fontSize: 40, marginBottom: 12 }}>🚪</div>
+          <div style={{ fontSize: 15, fontWeight: 600 }}>Nenhuma solicitação encontrada</div>
+        </div>
+      ) : listaFiltrada.map(sol => {
+        const st = STATUS_DESL[sol.status] || STATUS_DESL.rascunho;
+        const tipo = TIPOS_DESL.find(t => t.value === sol.tipo);
+        return (
+          <div key={sol.id} style={{ background: "#fff", borderRadius: 12, border: "1px solid #E5E7EB", padding: "16px 20px", marginBottom: 12 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                  <span style={{ fontWeight: 700, fontSize: 15 }}>{sol.colaborador_nome}</span>
+                  <span style={{ background: "#F3F4F6", borderRadius: 6, padding: "2px 8px", fontSize: 12 }}>{sol.chapa}</span>
+                  <span style={{ background: st.color + "22", color: st.color, borderRadius: 6, padding: "2px 8px", fontSize: 12, fontWeight: 600 }}>{st.label}</span>
+                </div>
+                <div style={{ fontSize: 13, color: "#6B7280" }}>
+                  {tipo?.label} · Desligamento: <b>{sol.data_desligamento ? new Date(sol.data_desligamento).toLocaleDateString("pt-BR") : "—"}</b>
+                  · Solicitante: <b>{sol.gestor_nome}</b>
+                  · {new Date(sol.criado_em).toLocaleDateString("pt-BR")}
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button onClick={() => abrirDetalhe(sol.id)}
+                  style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #E5E7EB", background: "#fff", fontSize: 13, cursor: "pointer" }}>
+                  Ver
+                </button>
+                {podeAgir(sol) && (
+                  <button onClick={() => setModalAcao({ id: sol.id, status: sol.status, acao: "aprovar", observacao: "" })}
+                    style={{ padding: "6px 14px", borderRadius: 8, border: "none", background: "#0F2447", color: "#fff", fontSize: 13, cursor: "pointer", fontWeight: 600 }}>
+                    Analisar
+                  </button>
+                )}
+                {sol.status === "rascunho" && sol.gestor_id === user.id && (
+                  <button onClick={async () => { try { await api.put("/desligamentos/"+sol.id+"/enviar",{}); await carregar(); } catch(e){setErro(e.message);} }}
+                    style={{ padding: "6px 14px", borderRadius: 8, border: "none", background: "#10B981", color: "#fff", fontSize: 13, cursor: "pointer", fontWeight: 600 }}>
+                    Enviar
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+
+      {/* Modal Novo */}
+      {modalNovo && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
+          <div style={{ background: "#fff", borderRadius: 16, width: "100%", maxWidth: 600, maxHeight: "90vh", overflowY: "auto", padding: 28 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
+              <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>Nova Solicitação de Desligamento</h3>
+              <button onClick={() => setModalNovo(false)} style={{ background: "none", border: "none", fontSize: 20, cursor: "pointer" }}>×</button>
+            </div>
+
+            {erro && <div style={{ background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, padding: "8px 14px", marginBottom: 16, color: "#DC2626", fontSize: 12 }}>⚠️ {erro}</div>}
+
+            {/* Colaborador */}
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Colaborador *</label>
+              <div style={{ position: "relative" }}>
+                <input value={buscaColab} onChange={e => onBuscaColab(e.target.value)}
+                  placeholder="Buscar por nome ou matrícula..."
+                  style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, boxSizing: "border-box" }} />
+                {sugestoesColab.length > 0 && (
+                  <div style={{ position: "absolute", top: "100%", left: 0, right: 0, background: "#fff", border: "1px solid #E5E7EB", borderRadius: 8, zIndex: 10, maxHeight: 200, overflowY: "auto", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}>
+                    {sugestoesColab.map(c => (
+                      <div key={c.id} onClick={() => selecionarColab(c)}
+                        style={{ padding: "10px 14px", cursor: "pointer", fontSize: 13, borderBottom: "1px solid #F3F4F6" }}
+                        onMouseEnter={e => e.target.style.background="#F8FAFC"}
+                        onMouseLeave={e => e.target.style.background="#fff"}>
+                        <b>{c.chapa}</b> — {c.nome} <span style={{ color: "#94A3B8" }}>{c.funcao}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {colaboradorSel && (
+                <div style={{ marginTop: 8, padding: "10px 14px", background: "#F0FDF4", borderRadius: 8, fontSize: 12, color: "#166534" }}>
+                  ✅ <b>{colaboradorSel.nome}</b> · Matrícula: {colaboradorSel.chapa} · Cargo: {colaboradorSel.funcao || "—"} · CC: {colaboradorSel.centro_custo} — {colaboradorSel.desc_cc}
+                  {colaboradorSel.tipo_contrato === "determinado" && <span style={{ marginLeft: 8, background: "#FEF3C7", color: "#92400E", padding: "1px 6px", borderRadius: 4 }}>Contrato até {colaboradorSel.data_fim_contrato ? new Date(colaboradorSel.data_fim_contrato).toLocaleDateString("pt-BR") : "—"}</span>}
+                </div>
+              )}
+            </div>
+
+            {/* Tipo */}
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Tipo de Desligamento *</label>
+              <select value={form.tipo} onChange={e => setForm(f => ({ ...f, tipo: e.target.value }))}
+                style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13 }}>
+                <option value="">Selecione...</option>
+                {TIPOS_DESL.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+              </select>
+            </div>
+
+            {/* Datas */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
+              <div>
+                <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Data de Desligamento *</label>
+                <input type="date" value={form.data_desligamento}
+                  onChange={e => setForm(f => ({ ...f, data_desligamento: e.target.value }))}
+                  style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, boxSizing: "border-box" }} />
+              </div>
+              {form.tipo === "aviso_trabalhado" && (
+                <div>
+                  <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Data de Aviso</label>
+                  <input type="date" value={form.data_aviso || calcularDataAviso(form.data_desligamento)}
+                    onChange={e => setForm(f => ({ ...f, data_aviso: e.target.value }))}
+                    style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, boxSizing: "border-box" }} />
+                </div>
+              )}
+            </div>
+
+            {/* Redução jornada */}
+            {form.tipo === "aviso_trabalhado" && (
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, cursor: "pointer" }}>
+                  <input type="checkbox" checked={form.reducao_jornada}
+                    onChange={e => setForm(f => ({ ...f, reducao_jornada: e.target.checked }))} />
+                  Colaborador terá redução de jornada durante o aviso
+                </label>
+              </div>
+            )}
+
+            {/* Justificativa */}
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
+                Justificativa {form.tipo === "antecipacao_contrato" ? "*" : "(opcional)"}
+              </label>
+              <textarea value={form.justificativa} onChange={e => setForm(f => ({ ...f, justificativa: e.target.value }))}
+                rows={3} placeholder="Descreva o motivo do desligamento..."
+                style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, resize: "vertical", boxSizing: "border-box" }} />
+            </div>
+
+            {/* Observações */}
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Observações</label>
+              <textarea value={form.observacoes} onChange={e => setForm(f => ({ ...f, observacoes: e.target.value }))}
+                rows={2} placeholder="Observações adicionais..."
+                style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, resize: "vertical", boxSizing: "border-box" }} />
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, borderTop: "1px solid #F3F4F6", paddingTop: 16 }}>
+              <button onClick={() => setModalNovo(false)} disabled={salvando}
+                style={{ padding: "9px 20px", borderRadius: 8, border: "1px solid #E5E7EB", background: "#fff", fontSize: 14, cursor: "pointer" }}>
+                Cancelar
+              </button>
+              <button onClick={() => salvar(false)} disabled={salvando}
+                style={{ padding: "9px 20px", borderRadius: 8, border: "1px solid #0F2447", background: "#fff", color: "#0F2447", fontSize: 14, cursor: "pointer", fontWeight: 600 }}>
+                {salvando ? "Salvando..." : "Salvar Rascunho"}
+              </button>
+              <button onClick={() => salvar(true)} disabled={salvando}
+                style={{ padding: "9px 20px", borderRadius: 8, border: "none", background: "#0F2447", color: "#fff", fontSize: 14, cursor: "pointer", fontWeight: 600 }}>
+                {salvando ? "Enviando..." : "Enviar para Aprovação"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Detalhe */}
+      {modalDetalhe && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
+          <div style={{ background: "#fff", borderRadius: 16, width: "100%", maxWidth: 650, maxHeight: "90vh", overflowY: "auto", padding: 28 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
+              <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>Detalhes da Solicitação #{modalDetalhe.id}</h3>
+              <button onClick={() => setModalDetalhe(null)} style={{ background: "none", border: "none", fontSize: 20, cursor: "pointer" }}>×</button>
+            </div>
+
+            {/* Dados */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 20 }}>
+              {[
+                ["Colaborador",  modalDetalhe.colaborador_nome],
+                ["Matrícula",    modalDetalhe.chapa],
+                ["CPF",          modalDetalhe.cpf || "—"],
+                ["Cargo",        modalDetalhe.funcao || "—"],
+                ["Tipo",         TIPOS_DESL.find(t => t.value === modalDetalhe.tipo)?.label],
+                ["Status",       STATUS_DESL[modalDetalhe.status]?.label],
+                ["Desligamento", modalDetalhe.data_desligamento ? new Date(modalDetalhe.data_desligamento).toLocaleDateString("pt-BR") : "—"],
+                ["Data Aviso",   modalDetalhe.data_aviso ? new Date(modalDetalhe.data_aviso).toLocaleDateString("pt-BR") : "—"],
+                ["Solicitante",  modalDetalhe.gestor_nome],
+                ["Centro Custo", `${modalDetalhe.centro_custo || "—"} — ${modalDetalhe.desc_cc || "—"}`],
+              ].map(([l, v]) => (
+                <div key={l} style={{ background: "#F8FAFC", borderRadius: 8, padding: "10px 14px" }}>
+                  <div style={{ fontSize: 11, color: "#94A3B8", fontWeight: 600, marginBottom: 2 }}>{l}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600 }}>{v || "—"}</div>
+                </div>
+              ))}
+            </div>
+
+            {modalDetalhe.justificativa && (
+              <div style={{ marginBottom: 16 }}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: "#94A3B8", marginBottom: 4 }}>JUSTIFICATIVA</div>
+                <div style={{ background: "#F8FAFC", borderRadius: 8, padding: "10px 14px", fontSize: 13 }}>{modalDetalhe.justificativa}</div>
+              </div>
+            )}
+
+            {/* Histórico */}
+            {modalDetalhe.logs?.length > 0 && (
+              <div style={{ marginBottom: 16 }}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: "#94A3B8", marginBottom: 8 }}>HISTÓRICO</div>
+                {modalDetalhe.logs.map((l, i) => (
+                  <div key={i} style={{ display: "flex", gap: 10, marginBottom: 8, fontSize: 12 }}>
+                    <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#0F2447", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700, flexShrink: 0 }}>
+                      {l.usuario_nome?.slice(0,2).toUpperCase()}
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: 600 }}>{l.usuario_nome} <span style={{ color: "#94A3B8", fontWeight: 400 }}>· {l.acao}</span></div>
+                      <div style={{ color: "#6B7280" }}>{l.observacao || ""} · {new Date(l.criado_em).toLocaleString("pt-BR")}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: 16, borderTop: "1px solid #F3F4F6" }}>
+              <button onClick={() => setModalDetalhe(null)}
+                style={{ padding: "9px 20px", borderRadius: 8, border: "1px solid #E5E7EB", background: "#fff", fontSize: 14, cursor: "pointer" }}>
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Ação */}
+      {modalAcao && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
+          <div style={{ background: "#fff", borderRadius: 16, width: "100%", maxWidth: 460, padding: 28 }}>
+            <h3 style={{ margin: "0 0 16px", fontSize: 17, fontWeight: 700 }}>Analisar Solicitação</h3>
+            <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+              {["aprovar","reprovar","solicitar_ajuste"].map(a => (
+                <button key={a} onClick={() => setModalAcao(m => ({ ...m, acao: a }))}
+                  style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: "2px solid",
+                    borderColor: modalAcao.acao === a ? "#0F2447" : "#E5E7EB",
+                    background: modalAcao.acao === a ? "#0F2447" : "#fff",
+                    color: modalAcao.acao === a ? "#fff" : "#374151",
+                    fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                  {a === "aprovar" ? "✅ Aprovar" : a === "reprovar" ? "❌ Reprovar" : "🔄 Ajuste"}
+                </button>
+              ))}
+            </div>
+            <textarea value={modalAcao.observacao}
+              onChange={e => setModalAcao(m => ({ ...m, observacao: e.target.value }))}
+              rows={3} placeholder="Observação (opcional para aprovação)..."
+              style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, resize: "none", boxSizing: "border-box", marginBottom: 16 }} />
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
+              <button onClick={() => setModalAcao(null)} disabled={salvando}
+                style={{ padding: "9px 20px", borderRadius: 8, border: "1px solid #E5E7EB", background: "#fff", fontSize: 14, cursor: "pointer" }}>
+                Cancelar
+              </button>
+              <button onClick={executarAcao} disabled={salvando}
+                style={{ padding: "9px 20px", borderRadius: 8, border: "none", background: "#0F2447", color: "#fff", fontSize: 14, cursor: "pointer", fontWeight: 600 }}>
+                {salvando ? "Processando..." : "Confirmar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function App() {
   const [user, setUser] = useState(null);
   const [page, setPage] = useState("dashboard");
