@@ -4124,6 +4124,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
   const [salvando,       setSalvando]       = useState(false);
   const [erro,           setErro]           = useState("");
   const [filtroStatus,   setFiltroStatus]   = useState("");
+  const [modalPDF,       setModalPDF]       = useState(null);
 
   const FORM_VAZIO = {
     colaborador_id: "", tipo: "", data_desligamento: "",
@@ -4284,6 +4285,10 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                   style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #E5E7EB", background: "#fff", fontSize: 13, cursor: "pointer" }}>
                   Ver
                 </button>
+                <button onClick={async () => { const r = await api.get("/desligamentos/"+sol.id); setModalPDF(r.data); }}
+                  style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #6B7280", background: "#fff", fontSize: 13, cursor: "pointer" }}>
+                  📄 Doc
+                  </button>
                 {podeAgir(sol) && (
                   <button onClick={() => setModalAcao({ id: sol.id, status: sol.status, acao: "aprovar", observacao: "" })}
                     style={{ padding: "6px 14px", borderRadius: 8, border: "none", background: "#0F2447", color: "#fff", fontSize: 13, cursor: "pointer", fontWeight: 600 }}>
