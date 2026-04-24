@@ -4679,7 +4679,6 @@ function ModalPDFDesligamento({ sol, onClose }) {
               o presente AVISO PRÉVIO que será indenizado pelo valor correspondente, conforme Artigo 487,
               parágrafo 1o. da Consolidação das Leis do Trabalho.
             </p>
-            {sol.justificativa && <p style={{ marginBottom: 20 }}><strong>Obs:</strong> {sol.justificativa}</p>}
             <Assinaturas />
             <p style={{ fontSize: 12, marginTop: 12 }}>
               Obs.: Para homologação das verbas rescisórias a data, local e horário a combinar,
@@ -4694,7 +4693,6 @@ function ModalPDFDesligamento({ sol, onClose }) {
               Comunicamos por meio desta, que seu contrato de trabalho por prazo determinado será rescindido
               no seu termo, em <strong>{fmt(sol.data_desligamento)}</strong>.
             </p>
-            {sol.observacoes && <p style={{ marginBottom: 20 }}><strong>Obs:</strong> {sol.observacoes}</p>}
             <Assinaturas />
             <p style={{ fontSize: 12, marginTop: 12 }}>
               Obs.: Para homologação das verbas rescisórias a data, local e horário a combinar,
@@ -4712,7 +4710,6 @@ function ModalPDFDesligamento({ sol, onClose }) {
                 : ","} achamos por bem rescindi-lo antes do prazo acordado. Sendo assim, a partir
               de <strong>{fmt(sol.data_desligamento)}</strong>, não serão mais necessários seus serviços.
             </p>
-            {sol.justificativa && <p style={{ marginBottom: 20 }}><strong>Motivo:</strong> {sol.justificativa}</p>}
             <Assinaturas />
           </>)}
 
