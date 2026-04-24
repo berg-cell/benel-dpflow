@@ -4203,6 +4203,18 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     return d.toISOString().split("T")[0];
   };
 
+  // Calcular data automática para Término de Contrato
+  const calcularDataTermino = (dataAdmissao) => {
+    if (!dataAdmissao) return "";
+    const admissao = new Date(dataAdmissao.split("T")[0]);
+    const d45 = new Date(admissao); d45.setDate(d45.getDate() + 45);
+    const d90 = new Date(admissao); d90.setDate(d90.getDate() + 90);
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    // Se já passou dos 45 dias, usa 90 dias; senão usa 45 dias
+    const dataFim = hoje > d45 ? d90 : d45;
+    return dataFim.toISOString().split("T")[0];
+  };
+
   const salvar = async (enviar = false) => {
     const errVal = validarForm();
     if (errVal) { setErro(errVal); return; }
@@ -4372,7 +4384,15 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
             {/* Tipo */}
             <div style={{ marginBottom: 16 }}>
               <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Tipo de Desligamento *</label>
-              <select value={form.tipo} onChange={e => setForm(f => ({ ...f, tipo: e.target.value }))}
+              <select value={form.tipo} onChange={e => {
+                const novoTipo = e.target.value;
+                if (novoTipo === "termino_contrato" && colaboradorSel?.data_admissao) {
+                  const dataAuto = calcularDataTermino(colaboradorSel.data_admissao);
+                  setForm(f => ({ ...f, tipo: novoTipo, data_desligamento: dataAuto }));
+                } else {
+                  setForm(f => ({ ...f, tipo: novoTipo }));
+                }
+              }}
                 style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13 }}>
                 <option value="">Selecione...</option>
                 {TIPOS_DESL.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
@@ -4390,9 +4410,12 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
               {form.tipo === "aviso_trabalhado" && (
                 <div>
                   <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Data de Aviso</label>
-                  <input type="date" value={form.data_aviso || calcularDataAviso(form.data_desligamento)}
-                    onChange={e => setForm(f => ({ ...f, data_aviso: e.target.value }))}
-                    style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, boxSizing: "border-box" }} />
+                  <input type="date" value={form.data_desligamento}
+                  onChange={e => setForm(f => ({ ...f, data_desligamento: e.target.value }))}
+                  readOnly={form.tipo === "termino_contrato"}
+                  style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, boxSizing: "border-box",
+                    background: form.tipo === "termino_contrato" ? "#F3F4F6" : "#fff",
+                    cursor: form.tipo === "termino_contrato" ? "not-allowed" : "auto" }} />
                 </div>
               )}
             </div>
