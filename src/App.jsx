@@ -857,6 +857,7 @@ const NAV_ITEMS = [
   { id: "dashboard",   label: "Dashboard",              icon: "◉",  perfis: ["gestor","superior","dp","admin"] },
   { id: "exportacao",    label: "Exportação TXT",         icon: "↓",  perfis: ["dp","admin"] },
   { id: "ocorrencias",   label: "Advertências/Suspensões", icon: "⚠️", perfis: ["gestor","dp","admin"] },
+  { id: "desligamentos", label: "Desligamentos",           icon: "🚪", perfis: ["gestor","superior","dp","admin"] },
   { id: "auditoria",     label: "Auditoria",              icon: "📜", perfis: ["dp","admin"] },
 ];
 
@@ -4187,6 +4188,7 @@ export default function App() {
     cad_alcadas:      { title: "Regras de Alçadas",       subtitle: "Cadastros › Alçadas" },
     cad_usuarios:     { title: "Usuários do Sistema",     subtitle: "Cadastros › Usuários" },
     auditoria:        { title: "Auditoria",               subtitle: "Log completo de ações" },
+    desligamentos:    { title: "Solicitações de Desligamento", subtitle: "Gerencie solicitações de desligamento de colaboradores" },
     ocorrencias:      { title: "Advertências / Suspensões", subtitle: "Registro de ocorrências disciplinares" },
   };
 
@@ -4227,6 +4229,7 @@ export default function App() {
           {page === "cad_hierarquia"    && <CadHierarquia hierarquia={hierarquia} setHierarquia={setHierarquia} usuarios={usuarios} />}
           {page === "cad_alcadas"       && <CadAlcadas alcadas={alcadas} setAlcadas={setAlcadas} eventos={eventos} />}
           {page === "cad_usuarios"      && <CadUsuarios usuarios={usuarios} setUsuarios={setUsuarios} />}
+          {page === "desligamentos"     && <Desligamentos user={user} colaboradores={colaboradores} api={api} recarregarDados={carregarDados} />}
           {page === "auditoria"         && <Auditoria solicitacoes={solicitacoes} blocos={blocos} sessao={sessao} />}
           {page === "ocorrencias"       && <Ocorrencias user={user} colaboradores={colaboradores} />}
         </div>
