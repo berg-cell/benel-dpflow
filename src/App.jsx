@@ -4558,7 +4558,7 @@ function ModalPDFDesligamento({ sol, onClose }) {
       <div style={{ fontWeight: 700 }}>Sr. (a) &nbsp;{sol.colaborador_nome}</div>
       <div style={{ fontWeight: 700 }}>{sol.chapa}{sol.desc_cc ? `    SEÇÃO : ${sol.desc_cc}` : ""}</div>
       <div>C.P.F : &nbsp;{sol.cpf || "___.___.___-__"}</div>
-      <div>Admissão: &nbsp;{sol.data_admissao ? fmt(sol.data_admissao) : "__/__/____"}</div>
+      <div>Admissão: &nbsp;{(sol.data_admissao || sol.admissao) ? fmt((sol.data_admissao || sol.admissao).split("T")[0]) : "__/__/____"}</div>
     </div>
   );
 
@@ -4570,8 +4570,8 @@ function ModalPDFDesligamento({ sol, onClose }) {
       </div>
       <div style={{ marginBottom: 28 }}>
         <img src={ASSINATURA_BENEL} alt="Assinatura"
-          style={{ height: 70, display: "block", marginBottom: 2, objectFit: "contain" }} />
-        <div style={{ borderTop: "1px solid #000", width: 320, paddingTop: 4, fontWeight: 700 }}>
+          style={{ height: 70, display: "block", margin: "0 auto 4px", objectFit: "contain" }} />
+        <div style={{ borderTop: "1px solid #000", width: 320, margin: "0 auto 6px", paddingTop: 4, fontWeight: 700, textAlign: "center" }}>
           BENEL TRANSPORTES E LOGISTICA LTDA
         </div>
       </div>
