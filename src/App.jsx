@@ -4166,13 +4166,35 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
   };
 
   const validarForm = () => {
-    if (!form.colaborador_id)       return "Selecione um colaborador.";
-    if (!form.tipo)                 return "Selecione o tipo de desligamento.";
-    if (!form.data_desligamento)    return "Informe a data de desligamento.";
+    if (!form.colaborador_id)    return "Selecione um colaborador.";
+    if (!form.tipo)              return "Selecione o tipo de desligamento.";
+    if (!form.data_desligamento) return "Informe a data de desligamento.";
     if (form.tipo === "antecipacao_contrato" && !form.justificativa)
-                                    return "Justificativa obrigatória para antecipação.";
-    if (form.tipo === "termino_contrato" && colaboradorSel?.tipo_contrato !== "determinado")
-                                    return "Colaborador não possui contrato determinado.";
+      return "Justificativa obrigatória para antecipação de contrato.";
+
+    if (form.tipo === "termino_contrato") {
+      if (colaboradorSel?.tipo_contrato !== "determinado")
+        return "Colaborador não possui contrato por prazo determinado.";
+
+      if (colaboradorSel?.data_admissao) {
+        const admissao  = new Date(colaboradorSel.data_admissao.split("T")[0]);
+        const d45       = new Date(admissao); d45.setDate(d45.getDate() + 45);
+        const d90       = new Date(admissao); d90.setDate(d90.getDate() + 90);
+        const hoje      = new Date(); hoje.setHours(0,0,0,0);
+        const fmtBR     = (d) => d.toLocaleDateString("pt-BR", { timeZone: "UTC" });
+
+        if (hoje > d90) {
+          return (
+            `Solicitação não permitida.\n` +
+            `O colaborador já ultrapassou a data limite do contrato de experiência.\n\n` +
+            `Detalhes do contrato:\n` +
+            `• Início do contrato: ${fmtBR(admissao)}\n` +
+            `• Fim do 1º período (45 dias): ${fmtBR(d45)}\n` +
+            `• Fim do 2º período (90 dias): ${fmtBR(d90)}`
+          );
+        }
+      }
+    }
     return null;
   };
 
@@ -4314,7 +4336,13 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
               <button onClick={() => setModalNovo(false)} style={{ background: "none", border: "none", fontSize: 20, cursor: "pointer" }}>×</button>
             </div>
 
-            {erro && <div style={{ background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, padding: "8px 14px", marginBottom: 16, color: "#DC2626", fontSize: 12 }}>⚠️ {erro}</div>}
+            {erro && (
+  <div style={{ background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, padding: "10px 14px", marginBottom: 16, color: "#DC2626", fontSize: 12 }}>
+    {erro.split("\n").map((linha, i) => (
+      <div key={i} style={{ marginBottom: linha === "" ? 6 : 2 }}>{linha ? `${i === 0 ? "⚠️ " : ""}${linha}` : ""}</div>
+    ))}
+  </div>
+)}
 
             {/* Colaborador */}
             <div style={{ marginBottom: 16 }}>
