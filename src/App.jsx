@@ -4140,7 +4140,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     setCarregando(true);
     try {
       const r = await api.listarDesligamentos(filtroStatus);
-      setLista(r.data || []);
+      setLista(Array.isArray(r) ? r : (r.data || []));
     } catch (e) { setErro(e.message); }
     finally { setCarregando(false); }
   };
