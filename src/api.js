@@ -168,6 +168,24 @@ export const api = {
       body: JSON.stringify({ novaSenha }),
     }),
 
+  // ── Desligamentos ──────────────────────────────────────────────────────────
+  listarDesligamentos: (status = "") =>
+    request(`/desligamentos${status ? "?status=" + status : ""}`),
+
+  buscarDesligamento: (id) => request(`/desligamentos/${id}`),
+
+  criarDesligamento: (data) =>
+    request("/desligamentos", { method: "POST", body: JSON.stringify(data) }),
+
+  enviarDesligamento: (id) =>
+    request(`/desligamentos/${id}/enviar`, { method: "PUT", body: JSON.stringify({}) }),
+
+  aprovarDesligamento: (id, acao, observacao) =>
+    request(`/desligamentos/${id}/aprovar`, {
+      method: "PUT",
+      body: JSON.stringify({ acao, observacao: observacao || "" }),
+    }),
+
   getToken: () => _accessToken,
 
 };
