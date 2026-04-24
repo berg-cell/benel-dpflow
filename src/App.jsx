@@ -4173,9 +4173,6 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
       return "Justificativa obrigatória para antecipação de contrato.";
 
     if (form.tipo === "termino_contrato") {
-      if (colaboradorSel?.tipo_contrato !== "determinado")
-        return "Colaborador não possui contrato por prazo determinado.";
-
       if (colaboradorSel?.data_admissao) {
         const admissao  = new Date(colaboradorSel.data_admissao.split("T")[0]);
         const d45       = new Date(admissao); d45.setDate(d45.getDate() + 45);
