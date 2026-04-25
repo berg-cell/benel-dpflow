@@ -4089,7 +4089,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
   const carregar = async () => {
     setCarregando(true);
     try {
-      const r = await api.get("/desligamentos" + (filtroStatus ? `?status=${filtroStatus}` : ""));
+      const r = await api.listarDesligamentos(filtroStatus);
       setLista(Array.isArray(r) ? r : (r.data || []));
     } catch (e) { setErro(e.message); }
     finally { setCarregando(false); }
@@ -4188,8 +4188,8 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
       const payload = { ...form };
       if (form.tipo === "aviso_trabalhado" && !form.data_aviso)
         payload.data_aviso = calcularDataAviso(form.data_desligamento);
-      const r = await api.post("/desligamentos", payload);
-      if (enviar) await api.put("/desligamentos/" + r.data.id + "/enviar", {});
+      const r = await api.criarDesligamento(payload);
+      if (enviar) await api.enviarDesligamento(r.id || r.data?.id);
       await carregar();
       setModalNovo(false);
       setForm(FORM_VAZIO);
@@ -4203,9 +4203,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     if (!modalAcao) return;
     setSalvando(true);
     try {
-      await api.put("/desligamentos/" + modalAcao.id + "/aprovar", {
-        acao: modalAcao.acao, observacao: modalAcao.observacao || "",
-      });
+      await api.aprovarDesligamento(modalAcao.id, modalAcao.acao, modalAcao.observacao);
       await carregar();
       setModalAcao(null);
     } catch (e) { setErro(e.message); }
@@ -4214,8 +4212,8 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
 
   const abrirDetalhe = async (id) => {
     try {
-      const r = await api.get("/desligamentos/" + id);
-      setModalDetalhe(r.data);
+      const r = await api.buscarDesligamento(id);
+      setModalDetalhe(r);
     } catch (e) { setErro(e.message); }
   };
 
@@ -4285,7 +4283,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                   style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #6B7280", background: "#fff", fontSize: 13, cursor: "pointer" }}>
                   📄 Doc
                 </button>
-                <button onClick={async () => { const r = await api.get("/desligamentos/"+sol.id); setModalPDF(r.data); }}
+                <button onClick={async () => { const r = await api.buscarDesligamento(sol.id); setModalPDF(r); }}
                   style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #6B7280", background: "#fff", fontSize: 13, cursor: "pointer" }}>
                   📄 Doc
                   </button>
@@ -4296,7 +4294,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                   </button>
                 )}
                 {sol.status === "rascunho" && sol.gestor_id === user.id && (
-                  <button onClick={async () => { try { await api.put("/desligamentos/"+sol.id+"/enviar",{}); await carregar(); } catch(e){setErro(e.message);} }}
+                  <button onClick={async () => { try { await api.enviarDesligamento(sol.id); await carregar(); } catch(e){setErro(e.message);} }}
                     style={{ padding: "6px 14px", borderRadius: 8, border: "none", background: "#10B981", color: "#fff", fontSize: 13, cursor: "pointer", fontWeight: 600 }}>
                     Enviar
                   </button>
