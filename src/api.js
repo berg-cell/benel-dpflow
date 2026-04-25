@@ -189,6 +189,12 @@ export const api = {
       method: "POST",
       body: JSON.stringify(dados),
     }),
-
+  
+  addAnexoOcorrencia: (id, dados) =>
+    request(`/ocorrencias/${id}/anexos`, {
+      method: "POST",
+      body: JSON.stringify(dados),
+    }),
+  
   getToken: () => _accessToken,
 };
