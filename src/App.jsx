@@ -3839,56 +3839,6 @@ function Ocorrencias({ user, colaboradores }) {
             </div>
           )}
 
-          {/* Anexo */}
-          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 14px", background: "#FFFBEB", border: "1px dashed #FCD34D", borderRadius: 8 }}>
-            <span style={{ fontSize: 18 }}>📎</span>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: "#92400E" }}>Anexo (opcional)</div>
-              {form.anexo_nome
-                ? <div style={{ fontSize: 12, color: "#065F46", marginTop: 2 }}>✓ {form.anexo_nome}</div>
-                : <div style={{ fontSize: 11, color: "#92400E", marginTop: 2 }}>Nenhum arquivo selecionado</div>}
-            </div>
-            <label style={{ padding: "6px 12px", background: "#F59E0B", color: "#fff", borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
-              {form.anexo_nome ? "Trocar" : "Selecionar"}
-              <input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={e => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = ev => setForm(f => ({ ...f, anexo_nome: file.name, anexo_base64: ev.target.result }));
-                reader.readAsDataURL(file);
-              }} style={{ display: "none" }} />
-            </label>
-            {form.anexo_nome && (
-              <button onClick={() => setForm(f => ({ ...f, anexo_nome: "", anexo_base64: "" }))}
-                style={{ background: "none", border: "none", color: "#EF4444", cursor: "pointer", fontSize: 14 }}>✕</button>
-            )}
-          </div>
-
-          {/* Anexo */}
-          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 14px", background: "#FFFBEB", border: "1px dashed #FCD34D", borderRadius: 8 }}>
-            <span style={{ fontSize: 18 }}>📎</span>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: "#92400E" }}>Anexo (opcional)</div>
-              {form.anexo_nome
-                ? <div style={{ fontSize: 12, color: "#065F46", marginTop: 2 }}>✓ {form.anexo_nome}</div>
-                : <div style={{ fontSize: 11, color: "#92400E", marginTop: 2 }}>Nenhum arquivo selecionado</div>}
-            </div>
-            <label style={{ padding: "6px 12px", background: "#F59E0B", color: "#fff", borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
-              {form.anexo_nome ? "Trocar" : "Selecionar"}
-              <input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={e => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = ev => setForm(f => ({ ...f, anexo_nome: file.name, anexo_base64: ev.target.result }));
-                reader.readAsDataURL(file);
-              }} style={{ display: "none" }} />
-            </label>
-            {form.anexo_nome && (
-              <button onClick={() => setForm(f => ({ ...f, anexo_nome: "", anexo_base64: "" }))}
-                style={{ background: "none", border: "none", color: "#EF4444", cursor: "pointer", fontSize: 14 }}>✕</button>
-            )}
-          </div>
-
           <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", paddingTop: 6, borderTop: "1px solid #F3F4F6" }}>
             <Button variant="secondary" onClick={() => setModalForm(false)}>Cancelar</Button>
             <Button onClick={salvar} disabled={salvando}>{salvando ? "Salvando..." : "Registrar Ocorrência"}</Button>
@@ -4125,6 +4075,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
   const [erro,           setErro]           = useState("");
   const [filtroStatus,   setFiltroStatus]   = useState("");
   const [modalPDF,       setModalPDF]       = useState(null);
+  const [modalPDF,       setModalPDF]       = useState(null);
 
   const FORM_VAZIO = {
     colaborador_id: "", tipo: "", data_desligamento: "",
@@ -4139,7 +4090,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
   const carregar = async () => {
     setCarregando(true);
     try {
-      const r = await api.listarDesligamentos(filtroStatus);
+      const r = await api.get("/desligamentos" + (filtroStatus ? `?status=${filtroStatus}` : ""));
       setLista(Array.isArray(r) ? r : (r.data || []));
     } catch (e) { setErro(e.message); }
     finally { setCarregando(false); }
@@ -4172,47 +4123,42 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     if (form.tipo === "antecipacao_contrato" && !form.justificativa)
       return "Justificativa obrigatória para antecipação de contrato.";
 
-    // Bloquear aviso trabalhado/indenizado para contratos dentro dos 90 dias
-    if (["aviso_trabalhado", "aviso_indenizado"].includes(form.tipo)) {
+    if (["aviso_trabalhado","aviso_indenizado"].includes(form.tipo)) {
       if (colaboradorSel?.data_admissao) {
         const admissao = new Date(colaboradorSel.data_admissao.split("T")[0]);
         const d90  = new Date(admissao); d90.setDate(d90.getDate() + 90);
         const d45  = new Date(admissao); d45.setDate(d45.getDate() + 45);
         const hoje = new Date(); hoje.setHours(0,0,0,0);
         const fmtBR = (d) => d.toLocaleDateString("pt-BR", { timeZone: "UTC" });
-
         if (hoje <= d90) {
           return (
-            `Solicitação não permitida para este colaborador.\n` +
-            `Colaboradores em contrato de experiência (até 90 dias) não podem receber Aviso Prévio.\n\n` +
-            `Detalhes do contrato:\n` +
-            `• Início do contrato: ${fmtBR(admissao)}\n` +
-            `• Fim do 1º período (45 dias): ${fmtBR(d45)}\n` +
-            `• Fim do 2º período (90 dias): ${fmtBR(d90)}\n\n` +
-            `Use "Término de Contrato" ou "Antecipação de Término de Contrato".`
+            "Solicitação não permitida para este colaborador.\n" +
+            "Colaboradores em contrato de experiência (até 90 dias) não podem receber Aviso Prévio.\n\n" +
+            "Detalhes do contrato:\n" +
+            "• Início: " + fmtBR(admissao) + "\n" +
+            "• Fim 1º período (45 dias): " + fmtBR(d45) + "\n" +
+            "• Fim 2º período (90 dias): " + fmtBR(d90) + "\n\n" +
+            "Use \"Término de Contrato\" ou \"Antecipação de Término\"."
           );
         }
       }
     }
 
-    if (form.tipo === "termino_contrato") {
-      if (colaboradorSel?.data_admissao) {
-        const admissao  = new Date(colaboradorSel.data_admissao.split("T")[0]);
-        const d45       = new Date(admissao); d45.setDate(d45.getDate() + 45);
-        const d90       = new Date(admissao); d90.setDate(d90.getDate() + 90);
-        const hoje      = new Date(); hoje.setHours(0,0,0,0);
-        const fmtBR     = (d) => d.toLocaleDateString("pt-BR", { timeZone: "UTC" });
-
-        if (hoje > d90) {
-          return (
-            `Solicitação não permitida.\n` +
-            `O colaborador já ultrapassou a data limite do contrato de experiência.\n\n` +
-            `Detalhes do contrato:\n` +
-            `• Início do contrato: ${fmtBR(admissao)}\n` +
-            `• Fim do 1º período (45 dias): ${fmtBR(d45)}\n` +
-            `• Fim do 2º período (90 dias): ${fmtBR(d90)}`
-          );
-        }
+    if (form.tipo === "termino_contrato" && colaboradorSel?.data_admissao) {
+      const admissao = new Date(colaboradorSel.data_admissao.split("T")[0]);
+      const d90  = new Date(admissao); d90.setDate(d90.getDate() + 90);
+      const d45  = new Date(admissao); d45.setDate(d45.getDate() + 45);
+      const hoje = new Date(); hoje.setHours(0,0,0,0);
+      const fmtBR = (d) => d.toLocaleDateString("pt-BR", { timeZone: "UTC" });
+      if (hoje > d90) {
+        return (
+          "Solicitação não permitida.\n" +
+          "O colaborador já ultrapassou a data limite do contrato de experiência.\n\n" +
+          "Detalhes do contrato:\n" +
+          "• Início: " + fmtBR(admissao) + "\n" +
+          "• Fim 1º período (45 dias): " + fmtBR(d45) + "\n" +
+          "• Fim 2º período (90 dias): " + fmtBR(d90)
+        );
       }
     }
     return null;
@@ -4226,16 +4172,13 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     return d.toISOString().split("T")[0];
   };
 
-  // Calcular data automática para Término de Contrato
   const calcularDataTermino = (dataAdmissao) => {
     if (!dataAdmissao) return "";
     const admissao = new Date(dataAdmissao.split("T")[0]);
     const d45 = new Date(admissao); d45.setDate(d45.getDate() + 45);
     const d90 = new Date(admissao); d90.setDate(d90.getDate() + 90);
     const hoje = new Date(); hoje.setHours(0,0,0,0);
-    // Se já passou dos 45 dias, usa 90 dias; senão usa 45 dias
-    const dataFim = hoje > d45 ? d90 : d45;
-    return dataFim.toISOString().split("T")[0];
+    return (hoje > d45 ? d90 : d45).toISOString().split("T")[0];
   };
 
   const salvar = async (enviar = false) => {
@@ -4246,8 +4189,8 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
       const payload = { ...form };
       if (form.tipo === "aviso_trabalhado" && !form.data_aviso)
         payload.data_aviso = calcularDataAviso(form.data_desligamento);
-      const r = await api.criarDesligamento(payload);
-      if (enviar) await api.enviarDesligamento(r.id || r.data?.id);
+      const r = await api.post("/desligamentos", payload);
+      if (enviar) await api.put("/desligamentos/" + r.data.id + "/enviar", {});
       await carregar();
       setModalNovo(false);
       setForm(FORM_VAZIO);
@@ -4261,7 +4204,9 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     if (!modalAcao) return;
     setSalvando(true);
     try {
-      await api.aprovarDesligamento(modalAcao.id, modalAcao.acao, modalAcao.observacao);
+      await api.put("/desligamentos/" + modalAcao.id + "/aprovar", {
+        acao: modalAcao.acao, observacao: modalAcao.observacao || "",
+      });
       await carregar();
       setModalAcao(null);
     } catch (e) { setErro(e.message); }
@@ -4270,8 +4215,8 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
 
   const abrirDetalhe = async (id) => {
     try {
-      const r = await api.buscarDesligamento(id);
-      setModalDetalhe(r);
+      const r = await api.get("/desligamentos/" + id);
+      setModalDetalhe(r.data);
     } catch (e) { setErro(e.message); }
   };
 
@@ -4337,7 +4282,11 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                   style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #E5E7EB", background: "#fff", fontSize: 13, cursor: "pointer" }}>
                   Ver
                 </button>
-                <button onClick={async () => { const r = await api.buscarDesligamento(sol.id); setModalPDF(r); }}
+                <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalPDF(r); } catch(e){ setErro(e.message); } }}
+                  style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #6B7280", background: "#fff", fontSize: 13, cursor: "pointer" }}>
+                  📄 Doc
+                </button>
+                <button onClick={async () => { const r = await api.get("/desligamentos/"+sol.id); setModalPDF(r.data); }}
                   style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #6B7280", background: "#fff", fontSize: 13, cursor: "pointer" }}>
                   📄 Doc
                   </button>
@@ -4348,10 +4297,28 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                   </button>
                 )}
                 {sol.status === "rascunho" && sol.gestor_id === user.id && (
-                  <button onClick={async () => { try { await api.enviarDesligamento(sol.id); await carregar(); } catch(e){setErro(e.message);} }}
+                  <button onClick={async () => { try { await api.put("/desligamentos/"+sol.id+"/enviar",{}); await carregar(); } catch(e){setErro(e.message);} }}
                     style={{ padding: "6px 14px", borderRadius: 8, border: "none", background: "#10B981", color: "#fff", fontSize: 13, cursor: "pointer", fontWeight: 600 }}>
                     Enviar
                   </button>
+                )}
+                {["aprovado","finalizado"].includes(sol.status) && (
+                  <label style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #10B981", background: "#F0FDF4", color: "#065F46", fontSize: 13, cursor: "pointer", fontWeight: 600 }}>
+                    📎 Anexar
+                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display: "none" }}
+                      onChange={async (e) => {
+                        const file = e.target.files[0]; if (!file) return;
+                        if (file.size > 5*1024*1024) { setErro("Arquivo muito grande (max 5MB)"); return; }
+                        const reader = new FileReader();
+                        reader.onload = async (ev) => {
+                          try {
+                            await api.post("/desligamentos/"+sol.id+"/anexos", { nome_arquivo: file.name, tipo_arquivo: file.type, dados_base64: ev.target.result });
+                            alert("Anexo adicionado com sucesso!"); setErro("");
+                          } catch(err) { setErro(err.message); }
+                        };
+                        reader.readAsDataURL(file);
+                      }} />
+                  </label>
                 )}
               </div>
             </div>
@@ -4369,12 +4336,12 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
             </div>
 
             {erro && (
-  <div style={{ background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, padding: "10px 14px", marginBottom: 16, color: "#DC2626", fontSize: 12 }}>
-    {erro.split("\n").map((linha, i) => (
-      <div key={i} style={{ marginBottom: linha === "" ? 6 : 2 }}>{linha ? `${i === 0 ? "⚠️ " : ""}${linha}` : ""}</div>
-    ))}
-  </div>
-)}
+              <div style={{ background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, padding: "10px 14px", marginBottom: 16, color: "#DC2626", fontSize: 12 }}>
+                {erro.split("\n").map((linha, i) => (
+                  <div key={i} style={{ marginBottom: linha === "" ? 6 : 2 }}>{linha ? `${i === 0 ? "⚠️ " : ""}${linha}` : ""}</div>
+                ))}
+              </div>
+            )}
 
             {/* Colaborador */}
             <div style={{ marginBottom: 16 }}>
@@ -4410,8 +4377,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
               <select value={form.tipo} onChange={e => {
                 const novoTipo = e.target.value;
                 if (novoTipo === "termino_contrato" && colaboradorSel?.data_admissao) {
-                  const dataAuto = calcularDataTermino(colaboradorSel.data_admissao);
-                  setForm(f => ({ ...f, tipo: novoTipo, data_desligamento: dataAuto }));
+                  setForm(f => ({ ...f, tipo: novoTipo, data_desligamento: calcularDataTermino(colaboradorSel.data_admissao) }));
                 } else {
                   setForm(f => ({ ...f, tipo: novoTipo }));
                 }
@@ -4428,17 +4394,17 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                 <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Data de Desligamento *</label>
                 <input type="date" value={form.data_desligamento}
                   onChange={e => setForm(f => ({ ...f, data_desligamento: e.target.value }))}
-                  style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, boxSizing: "border-box" }} />
-              </div>
-              {form.tipo === "aviso_trabalhado" && (
-                <div>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Data de Aviso</label>
-                  <input type="date" value={form.data_desligamento}
-                  onChange={e => setForm(f => ({ ...f, data_desligamento: e.target.value }))}
                   readOnly={form.tipo === "termino_contrato"}
                   style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, boxSizing: "border-box",
                     background: form.tipo === "termino_contrato" ? "#F3F4F6" : "#fff",
                     cursor: form.tipo === "termino_contrato" ? "not-allowed" : "auto" }} />
+              </div>
+              {form.tipo === "aviso_trabalhado" && (
+                <div>
+                  <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Data de Aviso</label>
+                  <input type="date" value={form.data_aviso || calcularDataAviso(form.data_desligamento)}
+                    onChange={e => setForm(f => ({ ...f, data_aviso: e.target.value }))}
+                    style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, boxSizing: "border-box" }} />
                 </div>
               )}
             </div>
@@ -4589,6 +4555,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
           </div>
         </div>
       )}
+
       {/* Modal PDF Desligamento */}
       {modalPDF && <ModalPDFDesligamento sol={modalPDF} onClose={() => setModalPDF(null)} />}
     </div>
@@ -4596,7 +4563,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
 }
 
 function ModalPDFDesligamento({ sol, onClose }) {
-  const fmt = (d) => d ? new Date(d).toLocaleDateString("pt-BR") : "__/__/____";
+  const fmt = (d) => d ? new Date(d).toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "__/__/____";
   const TIPOS = {
     aviso_trabalhado:     "AVISO PRÉVIO TRABALHADO",
     aviso_indenizado:     "AVISO PRÉVIO INDENIZADO",
@@ -4610,195 +4577,97 @@ function ModalPDFDesligamento({ sol, onClose }) {
     const conteudo = document.getElementById("pdf-desligamento-benel").innerHTML;
     const win = window.open("", "_blank");
     win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${titulo}</title>
-    <style>
-      body { font-family: Arial, sans-serif; font-size: 13px; color: #000; line-height: 1.6; padding: 30px 40px; margin: 0; }
-      .ficha { border: 1.5px solid #000; padding: 10px 14px; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; }
-      .titulo { font-size: 18px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; text-align: center; }
-      .linha-assin { border-top: 1px solid #000; width: 320px; margin: 0 auto 4px; padding-top: 6px; font-weight: 700; text-align: center; }
-      .separador { border: none; border-top: 1px dotted #000; margin: 24px 0; }
-      @media print { body { padding: 20px 30px; } }
-    </style></head><body>${conteudo}</body></html>`);
+    <style>body{font-family:Arial,sans-serif;font-size:13px;color:#000;line-height:1.6;padding:30px 40px;margin:0;}@media print{body{padding:20px 30px;}}</style>
+    </head><body>${conteudo}</body></html>`);
     win.document.close();
     setTimeout(() => win.print(), 400);
   };
 
-  // ── Ficha padrão (igual advertência/suspensão) ────────────────────────────
   const Ficha = () => (
     <div style={{ border: "1.5px solid #000", padding: "10px 14px", marginBottom: 20,
       display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 20px" }}>
       <div style={{ fontWeight: 700 }}>Sr. (a) &nbsp;{sol.colaborador_nome}</div>
       <div style={{ fontWeight: 700 }}>{sol.chapa}{sol.desc_cc ? `    SEÇÃO : ${sol.desc_cc}` : ""}</div>
       <div>C.P.F : &nbsp;{sol.cpf || "___.___.___-__"}</div>
-      <div>Admissão: &nbsp;{(sol.data_admissao || sol.admissao) ? fmt((sol.data_admissao || sol.admissao).split("T")[0]) : "__/__/____"}</div>
+      <div>Admissão: &nbsp;{(sol.data_admissao||sol.admissao) ? fmt((sol.data_admissao||sol.admissao).split("T")[0]) : "__/__/____"}</div>
     </div>
   );
 
-  // ── Assinaturas (empresa centralizada + colaborador centralizado) ─────────
   const Assinaturas = () => (
     <>
-      <div style={{ textAlign: "left", marginBottom: 8 }}>
-        {sol.cidade || "Fortaleza"}
-      </div>
-      <div style={{ marginBottom: 28 }}>
-        <img src={ASSINATURA_BENEL} alt="Assinatura"
-          style={{ height: 70, display: "block", margin: "0 auto 4px", objectFit: "contain" }} />
+      <div style={{ marginBottom: 8 }}>Fortaleza</div>
+      <div style={{ marginBottom: 28, textAlign: "left" }}>
+        <img src={ASSINATURA_BENEL} alt="Assinatura" style={{ height: 70, display: "block", margin: "0 auto 4px", objectFit: "contain" }} />
         <div style={{ borderTop: "1px solid #000", width: 320, margin: "0 auto 6px", paddingTop: 4, fontWeight: 700, textAlign: "center" }}>
           BENEL TRANSPORTES E LOGISTICA LTDA
         </div>
       </div>
-      <div style={{ marginBottom: 28 }}>
-        <strong>Ciente:</strong> &nbsp;{fmt(sol.data_desligamento)}
-      </div>
+      <div style={{ marginBottom: 28 }}><strong>Ciente:</strong> &nbsp;{fmt(sol.data_desligamento)}</div>
       <div style={{ textAlign: "center", marginTop: 20 }}>
         <div style={{ height: 56 }} />
-        <div style={{ borderTop: "1px solid #000", width: 320, margin: "0 auto 4px", paddingTop: 6, fontWeight: 700 }}>
-          {sol.colaborador_nome}
-        </div>
+        <div style={{ borderTop: "1px solid #000", width: 320, margin: "0 auto 4px", paddingTop: 6, fontWeight: 700 }}>{sol.colaborador_nome}</div>
         <div style={{ fontSize: 12 }}>Assinatura do Empregado</div>
       </div>
     </>
   );
 
-  // ── Declaração de Ciência (aviso indenizado + término) ────────────────────
   const Declaracao = () => (
     <>
       <hr style={{ border: "none", borderTop: "1px dotted #000", margin: "24px 0" }} />
-      <div style={{ textAlign: "center", fontWeight: 900, fontSize: 14, marginBottom: 16, textDecoration: "underline" }}>
-        DECLARAÇÃO DE CIÊNCIA DE PAGAMENTO
-      </div>
-      <p style={{ textAlign: "justify", marginBottom: 16 }}>
-        Estou ciente que devo comparecer a sede da empresa e/ou agente homologador, até o dia __/___/_____,
-        para confirmar o recebimento das minhas verbas rescisórias, feito dentro dos prazos legais.
-        O não comparecimento na data acima citada automaticamente dará a minha ciência.
-      </p>
-      <p style={{ fontSize: 12, marginBottom: 24 }}>
-        Obs.: Para homologação das verbas rescisórias a data, local e horário a combinar, dentro do prazo legal previsto na CLT.
-      </p>
+      <div style={{ textAlign: "center", fontWeight: 900, fontSize: 14, marginBottom: 16 }}>DECLARAÇÃO DE CIÊNCIA DE PAGAMENTO</div>
+      <p style={{ textAlign: "justify", marginBottom: 16 }}>Estou ciente que devo comparecer a sede da empresa e/ou agente homologador, até o dia __/___/_____, para confirmar o recebimento das minhas verbas rescisórias, feito dentro dos prazos legais. O não comparecimento na data acima citada automaticamente dará a minha ciência.</p>
+      <p style={{ fontSize: 12, marginBottom: 24 }}>Obs.: Para homologação das verbas rescisórias a data, local e horário a combinar, dentro do prazo legal previsto na CLT.</p>
       <div style={{ textAlign: "center", marginTop: 20 }}>
         <div style={{ height: 56 }} />
-        <div style={{ borderTop: "1px solid #000", width: 320, margin: "0 auto 4px", paddingTop: 6, fontWeight: 700 }}>
-          {sol.colaborador_nome}
-        </div>
+        <div style={{ borderTop: "1px solid #000", width: 320, margin: "0 auto 4px", paddingTop: 6, fontWeight: 700 }}>{sol.colaborador_nome}</div>
         <div style={{ fontSize: 12 }}>Assinatura do Empregado</div>
       </div>
     </>
   );
 
   return (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex",
-      alignItems: "flex-start", justifyContent: "center", zIndex: 1100, overflowY: "auto", padding: "20px 0" }}>
-      <div style={{ background: "#fff", borderRadius: 16, width: "100%", maxWidth: 760,
-        margin: "auto", padding: 28 }}>
-
-        {/* Barra do modal */}
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "flex-start", justifyContent: "center", zIndex: 1100, overflowY: "auto", padding: "20px 0" }}>
+      <div style={{ background: "#fff", borderRadius: 16, width: "100%", maxWidth: 760, margin: "auto", padding: 28 }}>
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
           <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Documento de Desligamento</h3>
-          <button onClick={onClose} style={{ background: "none", border: "none", fontSize: 22, cursor: "pointer", lineHeight: 1 }}>×</button>
+          <button onClick={onClose} style={{ background: "none", border: "none", fontSize: 22, cursor: "pointer" }}>×</button>
         </div>
-
-        {/* Documento */}
-        <div id="pdf-desligamento-benel"
-          style={{ fontFamily: "Arial, sans-serif", fontSize: 13, color: "#000", lineHeight: 1.6, background: "#fff", padding: "0 4px" }}>
-
-          {/* Cabeçalho: Logo esquerda + Título centralizado */}
+        <div id="pdf-desligamento-benel" style={{ fontFamily: "Arial,sans-serif", fontSize: 13, color: "#000", lineHeight: 1.6 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
             <img src={LOGO_BENEL} alt="Benel" style={{ height: 52 }} />
-            <div style={{ fontSize: 18, fontWeight: 900, textTransform: "uppercase",
-              letterSpacing: 2, textAlign: "right", maxWidth: "55%" }}>
-              {titulo}
-            </div>
+            <div style={{ fontSize: 16, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, textAlign: "right", maxWidth: "55%" }}>{titulo}</div>
           </div>
-
-          {/* Ficha */}
           <Ficha />
-
-          {/* ── AVISO TRABALHADO ──────────────────────────────────── */}
           {sol.tipo === "aviso_trabalhado" && (<>
-            <p style={{ textAlign: "justify", marginBottom: 16 }}>
-              Pelo presente, notificamos que a partir desta data nossa parceria (Contrato de Trabalho),
-              que foi construída ao longo da trajetória na <strong>BENEL TRANSPORTES E LOGISTICA LTDA</strong>,
-              chegou ao fim, e por isso, vimos avisá-lo(la) que os efeitos do disposto art. 487, inc. II da CLT,
-              deverá assinar umas das possibilidades abaixo:
-            </p>
-            <p style={{ marginBottom: 8 }}>
-              ( &nbsp;) &nbsp;Escolho reduzir minha jornada em duas horas, conforme determina o art. 488 da CLT.
-            </p>
-            <p style={{ marginBottom: 8 }}>
-              ( &nbsp;) &nbsp;Escolho faltar 07 (sete) dias corridos, sem prejuízo do salário, caso em que sua jornada
-              diária de trabalho nos 30 dias restantes não será reduzida.
-            </p>
-            <p style={{ marginTop: 12, marginBottom: 8 }}>
-              Favor marcar abaixo se concorda com o pedido da Empresa em reconsiderar o presente aviso prévio,
-              conforme previsão do parágrafo único do art. 489 da CLT, em função da continuidade do contrato de trabalho.
-            </p>
+            <p style={{ textAlign: "justify", marginBottom: 16 }}>Pelo presente, notificamos que a partir desta data nossa parceria (Contrato de Trabalho), que foi construída ao longo da trajetória na <strong>BENEL TRANSPORTES E LOGISTICA LTDA</strong>, chegou ao fim, e por isso, vimos avisá-lo(la) que os efeitos do disposto art. 487, inc. II da CLT, deverá assinar umas das possibilidades abaixo:</p>
+            <p style={{ marginBottom: 8 }}>( &nbsp;) &nbsp;Escolho reduzir minha jornada em duas horas, conforme determina o art. 488 da CLT.</p>
+            <p style={{ marginBottom: 8 }}>( &nbsp;) &nbsp;Escolho faltar 07 (sete) dias corridos, sem prejuízo do salário, caso em que sua jornada diária de trabalho nos 30 dias restantes não será reduzida.</p>
+            <p style={{ marginTop: 12, marginBottom: 8 }}>Favor marcar abaixo se concorda com o pedido da Empresa em reconsiderar o presente aviso prévio, conforme previsão do parágrafo único do art. 489 da CLT.</p>
             <p style={{ marginBottom: 16 }}>( &nbsp;) Sim &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( &nbsp;) Não</p>
-            <p style={{ fontStyle: "italic", fontSize: 12, marginBottom: 20 }}>
-              Agradecemos a cooperação prestada por V.Sa., pedimos a devolução do presente aviso com o seu ciente.
-            </p>
-            <div style={{ marginBottom: 20 }}>
-              <strong>Início do Aviso:</strong> &nbsp;{sol.data_aviso ? fmt(sol.data_aviso) : "__/__/____"}
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <strong>Fim do Aviso:</strong> &nbsp;{fmt(sol.data_desligamento)}
-            </div>
+            <p style={{ fontStyle: "italic", fontSize: 12, marginBottom: 20 }}>Agradecemos a cooperação prestada por V.Sa., pedimos a devolução do presente aviso com o seu ciente.</p>
+            <div style={{ marginBottom: 20 }}><strong>Início do Aviso:</strong> &nbsp;{sol.data_aviso ? fmt(sol.data_aviso) : "__/__/____"}&nbsp;&nbsp;&nbsp;&nbsp;<strong>Fim do Aviso:</strong> &nbsp;{fmt(sol.data_desligamento)}</div>
             <Assinaturas />
           </>)}
-
-          {/* ── AVISO INDENIZADO ──────────────────────────────────── */}
           {sol.tipo === "aviso_indenizado" && (<>
-            <p style={{ textAlign: "justify", marginBottom: 24 }}>
-              Comunicamos a V.Sa., nossa iniciativa de rescindir seu contrato de trabalho, para o que lhe damos
-              o presente AVISO PRÉVIO que será indenizado pelo valor correspondente, conforme Artigo 487,
-              parágrafo 1o. da Consolidação das Leis do Trabalho.
-            </p>
+            <p style={{ textAlign: "justify", marginBottom: 24 }}>Comunicamos a V.Sa., nossa iniciativa de rescindir seu contrato de trabalho, para o que lhe damos o presente AVISO PRÉVIO que será indenizado pelo valor correspondente, conforme Artigo 487, parágrafo 1o. da Consolidação das Leis do Trabalho.</p>
             <Assinaturas />
-            <p style={{ fontSize: 12, marginTop: 12 }}>
-              Obs.: Para homologação das verbas rescisórias a data, local e horário a combinar,
-              dentro do prazo legal previsto na CLT.
-            </p>
+            <p style={{ fontSize: 12, marginTop: 12 }}>Obs.: Para homologação das verbas rescisórias a data, local e horário a combinar, dentro do prazo legal previsto na CLT.</p>
             <Declaracao />
           </>)}
-
-          {/* ── TÉRMINO DE CONTRATO ───────────────────────────────── */}
           {sol.tipo === "termino_contrato" && (<>
-            <p style={{ textAlign: "justify", marginBottom: 24 }}>
-              Comunicamos por meio desta, que seu contrato de trabalho por prazo determinado será rescindido
-              no seu termo, em <strong>{fmt(sol.data_desligamento)}</strong>.
-            </p>
+            <p style={{ textAlign: "justify", marginBottom: 24 }}>Comunicamos por meio desta, que seu contrato de trabalho por prazo determinado será rescindido no seu termo, em <strong>{fmt(sol.data_desligamento)}</strong>.</p>
             <Assinaturas />
-            <p style={{ fontSize: 12, marginTop: 12 }}>
-              Obs.: Para homologação das verbas rescisórias a data, local e horário a combinar,
-              dentro do prazo legal previsto na CLT.
-            </p>
+            <p style={{ fontSize: 12, marginTop: 12 }}>Obs.: Para homologação das verbas rescisórias a data, local e horário a combinar, dentro do prazo legal previsto na CLT.</p>
             <Declaracao />
           </>)}
-
-          {/* ── ANTECIPAÇÃO DE CONTRATO ───────────────────────────── */}
           {sol.tipo === "antecipacao_contrato" && (<>
-            <p style={{ textAlign: "justify", marginBottom: 24 }}>
-              Vimos pela presente comunicar-lhe que por não mais convir a esta empresa manter seu contrato
-              de experiência{sol.data_fim_contrato
-                ? `, cujo término estava previsto para o dia ${fmt(sol.data_fim_contrato)},`
-                : ","} achamos por bem rescindi-lo antes do prazo acordado. Sendo assim, a partir
-              de <strong>{fmt(sol.data_desligamento)}</strong>, não serão mais necessários seus serviços.
-            </p>
+            <p style={{ textAlign: "justify", marginBottom: 24 }}>Vimos pela presente comunicar-lhe que por não mais convir a esta empresa manter seu contrato de experiência{sol.data_fim_contrato ? `, cujo término estava previsto para o dia ${fmt(sol.data_fim_contrato)},` : ","} achamos por bem rescindi-lo antes do prazo acordado. Sendo assim, a partir de <strong>{fmt(sol.data_desligamento)}</strong>, não serão mais necessários seus serviços.</p>
             <Assinaturas />
           </>)}
-
         </div>
-
-        {/* Botões */}
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: 10,
-          paddingTop: 16, borderTop: "1px solid #F3F4F6", marginTop: 20 }}>
-          <button onClick={onClose}
-            style={{ padding: "9px 20px", borderRadius: 8, border: "1px solid #E5E7EB",
-              background: "#fff", fontSize: 14, cursor: "pointer" }}>
-            Fechar
-          </button>
-          <button onClick={imprimir}
-            style={{ padding: "9px 20px", borderRadius: 8, border: "none",
-              background: "#0F2447", color: "#fff", fontSize: 14, cursor: "pointer", fontWeight: 600 }}>
-            🖨 Imprimir / Salvar PDF
-          </button>
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, paddingTop: 16, borderTop: "1px solid #F3F4F6", marginTop: 20 }}>
+          <button onClick={onClose} style={{ padding: "9px 20px", borderRadius: 8, border: "1px solid #E5E7EB", background: "#fff", fontSize: 14, cursor: "pointer" }}>Fechar</button>
+          <button onClick={imprimir} style={{ padding: "9px 20px", borderRadius: 8, border: "none", background: "#0F2447", color: "#fff", fontSize: 14, cursor: "pointer", fontWeight: 600 }}>🖨 Imprimir / Salvar PDF</button>
         </div>
       </div>
     </div>
