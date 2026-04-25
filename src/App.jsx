@@ -4075,7 +4075,6 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
   const [erro,           setErro]           = useState("");
   const [filtroStatus,   setFiltroStatus]   = useState("");
   const [modalPDF,       setModalPDF]       = useState(null);
-  const [modalPDF,       setModalPDF]       = useState(null);
 
   const FORM_VAZIO = {
     colaborador_id: "", tipo: "", data_desligamento: "",
