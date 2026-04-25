@@ -3767,6 +3767,22 @@ function Ocorrencias({ user, colaboradores }) {
                 </td>
                 <td style={{ padding: "10px 14px", display: "flex", gap: 6 }}>
                   <Button variant="ghost" size="sm" onClick={() => gerarPDF(oc)}>📄 PDF</Button>
+                  <label style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "5px 10px", borderRadius: 8, border: "1px solid #10B981", background: "#F0FDF4", color: "#065F46", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                    📎 Anexar
+                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display: "none" }}
+                      onChange={async (e) => {
+                        const file = e.target.files[0]; if (!file) return;
+                        if (file.size > 5*1024*1024) { alert("Arquivo muito grande (max 5MB)"); return; }
+                        const reader = new FileReader();
+                        reader.onload = async (ev) => {
+                          try {
+                            await api.addAnexoOcorrencia(oc.id, { nome_arquivo: file.name, tipo_arquivo: file.type, dados_base64: ev.target.result });
+                            alert("Anexo adicionado com sucesso!");
+                          } catch(err) { alert(err.message); }
+                        };
+                        reader.readAsDataURL(file);
+                      }} />
+                  </label>
                   {oc.status === "ATIVO" && (
                     <Button variant="danger" size="sm" onClick={() => cancelarOcorrencia(oc.id)}>Cancelar</Button>
                   )}
