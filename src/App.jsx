@@ -4133,6 +4133,22 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
 
   const validarForm = () => {
     if (!form.colaborador_id)    return "Selecione um colaborador.";
+
+    // Bloquear desligamento de colaborador com estabilidade ativa
+    if (colaboradorSel?.data_fim_estabilidade) {
+      const fimEstab = new Date(colaboradorSel.data_fim_estabilidade.split("T")[0]);
+      const hoje = new Date(); hoje.setHours(0,0,0,0);
+      if (fimEstab >= hoje) {
+        const fmtBR = (d) => d.toLocaleDateString("pt-BR", { timeZone: "UTC" });
+        return (
+          "Solicitação não permitida.\n" +
+          "Este colaborador possui estabilidade ativa e não pode ser desligado.\n\n" +
+          "Detalhes da estabilidade:\n" +
+          "• Motivo: " + (colaboradorSel.descricao_estabilidade || "—") + "\n" +
+          "• Válida até: " + fmtBR(fimEstab)
+        );
+      }
+    }
     if (!form.tipo)              return "Selecione o tipo de desligamento.";
     if (!form.data_desligamento) return "Informe a data de desligamento.";
     if (form.tipo === "antecipacao_contrato" && !form.justificativa)
