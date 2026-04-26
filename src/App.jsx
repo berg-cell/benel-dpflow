@@ -4126,18 +4126,57 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     } else setSugestoesColab([]);
   };
 
-  const selecionarColab = (c) => {
-    console.log("COLAB SEL:", JSON.stringify(c));
+  const [validandoColab, setValidandoColab] = useState(false);
+  const [bloqueioColab,  setBloqueioColab]  = useState(null); // { motivo, mensagem }
+
+  const selecionarColab = async (c) => {
     setColaboradorSel(c);
     setBuscaColab(c.nome);
     setForm(f => ({ ...f, colaborador_id: c.id }));
     setSugestoesColab([]);
+    setBloqueioColab(null);
+
+    // Validação extra no frontend antes de chamar API (rápida, sem rede)
+    if (c.cod_situacao === "D") {
+      setBloqueioColab({
+        motivo: "situacao",
+        mensagem: "Colaborador não pode ser selecionado para desligamento, pois já consta com situação Demitido.",
+      });
+      return;
+    }
+
+    // Validação via backend (estabilidade e outros bloqueios persistidos)
+    setValidandoColab(true);
+    try {
+      const v = await api.validarColaboradorDesligamento(c.id);
+      if (!v.apto) {
+        setBloqueioColab({ motivo: v.motivo, mensagem: v.mensagem });
+      }
+    } catch (_) {
+      // Se API falhar, aplica validação local de estabilidade como fallback
+      if (c.data_fim_estabilidade) {
+        const fimEstab = new Date(c.data_fim_estabilidade.split("T")[0]);
+        const hoje = new Date(); hoje.setHours(0,0,0,0);
+        if (fimEstab >= hoje) {
+          const fmtBR = (d) => d.toLocaleDateString("pt-BR", { timeZone: "UTC" });
+          setBloqueioColab({
+            motivo: "estabilidade",
+            mensagem: `Este colaborador não pode ser desligado, pois possui estabilidade ativa: ${c.descricao_estabilidade || "Estabilidade"}. A estabilidade encerra em ${fmtBR(fimEstab)}.`,
+          });
+        }
+      }
+    } finally {
+      setValidandoColab(false);
+    }
   };
 
   const validarForm = () => {
     if (!form.colaborador_id)    return "Selecione um colaborador.";
 
-    // Bloquear desligamento de colaborador com estabilidade ativa
+    // Bloquear se houver bloqueio identificado ao selecionar o colaborador
+    if (bloqueioColab) return bloqueioColab.mensagem;
+
+    // Bloquear desligamento de colaborador com estabilidade ativa (fallback local)
     if (colaboradorSel?.data_fim_estabilidade) {
       const fimEstab = new Date(colaboradorSel.data_fim_estabilidade.split("T")[0]);
       const hoje = new Date(); hoje.setHours(0,0,0,0);
@@ -4274,7 +4313,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
           </button>
         </div>
         {["gestor","dp","admin"].includes(user.perfil) && (
-          <button onClick={() => { setModalNovo(true); setErro(""); setForm(FORM_VAZIO); setColaboradorSel(null); setBuscaColab(""); }}
+          <button onClick={() => { setModalNovo(true); setErro(""); setForm(FORM_VAZIO); setColaboradorSel(null); setBuscaColab(""); setBloqueioColab(null); }}
             style={{ padding: "10px 20px", background: "#0F2447", color: "#fff", border: "none", borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: "pointer" }}>
             + Nova Solicitação
           </button>
@@ -4391,10 +4430,21 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                   </div>
                 )}
               </div>
-              {colaboradorSel && (
+              {validandoColab && (
+                <div style={{ marginTop: 8, padding: "8px 14px", background: "#EFF6FF", borderRadius: 8, fontSize: 12, color: "#1D4ED8" }}>
+                  🔄 Verificando aptidão do colaborador...
+                </div>
+              )}
+              {!validandoColab && colaboradorSel && !bloqueioColab && (
                 <div style={{ marginTop: 8, padding: "10px 14px", background: "#F0FDF4", borderRadius: 8, fontSize: 12, color: "#166534" }}>
                   ✅ <b>{colaboradorSel.nome}</b> · Matrícula: {colaboradorSel.chapa} · Cargo: {colaboradorSel.funcao || "—"} · CC: {colaboradorSel.centro_custo} — {colaboradorSel.desc_cc}
                   {colaboradorSel.tipo_contrato === "determinado" && <span style={{ marginLeft: 8, background: "#FEF3C7", color: "#92400E", padding: "1px 6px", borderRadius: 4 }}>Contrato até {colaboradorSel.data_fim_contrato ? new Date(colaboradorSel.data_fim_contrato).toLocaleDateString("pt-BR") : "—"}</span>}
+                </div>
+              )}
+              {!validandoColab && bloqueioColab && (
+                <div style={{ marginTop: 8, padding: "12px 14px", background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, fontSize: 12, color: "#DC2626" }}>
+                  🚫 <b>Colaborador bloqueado para desligamento</b>
+                  <div style={{ marginTop: 6, lineHeight: 1.6 }}>{bloqueioColab.mensagem}</div>
                 </div>
               )}
             </div>
