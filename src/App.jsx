@@ -4400,7 +4400,14 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
 
   const listaFiltrada = lista.filter(s => !filtroStatus || s.status === filtroStatus);
 
-  const podeAgir = (sol) => ALCADA_DESL[sol.status]?.includes(user.perfil);
+  const podeAgir = (sol) => {
+    if (!ALCADA_DESL[sol.status]?.includes(user.perfil)) return false;
+    // Superior só age se for o vinculado na hierarquia desta solicitação
+    if (sol.status === "pendente_superior" && user.perfil === "superior") {
+      return sol.superior_id === user.id;
+    }
+    return true;
+  };
 
   return (
     <div style={{ padding: 28 }}>
