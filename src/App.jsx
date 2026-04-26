@@ -1321,7 +1321,7 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
   const [form, setForm] = useState({ chapa: "", nome: "", funcao: "", situacao: "Ativo", centro_custo: "", desc_cc: "", cpf: "", data_admissao: "" });
 
   useEffect(() => {
-    api.listarColaboradores().then(data => {
+    api.listarColaboradores(true).then(data => {
       if (data && data.length > 0) setColaboradores(data);
     }).catch(() => {});
   }, []);
@@ -1390,7 +1390,7 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
       // Salvar no banco via API
       await api.importarColaboradores(novos);
       // Recarregar do banco
-      const atualizados = await api.listarColaboradores();
+      const atualizados = await api.listarColaboradores(true);
       if (atualizados && atualizados.length > 0) setColaboradores(atualizados);
       alert(`✅ ${novos.length} colaborador(es) importado(s) com sucesso!`);
     } catch (err) {
