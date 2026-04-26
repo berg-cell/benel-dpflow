@@ -182,6 +182,9 @@ export const api = {
   criarDesligamento: (data) =>
     request("/desligamentos", { method: "POST", body: JSON.stringify(data) }),
 
+  cancelarDesligamento: (id) =>
+    request(`/desligamentos/${id}/cancelar`, { method: "PUT", body: JSON.stringify({}) }),
+
   enviarDesligamento: (id) =>
     request(`/desligamentos/${id}/enviar`, { method: "PUT", body: JSON.stringify({}) }),
 
