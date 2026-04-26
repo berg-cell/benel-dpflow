@@ -80,7 +80,11 @@ export const api = {
   me: () => request("/auth/me"),
 
   // ── Colaboradores ─────────────────────────────────────────────────────────
-  listarColaboradores: () => request("/colaboradores"),
+  listarColaboradores: (incluirDemitidos = false) =>
+    request(`/colaboradores${incluirDemitidos ? "?incluirDemitidos=true" : ""}`),
+
+  buscarColaboradores: (q) =>
+    request(`/colaboradores/buscar?q=${encodeURIComponent(q)}`),
 
   criarColaborador: (data) =>
     request("/colaboradores", { method: "POST", body: JSON.stringify(data) }),
