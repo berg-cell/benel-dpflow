@@ -167,6 +167,9 @@ export const api = {
     }),
 
   // ── Desligamentos ─────────────────────────────────────────────────────────
+  validarColaboradorDesligamento: (id) =>
+    request(`/desligamentos/validar-colaborador/${id}`),
+
   listarDesligamentos: (status = "") =>
     request(`/desligamentos${status ? "?status=" + status : ""}`),
 
