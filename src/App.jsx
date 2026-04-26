@@ -2427,13 +2427,22 @@ function CelulaColaborador({ linha, idx, updateLinha, colaboradores = [] }) {
     updateLinha(idx, "colaborador", colab);
   };
 
+  const normalizar = (s) =>
+    (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
   const onChangeNome = (v) => {
     setBuscaNome(v);
     updateLinha(idx, "colaborador_id", "");
     updateLinha(idx, "colaborador", null);
     setBuscaChapa("");
     if (v.length >= 2) {
-      setSugestoesNome(colaboradores.filter(c => c.cod_situacao !== "D" && c.nome.toLowerCase().includes(v.toLowerCase())).slice(0, 10));
+      const termo = normalizar(v);
+      setSugestoesNome(
+        colaboradores
+          .filter(c => c.cod_situacao !== "D")
+          .filter(c => normalizar(c.nome).includes(termo))
+          .slice(0, 10)
+      );
     } else {
       setSugestoesNome([]);
     }
@@ -2445,7 +2454,12 @@ function CelulaColaborador({ linha, idx, updateLinha, colaboradores = [] }) {
     updateLinha(idx, "colaborador", null);
     setBuscaNome("");
     if (v.length >= 2) {
-      setSugestoesChapa(colaboradores.filter(c => c.cod_situacao !== "D" && c.chapa.includes(v)).slice(0, 10));
+      setSugestoesChapa(
+        colaboradores
+          .filter(c => c.cod_situacao !== "D")
+          .filter(c => (c.chapa || "").includes(v.trim()))
+          .slice(0, 10)
+      );
     } else {
       setSugestoesChapa([]);
     }
@@ -3878,13 +3892,22 @@ function ColabSelect({ colaboradores, onSelect, selecionado }) {
   const [busca, setBusca] = useState(selecionado || "");
   const [sugestoes, setSugestoes] = useState([]);
 
+  const normalizar = (s) =>
+    (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
   const onBusca = (v) => {
     setBusca(v);
     if (v.length >= 2) {
-      setSugestoes(colaboradores.filter(c =>
-        c.cod_situacao !== "D" &&
-        (c.nome.toLowerCase().includes(v.toLowerCase()) || c.chapa.includes(v))
-      ).slice(0, 8));
+      const termo = normalizar(v);
+      setSugestoes(
+        colaboradores
+          .filter(c => c.cod_situacao !== "D")
+          .filter(c =>
+            normalizar(c.nome).includes(termo) ||
+            (c.chapa || "").includes(v.trim())
+          )
+          .slice(0, 10)
+      );
     } else { setSugestoes([]); }
   };
 
@@ -4114,15 +4137,25 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
 
   useEffect(() => { carregar(); }, [filtroStatus]);
 
+  const normalizar = (s) =>
+    (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
   const onBuscaColab = (v) => {
     setBuscaColab(v);
     setForm(f => ({ ...f, colaborador_id: "" }));
     setColaboradorSel(null);
+    setBloqueioColab(null);
     if (v.length >= 2) {
-      setSugestoesColab(colaboradores.filter(c =>
-        c.cod_situacao !== "D" &&
-        (c.nome.toLowerCase().includes(v.toLowerCase()) || c.chapa.includes(v))
-      ));
+      const termo = normalizar(v);
+      setSugestoesColab(
+        colaboradores
+          .filter(c => c.cod_situacao !== "D")
+          .filter(c =>
+            normalizar(c.nome).includes(termo) ||
+            (c.chapa || "").includes(v.trim())
+          )
+          .slice(0, 15)
+      );
     } else setSugestoesColab([]);
   };
 
