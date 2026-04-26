@@ -4708,27 +4708,31 @@ export default function App() {
   const [page, setPage] = useState("dashboard");
 
   // ── Estado global dos cadastros ──
-  const [colaboradores, setColaboradores] = useState(MOCK_COLABORADORES);
-  const [eventos, setEventos] = useState(MOCK_EVENTOS);
-  const [usuarios, setUsuarios] = useState(MOCK_USERS);
-  const [hierarquia, setHierarquia] = useState(MOCK_HIERARQUIA_INIT);
-  const [alcadas, setAlcadas] = useState(MOCK_ALCADAS_INIT);
-  const [solicitacoes, setSolicitacoes] = useState(MOCK_SOLICITACOES_INIT);
-  const [blocos, setBlocos] = useState(MOCK_BLOCOS_INIT);
+  const [colaboradores, setColaboradores] = useState([]);
+  const [eventos, setEventos] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
+  const [hierarquia, setHierarquia] = useState([]);
+  const [alcadas, setAlcadas] = useState([]);
+  const [solicitacoes, setSolicitacoes] = useState([]);
+  const [blocos, setBlocos] = useState([]);
   const [sessao, setSessao] = useState(null);
   const [sessaoAviso, setSessaoAviso] = useState(false);
 
   // ── Carregar dados reais da API após login ────────────────────────────────
   const carregarDados = useCallback(async () => {
     try {
-      const [cols, evts, blcs, usrs] = await Promise.all([
+      const [cols, evts, blcs, usrs, hier, alcs] = await Promise.all([
         api.listarColaboradores().catch(() => null),
         api.listarEventos().catch(() => null),
         api.listarBlocos().catch(() => null),
         api.listarUsuarios().catch(() => null),
+        api.listarHierarquia().catch(() => null),
+        api.listarAlcadas().catch(() => null),
       ]);
       if (cols && cols.length > 0) setColaboradores(cols);
       if (evts && evts.length > 0) setEventos(evts);
+      if (hier && hier.length > 0) setHierarquia(hier);
+      if (alcs && alcs.length > 0) setAlcadas(alcs);
       if (usrs && usrs.length > 0) {
         const comAvatar = usrs.map(u => ({
           ...u,
@@ -4737,7 +4741,7 @@ export default function App() {
         setUsuarios(comAvatar);
       }
       if (blcs && blcs.length > 0) {
-        const evtsRef = evts || MOCK_EVENTOS;
+        const evtsRef = evts || [];
         const colsRef = cols || [];
         const blocsNorm = blcs.map(b => {
           const ev = evtsRef.find(e => e.id === b.evento_id) || null;
