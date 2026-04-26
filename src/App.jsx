@@ -1352,9 +1352,11 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
     }).catch(() => {});
   }, []);
 
-  const lista = colaboradores.filter(c =>
-    c.nome.toLowerCase().includes(busca.toLowerCase()) || c.chapa.includes(busca)
-  );
+  const lista = colaboradores
+    .filter(c => c.cod_situacao !== "D")
+    .filter(c =>
+      c.nome.toLowerCase().includes(busca.toLowerCase()) || c.chapa.includes(busca)
+    );
 
   const abrirNovo = () => { setForm({ chapa: "", nome: "", funcao: "", situacao: "Ativo", centro_custo: "", desc_cc: "", cpf: "", data_admissao: "" }); setModalForm("novo"); };
   const abrirEditar = (c) => {
@@ -4128,6 +4130,7 @@ const STATUS_DESL = {
   reprovado:          { label: "Reprovado",          color: "#EF4444" },
   ajuste_solicitado:  { label: "Ajuste Solicitado",  color: "#8B5CF6" },
   finalizado:         { label: "Finalizado",         color: "#0F2447" },
+  cancelado:          { label: "Cancelado",          color: "#9CA3AF" },
 };
 
 const ALCADA_DESL = {
@@ -4466,6 +4469,18 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                         reader.readAsDataURL(file);
                       }} />
                   </label>
+                )}
+                {["admin","dp"].includes(user.perfil) && !["cancelado","finalizado"].includes(sol.status) && (
+                  <button onClick={async () => {
+                    if (!window.confirm(`Cancelar a solicitação de desligamento de ${sol.colaborador_nome}?\n\nEsta ação não pode ser desfeita.`)) return;
+                    try {
+                      await api.cancelarDesligamento(sol.id);
+                      await carregar();
+                    } catch(e) { setErro(e.message); }
+                  }}
+                    style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #EF4444", background: "#FEF2F2", color: "#DC2626", fontSize: 13, cursor: "pointer", fontWeight: 600 }}>
+                    🚫 Cancelar
+                  </button>
                 )}
               </div>
             </div>
