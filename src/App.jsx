@@ -1185,7 +1185,18 @@ function ImportacaoModal({ open, onClose, titulo, colunas, exemplo, onImportar }
     if (!f) return;
     setArquivo(f.name);
     const reader = new FileReader();
-    reader.onload = ev => setTexto(ev.target.result);
+    reader.onload = ev => {
+      let text = ev.target.result;
+      // Detectar se tem caracteres corrompidos (Latin-1 lido como UTF-8)
+      if (text.includes("\uFFFD") || /[\x80-\x9F]/.test(text)) {
+        // Reler como Latin-1
+        const reader2 = new FileReader();
+        reader2.onload = ev2 => setTexto(ev2.target.result);
+        reader2.readAsText(f, "ISO-8859-1");
+      } else {
+        setTexto(text);
+      }
+    };
     reader.readAsText(f, "UTF-8");
   };
 
@@ -1391,14 +1402,19 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
 
   const onImportar = async (rows) => {
     const novos = rows.map(r => ({
-      chapa:         r.chapa || "",
-      nome:          r.nome || "",
-      funcao:        r.funcao || "",
-      situacao:      r.situacao || "Ativo",
-      centro_custo:  r.centro_custo || "",
-      desc_cc:       r.desc_cc || "",
-      cpf:           r.cpf || "",
-      data_admissao: fmtAdmissao(r.data_admissao),
+      chapa:                  r.chapa || "",
+      nome:                   r.nome || "",
+      funcao:                 r.funcao || "",
+      situacao:               r.situacao || "Ativo",
+      cod_situacao:           r.cod_situacao || null,
+      centro_custo:           r.centro_custo || "",
+      desc_cc:                r.desc_cc || "",
+      cpf:                    r.cpf || "",
+      data_admissao:          fmtAdmissao(r.data_admissao),
+      tipo_contrato:          r.tipo_contrato || null,
+      data_fim_contrato:      r.data_fim_contrato || null,
+      data_fim_estabilidade:  r.data_fim_estabilidade || null,
+      descricao_estabilidade: r.descricao_estabilidade || null,
     })).filter(r => r.chapa && r.nome);
 
     try {
