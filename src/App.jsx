@@ -3882,7 +3882,8 @@ function ColabSelect({ colaboradores, onSelect, selecionado }) {
     setBusca(v);
     if (v.length >= 2) {
       setSugestoes(colaboradores.filter(c =>
-        c.nome.toLowerCase().includes(v.toLowerCase()) || c.chapa.includes(v)
+        c.cod_situacao !== "D" &&
+        (c.nome.toLowerCase().includes(v.toLowerCase()) || c.chapa.includes(v))
       ).slice(0, 8));
     } else { setSugestoes([]); }
   };
@@ -4119,7 +4120,8 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     setColaboradorSel(null);
     if (v.length >= 2) {
       setSugestoesColab(colaboradores.filter(c =>
-        c.nome.toLowerCase().includes(v.toLowerCase()) || c.chapa.includes(v)
+        c.cod_situacao !== "D" &&
+        (c.nome.toLowerCase().includes(v.toLowerCase()) || c.chapa.includes(v))
       ));
     } else setSugestoesColab([]);
   };
