@@ -143,6 +143,9 @@ export const api = {
   // ── Health ────────────────────────────────────────────────────────────────
   health: () => request("/health"),
 
+  // ── Centro de Custo ───────────────────────────────────────────────────────
+  listarCentrosCusto: () => request("/centros-custo"),
+
   // ── Hierarquia ────────────────────────────────────────────────────────────
   listarHierarquia: () => request("/hierarquia"),
   criarHierarquia:  (data)    => request("/hierarquia",     { method: "POST", body: JSON.stringify(data) }),
