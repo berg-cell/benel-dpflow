@@ -1691,8 +1691,15 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
     }).catch(() => {});
   }, []);
 
-  const gestores = usuarios.filter(u => u.perfil === "gestor" || u.perfil === "admin");
-  const superiores = usuarios.filter(u => u.perfil === "superior" || u.perfil === "admin");
+  const gestores   = usuarios.filter(u => u.ativo !== false);
+  const superiores = usuarios.filter(u => u.ativo !== false);
+
+  const [centrosCusto, setCentrosCusto] = useState([]);
+  useEffect(() => {
+    api.listarCentrosCusto().then(data => {
+      if (Array.isArray(data)) setCentrosCusto(data);
+    }).catch(() => {});
+  }, []);
 
   const abrirNovo = () => { setForm({ gestor_id: "", superior_id: "", centro_custo: "", desc_cc: "" }); setModalForm("novo"); };
   const abrirEditar = (h) => { setForm({ ...h }); setModalForm("editar"); };
@@ -1823,8 +1830,25 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
             </select>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 12 }}>
-            <Input label="Cód. Centro de Custo" value={form.centro_custo} onChange={v => setForm(p => ({ ...p, centro_custo: v }))} placeholder="001 (vazio = todos)" />
-            <Input label="Descrição CC" value={form.desc_cc} onChange={v => setForm(p => ({ ...p, desc_cc: v }))} placeholder="TI, RH..." />
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Cód. Centro de Custo</label>
+              <select value={form.centro_custo || ""} onChange={e => {
+                const cod = e.target.value;
+                const cc = centrosCusto.find(c => c.codccusto === cod);
+                setForm(p => ({ ...p, centro_custo: cod, desc_cc: cc ? cc.nome : p.desc_cc }));
+              }} style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid #D1D5DB", fontSize: 13 }}>
+                <option value="">Todos</option>
+                {centrosCusto.filter(c => c.tipo !== "BLOQUEADO").map(c => (
+                  <option key={c.codccusto} value={c.codccusto}>{c.codccusto}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Descrição CC</label>
+              <input value={form.desc_cc || ""} readOnly
+                style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid #D1D5DB", fontSize: 13, background: "#F9FAFB", color: "#6B7280", boxSizing: "border-box" }}
+                placeholder="Preenchido automaticamente" />
+            </div>
           </div>
           <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", paddingTop: 6, borderTop: "1px solid #F3F4F6" }}>
             <Button variant="secondary" onClick={() => setModalForm(null)}>Cancelar</Button>
