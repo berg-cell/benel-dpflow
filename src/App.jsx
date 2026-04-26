@@ -1122,13 +1122,20 @@ function parseCSV(text) {
   const MAPA = {
     "matrícula": "chapa", "matricula": "chapa", "chapa": "chapa",
     "nome": "nome",
-    "função": "funcao", "funcao": "funcao", "cargo": "funcao",
+    "função": "funcao", "funcao": "funcao", "cargo": "funcao", "desc_funcao": "funcao",
     "seção": "desc_cc", "secao": "desc_cc", "setor": "desc_cc", "desc_cc": "desc_cc",
     "cpf": "cpf",
     "admissão": "data_admissao", "admissao": "data_admissao",
     "data_admissao": "data_admissao", "data admissao": "data_admissao",
     "c. custo": "centro_custo", "centro_custo": "centro_custo", "centro custo": "centro_custo",
     "situação": "situacao", "situacao": "situacao", "status": "situacao",
+    "desc_situacao": "situacao",
+    "cod_situacao": "cod_situacao", "cód. situação": "cod_situacao", "cod situacao": "cod_situacao",
+    "tipo_contrato": "tipo_contrato", "tipo contrato": "tipo_contrato",
+    "data_fim_contrato": "data_fim_contrato", "data fim contrato": "data_fim_contrato",
+    "prazo45": "prazo45", "prazo90": "prazo90",
+    "data_fim_estabilidade": "data_fim_estabilidade", "data fim estabilidade": "data_fim_estabilidade",
+    "descricao_estabilidade": "descricao_estabilidade", "descrição estabilidade": "descricao_estabilidade",
   };
 
   const rawHeaders = splitLine(lines[0]);
@@ -1154,8 +1161,16 @@ function parseCSV(text) {
     const vals = splitLine(line);
     const row = Object.fromEntries(headers.map((h, i) => [h, vals[i] || ""]));
     // Aplicar conversões
-    if (row.data_admissao) row.data_admissao = fmtData(row.data_admissao);
-    if (row.centro_custo) row.centro_custo = fmtCC(row.centro_custo);
+    if (row.data_admissao)         row.data_admissao         = fmtData(row.data_admissao);
+    if (row.data_fim_contrato)     row.data_fim_contrato     = fmtData(row.data_fim_contrato);
+    if (row.data_fim_estabilidade) row.data_fim_estabilidade = fmtData(row.data_fim_estabilidade);
+    if (row.prazo45)               row.prazo45               = fmtData(row.prazo45);
+    if (row.prazo90)               row.prazo90               = fmtData(row.prazo90);
+    if (row.centro_custo)          row.centro_custo          = fmtCC(row.centro_custo);
+    // Normalizar situacao a partir de desc_situacao se não vier mapeado
+    if (!row.situacao && row.desc_situacao) {
+      row.situacao = row.desc_situacao.toLowerCase().includes("ativo") ? "Ativo" : "Inativo";
+    }
     return row;
   });
 }
