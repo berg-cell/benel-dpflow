@@ -4140,23 +4140,39 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
   const normalizar = (s) =>
     (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 
+  const buscaTimer = React.useRef(null);
+
   const onBuscaColab = (v) => {
     setBuscaColab(v);
     setForm(f => ({ ...f, colaborador_id: "" }));
     setColaboradorSel(null);
     setBloqueioColab(null);
-    if (v.length >= 2) {
-      const termo = normalizar(v);
-      setSugestoesColab(
-        colaboradores
+
+    if (v.length < 2) { setSugestoesColab([]); return; }
+
+    const termo = normalizar(v);
+
+    // Resultado local imediato como preview
+    const local = colaboradores
+      .filter(c => c.cod_situacao !== "D")
+      .filter(c =>
+        normalizar(c.nome).includes(termo) ||
+        (c.chapa || "").includes(v.trim())
+      )
+      .slice(0, 15);
+    setSugestoesColab(local);
+
+    // Busca na API com debounce (sempre — não depende do resultado local)
+    clearTimeout(buscaTimer.current);
+    buscaTimer.current = setTimeout(async () => {
+      try {
+        const resultado = await api.buscarColaboradores(v.trim());
+        const filtrado = (Array.isArray(resultado) ? resultado : [])
           .filter(c => c.cod_situacao !== "D")
-          .filter(c =>
-            normalizar(c.nome).includes(termo) ||
-            (c.chapa || "").includes(v.trim())
-          )
-          .slice(0, 15)
-      );
-    } else setSugestoesColab([]);
+          .slice(0, 15);
+        if (filtrado.length > 0) setSugestoesColab(filtrado);
+      } catch (_) { /* mantém o resultado local */ }
+    }, 300);
   };
 
   const [validandoColab, setValidandoColab] = useState(false);
