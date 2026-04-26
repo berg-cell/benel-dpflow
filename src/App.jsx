@@ -4125,6 +4125,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
   };
 
   const selecionarColab = (c) => {
+    console.log("COLAB SEL:", JSON.stringify(c));
     setColaboradorSel(c);
     setBuscaColab(c.nome);
     setForm(f => ({ ...f, colaborador_id: c.id }));
