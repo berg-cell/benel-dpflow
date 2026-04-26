@@ -1,4 +1,4 @@
-import { useState, useContext, createContext, useEffect, useCallback } from "react";
+import { useState, useContext, createContext, useEffect, useCallback, useRef } from "react";
 import { api, setTokens, clearTokens, onSessionExpired } from "./api";
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -4140,7 +4140,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
   const normalizar = (s) =>
     (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 
-  const buscaTimer = React.useRef(null);
+  const buscaTimer = useRef(null);
 
   const onBuscaColab = (v) => {
     setBuscaColab(v);
