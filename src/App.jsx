@@ -2433,7 +2433,7 @@ function CelulaColaborador({ linha, idx, updateLinha, colaboradores = [] }) {
     updateLinha(idx, "colaborador", null);
     setBuscaChapa("");
     if (v.length >= 2) {
-      setSugestoesNome(colaboradores.filter(c => c.nome.toLowerCase().includes(v.toLowerCase())).slice(0, 10));
+      setSugestoesNome(colaboradores.filter(c => c.cod_situacao !== "D" && c.nome.toLowerCase().includes(v.toLowerCase())).slice(0, 10));
     } else {
       setSugestoesNome([]);
     }
@@ -2445,7 +2445,7 @@ function CelulaColaborador({ linha, idx, updateLinha, colaboradores = [] }) {
     updateLinha(idx, "colaborador", null);
     setBuscaNome("");
     if (v.length >= 2) {
-      setSugestoesChapa(colaboradores.filter(c => c.chapa.includes(v)).slice(0, 10));
+      setSugestoesChapa(colaboradores.filter(c => c.cod_situacao !== "D" && c.chapa.includes(v)).slice(0, 10));
     } else {
       setSugestoesChapa([]);
     }
