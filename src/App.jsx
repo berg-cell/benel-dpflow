@@ -4306,8 +4306,8 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     if (["aviso_trabalhado","aviso_indenizado"].includes(form.tipo)) {
       if (colaboradorSel?.data_admissao) {
         const admissao = new Date(colaboradorSel.data_admissao.split("T")[0]);
-        const d90  = new Date(admissao); d90.setDate(d90.getDate() + 90);
-        const d45  = new Date(admissao); d45.setDate(d45.getDate() + 45);
+        const d90  = new Date(admissao); d90.setDate(d90.getDate() + 89);
+        const d45  = new Date(admissao); d45.setDate(d45.getDate() + 44);
         const hoje = new Date(); hoje.setHours(0,0,0,0);
         const fmtBR = (d) => d.toLocaleDateString("pt-BR", { timeZone: "UTC" });
         if (hoje <= d90) {
@@ -4316,8 +4316,8 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
             "Colaboradores em contrato de experiência (até 90 dias) não podem receber Aviso Prévio.\n\n" +
             "Detalhes do contrato:\n" +
             "• Início: " + fmtBR(admissao) + "\n" +
-            "• Fim 1º período (45 dias): " + fmtBR(d45) + "\n" +
-            "• Fim 2º período (90 dias): " + fmtBR(d90) + "\n\n" +
+            "• Fim 1º período (admissão + 44 dias): " + fmtBR(d45) + "\n" +
+            "• Fim 2º período (admissão + 89 dias): " + fmtBR(d90) + "\n\n" +
             "Use \"Término de Contrato\" ou \"Antecipação de Término\"."
           );
         }
@@ -4326,8 +4326,8 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
 
     if (form.tipo === "termino_contrato" && colaboradorSel?.data_admissao) {
       const admissao = new Date(colaboradorSel.data_admissao.split("T")[0]);
-      const d90  = new Date(admissao); d90.setDate(d90.getDate() + 90);
-      const d45  = new Date(admissao); d45.setDate(d45.getDate() + 45);
+      const d90  = new Date(admissao); d90.setDate(d90.getDate() + 89);
+      const d45  = new Date(admissao); d45.setDate(d45.getDate() + 44);
       const hoje = new Date(); hoje.setHours(0,0,0,0);
       const fmtBR = (d) => d.toLocaleDateString("pt-BR", { timeZone: "UTC" });
       if (hoje > d90) {
@@ -4336,8 +4336,8 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
           "O colaborador já ultrapassou a data limite do contrato de experiência.\n\n" +
           "Detalhes do contrato:\n" +
           "• Início: " + fmtBR(admissao) + "\n" +
-          "• Fim 1º período (45 dias): " + fmtBR(d45) + "\n" +
-          "• Fim 2º período (90 dias): " + fmtBR(d90)
+          "• Fim 1º período (admissão + 44 dias): " + fmtBR(d45) + "\n" +
+          "• Fim 2º período (admissão + 89 dias): " + fmtBR(d90)
         );
       }
     }
@@ -4355,8 +4355,8 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
   const calcularDataTermino = (dataAdmissao) => {
     if (!dataAdmissao) return "";
     const admissao = new Date(dataAdmissao.split("T")[0]);
-    const d45 = new Date(admissao); d45.setDate(d45.getDate() + 45);
-    const d90 = new Date(admissao); d90.setDate(d90.getDate() + 90);
+    const d45 = new Date(admissao); d45.setDate(d45.getDate() + 44);
+    const d90 = new Date(admissao); d90.setDate(d90.getDate() + 89);
     const hoje = new Date(); hoje.setHours(0,0,0,0);
     return (hoje > d45 ? d90 : d45).toISOString().split("T")[0];
   };
