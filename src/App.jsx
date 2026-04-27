@@ -1763,7 +1763,7 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
-              {["Gestor (1ª alçada)", "Superior (2ª alçada)", "Centro de Custo", "Status", "Ações"].map(h => (
+              {["1ª Alçada", "2ª Alçada", "Centro de Custo", "Status", "Ações"].map(h => (
                 <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
@@ -1814,7 +1814,7 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
         title={modalForm === "novo" ? "Nova Regra de Hierarquia" : "Editar Hierarquia"} width={480}>
         <div style={{ display: "flex", flexDirection: "column", gap: 13 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Gestor (1ª alçada) *</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>1ª Alçada *</label>
             <select value={form.gestor_id} onChange={e => setForm(p => ({ ...p, gestor_id: e.target.value }))}
               style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 12px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
               <option value="">Selecione...</option>
@@ -1822,7 +1822,7 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
             </select>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Superior (2ª alçada) *</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>2ª Alçada *</label>
             <select value={form.superior_id} onChange={e => setForm(p => ({ ...p, superior_id: e.target.value }))}
               style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 12px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
               <option value="">Selecione...</option>
