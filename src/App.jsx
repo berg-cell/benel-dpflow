@@ -4158,9 +4158,11 @@ const STATUS_DESL = {
 };
 
 const ALCADA_DESL = {
-  pendente_superior: ["superior", "admin"],
-  pendente_dp:       ["dp", "admin"],
-  aprovado:          ["dp", "admin"],
+  pendente_superior:  ["superior", "dp", "admin"],
+  // 2ª alçada — descomente quando quiser ativar:
+  // pendente_dp:     ["dp", "admin"],
+  aprovado:           ["dp", "admin"],
+  ajuste_solicitado:  ["gestor", "dp", "admin"],
 };
 
 function Desligamentos({ user, colaboradores, api, recarregarDados }) {
@@ -4402,9 +4404,11 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
 
   const podeAgir = (sol) => {
     if (!ALCADA_DESL[sol.status]?.includes(user.perfil)) return false;
+    // DP e Admin agem livremente em qualquer etapa
+    if (["dp", "admin"].includes(user.perfil)) return true;
     // Superior só age se for o vinculado na hierarquia desta solicitação
-    if (sol.status === "pendente_superior" && user.perfil === "superior") {
-      return sol.superior_id === user.id;
+    if (user.perfil === "superior") {
+      return !sol.superior_id || sol.superior_id === user.id;
     }
     return true;
   };
