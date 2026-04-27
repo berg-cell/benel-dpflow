@@ -851,14 +851,14 @@ const CADASTROS_SUBMENU = [
 ];
 
 const NAV_ITEMS = [
-  { id: "cadastros",   label: "Cadastros",              icon: "🗂",  perfis: ["dp","admin"], submenu: CADASTROS_SUBMENU },
-  { id: "solicitacoes",label: "Solicitações",           icon: "≡",  perfis: ["gestor","superior","dp","admin"] },
-  { id: "aprovacoes",  label: "Aprovações",             icon: "✓",  perfis: ["gestor","superior","dp","admin"] },
-  { id: "dashboard",   label: "Dashboard",              icon: "◉",  perfis: ["gestor","superior","dp","admin"] },
-  { id: "exportacao",    label: "Exportação TXT",         icon: "↓",  perfis: ["dp","admin"] },
-  { id: "ocorrencias",   label: "Advertências/Suspensões", icon: "⚠️", perfis: ["gestor","dp","admin"] },
-  { id: "desligamentos", label: "Desligamentos",           icon: "🚪", perfis: ["gestor","superior","dp","admin"] },
-  { id: "auditoria",     label: "Auditoria",              icon: "📜", perfis: ["dp","admin"] },
+  { id: "cadastros",     label: "Cadastros",                            icon: "🗂",  perfis: ["dp","admin"], submenu: CADASTROS_SUBMENU },
+  { id: "ocorrencias",   label: "Solicitações de Advertências/Suspensões", icon: "⚠️", perfis: ["gestor","dp","admin"] },
+  { id: "solicitacoes",  label: "Solicitações de Pagamento",            icon: "≡",  perfis: ["gestor","superior","dp","admin"] },
+  { id: "desligamentos", label: "Solicitações de Desligamento",         icon: "🚪", perfis: ["gestor","superior","dp","admin"] },
+  { id: "aprovacoes",    label: "Aprovações",                           icon: "✓",  perfis: ["superior","dp","admin"] },
+  { id: "dashboard",     label: "Dashboard",                            icon: "◉",  perfis: ["gestor","superior","dp","admin"] },
+  { id: "exportacao",    label: "Exportação TXT",                       icon: "↓",  perfis: ["dp","admin"] },
+  { id: "auditoria",     label: "Auditoria",                            icon: "📜", perfis: ["dp","admin"] },
 ];
 
 
@@ -3498,10 +3498,10 @@ function Aprovacoes({ blocos, setBlocos, user, recarregarDados }) {
   const [modalAcao, setModalAcao] = useState(null);
 
   const getFilaParaUsuario = () => {
-    if (user.perfil === "gestor") return blocos.filter(b => b.status === "pendente_gestor");
     if (user.perfil === "superior") return blocos.filter(b => b.status === "pendente_superior");
     if (user.perfil === "dp") return blocos.filter(b => b.status === "pendente_dp");
     if (user.perfil === "admin") return blocos.filter(b => b.status.startsWith("pendente"));
+    return [];
     return [];
   };
 
@@ -4981,7 +4981,7 @@ export default function App() {
     cad_usuarios:     { title: "Usuários do Sistema",     subtitle: "Cadastros › Usuários" },
     auditoria:        { title: "Auditoria",               subtitle: "Log completo de ações" },
     desligamentos:    { title: "Solicitações de Desligamento", subtitle: "Gerencie solicitações de desligamento de colaboradores" },
-    ocorrencias:      { title: "Advertências / Suspensões", subtitle: "Registro de ocorrências disciplinares" },
+    ocorrencias:      { title: "Solicitações de Advertências/Suspensões", subtitle: "Registro de ocorrências disciplinares" },
   };
 
   if (!user) return <Login onLogin={(u, s) => { setUser(u); setSessao(s); setPage("solicitacoes"); }} />;
