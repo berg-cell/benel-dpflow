@@ -4563,7 +4563,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
               )}
               {!validandoColab && colaboradorSel && !bloqueioColab && (
                 <div style={{ marginTop: 8, padding: "10px 14px", background: "#F0FDF4", borderRadius: 8, fontSize: 12, color: "#166534" }}>
-                  ✅ <b>{colaboradorSel.nome}</b> · Matrícula: {colaboradorSel.chapa} · Cargo: {colaboradorSel.funcao || "—"} · CC: {colaboradorSel.centro_custo} — {colaboradorSel.desc_cc}
+                  ✅ <b>{colaboradorSel.nome}</b> · {colaboradorSel.descricao_filial || colaboradorSel.desc_cc || "—"} · Matrícula: {colaboradorSel.chapa} · Função: {colaboradorSel.desc_funcao || colaboradorSel.funcao || "—"} · CC: {colaboradorSel.centro_custo} — {colaboradorSel.desc_cc}
                   {colaboradorSel.tipo_contrato === "determinado" && <span style={{ marginLeft: 8, background: "#FEF3C7", color: "#92400E", padding: "1px 6px", borderRadius: 4 }}>Contrato até {colaboradorSel.data_fim_contrato ? new Date(colaboradorSel.data_fim_contrato).toLocaleDateString("pt-BR") : "—"}</span>}
                 </div>
               )}
