@@ -2265,8 +2265,8 @@ function CadUsuarios({ usuarios, setUsuarios }) {
 
 const LINHA_VAZIA = () => ({
   _id: Date.now() + Math.random(),
-  colaborador_id: "", colaborador: null, data: "", hora: "",
-  valor: "", observacao: ""
+  colaborador_id: "", colaborador: null,
+  hora: "", valor: "", referencia: "", observacao: ""
 });
 
 function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user, colaboradores = [], eventos = [], recarregarDados }) {
@@ -2289,7 +2289,13 @@ function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user, 
   };
 
   const salvarBloco = async () => {
-    const linhasValidas = editandoBloco.linhas.filter(l => l.colaborador_id && String(l.colaborador_id) !== "" && l.data && parseFloat(l.valor) > 0);
+    const forma = eventoObj?.forma || "valor";
+    const linhasValidas = editandoBloco.linhas.filter(l => {
+      if (!l.colaborador_id || String(l.colaborador_id) === "") return false;
+      if (forma === "hora")       return !!(l.hora);
+      if (forma === "referencia") return parseFloat(l.referencia) > 0;
+      return parseFloat(l.valor) > 0;
+    });
     console.log("DEBUG linhas:", JSON.stringify(editandoBloco.linhas));
     console.log("DEBUG validas:", JSON.stringify(linhasValidas));
     if (!editandoBloco.evento_id) { alert("Selecione o Evento do Bloco."); return; }
@@ -2303,16 +2309,22 @@ function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user, 
     const mesLabel = MESES.find(m => m.value === editandoBloco.competencia)?.label || editandoBloco.competencia;
     const descricaoAuto = editandoBloco.descricao || `${eventoObj?.descricao || "Bloco"} — ${mesLabel}`;
 
+    // Data automática: último dia da competência (MMAAAA → AAAA-MM-DD)
+    const comp = editandoBloco.competencia; // ex: "042026"
+    const dataComp = comp.length === 6
+      ? `${comp.slice(2)}-${comp.slice(0,2)}-01`
+      : new Date().toISOString().split("T")[0];
+
     const payload = {
       descricao: descricaoAuto,
       competencia: editandoBloco.competencia,
       evento_id: parseInt(editandoBloco.evento_id),
       linhas: linhasValidas.map(l => ({
         colaborador_id: parseInt(l.colaborador_id) || 0,
-        data: l.data,
-        hora: l.hora || null,
-        valor: parseFloat(l.valor),
-        referencia: l.referencia ? parseFloat(l.referencia) : null,
+        data: dataComp,
+        hora: eventoObj?.forma === "hora" ? (l.hora || null) : null,
+        referencia: eventoObj?.forma === "referencia" ? (parseFloat(l.referencia) || null) : null,
+        valor: parseFloat(l.valor) || 0,
         observacao: l.observacao || "",
       })),
     };
@@ -2590,7 +2602,7 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
   }));
 
   const totalBloco = bloco.linhas.reduce((a, l) => a + parseFloat(l.valor || 0), 0);
-  const eventoSelecionado = MOCK_EVENTOS.find(e => e.id === parseInt(bloco.evento_id));
+  const eventoSelecionado = eventos.find(e => e.id === parseInt(bloco.evento_id));
 
   const onAnexo = (e) => {
     const file = e.target.files[0];
@@ -2665,7 +2677,7 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
                 }}
               >
                 <option value="">Selecione o evento...</option>
-                {MOCK_EVENTOS.map(e => (
+                {eventos.filter(e => e.ativo !== false).map(e => (
                   <option key={e.id} value={e.id}>{e.codigo} — {e.descricao}</option>
                 ))}
               </select>
@@ -2748,10 +2760,14 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
               </span>
               <Button variant="secondary" size="sm" onClick={addLinha}>+ Adicionar linha</Button>
             </div>
-            <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 780 }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 600 }}>
               <thead>
                 <tr style={{ background: "#0F2447" }}>
-                  {["Matrícula / Colaborador *", "Data *", "Hora", "Valor (R$) *", "Observação", ""].map(h => (
+                  {["Matrícula / Colaborador *",
+                    ...(eventoSelecionado?.forma === "hora"       ? ["Hora *"]        : []),
+                    ...(eventoSelecionado?.forma === "referencia" ? ["Referência *"]   : []),
+                    ...(eventoSelecionado?.forma === "valor"      ? ["Valor (R$) *"]   : ["Valor (R$)"]),
+                    "Observação", ""].map(h => (
                     <th key={h} style={{
                       padding: "9px 10px", textAlign: "left", fontSize: 10, fontWeight: 700,
                       color: "rgba(255,255,255,0.7)", textTransform: "uppercase", letterSpacing: 0.4
@@ -2762,25 +2778,38 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
               <tbody>
                 {bloco.linhas.map((linha, idx) => (
                   <tr key={linha._id} style={{ borderBottom: "1px solid #F3F4F6", background: idx % 2 === 0 ? "#fff" : "#FAFAFA" }}>
-                    {/* Matrícula + Nome autocompletados */}
+                    {/* Matrícula + Nome — sem alteração */}
                     <td style={{ padding: "6px 8px", minWidth: 260 }}>
                       <CelulaColaborador linha={linha} idx={idx} updateLinha={updateLinha} colaboradores={colaboradores} />
                     </td>
-                    <td style={{ padding: "6px 8px", minWidth: 120 }}>
-                      <input type="date" value={linha.data} onChange={e => updateLinha(idx, "data", e.target.value)}
-                        style={{ width: "100%", border: "1px solid #D1D5DB", borderRadius: 6, padding: "5px 7px", fontSize: 11, fontFamily: "inherit" }} />
-                    </td>
-                    <td style={{ padding: "6px 8px", minWidth: 88 }}>
-                      <input type="time" value={linha.hora} onChange={e => updateLinha(idx, "hora", e.target.value)}
-                        style={{ width: "100%", border: "1px solid #D1D5DB", borderRadius: 6, padding: "5px 7px", fontSize: 11, fontFamily: "inherit" }} />
-                    </td>
-                    <td style={{ padding: "6px 8px", minWidth: 100 }}>
-                      <input type="number" step="0.01" value={linha.valor} onChange={e => updateLinha(idx, "valor", e.target.value)}
-                        placeholder="0.00"
-                        style={{ width: "100%", border: "1px solid #D1D5DB", borderRadius: 6, padding: "5px 7px", fontSize: 11, fontFamily: "inherit" }} />
-                    </td>
+                    {/* Hora — somente para forma=hora */}
+                    {eventoSelecionado?.forma === "hora" && (
+                      <td style={{ padding: "6px 8px", minWidth: 100 }}>
+                        <input type="time" value={linha.hora || ""} onChange={e => updateLinha(idx, "hora", e.target.value)}
+                          style={{ width: "100%", border: "1px solid #D1D5DB", borderRadius: 6, padding: "5px 7px", fontSize: 11, fontFamily: "inherit" }} />
+                      </td>
+                    )}
+                    {/* Referência — somente para forma=referencia */}
+                    {eventoSelecionado?.forma === "referencia" && (
+                      <td style={{ padding: "6px 8px", minWidth: 110 }}>
+                        <input type="number" step="0.01" min="0" value={linha.referencia || ""}
+                          onChange={e => updateLinha(idx, "referencia", e.target.value)}
+                          placeholder="0.00"
+                          style={{ width: "100%", border: "1px solid #D1D5DB", borderRadius: 6, padding: "5px 7px", fontSize: 11, fontFamily: "inherit" }} />
+                      </td>
+                    )}
+                    {/* Valor — somente para forma=valor obrigatório; para hora/referencia é opcional */}
+                    {eventoSelecionado?.forma === "valor" && (
+                      <td style={{ padding: "6px 8px", minWidth: 110 }}>
+                        <input type="number" step="0.01" min="0" value={linha.valor || ""}
+                          onChange={e => updateLinha(idx, "valor", e.target.value)}
+                          placeholder="0.00"
+                          style={{ width: "100%", border: "1px solid #D1D5DB", borderRadius: 6, padding: "5px 7px", fontSize: 11, fontFamily: "inherit" }} />
+                      </td>
+                    )}
+                    {/* Observação */}
                     <td style={{ padding: "6px 8px", minWidth: 160 }}>
-                      <input value={linha.observacao} onChange={e => updateLinha(idx, "observacao", e.target.value)}
+                      <input value={linha.observacao || ""} onChange={e => updateLinha(idx, "observacao", e.target.value)}
                         placeholder="Opcional"
                         style={{ width: "100%", border: "1px solid #D1D5DB", borderRadius: 6, padding: "5px 7px", fontSize: 11, fontFamily: "inherit" }} />
                     </td>
