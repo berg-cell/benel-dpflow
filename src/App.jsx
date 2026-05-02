@@ -2601,6 +2601,8 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
     ...b, linhas: b.linhas.map((l, i) => i === idx ? { ...l, [campo]: val } : l)
   }));
 
+  if (!bloco) return null;
+
   const totalBloco = bloco.linhas.reduce((a, l) => a + parseFloat(l.valor || 0), 0);
   const eventoSelecionado = eventos.find(e => e.id === parseInt(bloco.evento_id));
 
@@ -2852,6 +2854,7 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
 
 // ─── DETALHES DO BLOCO ────────────────────────────────────────────────────────
 function DetalhesBloco({ bloco }) {
+  if (!bloco) return null;
   const total = bloco.linhas.reduce((a, l) => a + parseFloat(l.valor || 0), 0);
   const ACAO_COLOR = {
     criado: "#3B82F6", editado: "#F59E0B",
@@ -2912,6 +2915,7 @@ function DetalhesBloco({ bloco }) {
 
 // ─── RELATÓRIO DO BLOCO ───────────────────────────────────────────────────────
 function RelatorioBloco({ bloco }) {
+  if (!bloco) return null;
   const total = bloco.linhas.reduce((a, l) => a + parseFloat(l.valor || 0), 0);
   const ACAO_LABEL = {
     criado: "Criação", editado: "Edição", aprovado_gestor: "Aprovação Gestor",
