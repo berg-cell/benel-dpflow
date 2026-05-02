@@ -2289,6 +2289,13 @@ function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user, 
   };
 
   const salvarBloco = async () => {
+    if (!editandoBloco.evento_id)   { alert("Selecione o Evento do Bloco."); return; }
+    if (!editandoBloco.competencia) { alert("Selecione a Competência."); return; }
+
+    // Buscar evento primeiro (necessário para determinar forma)
+    const eventoObj = eventos.find(e => e.id === parseInt(editandoBloco.evento_id))
+                   || MOCK_EVENTOS.find(e => e.id === parseInt(editandoBloco.evento_id));
+
     const forma = eventoObj?.forma || "valor";
     const linhasValidas = editandoBloco.linhas.filter(l => {
       if (!l.colaborador_id || String(l.colaborador_id) === "") return false;
@@ -2296,14 +2303,6 @@ function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user, 
       if (forma === "referencia") return parseFloat(l.referencia) > 0;
       return parseFloat(l.valor) > 0;
     });
-    console.log("DEBUG linhas:", JSON.stringify(editandoBloco.linhas));
-    console.log("DEBUG validas:", JSON.stringify(linhasValidas));
-    if (!editandoBloco.evento_id) { alert("Selecione o Evento do Bloco."); return; }
-    if (!editandoBloco.competencia) { alert("Selecione a Competência."); return; }
-
-    // Buscar evento da lista real
-    const eventoObj = eventos.find(e => e.id === parseInt(editandoBloco.evento_id))
-                   || MOCK_EVENTOS.find(e => e.id === parseInt(editandoBloco.evento_id));
 
     // Descrição automática: Evento + Competência
     const mesLabel = MESES.find(m => m.value === editandoBloco.competencia)?.label || editandoBloco.competencia;
