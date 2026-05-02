@@ -2441,6 +2441,7 @@ function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user, 
           setBloco={setEditandoBloco}
           onSalvar={salvarBloco}
           colaboradores={colaboradores}
+          eventos={eventos}
         />
       )}
 
@@ -2593,7 +2594,7 @@ function CelulaColaborador({ linha, idx, updateLinha, colaboradores = [] }) {
   );
 }
 
-function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradores = [] }) {
+function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradores = [], eventos = [] }) {
   const addLinha = () => setBloco(b => ({ ...b, linhas: [...b.linhas, LINHA_VAZIA()] }));
   const removeLinha = (idx) => setBloco(b => ({ ...b, linhas: b.linhas.filter((_, i) => i !== idx) }));
   const updateLinha = (idx, campo, val) => setBloco(b => ({
