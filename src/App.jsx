@@ -1685,6 +1685,21 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
   const [modalImport, setModalImport] = useState(false);
   const [modalForm, setModalForm] = useState(null);
   const [form, setForm] = useState({ gestor_id: "", superior_id: "", centro_custo: "", desc_cc: "" });
+  const [filtroGestor,   setFiltroGestor]   = useState("");
+  const [filtroSuperior, setFiltroSuperior] = useState("");
+  const [filtroCC,       setFiltroCC]       = useState("");
+  const [filtroAtivo,    setFiltroAtivo]    = useState("");
+
+  const norm = (s) => (s||"").toLowerCase().trim();
+
+  const hierarquiaFiltrada = hierarquia.filter(h => {
+    if (filtroGestor   && !norm(h.gestor_nome).includes(norm(filtroGestor)))     return false;
+    if (filtroSuperior && !norm(h.superior_nome).includes(norm(filtroSuperior))) return false;
+    if (filtroCC       && !norm(h.centro_custo + " " + h.desc_cc).includes(norm(filtroCC))) return false;
+    if (filtroAtivo === "ativo"   && !h.ativo)  return false;
+    if (filtroAtivo === "inativo" &&  h.ativo)  return false;
+    return true;
+  });
 
   useEffect(() => {
     api.listarHierarquia().then(data => {
@@ -1768,11 +1783,42 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
                 <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
+            <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
+              <th style={{ padding: "6px 10px" }}>
+                <input value={filtroGestor} onChange={e => setFiltroGestor(e.target.value)}
+                  placeholder="🔍 Buscar 1ª alçada..."
+                  style={{ width: "100%", padding: "5px 8px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 11, fontFamily: "inherit", boxSizing: "border-box" }} />
+              </th>
+              <th style={{ padding: "6px 10px" }}>
+                <input value={filtroSuperior} onChange={e => setFiltroSuperior(e.target.value)}
+                  placeholder="🔍 Buscar 2ª alçada..."
+                  style={{ width: "100%", padding: "5px 8px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 11, fontFamily: "inherit", boxSizing: "border-box" }} />
+              </th>
+              <th style={{ padding: "6px 10px" }}>
+                <input value={filtroCC} onChange={e => setFiltroCC(e.target.value)}
+                  placeholder="🔍 Buscar CC..."
+                  style={{ width: "100%", padding: "5px 8px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 11, fontFamily: "inherit", boxSizing: "border-box" }} />
+              </th>
+              <th style={{ padding: "6px 10px" }}>
+                <select value={filtroAtivo} onChange={e => setFiltroAtivo(e.target.value)}
+                  style={{ width: "100%", padding: "5px 8px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 11, fontFamily: "inherit" }}>
+                  <option value="">Todos</option>
+                  <option value="ativo">Ativo</option>
+                  <option value="inativo">Inativo</option>
+                </select>
+              </th>
+              <th style={{ padding: "6px 10px" }}>
+                <button onClick={() => { setFiltroGestor(""); setFiltroSuperior(""); setFiltroCC(""); setFiltroAtivo(""); }}
+                  style={{ fontSize: 10, padding: "4px 8px", borderRadius: 6, border: "1px solid #D1D5DB", background: "#fff", cursor: "pointer", color: "#6B7280" }}>
+                  ✕ Limpar
+                </button>
+              </th>
+            </tr>
           </thead>
           <tbody>
-            {hierarquia.length === 0 ? (
-              <tr><td colSpan={5} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Nenhuma regra cadastrada</td></tr>
-            ) : hierarquia.map((h, i) => (
+            {hierarquiaFiltrada.length === 0 ? (
+              <tr><td colSpan={5} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Nenhuma regra encontrada</td></tr>
+            ) : hierarquiaFiltrada.map((h, i) => (
               <tr key={h.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
                 <td style={{ padding: "11px 16px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
