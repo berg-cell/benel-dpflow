@@ -146,6 +146,12 @@ export const api = {
   // ── Centro de Custo ───────────────────────────────────────────────────────
   listarCentrosCusto: () => request("/centros-custo"),
 
+  // ── Autorização de Desconto ───────────────────────────────────────────────
+  listarAutorizacoes: () => request("/autorizacoes"),
+  criarAutorizacao: (data) => request("/autorizacoes", { method: "POST", body: JSON.stringify(data) }),
+  addAnexoAutorizacao: (id, data) => request(`/autorizacoes/${id}/anexo`, { method: "POST", body: JSON.stringify(data) }),
+  cancelarAutorizacao: (id) => request(`/autorizacoes/${id}/cancelar`, { method: "PUT", body: JSON.stringify({}) }),
+
   // ── Hierarquia ────────────────────────────────────────────────────────────
   listarHierarquia: () => request("/hierarquia"),
   criarHierarquia:  (data)    => request("/hierarquia",     { method: "POST", body: JSON.stringify(data) }),
