@@ -3730,7 +3730,13 @@ function gerarHTMLAutorizacao(dados, colaborador, logoBase64) {
   const hoje = new Date();
   const mesesNome = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
   const dataDoc   = `${hoje.getDate()} de ${mesesNome[hoje.getMonth()]} de ${hoje.getFullYear()}`;
-  const dataOcorr = data_ocorrido ? new Date(data_ocorrido + "T12:00:00").toLocaleDateString("pt-BR") : "___/___/______";
+  const dataOcorr = (() => {
+    if (!data_ocorrido) return "___/___/______";
+    try {
+      const d = new Date(String(data_ocorrido).includes("T") ? data_ocorrido : data_ocorrido + "T12:00:00");
+      return isNaN(d.getTime()) ? "___/___/______" : d.toLocaleDateString("pt-BR");
+    } catch { return "___/___/______"; }
+  })();
 
   return `
     <div style="font-family:Arial,sans-serif;font-size:10.5pt;line-height:1.45;max-width:680px;margin:0 auto;padding:24px 32px;color:#000;text-align:justify;">
