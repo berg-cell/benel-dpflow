@@ -1346,6 +1346,14 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
   const [modalImport, setModalImport] = useState(false);
   const [modalForm, setModalForm] = useState(null);
   const [form, setForm] = useState({ chapa: "", nome: "", funcao: "", situacao: "Ativo", centro_custo: "", desc_cc: "", cpf: "", data_admissao: "" });
+  const [fMatricula, setFMatricula] = useState("");
+  const [fNome,      setFNome]      = useState("");
+  const [fFuncao,    setFuncao]     = useState("");
+  const [fSecao,     setFSecao]     = useState("");
+  const [fCpf,       setFCpf]       = useState("");
+  const [fSituacao,  setFSituacao]  = useState("");
+
+  const norm = s => (s||"").toLowerCase();
 
   useEffect(() => {
     api.listarColaboradores(true).then(data => {
@@ -1355,9 +1363,12 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
 
   const lista = colaboradores
     .filter(c => c.cod_situacao !== "D")
-    .filter(c =>
-      c.nome.toLowerCase().includes(busca.toLowerCase()) || c.chapa.includes(busca)
-    );
+    .filter(c => !fMatricula || (c.chapa||"").includes(fMatricula))
+    .filter(c => !fNome      || norm(c.nome).includes(norm(fNome)))
+    .filter(c => !fFuncao    || norm(c.funcao).includes(norm(fFuncao)))
+    .filter(c => !fSecao     || norm(c.desc_cc).includes(norm(fSecao)))
+    .filter(c => !fCpf       || (c.cpf||"").includes(fCpf))
+    .filter(c => !fSituacao  || norm(c.situacao) === norm(fSituacao));
 
   const abrirNovo = () => { setForm({ chapa: "", nome: "", funcao: "", situacao: "Ativo", centro_custo: "", desc_cc: "", cpf: "", data_admissao: "" }); setModalForm("novo"); };
   const abrirEditar = (c) => {
@@ -1455,9 +1466,6 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
         </div>
       </div>
 
-      <Card style={{ marginBottom: 16, padding: "12px 16px" }}>
-        <Input value={busca} onChange={setBusca} placeholder="Buscar por nome ou matrícula..." />
-      </Card>
 
       <Card style={{ padding: 0, overflow: "hidden" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -1465,6 +1473,27 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
             <tr style={{ background: "#F9FAFB" }}>
               {["Matrícula", "Nome", "Função", "Seção", "CPF", "Admissão", "C. Custo", "Situação", "Ações"].map(h => (
                 <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+              ))}
+            </tr>
+            <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
+              {[
+                <input value={fMatricula} onChange={e=>setFMatricula(e.target.value)} placeholder="🔍 Matrícula" />,
+                <input value={fNome}      onChange={e=>setFNome(e.target.value)}      placeholder="🔍 Nome" />,
+                <input value={fFuncao}    onChange={e=>setFuncao(e.target.value)}     placeholder="🔍 Função" />,
+                <input value={fSecao}     onChange={e=>setFSecao(e.target.value)}     placeholder="🔍 Seção" />,
+                <input value={fCpf}       onChange={e=>setFCpf(e.target.value)}       placeholder="🔍 CPF" />,
+                null,
+                null,
+                <select value={fSituacao} onChange={e=>setFSituacao(e.target.value)}>
+                  <option value="">Todos</option>
+                  <option value="Ativo">Ativo</option>
+                  <option value="Inativo">Inativo</option>
+                </select>,
+                <button onClick={()=>{setFMatricula("");setFNome("");setFuncao("");setFSecao("");setFCpf("");setFSituacao("");}}>✕ Limpar</button>
+              ].map((el, i) => (
+                <th key={i} style={{ padding: "5px 8px" }}>
+                  {el && React.cloneElement(el, { style: { width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" } })}
+                </th>
               ))}
             </tr>
           </thead>
@@ -1541,6 +1570,16 @@ function CadEventos({ eventos, setEventos }) {
   const [modalImport, setModalImport] = useState(false);
   const [modalForm, setModalForm] = useState(null);
   const [form, setForm] = useState({ codigo: "", descricao: "", tipo: "provento", forma: "valor" });
+  const [fCodigo,  setFCodigo]  = useState("");
+  const [fDesc,    setFDesc]    = useState("");
+  const [fTipo,    setFTipo]    = useState("");
+  const [fForma,   setFForma]   = useState("");
+  const norm = s => (s||"").toLowerCase();
+  const eventosFiltrados = eventos
+    .filter(e => !fCodigo || (e.codigo||"").includes(fCodigo))
+    .filter(e => !fDesc   || norm(e.descricao).includes(norm(fDesc)))
+    .filter(e => !fTipo   || e.tipo === fTipo)
+    .filter(e => !fForma  || e.forma === fForma);
 
   useEffect(() => {
     api.listarEventos().then(data => {
@@ -1627,9 +1666,16 @@ function CadEventos({ eventos, setEventos }) {
                 <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
+            <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
+              <th style={{ padding: "5px 8px" }}><input value={fCodigo} onChange={e=>setFCodigo(e.target.value)} placeholder="🔍 Código" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding: "5px 8px" }}><input value={fDesc}   onChange={e=>setFDesc(e.target.value)}   placeholder="🔍 Descrição" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding: "5px 8px" }}><select value={fTipo}  onChange={e=>setFTipo(e.target.value)}   style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="provento">Provento</option><option value="desconto">Desconto</option></select></th>
+              <th style={{ padding: "5px 8px" }}><select value={fForma} onChange={e=>setFForma(e.target.value)}  style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="valor">Valor</option><option value="hora">Hora</option><option value="referencia">Referência</option></select></th>
+              <th style={{ padding: "5px 8px" }}><button onClick={()=>{setFCodigo("");setFDesc("");setFTipo("");setFForma("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
+            </tr>
           </thead>
           <tbody>
-            {eventos.map((e, i) => (
+            {eventosFiltrados.map((e, i) => (
               <tr key={e.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
                 <td style={{ padding: "11px 16px" }}>
                   <span style={{ fontFamily: "monospace", fontSize: 13, fontWeight: 700, color: "#1B3A6B" }}>{e.codigo}</span>
@@ -1919,6 +1965,14 @@ function CadAlcadas({ alcadas, setAlcadas, eventos }) {
   const [modalImport, setModalImport] = useState(false);
   const [modalForm, setModalForm] = useState(null);
   const [form, setForm] = useState({ evento_id: "", num_alcadas: 1, exige_anexo: false });
+  const [fEvento,  setFEvento]  = useState("");
+  const [fAnexo,   setFAnexo]   = useState("");
+  const [fStatus,  setFStatus]  = useState("");
+  const norm = s => (s||"").toLowerCase();
+  const alcadasFiltradas = alcadas
+    .filter(a => !fEvento || norm(a.evento_nome).includes(norm(fEvento)))
+    .filter(a => fAnexo === "" ? true : fAnexo === "sim" ? a.exige_anexo : !a.exige_anexo)
+    .filter(a => fStatus === "" ? true : fStatus === "ativo" ? a.ativo : !a.ativo);
 
   useEffect(() => {
     api.listarAlcadas().then(data => {
@@ -1990,11 +2044,18 @@ function CadAlcadas({ alcadas, setAlcadas, eventos }) {
                 <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
+            <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
+              <th style={{ padding: "5px 8px" }}><input value={fEvento} onChange={e=>setFEvento(e.target.value)} placeholder="🔍 Evento" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding: "5px 8px" }} />
+              <th style={{ padding: "5px 8px" }}><select value={fAnexo} onChange={e=>setFAnexo(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="sim">Obrigatório</option><option value="nao">Não exige</option></select></th>
+              <th style={{ padding: "5px 8px" }}><select value={fStatus} onChange={e=>setFStatus(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select></th>
+              <th style={{ padding: "5px 8px" }}><button onClick={()=>{setFEvento("");setFAnexo("");setFStatus("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
+            </tr>
           </thead>
           <tbody>
-            {alcadas.length === 0 ? (
-              <tr><td colSpan={5} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Nenhuma regra cadastrada</td></tr>
-            ) : alcadas.map((a, i) => (
+            {alcadasFiltradas.length === 0 ? (
+              <tr><td colSpan={5} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Nenhuma regra encontrada</td></tr>
+            ) : alcadasFiltradas.map((a, i) => (
               <tr key={a.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
                 <td style={{ padding: "11px 16px", fontSize: 13, fontWeight: 600, color: "#111827" }}>{a.evento_nome}</td>
                 <td style={{ padding: "11px 16px" }}>
@@ -2082,6 +2143,16 @@ function CadUsuarios({ usuarios, setUsuarios }) {
   const [salvandoReset, setSalvandoReset] = useState(false);
   const [salvando, setSalvando] = useState(false);
   const [form, setForm] = useState({ nome: "", email: "", perfil: "gestor", senha: "Benel@2025", secao: "", ativo: true });
+  const [fNomeU,   setFNomeU]   = useState("");
+  const [fEmailU,  setFEmailU]  = useState("");
+  const [fPerfilU, setFPerfilU] = useState("");
+  const [fStatusU, setFStatusU] = useState("");
+  const norm = s => (s||"").toLowerCase();
+  const usuariosFiltrados = usuarios
+    .filter(u => !fNomeU   || norm(u.nome).includes(norm(fNomeU)))
+    .filter(u => !fEmailU  || norm(u.email).includes(norm(fEmailU)))
+    .filter(u => !fPerfilU || u.perfil === fPerfilU)
+    .filter(u => fStatusU === "" ? true : fStatusU === "ativo" ? u.ativo !== false : u.ativo === false);
 
   const carregarUsuarios = async () => {
     try {
@@ -2197,9 +2268,17 @@ function CadUsuarios({ usuarios, setUsuarios }) {
                 <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
+            <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
+              <th style={{ padding: "5px 8px" }} />
+              <th style={{ padding: "5px 8px" }}><input value={fNomeU}  onChange={e=>setFNomeU(e.target.value)}  placeholder="🔍 Nome"   style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding: "5px 8px" }}><input value={fEmailU} onChange={e=>setFEmailU(e.target.value)} placeholder="🔍 E-mail" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding: "5px 8px" }}><select value={fPerfilU} onChange={e=>setFPerfilU(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="gestor">Gestor</option><option value="superior">Superior</option><option value="dp">DP</option><option value="admin">Admin</option></select></th>
+              <th style={{ padding: "5px 8px" }}><select value={fStatusU} onChange={e=>setFStatusU(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select></th>
+              <th style={{ padding: "5px 8px" }}><button onClick={()=>{setFNomeU("");setFEmailU("");setFPerfilU("");setFStatusU("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
+            </tr>
           </thead>
           <tbody>
-            {usuarios.map((u, i) => (
+            {usuariosFiltrados.map((u, i) => (
               <tr key={u.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
                 <td style={{ padding: "11px 16px" }}>
                   <div style={{ width: 32, height: 32, borderRadius: 8, background: PERFIL_CONFIG[u.perfil]?.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#fff" }}>{u.avatar}</div>
