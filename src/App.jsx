@@ -3712,66 +3712,93 @@ function valorPorExtenso(valor) {
   return txt;
 }
 
-function gerarDocAutorizacao(dados, colaborador) {
+function gerarHTMLAutorizacao(dados, colaborador) {
   const {
     valor_total, num_parcelas, mes_inicio, ano_inicio,
     data_ocorrido, descricao_prejuizo, gestor_nome
   } = dados;
 
-  const valorNum   = parseFloat(valor_total) || 0;
-  const parcelas   = parseInt(num_parcelas) || 1;
-  const valorParc  = parcelas > 0 ? (valorNum / parcelas).toFixed(2) : valorNum.toFixed(2);
-  const mesLabel   = MESES_AUTORIZACAO.find(m => m.value === mes_inicio)?.label || mes_inicio;
-  const valorExt   = valorPorExtenso(valorNum);
-  const cpfFmt     = colaborador?.cpf || "_______________";
-  const nome       = colaborador?.nome || "_______________";
+  const valorNum  = parseFloat(valor_total) || 0;
+  const parcelas  = parseInt(num_parcelas) || 1;
+  const valorParc = (valorNum / parcelas).toFixed(2).replace(".", ",");
+  const mesLabel  = MESES_AUTORIZACAO.find(m => m.value === mes_inicio)?.label || mes_inicio;
+  const valorExt  = valorPorExtenso(valorNum);
+  const cpfFmt    = colaborador?.cpf || "_______________";
+  const nome      = colaborador?.nome || "_______________";
+  const valorFmt  = valorNum.toFixed(2).replace(".", ",");
 
   const hoje = new Date();
-  const diasSemana = ["domingo","segunda-feira","terça-feira","quarta-feira","quinta-feira","sexta-feira","sábado"];
-  const mesesNome  = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
-  const dataDoc    = `${hoje.getDate()} de ${mesesNome[hoje.getMonth()]} de ${hoje.getFullYear()}`;
+  const mesesNome = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+  const dataDoc   = `${hoje.getDate()} de ${mesesNome[hoje.getMonth()]} de ${hoje.getFullYear()}`;
+  const dataOcorr = data_ocorrido ? new Date(data_ocorrido + "T12:00:00").toLocaleDateString("pt-BR") : "___/___/______";
 
   return `
-AUTORIZAÇÃO PARA DESCONTO NA FOLHA DE PAGAMENTO
+    <div style="font-family: Arial, sans-serif; font-size: 12pt; line-height: 1.6; max-width: 700px; margin: 0 auto; padding: 40px; color: #000; text-align: justify;">
+      <h2 style="text-align: center; font-size: 13pt; font-weight: bold; text-decoration: underline; margin-bottom: 24px;">
+        AUTORIZAÇÃO PARA DESCONTO NA FOLHA DE PAGAMENTO
+      </h2>
 
+      <p style="margin-bottom: 20px;">
+        Pelo presente, eu <u>${nome}</u>, CPF nº <u>${cpfFmt}</u>,
+        AUTORIZO a <strong>BENEL–TRANPORTE E LOGÍSTICA LTDA</strong>, a proceder desconto no meu salário,
+        a título de reparação da importância de <strong>R$ ${valorFmt}</strong>
+        (<em>${valorExt}</em>), decorrentes de prejuízos causados a Empregadora,
+        conforme exposto abaixo, sendo parcelados em <strong>${parcelas}</strong>
+        parcelas de <strong>R$ ${valorParc}</strong>,
+        a começar na próxima folha de pagamento em <strong>${mesLabel} / ${ano_inicio}</strong>.
+      </p>
 
-Pelo presente, eu ${nome}, CPF nº ${cpfFmt}, AUTORIZO a BENEL–TRANSPORTE E LOGÍSTICA LTDA, a proceder desconto no meu salário, a título de reparação da importância de R$ ${valorNum.toFixed(2).replace(".",",")} (${valorExt}), decorrentes de prejuízos causados à Empregadora, conforme exposto abaixo, sendo parcelados em ${parcelas} parcela${parcelas > 1 ? "s" : ""} de R$ ${parseFloat(valorParc).toFixed(2).replace(".",",")} , a começar na próxima folha de pagamento em ${mesLabel} / ${ano_inicio}.
+      <p style="font-weight: bold; margin-bottom: 6px;">DESCRIÇÃO DO PREJUÍZO:</p>
+      <p style="min-height: 40px; margin-bottom: 20px;">${descricao_prejuizo || "&nbsp;"}</p>
 
+      <p style="margin-bottom: 20px;">DATA DO OCORRIDO: <u>${dataOcorr}</u></p>
 
-DESCRIÇÃO DO PREJUÍZO:
+      <p style="margin-bottom: 16px;">
+        Declaro estar ciente do referido desconto, conforme parágrafo primeiro do artigo 462,
+        da CLT e cláusula quinta do meu contrato de trabalho, transcritos abaixo:
+      </p>
 
-${descricao_prejuizo || ""}
+      <blockquote style="border-left: 3px solid #999; margin: 0 0 16px 20px; padding: 10px 16px; font-size: 11pt;">
+        <p style="margin-bottom: 8px;">Art. 462 - Ao empregador é vedado efetuar qualquer desconto nos salários do empregado,
+        salvo quando este resultar de adiantamentos, de dispositivos de lei ou de contrato coletivo.</p>
+        <p style="margin: 0;"><strong>§ 1º -</strong> Em caso de dano causado pelo empregado, o desconto será lícito,
+        <u>desde de que esta possibilidade tenha sido acordada ou na ocorrência de dolo do empregado.</u></p>
+      </blockquote>
 
+      <blockquote style="border-left: 3px solid #999; margin: 0 0 20px 20px; padding: 10px 16px; font-size: 11pt;">
+        <p style="margin: 0;"><strong>5.</strong> Além dos descontos permitidos na legislação, a EMPREGADORA poderá descontar
+        da remuneração do EMPREGADO(A) <strong>toda e qualquer importância</strong> que este seja devedor por prejuízo que vier
+        a dar causa, contra a EMPREGADORA ou terceiros, por culpa ou dolo, e, ainda, por outras obrigações que porventura
+        incidam em sua remuneração.</p>
+      </blockquote>
 
-DATA DO OCORRIDO: ${data_ocorrido ? new Date(data_ocorrido + "T12:00:00").toLocaleDateString("pt-BR") : "___/___/______"}
+      <p style="margin-bottom: 16px;">
+        Declaro estar ciente de que o presente instrumento serve para fins de advertência disciplinar
+        em virtude dos fatos acima discriminados, os quais decorrem do descumprimento às normas internas da empresa.
+      </p>
 
+      <p style="margin-bottom: 16px;">
+        Declaro, também, estar ciente que em caso de rescisão do contrato de trabalho,
+        será descontado o valor remanescente do prejuízo, até o limite legal.
+      </p>
 
-Declaro estar ciente do referido desconto, conforme parágrafo primeiro do artigo 462, da CLT e cláusula quinta do meu contrato de trabalho, transcritos abaixo:
+      <p style="margin-bottom: 40px;">
+        Posto isso, assino de livre e espontânea vontade a presente autorização,
+        para que produza os efeitos jurídicos necessários.
+      </p>
 
-Art. 462 - Ao empregador é vedado efetuar qualquer desconto nos salários do empregado, salvo quando este resultar de adiantamentos, de dispositivos de lei ou de contrato coletivo.
+      <p style="margin-bottom: 60px;">___________________, ${dataDoc}.</p>
 
-§ 1º - Em caso de dano causado pelo empregado, o desconto será lícito, desde que esta possibilidade tenha sido acordada ou na ocorrência de dolo do empregado.
-
-5. Além dos descontos permitidos na legislação, a EMPREGADORA poderá descontar da remuneração do EMPREGADO(A) toda e qualquer importância que este seja devedor por prejuízo que vier a dar causa, contra a EMPREGADORA ou terceiros, por culpa ou dolo, e, ainda, por outras obrigações que porventura incidam em sua remuneração.
-
-Declaro estar ciente de que o presente instrumento serve para fins de advertência disciplinar em virtude dos fatos acima discriminados, os quais decorrem do descumprimento às normas internas da empresa.
-
-Declaro, também, estar ciente que em caso de rescisão do contrato de trabalho, será descontado o valor remanescente do prejuízo, até o limite legal.
-
-Posto isso, assino de livre e espontânea vontade a presente autorização, para que produza os efeitos jurídicos necessários.
-
-
-___________________, ${dataDoc}.
-
-
-
-___________________________
-${nome}
-
-
-___________________________
-${gestor_nome || "Líder"}
-`;
+      <div style="display: flex; justify-content: space-around; margin-top: 40px;">
+        <div style="text-align: center; width: 45%;">
+          <div style="border-top: 1px solid #000; padding-top: 6px;">${nome}</div>
+        </div>
+        <div style="text-align: center; width: 45%;">
+          <div style="border-top: 1px solid #000; padding-top: 6px;">${gestor_nome || "Líder"}</div>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 function Autorizacoes({ user, colaboradores }) {
@@ -3958,14 +3985,14 @@ function Autorizacoes({ user, colaboradores }) {
           {/* Início do desconto */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Mês de Início *</label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Mês de Início do Desconto *</label>
               <select value={form.mes_inicio} onChange={e => setForm(f => ({ ...f, mes_inicio: e.target.value }))}
                 style={{ width: "100%", padding: "9px 12px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }}>
                 {MESES_AUTORIZACAO.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
               </select>
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Ano de Início *</label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Ano de Início do Desconto *</label>
               <select value={form.ano_inicio} onChange={e => setForm(f => ({ ...f, ano_inicio: e.target.value }))}
                 style={{ width: "100%", padding: "9px 12px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }}>
                 {[0,1,2].map(i => <option key={i} value={anoAtual+i}>{anoAtual+i}</option>)}
@@ -3999,21 +4026,23 @@ function Autorizacoes({ user, colaboradores }) {
 
       {/* Modal Visualizar Documento */}
       {modalDoc && (
-        <Modal open={!!modalDoc} onClose={() => setModalDoc(null)} title="Autorização de Desconto" width={680}>
-          <pre style={{ fontFamily: "Arial, sans-serif", fontSize: 12, lineHeight: 1.8, whiteSpace: "pre-wrap", color: "#111827", margin: 0 }}>
-            {gerarDocAutorizacao(modalDoc, modalDoc.colaborador)}
-          </pre>
+        <Modal open={!!modalDoc} onClose={() => setModalDoc(null)} title="Autorização de Desconto" width={760}>
+          <div style={{ maxHeight: "65vh", overflowY: "auto", border: "1px solid #E5E7EB", borderRadius: 8 }}
+            dangerouslySetInnerHTML={{ __html: gerarHTMLAutorizacao(modalDoc, modalDoc.colaborador) }}
+          />
           <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, paddingTop: 16, borderTop: "1px solid #F3F4F6", marginTop: 16 }}>
             <Button variant="secondary" onClick={() => setModalDoc(null)}>Fechar</Button>
             <Button onClick={() => {
-              const conteudo = gerarDocAutorizacao(modalDoc, modalDoc.colaborador);
-              const blob = new Blob([conteudo], { type: "text/plain;charset=utf-8" });
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement("a");
-              a.href = url; a.download = `autorizacao_desconto_${(modalDoc.colaborador?.chapa||"").trim()}.txt`;
-              a.click(); URL.revokeObjectURL(url);
-            }}>⬇ Baixar TXT</Button>
-            <Button onClick={() => window.print()}>🖨 Imprimir</Button>
+              const html = gerarHTMLAutorizacao(modalDoc, modalDoc.colaborador);
+              const janela = window.open("", "_blank");
+              janela.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8">
+                <title>Autorização de Desconto</title>
+                <style>body{margin:0;padding:0;}@media print{@page{margin:1.5cm;size:A4;}}</style>
+              </head><body>${html}</body></html>`);
+              janela.document.close();
+              janela.focus();
+              setTimeout(() => { janela.print(); }, 500);
+            }}>⬇ Baixar PDF</Button>
           </div>
         </Modal>
       )}
