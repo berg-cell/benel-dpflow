@@ -3767,13 +3767,15 @@ function gerarHTMLAutorizacao(dados, colaborador, logoBase64) {
       <p style="margin:0 0 6px 0;">Declaro estar ciente de que o presente instrumento serve para fins de advertência disciplinar em virtude dos fatos acima discriminados, os quais decorrem do descumprimento às normas internas da empresa.</p>
       <p style="margin:0 0 6px 0;">Declaro, também, estar ciente que em caso de rescisão do contrato de trabalho, será descontado o valor remanescente do prejuízo, até o limite legal.</p>
       <p style="margin:0 0 18px 0;">Posto isso, assino de livre e espontânea vontade a presente autorização, para que produza os efeitos jurídicos necessários.</p>
-      <p style="margin:0 0 24px 0;">___________________, ${dataDoc}.</p>
-      <div style="display:flex;justify-content:space-around;margin-top:8px;">
+      <p style="margin:0 0 36px 0;">___________________, ${dataDoc}.</p>
+      <div style="display:flex;justify-content:space-around;margin-top:24px;">
         <div style="text-align:center;width:44%;">
-          <div style="border-top:1px solid #000;padding-top:4px;font-size:10pt;">${nome}</div>
+          <div style="border-top:1px solid #000;padding-top:6px;font-size:10pt;">${nome}</div>
+          <div style="font-size:9pt;color:#444;margin-top:2px;">Colaborador(a)</div>
         </div>
         <div style="text-align:center;width:44%;">
-          <div style="border-top:1px solid #000;padding-top:4px;font-size:10pt;">${gestor_nome || "Líder"}</div>
+          <div style="border-top:1px solid #000;padding-top:6px;font-size:10pt;">${gestor_nome || "Gestor"}</div>
+          <div style="font-size:9pt;color:#444;margin-top:2px;">Gestor(a)</div>
         </div>
       </div>
     </div>
