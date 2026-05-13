@@ -1225,10 +1225,19 @@ function ImportacaoModal({ open, onClose, titulo, colunas, exemplo, onImportar }
     }
   };
 
-  const confirmar = () => {
-    onImportar(resultado.validos);
-    setTexto(""); setResultado(null); setArquivo(null);
-    onClose();
+  const [importando, setImportando] = useState(false);
+
+  const confirmar = async () => {
+    setImportando(true);
+    try {
+      await onImportar(resultado.validos);
+      setTexto(""); setResultado(null); setArquivo(null);
+      onClose();
+    } catch(e) {
+      alert("Erro ao importar: " + e.message);
+    } finally {
+      setImportando(false);
+    }
   };
 
   const baixarModelo = () => {
@@ -1330,8 +1339,8 @@ function ImportacaoModal({ open, onClose, titulo, colunas, exemplo, onImportar }
           <Button variant="secondary" onClick={() => { setTexto(""); setResultado(null); setArquivo(null); onClose(); }}>Cancelar</Button>
           {!resultado
             ? <Button onClick={processar} disabled={!texto.trim()}>Processar arquivo</Button>
-            : <Button variant="success" onClick={confirmar} disabled={resultado.validos.length === 0}>
-                Importar {resultado.validos.length} registros
+            : <Button variant="success" onClick={confirmar} disabled={resultado.validos.length === 0 || importando}>
+                {importando ? "⏳ Importando..." : `Importar ${resultado.validos.length} registros`}
               </Button>
           }
         </div>
@@ -1423,28 +1432,26 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
       chapa:                  r.chapa || "",
       nome:                   r.nome || "",
       funcao:                 r.funcao || "",
+      desc_funcao:            r.desc_funcao || "",
       situacao:               r.situacao || "Ativo",
       cod_situacao:           r.cod_situacao || null,
       centro_custo:           r.centro_custo || "",
       desc_cc:                r.desc_cc || "",
+      descricao_filial:       r.descricao_filial || "",
       cpf:                    r.cpf || "",
       data_admissao:          fmtAdmissao(r.data_admissao),
       tipo_contrato:          r.tipo_contrato || null,
       data_fim_contrato:      r.data_fim_contrato || null,
       data_fim_estabilidade:  r.data_fim_estabilidade || null,
       descricao_estabilidade: r.descricao_estabilidade || null,
+      prazo45:                r.prazo45 || null,
+      prazo90:                r.prazo90 || null,
     })).filter(r => r.chapa && r.nome);
 
-    try {
-      // Salvar no banco via API
-      await api.importarColaboradores(novos);
-      // Recarregar do banco
-      const atualizados = await api.listarColaboradores(true);
-      if (atualizados && atualizados.length > 0) setColaboradores(atualizados);
-      alert(`✅ ${novos.length} colaborador(es) importado(s) com sucesso!`);
-    } catch (err) {
-      alert("Erro ao importar: " + err.message);
-    }
+    await api.importarColaboradores(novos);
+    const atualizados = await api.listarColaboradores(true);
+    if (atualizados && atualizados.length > 0) setColaboradores(atualizados);
+    alert(`✅ ${novos.length} colaborador(es) importado(s) com sucesso!`);
   };
 
   const colunas = [
