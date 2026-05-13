@@ -3712,7 +3712,7 @@ function valorPorExtenso(valor) {
   return txt;
 }
 
-function gerarHTMLAutorizacao(dados, colaborador) {
+function gerarHTMLAutorizacao(dados, colaborador, logoBase64) {
   const {
     valor_total, num_parcelas, mes_inicio, ano_inicio,
     data_ocorrido, descricao_prejuizo, gestor_nome
@@ -3733,68 +3733,41 @@ function gerarHTMLAutorizacao(dados, colaborador) {
   const dataOcorr = data_ocorrido ? new Date(data_ocorrido + "T12:00:00").toLocaleDateString("pt-BR") : "___/___/______";
 
   return `
-    <div style="font-family: Arial, sans-serif; font-size: 12pt; line-height: 1.6; max-width: 700px; margin: 0 auto; padding: 40px; color: #000; text-align: justify;">
-      <h2 style="text-align: center; font-size: 13pt; font-weight: bold; text-decoration: underline; margin-bottom: 24px;">
-        AUTORIZAÇÃO PARA DESCONTO NA FOLHA DE PAGAMENTO
-      </h2>
-
-      <p style="margin-bottom: 20px;">
+    <div style="font-family:Arial,sans-serif;font-size:10.5pt;line-height:1.45;max-width:680px;margin:0 auto;padding:24px 32px;color:#000;text-align:justify;">
+      ${logoBase64 ? `<div style="text-align:center;margin-bottom:10px;"><img src="${logoBase64}" alt="Benel" style="height:52px;" /></div>` : ""}
+      <h3 style="text-align:center;font-size:12pt;font-weight:bold;text-transform:uppercase;text-decoration:underline;margin:0 0 14px 0;letter-spacing:.5px;">
+        Autorização para Desconto na Folha de Pagamento
+      </h3>
+      <p style="margin:0 0 12px 0;">
         Pelo presente, eu <u>${nome}</u>, CPF nº <u>${cpfFmt}</u>,
         AUTORIZO a <strong>BENEL–TRANPORTE E LOGÍSTICA LTDA</strong>, a proceder desconto no meu salário,
-        a título de reparação da importância de <strong>R$ ${valorFmt}</strong>
-        (<em>${valorExt}</em>), decorrentes de prejuízos causados a Empregadora,
+        a título de reparação da importância de <strong>R$&nbsp;${valorFmt}</strong>
+        (<em>${valorExt}</em>), decorrentes de prejuízos causados à Empregadora,
         conforme exposto abaixo, sendo parcelados em <strong>${parcelas}</strong>
-        parcelas de <strong>R$ ${valorParc}</strong>,
-        a começar na próxima folha de pagamento em <strong>${mesLabel} / ${ano_inicio}</strong>.
+        parcela${parcelas > 1 ? "s" : ""} de <strong>R$&nbsp;${valorParc}</strong>,
+        a começar na próxima folha de pagamento em <strong>${mesLabel}&nbsp;/&nbsp;${ano_inicio}</strong>.
       </p>
-
-      <p style="font-weight: bold; margin-bottom: 6px;">DESCRIÇÃO DO PREJUÍZO:</p>
-      <p style="min-height: 40px; margin-bottom: 20px;">${descricao_prejuizo || "&nbsp;"}</p>
-
-      <p style="margin-bottom: 20px;">DATA DO OCORRIDO: <u>${dataOcorr}</u></p>
-
-      <p style="margin-bottom: 16px;">
-        Declaro estar ciente do referido desconto, conforme parágrafo primeiro do artigo 462,
-        da CLT e cláusula quinta do meu contrato de trabalho, transcritos abaixo:
-      </p>
-
-      <blockquote style="border-left: 3px solid #999; margin: 0 0 16px 20px; padding: 10px 16px; font-size: 11pt;">
-        <p style="margin-bottom: 8px;">Art. 462 - Ao empregador é vedado efetuar qualquer desconto nos salários do empregado,
-        salvo quando este resultar de adiantamentos, de dispositivos de lei ou de contrato coletivo.</p>
-        <p style="margin: 0;"><strong>§ 1º -</strong> Em caso de dano causado pelo empregado, o desconto será lícito,
-        <u>desde de que esta possibilidade tenha sido acordada ou na ocorrência de dolo do empregado.</u></p>
-      </blockquote>
-
-      <blockquote style="border-left: 3px solid #999; margin: 0 0 20px 20px; padding: 10px 16px; font-size: 11pt;">
-        <p style="margin: 0;"><strong>5.</strong> Além dos descontos permitidos na legislação, a EMPREGADORA poderá descontar
-        da remuneração do EMPREGADO(A) <strong>toda e qualquer importância</strong> que este seja devedor por prejuízo que vier
-        a dar causa, contra a EMPREGADORA ou terceiros, por culpa ou dolo, e, ainda, por outras obrigações que porventura
-        incidam em sua remuneração.</p>
-      </blockquote>
-
-      <p style="margin-bottom: 16px;">
-        Declaro estar ciente de que o presente instrumento serve para fins de advertência disciplinar
-        em virtude dos fatos acima discriminados, os quais decorrem do descumprimento às normas internas da empresa.
-      </p>
-
-      <p style="margin-bottom: 16px;">
-        Declaro, também, estar ciente que em caso de rescisão do contrato de trabalho,
-        será descontado o valor remanescente do prejuízo, até o limite legal.
-      </p>
-
-      <p style="margin-bottom: 40px;">
-        Posto isso, assino de livre e espontânea vontade a presente autorização,
-        para que produza os efeitos jurídicos necessários.
-      </p>
-
-      <p style="margin-bottom: 60px;">___________________, ${dataDoc}.</p>
-
-      <div style="display: flex; justify-content: space-around; margin-top: 40px;">
-        <div style="text-align: center; width: 45%;">
-          <div style="border-top: 1px solid #000; padding-top: 6px;">${nome}</div>
+      <p style="font-weight:bold;margin:0 0 2px 0;">DESCRIÇÃO DO PREJUÍZO:</p>
+      <p style="margin:0 0 10px 0;min-height:28px;">${descricao_prejuizo || "&nbsp;"}</p>
+      <p style="margin:0 0 12px 0;">DATA DO OCORRIDO:&nbsp;<u>${dataOcorr}</u></p>
+      <p style="margin:0 0 8px 0;">Declaro estar ciente do referido desconto, conforme parágrafo primeiro do artigo 462, da CLT e cláusula quinta do meu contrato de trabalho, transcritos abaixo:</p>
+      <div style="border:1px solid #aaa;margin:0 0 8px 0;padding:7px 12px;font-size:9.5pt;">
+        <p style="margin:0 0 4px 0;">Art. 462 – Ao empregador é vedado efetuar qualquer desconto nos salários do empregado, salvo quando este resultar de adiantamentos, de dispositivos de lei ou de contrato coletivo.</p>
+        <p style="margin:0;"><strong>§ 1º</strong> – Em caso de dano causado pelo empregado, o desconto será lícito, <u>desde de que esta possibilidade tenha sido acordada ou na ocorrência de dolo do empregado.</u></p>
+      </div>
+      <div style="border:1px solid #aaa;margin:0 0 10px 0;padding:7px 12px;font-size:9.5pt;">
+        <p style="margin:0;"><strong>5.</strong> Além dos descontos permitidos na legislação, a EMPREGADORA poderá descontar da remuneração do EMPREGADO(A) <strong>toda e qualquer importância</strong> que este seja devedor por prejuízo que vier a dar causa, contra a EMPREGADORA ou terceiros, por culpa ou dolo, e, ainda, por outras obrigações que porventura incidam em sua remuneração.</p>
+      </div>
+      <p style="margin:0 0 6px 0;">Declaro estar ciente de que o presente instrumento serve para fins de advertência disciplinar em virtude dos fatos acima discriminados, os quais decorrem do descumprimento às normas internas da empresa.</p>
+      <p style="margin:0 0 6px 0;">Declaro, também, estar ciente que em caso de rescisão do contrato de trabalho, será descontado o valor remanescente do prejuízo, até o limite legal.</p>
+      <p style="margin:0 0 18px 0;">Posto isso, assino de livre e espontânea vontade a presente autorização, para que produza os efeitos jurídicos necessários.</p>
+      <p style="margin:0 0 24px 0;">___________________, ${dataDoc}.</p>
+      <div style="display:flex;justify-content:space-around;margin-top:8px;">
+        <div style="text-align:center;width:44%;">
+          <div style="border-top:1px solid #000;padding-top:4px;font-size:10pt;">${nome}</div>
         </div>
-        <div style="text-align: center; width: 45%;">
-          <div style="border-top: 1px solid #000; padding-top: 6px;">${gestor_nome || "Líder"}</div>
+        <div style="text-align:center;width:44%;">
+          <div style="border-top:1px solid #000;padding-top:4px;font-size:10pt;">${gestor_nome || "Líder"}</div>
         </div>
       </div>
     </div>
@@ -3810,15 +3783,22 @@ function Autorizacoes({ user, colaboradores }) {
     data_ocorrido: "", descricao_prejuizo: "", observacoes: "",
   };
 
-  const [lista, setLista]           = useState([]);
-  const [modalNovo, setModalNovo]   = useState(false);
-  const [form, setForm]             = useState(FORM_VAZIO);
+  const [lista, setLista]             = useState([]);
+  const [carregando, setCarregando]   = useState(true);
+  const [modalNovo, setModalNovo]     = useState(false);
+  const [form, setForm]               = useState(FORM_VAZIO);
   const [colaboradorSel, setColabSel] = useState(null);
-  const [buscaColab, setBuscaColab] = useState("");
-  const [sugestoes, setSugestoes]   = useState([]);
-  const [erro, setErro]             = useState("");
-  const [modalDoc, setModalDoc]     = useState(null); // solicitação para ver doc
-  const [modalAnexo, setModalAnexo] = useState(null); // solicitação para anexar
+  const [buscaColab, setBuscaColab]   = useState("");
+  const [sugestoes, setSugestoes]     = useState([]);
+  const [erro, setErro]               = useState("");
+  const [modalDoc, setModalDoc]       = useState(null);
+
+  useEffect(() => {
+    api.listarAutorizacoes()
+      .then(data => { if (Array.isArray(data)) setLista(data); })
+      .catch(() => {})
+      .finally(() => setCarregando(false));
+  }, []);
 
   const normalizar = (s) => (s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
   const buscaTimer = useRef(null);
@@ -3849,42 +3829,52 @@ function Autorizacoes({ user, colaboradores }) {
     return p > 0 ? (v / p).toFixed(2) : "0.00";
   };
 
-  const salvar = () => {
+  const salvar = async () => {
     if (!form.colaborador_id)   return setErro("Selecione um colaborador.");
     if (!form.valor_total || parseFloat(form.valor_total) <= 0) return setErro("Informe o valor total.");
     if (!form.num_parcelas || parseInt(form.num_parcelas) < 1)  return setErro("Informe o número de parcelas.");
     if (!form.data_ocorrido)    return setErro("Informe a data do ocorrido.");
     if (!form.descricao_prejuizo.trim()) return setErro("Informe a descrição do prejuízo.");
     setErro("");
-    const nova = {
-      id: Date.now(), ...form,
-      colaborador: colaboradorSel,
-      gestor_nome: user.nome,
-      status: "pendente",
-      criado_em: new Date().toISOString(),
-      anexo: null,
-    };
-    setLista(l => [nova, ...l]);
-    setModalNovo(false);
-    setForm(FORM_VAZIO);
-    setColabSel(null);
-    setBuscaColab("");
+    try {
+      const payload = {
+        ...form,
+        colaborador_nome: colaboradorSel?.nome,
+        colaborador_cpf:  colaboradorSel?.cpf,
+      };
+      const nova = await api.criarAutorizacao(payload);
+      setLista(l => [{ ...nova, colaborador: colaboradorSel, gestor_nome: user.nome }, ...l]);
+      setModalNovo(false);
+      setForm(FORM_VAZIO);
+      setColabSel(null);
+      setBuscaColab("");
+    } catch(e) { setErro(e.message || "Erro ao salvar"); }
   };
 
-  const anexar = (id, file) => {
+  const anexar = async (id, file) => {
+    if (file.size > 5*1024*1024) { alert("Arquivo muito grande (máx 5MB)"); return; }
     const reader = new FileReader();
-    reader.onload = (ev) => {
-      setLista(l => l.map(s => s.id === id
-        ? { ...s, anexo: { nome: file.name, dados: ev.target.result }, status: "anexado" }
-        : s
-      ));
+    reader.onload = async (ev) => {
+      try {
+        await api.addAnexoAutorizacao(id, { nome_arquivo: file.name, dados_base64: ev.target.result });
+        setLista(l => l.map(s => s.id === id ? { ...s, anexo_nome: file.name, status: "anexado" } : s));
+      } catch(e) { alert("Erro ao anexar: " + e.message); }
     };
     reader.readAsDataURL(file);
   };
 
+  const cancelar = async (id) => {
+    if (!window.confirm("Cancelar esta autorização?")) return;
+    try {
+      await api.cancelarAutorizacao(id);
+      setLista(l => l.map(s => s.id === id ? { ...s, status: "cancelado" } : s));
+    } catch(e) { alert("Erro: " + e.message); }
+  };
+
   const STATUS_CORES = {
-    pendente: { bg: "#FEF3C7", color: "#92400E", label: "Pendente" },
-    anexado:  { bg: "#D1FAE5", color: "#065F46", label: "Anexado"  },
+    pendente:  { bg: "#FEF3C7", color: "#92400E", label: "Pendente" },
+    anexado:   { bg: "#D1FAE5", color: "#065F46", label: "Anexado"  },
+    cancelado: { bg: "#F3F4F6", color: "#6B7280", label: "Cancelado"},
   };
 
   return (
@@ -3899,19 +3889,24 @@ function Autorizacoes({ user, colaboradores }) {
         )}
       </div>
 
-      {lista.length === 0 ? (
+      {carregando ? (
+        <div style={{ textAlign: "center", padding: 40, color: "#9CA3AF" }}>Carregando...</div>
+      ) : lista.length === 0 ? (
         <div style={{ textAlign: "center", padding: 60, color: "#9CA3AF" }}>
           <div style={{ fontSize: 40, marginBottom: 12 }}>📋</div>
           <div>Nenhuma autorização registrada</div>
         </div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {lista.map(s => {
+          {lista.filter(s => s.status !== "cancelado").map(s => {
             const st = STATUS_CORES[s.status] || STATUS_CORES.pendente;
+            const nomeColab = s.colaborador?.nome || s.colaborador_nome || "—";
+            const docData = { ...s, gestor_nome: s.gestor_nome };
+            const colabData = s.colaborador || { nome: s.colaborador_nome, cpf: s.colaborador_cpf };
             return (
               <div key={s.id} style={{ background: "#fff", border: "1px solid #E5E7EB", borderRadius: 12, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 700, fontSize: 15, color: "#111827" }}>{s.colaborador?.nome}</div>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: "#111827" }}>{nomeColab}</div>
                   <div style={{ fontSize: 12, color: "#6B7280", marginTop: 3 }}>
                     R$ {parseFloat(s.valor_total).toFixed(2).replace(".",",")} · {s.num_parcelas}x de R$ {(parseFloat(s.valor_total)/parseInt(s.num_parcelas)).toFixed(2).replace(".",",")} · Início: {MESES_AUTORIZACAO.find(m=>m.value===s.mes_inicio)?.label}/{s.ano_inicio}
                   </div>
@@ -3919,13 +3914,16 @@ function Autorizacoes({ user, colaboradores }) {
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <span style={{ padding: "3px 10px", borderRadius: 20, fontSize: 11, fontWeight: 600, background: st.bg, color: st.color }}>{st.label}</span>
-                  <button onClick={() => setModalDoc(s)} style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #D1D5DB", background: "#fff", fontSize: 13, cursor: "pointer", fontWeight: 600 }}>📄 Doc</button>
+                  <button onClick={() => setModalDoc({ ...docData, colaborador: colabData })} style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #D1D5DB", background: "#fff", fontSize: 13, cursor: "pointer", fontWeight: 600 }}>📄 Doc</button>
                   <label style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #10B981", background: "#F0FDF4", color: "#065F46", fontSize: 13, cursor: "pointer", fontWeight: 600 }}>
-                    📎 Anexar
+                    📎 {s.anexo_nome ? "Substituir" : "Anexar"}
                     <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display: "none" }}
                       onChange={e => { const f = e.target.files[0]; if (f) anexar(s.id, f); }} />
                   </label>
-                  {s.anexo && <span style={{ fontSize: 11, color: "#065F46" }}>✅ {s.anexo.nome}</span>}
+                  {s.anexo_nome && <span style={{ fontSize: 11, color: "#065F46" }}>✅ {s.anexo_nome}</span>}
+                  {["dp","admin"].includes(user.perfil) && (
+                    <button onClick={() => cancelar(s.id)} style={{ padding: "6px 12px", borderRadius: 8, border: "1px solid #EF4444", background: "#FEF2F2", color: "#DC2626", fontSize: 13, cursor: "pointer", fontWeight: 600 }}>🚫</button>
+                  )}
                 </div>
               </div>
             );
@@ -4028,12 +4026,12 @@ function Autorizacoes({ user, colaboradores }) {
       {modalDoc && (
         <Modal open={!!modalDoc} onClose={() => setModalDoc(null)} title="Autorização de Desconto" width={760}>
           <div style={{ maxHeight: "65vh", overflowY: "auto", border: "1px solid #E5E7EB", borderRadius: 8 }}
-            dangerouslySetInnerHTML={{ __html: gerarHTMLAutorizacao(modalDoc, modalDoc.colaborador) }}
+            dangerouslySetInnerHTML={{ __html: gerarHTMLAutorizacao(modalDoc, modalDoc.colaborador, LOGO_BENEL) }}
           />
           <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, paddingTop: 16, borderTop: "1px solid #F3F4F6", marginTop: 16 }}>
             <Button variant="secondary" onClick={() => setModalDoc(null)}>Fechar</Button>
             <Button onClick={() => {
-              const html = gerarHTMLAutorizacao(modalDoc, modalDoc.colaborador);
+              const html = gerarHTMLAutorizacao(modalDoc, modalDoc.colaborador, LOGO_BENEL);
               const janela = window.open("", "_blank");
               janela.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8">
                 <title>Autorização de Desconto</title>
