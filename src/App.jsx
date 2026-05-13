@@ -1476,25 +1476,28 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
               ))}
             </tr>
             <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
-              {[
-                <input value={fMatricula} onChange={e=>setFMatricula(e.target.value)} placeholder="🔍 Matrícula" />,
-                <input value={fNome}      onChange={e=>setFNome(e.target.value)}      placeholder="🔍 Nome" />,
-                <input value={fFuncao}    onChange={e=>setFuncao(e.target.value)}     placeholder="🔍 Função" />,
-                <input value={fSecao}     onChange={e=>setFSecao(e.target.value)}     placeholder="🔍 Seção" />,
-                <input value={fCpf}       onChange={e=>setFCpf(e.target.value)}       placeholder="🔍 CPF" />,
-                null,
-                null,
-                <select value={fSituacao} onChange={e=>setFSituacao(e.target.value)}>
-                  <option value="">Todos</option>
-                  <option value="Ativo">Ativo</option>
-                  <option value="Inativo">Inativo</option>
-                </select>,
-                <button onClick={()=>{setFMatricula("");setFNome("");setFuncao("");setFSecao("");setFCpf("");setFSituacao("");}}>✕ Limpar</button>
-              ].map((el, i) => (
-                <th key={i} style={{ padding: "5px 8px" }}>
-                  {el && React.cloneElement(el, { style: { width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" } })}
-                </th>
-              ))}
+              {(() => {
+                const inp = { style: { width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" } };
+                const sel = { style: { width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" } };
+                return (<>
+                  <th style={{ padding:"5px 8px" }}><input value={fMatricula} onChange={e=>setFMatricula(e.target.value)} placeholder="🔍 Matrícula" {...inp} /></th>
+                  <th style={{ padding:"5px 8px" }}><input value={fNome}      onChange={e=>setFNome(e.target.value)}      placeholder="🔍 Nome"      {...inp} /></th>
+                  <th style={{ padding:"5px 8px" }}><input value={fFuncao}    onChange={e=>setFuncao(e.target.value)}     placeholder="🔍 Função"    {...inp} /></th>
+                  <th style={{ padding:"5px 8px" }}><input value={fSecao}     onChange={e=>setFSecao(e.target.value)}     placeholder="🔍 Seção"     {...inp} /></th>
+                  <th style={{ padding:"5px 8px" }}><input value={fCpf}       onChange={e=>setFCpf(e.target.value)}       placeholder="🔍 CPF"       {...inp} /></th>
+                  <th style={{ padding:"5px 8px" }} />
+                  <th style={{ padding:"5px 8px" }} />
+                  <th style={{ padding:"5px 8px" }}>
+                    <select value={fSituacao} onChange={e=>setFSituacao(e.target.value)} {...sel}>
+                      <option value="">Todos</option><option value="Ativo">Ativo</option><option value="Inativo">Inativo</option>
+                    </select>
+                  </th>
+                  <th style={{ padding:"5px 8px" }}>
+                    <button onClick={()=>{setFMatricula("");setFNome("");setFuncao("");setFSecao("");setFCpf("");setFSituacao("");}}
+                      style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button>
+                  </th>
+                </>);
+              })()}
             </tr>
           </thead>
           <tbody>
