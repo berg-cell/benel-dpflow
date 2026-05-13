@@ -1351,6 +1351,8 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
   const [fFuncao,    setFuncao]     = useState("");
   const [fSecao,     setFSecao]     = useState("");
   const [fCpf,       setFCpf]       = useState("");
+  const [fAdmissao,  setFAdmissao]  = useState("");
+  const [fCC,        setFCC]        = useState("");
   const [fSituacao,  setFSituacao]  = useState("");
 
   const norm = s => (s||"").toLowerCase();
@@ -1365,9 +1367,11 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
     .filter(c => c.cod_situacao !== "D")
     .filter(c => !fMatricula || (c.chapa||"").includes(fMatricula))
     .filter(c => !fNome      || norm(c.nome).includes(norm(fNome)))
-    .filter(c => !fFuncao    || norm(c.funcao).includes(norm(fFuncao)))
+    .filter(c => !fFuncao    || norm(c.desc_funcao||c.funcao).includes(norm(fFuncao)))
     .filter(c => !fSecao     || norm(c.desc_cc).includes(norm(fSecao)))
     .filter(c => !fCpf       || (c.cpf||"").includes(fCpf))
+    .filter(c => !fAdmissao  || (c.data_admissao||"").includes(fAdmissao))
+    .filter(c => !fCC        || norm((c.centro_custo||"")+" "+(c.desc_cc||"")).includes(norm(fCC)))
     .filter(c => !fSituacao  || norm(c.situacao) === norm(fSituacao));
 
   const abrirNovo = () => { setForm({ chapa: "", nome: "", funcao: "", situacao: "Ativo", centro_custo: "", desc_cc: "", cpf: "", data_admissao: "" }); setModalForm("novo"); };
@@ -1485,15 +1489,15 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
                   <th style={{ padding:"5px 8px" }}><input value={fFuncao}    onChange={e=>setFuncao(e.target.value)}     placeholder="🔍 Função"    {...inp} /></th>
                   <th style={{ padding:"5px 8px" }}><input value={fSecao}     onChange={e=>setFSecao(e.target.value)}     placeholder="🔍 Seção"     {...inp} /></th>
                   <th style={{ padding:"5px 8px" }}><input value={fCpf}       onChange={e=>setFCpf(e.target.value)}       placeholder="🔍 CPF"       {...inp} /></th>
-                  <th style={{ padding:"5px 8px" }} />
-                  <th style={{ padding:"5px 8px" }} />
+                  <th style={{ padding:"5px 8px" }}><input value={fAdmissao}  onChange={e=>setFAdmissao(e.target.value)}  placeholder="🔍 Admissão"  {...inp} /></th>
+                  <th style={{ padding:"5px 8px" }}><input value={fCC}        onChange={e=>setFCC(e.target.value)}        placeholder="🔍 C. Custo"  {...inp} /></th>
                   <th style={{ padding:"5px 8px" }}>
                     <select value={fSituacao} onChange={e=>setFSituacao(e.target.value)} {...sel}>
                       <option value="">Todos</option><option value="Ativo">Ativo</option><option value="Inativo">Inativo</option>
                     </select>
                   </th>
                   <th style={{ padding:"5px 8px" }}>
-                    <button onClick={()=>{setFMatricula("");setFNome("");setFuncao("");setFSecao("");setFCpf("");setFSituacao("");}}
+                    <button onClick={()=>{setFMatricula("");setFNome("");setFuncao("");setFSecao("");setFCpf("");setFAdmissao("");setFCC("");setFSituacao("");}}
                       style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button>
                   </th>
                 </>);
@@ -1509,7 +1513,7 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
                   <span style={{ fontFamily: "monospace", fontSize: 12, fontWeight: 700, background: "#F3F4F6", padding: "2px 8px", borderRadius: 4 }}>{c.chapa}</span>
                 </td>
                 <td style={{ padding: "11px 16px", fontSize: 13, fontWeight: 600, color: "#111827" }}>{c.nome}</td>
-                <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{c.funcao || "—"}</td>
+                <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{c.desc_funcao || c.funcao || "—"}</td>
                 <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{c.desc_cc || "—"}</td>
                 <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151", fontFamily: "monospace" }}>{c.cpf || "—"}</td>
                 <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{c.data_admissao ? new Date(c.data_admissao.split("T")[0]).toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "—"}</td>
