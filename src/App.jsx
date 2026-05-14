@@ -5101,13 +5101,15 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
   const [fTipo,    setFTipo]    = useState("");
   const [fStatus2, setFStatus2] = useState("");
   const [fGestor2, setFGestor2] = useState("");
+  const [fDataD,   setFDataD]   = useState("");
   const norm2 = s => (s||"").toLowerCase();
 
   const listaFiltrada = lista
     .filter(s => !fColab   || norm2(s.colaborador_nome).includes(norm2(fColab)) || (s.chapa||"").includes(fColab))
     .filter(s => !fTipo    || s.tipo === fTipo)
     .filter(s => !fStatus2 || s.status === fStatus2)
-    .filter(s => !fGestor2 || norm2(s.gestor_nome).includes(norm2(fGestor2)));
+    .filter(s => !fGestor2 || norm2(s.gestor_nome).includes(norm2(fGestor2)))
+    .filter(s => !fDataD   || (s.data_desligamento||"").startsWith(fDataD));
 
   const podeAgir = (sol) => {
     if (!ALCADA_DESL[sol.status]?.includes(user.perfil)) return false;
@@ -5147,7 +5149,9 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                   {TIPOS_DESL.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
               </th>
-              <th style={{ padding:"5px 8px" }} />
+              <th style={{ padding:"5px 8px" }}>
+                <input type="date" value={fDataD} onChange={e=>setFDataD(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} />
+              </th>
               <th style={{ padding:"5px 8px" }}><input value={fGestor2} onChange={e=>setFGestor2(e.target.value)} placeholder="🔍 Solicitante" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
               <th style={{ padding:"5px 8px" }}>
                 <select value={fStatus2} onChange={e=>setFStatus2(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}>
@@ -5155,7 +5159,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                   {Object.entries(STATUS_DESL).map(([v,d]) => <option key={v} value={v}>{d.label}</option>)}
                 </select>
               </th>
-              <th style={{ padding:"5px 8px" }}><button onClick={()=>{setFColab("");setFTipo("");setFStatus2("");setFGestor2("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
+              <th style={{ padding:"5px 8px" }}><button onClick={()=>{setFColab("");setFTipo("");setFStatus2("");setFGestor2("");setFDataD("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
             </tr>
           </thead>
           <tbody>
