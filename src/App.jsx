@@ -4977,8 +4977,18 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
       const payload = { ...form };
       if (form.tipo === "aviso_trabalhado" && !form.data_aviso)
         payload.data_aviso = calcularDataAviso(form.data_desligamento);
+
       const r = await api.criarDesligamento(payload);
-      if (enviar) await api.enviarDesligamento(r.id || r.data?.id);
+      const id = r.id || r.data?.id;
+
+      // Pedido de demissão: envia e aprova automaticamente (não precisa de aprovação)
+      if (form.tipo === "pedido_demissao") {
+        await api.enviarDesligamento(id);
+        await api.aprovarDesligamento(id, "aprovar", "Aprovado automaticamente — pedido de demissão do colaborador");
+      } else if (enviar) {
+        await api.enviarDesligamento(id);
+      }
+
       await carregar();
       setModalNovo(false);
       setForm(FORM_VAZIO);
@@ -5308,13 +5318,19 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                 style={{ padding: "9px 20px", borderRadius: 8, border: "1px solid #E5E7EB", background: "#fff", fontSize: 14, cursor: "pointer" }}>
                 Cancelar
               </button>
-              <button onClick={() => salvar(false)} disabled={salvando}
-                style={{ padding: "9px 20px", borderRadius: 8, border: "1px solid #0F2447", background: "#fff", color: "#0F2447", fontSize: 14, cursor: "pointer", fontWeight: 600 }}>
-                {salvando ? "Salvando..." : "Salvar Rascunho"}
-              </button>
-              <button onClick={() => salvar(true)} disabled={salvando}
+              {form.tipo !== "pedido_demissao" && (
+                <button onClick={() => salvar(false)} disabled={salvando}
+                  style={{ padding: "9px 20px", borderRadius: 8, border: "1px solid #0F2447", background: "#fff", color: "#0F2447", fontSize: 14, cursor: "pointer", fontWeight: 600 }}>
+                  {salvando ? "Salvando..." : "Salvar Rascunho"}
+                </button>
+              )}
+              <button onClick={() => salvar(form.tipo !== "pedido_demissao")} disabled={salvando}
                 style={{ padding: "9px 20px", borderRadius: 8, border: "none", background: "#0F2447", color: "#fff", fontSize: 14, cursor: "pointer", fontWeight: 600 }}>
-                {salvando ? "Enviando..." : "Enviar para Aprovação"}
+                {salvando
+                  ? "Processando..."
+                  : form.tipo === "pedido_demissao"
+                  ? "Registrar Pedido de Demissão"
+                  : "Enviar para Aprovação"}
               </button>
             </div>
           </div>
@@ -5540,16 +5556,16 @@ function ModalPDFDesligamento({ sol, onClose }) {
                 O documento original deve ser anexado abaixo.
               </p>
             </div>
-            {sol.pedido_anexo_base64 ? (
+            {sol.pedido_anexo_dados || sol.pedido_anexo_base64 ? (
               <div style={{ textAlign: "center", marginBottom: 20 }}>
                 <div style={{ fontSize: 12, fontWeight: 700, color: "#374151", marginBottom: 8 }}>
                   📄 {sol.pedido_anexo_nome}
                 </div>
-                {sol.pedido_anexo_base64.startsWith("data:image") ? (
-                  <img src={sol.pedido_anexo_base64} alt="Pedido de Demissão"
+                {sol.pedido_anexo_dados || sol.pedido_anexo_base64.startsWith("data:image") ? (
+                  <img src={sol.pedido_anexo_dados || sol.pedido_anexo_base64} alt="Pedido de Demissão"
                     style={{ maxWidth: "100%", maxHeight: 500, border: "1px solid #E5E7EB", borderRadius: 8 }} />
                 ) : (
-                  <a href={sol.pedido_anexo_base64} download={sol.pedido_anexo_nome}
+                  <a href={sol.pedido_anexo_dados || sol.pedido_anexo_base64} download={sol.pedido_anexo_nome}
                     style={{ padding: "10px 20px", background: "#0F2447", color: "#fff", borderRadius: 8, fontSize: 13, fontWeight: 600, textDecoration: "none" }}>
                     ⬇ Baixar PDF anexado
                   </a>
