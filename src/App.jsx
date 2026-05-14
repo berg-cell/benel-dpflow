@@ -4485,7 +4485,9 @@ function Ocorrencias({ user, colaboradores }) {
               <tr><td colSpan={7} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Carregando...</td></tr>
             ) : listaFiltrada.length === 0 ? (
               <tr><td colSpan={7} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Nenhuma ocorrência encontrada</td></tr>
-            ) : listaFiltrada.map((oc, i) => (
+            ) : listaFiltrada.map((oc, i) => {
+              const btnBase = { padding:"5px 10px", borderRadius:6, fontSize:11, fontWeight:600, cursor:"pointer", whiteSpace:"nowrap", fontFamily:"inherit" };
+              return (
               <tr key={oc.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
                 <td style={{ padding: "10px 14px" }}>
                   <div style={{ fontSize: 12, fontWeight: 600, color: "#111827" }}>{oc.nome_colaborador}</div>
@@ -4493,7 +4495,7 @@ function Ocorrencias({ user, colaboradores }) {
                 </td>
                 <td style={{ padding: "10px 14px" }}>
                   <span style={{
-                    padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 700,
+                    padding: "3px 8px", borderRadius: 6, fontSize: 11, fontWeight: 600,
                     background: oc.tipo === "ADVERTENCIA" ? "#FEF3C7" : "#FEE2E2",
                     color: oc.tipo === "ADVERTENCIA" ? "#92400E" : "#991B1B"
                   }}>
@@ -4509,35 +4511,38 @@ function Ocorrencias({ user, colaboradores }) {
                 <td style={{ padding: "10px 14px", fontSize: 12, color: "#374151" }}>{oc.gestor_nome}</td>
                 <td style={{ padding: "10px 14px" }}>
                   <span style={{
-                    padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600,
+                    padding: "3px 8px", borderRadius: 6, fontSize: 11, fontWeight: 600,
                     background: oc.status === "ATIVO" ? "#D1FAE5" : oc.status === "EXPORTADO" ? "#DBEAFE" : "#FEE2E2",
                     color: oc.status === "ATIVO" ? "#065F46" : oc.status === "EXPORTADO" ? "#1D4ED8" : "#991B1B"
                   }}>{oc.status}</span>
                 </td>
-                <td style={{ padding: "10px 14px", display: "flex", gap: 6 }}>
-                  <Button variant="ghost" size="sm" onClick={() => gerarPDF(oc)}>📄 PDF</Button>
-                  <label style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "5px 10px", borderRadius: 8, border: "1px solid #10B981", background: "#F0FDF4", color: "#065F46", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
-                    📎 Anexar
-                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display: "none" }}
-                      onChange={async (e) => {
-                        const file = e.target.files[0]; if (!file) return;
-                        if (file.size > 5*1024*1024) { alert("Arquivo muito grande (max 5MB)"); return; }
-                        const reader = new FileReader();
-                        reader.onload = async (ev) => {
-                          try {
-                            await api.addAnexoOcorrencia(oc.id, { nome_arquivo: file.name, tipo_arquivo: file.type, dados_base64: ev.target.result });
-                            alert("Anexo adicionado com sucesso!");
-                          } catch(err) { alert(err.message); }
-                        };
-                        reader.readAsDataURL(file);
-                      }} />
-                  </label>
-                  {oc.status === "ATIVO" && (
-                    <Button variant="danger" size="sm" onClick={() => cancelarOcorrencia(oc.id)}>Cancelar</Button>
-                  )}
+                <td style={{ padding: "10px 14px" }}>
+                  <div style={{ display:"flex", gap:4, alignItems:"center", flexWrap:"nowrap" }}>
+                    <button onClick={() => gerarPDF(oc)} style={{ ...btnBase, border:"1px solid #D1D5DB", background:"#fff", color:"#374151" }}>📄 PDF</button>
+                    <label style={{ ...btnBase, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46", display:"inline-block" }}>
+                      📎 Anexar
+                      <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display:"none" }}
+                        onChange={async (e) => {
+                          const file = e.target.files[0]; if (!file) return;
+                          if (file.size > 5*1024*1024) { alert("Arquivo muito grande (max 5MB)"); return; }
+                          const reader = new FileReader();
+                          reader.onload = async (ev) => {
+                            try {
+                              await api.addAnexoOcorrencia(oc.id, { nome_arquivo: file.name, tipo_arquivo: file.type, dados_base64: ev.target.result });
+                              alert("Anexo adicionado com sucesso!");
+                            } catch(err) { alert(err.message); }
+                          };
+                          reader.readAsDataURL(file);
+                        }} />
+                    </label>
+                    {oc.status === "ATIVO" && (
+                      <button onClick={() => cancelarOcorrencia(oc.id)} style={{ ...btnBase, border:"1px solid #EF4444", background:"#FEF2F2", color:"#DC2626" }}>🚫</button>
+                    )}
+                  </div>
                 </td>
               </tr>
-            ))}
+              );
+            })}
           </tbody>
         </table>
       </Card>
