@@ -5087,11 +5087,19 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                   style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #E5E7EB", background: "#fff", fontSize: 13, cursor: "pointer" }}>
                   Ver
                 </button>
-                <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalPDF(r); } catch(e){ setErro(e.message); } }}
-                  style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #6B7280", background: "#fff", fontSize: 13, cursor: "pointer" }}>
-                  📄 Doc
-                </button>
-                {podeAgir(sol) && (
+                {sol.tipo !== "pedido_demissao" && (
+                  <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalPDF(r); } catch(e){ setErro(e.message); } }}
+                    style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #6B7280", background: "#fff", fontSize: 13, cursor: "pointer" }}>
+                    📄 Doc
+                  </button>
+                )}
+                {sol.tipo === "pedido_demissao" && (sol.pedido_anexo_dados || sol.pedido_anexo_nome) && (
+                  <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalPDF(r); } catch(e){ setErro(e.message); } }}
+                    style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #10B981", background: "#F0FDF4", color: "#065F46", fontSize: 13, cursor: "pointer", fontWeight: 600 }}>
+                    📎 Ver Anexo
+                  </button>
+                )}
+                {podeAgir(sol) && sol.tipo !== "pedido_demissao" && (
                   <button onClick={() => setModalAcao({ id: sol.id, status: sol.status, acao: "aprovar", observacao: "" })}
                     style={{ padding: "6px 14px", borderRadius: 8, border: "none", background: "#0F2447", color: "#fff", fontSize: 13, cursor: "pointer", fontWeight: 600 }}>
                     Analisar
