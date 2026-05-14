@@ -4305,13 +4305,17 @@ function Ocorrencias({ user, colaboradores }) {
   const [fTipo,   setFTipo]   = useState("");
   const [fGestor, setFGestor] = useState("");
   const [fStatus, setFStatus] = useState("");
+  const [fDataIni, setFDataIni] = useState("");
+  const [fDataFim, setFDataFim] = useState("");
   const norm = s => (s||"").toLowerCase();
 
   const listaFiltrada = lista
-    .filter(o => !fColab  || norm(o.nome_colaborador).includes(norm(fColab)) || (o.chapa||"").includes(fColab))
-    .filter(o => !fTipo   || o.tipo === fTipo)
-    .filter(o => !fGestor || norm(o.gestor_nome).includes(norm(fGestor)))
-    .filter(o => !fStatus || o.status === fStatus);
+    .filter(o => !fColab   || norm(o.nome_colaborador).includes(norm(fColab)) || (o.chapa||"").includes(fColab))
+    .filter(o => !fTipo    || o.tipo === fTipo)
+    .filter(o => !fGestor  || norm(o.gestor_nome).includes(norm(fGestor)))
+    .filter(o => !fStatus  || o.status === fStatus)
+    .filter(o => !fDataIni || (o.data_ocorrencia||"") >= fDataIni)
+    .filter(o => !fDataFim || (o.data_ocorrencia||"") <= fDataFim);
 
   const carregarOcorrencias = async () => {
     setLoading(true);
@@ -4464,11 +4468,16 @@ function Ocorrencias({ user, colaboradores }) {
             <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
               <th style={{ padding:"5px 8px" }}><input value={fColab} onChange={e=>setFColab(e.target.value)} placeholder="🔍 Colaborador/Chapa" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
               <th style={{ padding:"5px 8px" }}><select value={fTipo} onChange={e=>setFTipo(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ADVERTENCIA">Advertência</option><option value="SUSPENSAO">Suspensão</option></select></th>
-              <th style={{ padding:"5px 8px" }} />
+              <th style={{ padding:"5px 8px" }}>
+                <div style={{ display:"flex", gap:3 }}>
+                  <input type="date" value={fDataIni} onChange={e=>setFDataIni(e.target.value)} title="Data início" style={{ width:"50%", padding:"5px 4px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:10, fontFamily:"inherit", boxSizing:"border-box" }} />
+                  <input type="date" value={fDataFim} onChange={e=>setFDataFim(e.target.value)} title="Data fim" style={{ width:"50%", padding:"5px 4px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:10, fontFamily:"inherit", boxSizing:"border-box" }} />
+                </div>
+              </th>
               <th style={{ padding:"5px 8px" }} />
               <th style={{ padding:"5px 8px" }}><input value={fGestor} onChange={e=>setFGestor(e.target.value)} placeholder="🔍 Gestor" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
               <th style={{ padding:"5px 8px" }}><select value={fStatus} onChange={e=>setFStatus(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ATIVO">Ativo</option><option value="EXPORTADO">Exportado</option><option value="CANCELADO">Cancelado</option></select></th>
-              <th style={{ padding:"5px 8px" }}><button onClick={()=>{setFColab("");setFTipo("");setFGestor("");setFStatus("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
+              <th style={{ padding:"5px 8px" }}><button onClick={()=>{setFColab("");setFTipo("");setFGestor("");setFStatus("");setFDataIni("");setFDataFim("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
             </tr>
           </thead>
           <tbody>
@@ -5158,6 +5167,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
             ) : listaFiltrada.map((sol, i) => {
               const st = STATUS_DESL[sol.status] || STATUS_DESL.rascunho;
               const tipo = TIPOS_DESL.find(t => t.value === sol.tipo);
+              const btnBase = { padding:"5px 10px", borderRadius:6, fontSize:11, fontWeight:600, cursor:"pointer", whiteSpace:"nowrap", fontFamily:"inherit" };
               return (
                 <tr key={sol.id} style={{ borderTop:"1px solid #F3F4F6", background: i%2===0?"#fff":"#FAFAFA" }}>
                   <td style={{ padding:"10px 14px" }}>
@@ -5168,68 +5178,52 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                   <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>{sol.data_desligamento ? new Date(sol.data_desligamento).toLocaleDateString("pt-BR") : "—"}</td>
                   <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>{sol.gestor_nome}</td>
                   <td style={{ padding:"10px 14px" }}>
-                    <span style={{ background: st.color+"22", color: st.color, borderRadius:6, padding:"2px 8px", fontSize:12, fontWeight:600 }}>{st.label}</span>
+                    <span style={{ background: st.color+"22", color: st.color, borderRadius:6, padding:"3px 8px", fontSize:11, fontWeight:600 }}>{st.label}</span>
                   </td>
                   <td style={{ padding:"10px 14px" }}>
-                    <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
-                <button onClick={() => abrirDetalhe(sol.id)}
-                  style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #E5E7EB", background: "#fff", fontSize: 13, cursor: "pointer" }}>
-                  Ver
-                </button>
-                {sol.tipo !== "pedido_demissao" && (
-                  <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalPDF(r); } catch(e){ setErro(e.message); } }}
-                    style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #6B7280", background: "#fff", fontSize: 13, cursor: "pointer" }}>
-                    📄 Doc
-                  </button>
-                )}
-                {sol.tipo === "pedido_demissao" && (
-                  <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalAnexoPedido(r); } catch(e){ setErro(e.message); } }}
-                    style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #10B981", background: "#F0FDF4", color: "#065F46", fontSize: 13, cursor: "pointer", fontWeight: 600 }}>
-                    📎 Ver Anexo
-                  </button>
-                )}
-                {podeAgir(sol) && sol.tipo !== "pedido_demissao" && (
-                  <button onClick={() => setModalAcao({ id: sol.id, status: sol.status, acao: "aprovar", observacao: "" })}
-                    style={{ padding: "6px 14px", borderRadius: 8, border: "none", background: "#0F2447", color: "#fff", fontSize: 13, cursor: "pointer", fontWeight: 600 }}>
-                    Analisar
-                  </button>
-                )}
-                {sol.status === "rascunho" && sol.gestor_id === user.id && (
-                  <button onClick={async () => { try { await api.enviarDesligamento(sol.id); await carregar(); } catch(e){setErro(e.message);} }}
-                    style={{ padding: "6px 14px", borderRadius: 8, border: "none", background: "#10B981", color: "#fff", fontSize: 13, cursor: "pointer", fontWeight: 600 }}>
-                    Enviar
-                  </button>
-                )}
-                {["aprovado","finalizado"].includes(sol.status) && sol.tipo !== "pedido_demissao" && (
-                  <label style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #10B981", background: "#F0FDF4", color: "#065F46", fontSize: 13, cursor: "pointer", fontWeight: 600 }}>
-                    📎 Anexar
-                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display: "none" }}
-                      onChange={async (e) => {
-                        const file = e.target.files[0]; if (!file) return;
-                        if (file.size > 5*1024*1024) { setErro("Arquivo muito grande (max 5MB)"); return; }
-                        const reader = new FileReader();
-                        reader.onload = async (ev) => {
-                          try {
-                            await api.post("/desligamentos/"+sol.id+"/anexos", { nome_arquivo: file.name, tipo_arquivo: file.type, dados_base64: ev.target.result });
-                            alert("Anexo adicionado com sucesso!"); setErro("");
-                          } catch(err) { setErro(err.message); }
-                        };
-                        reader.readAsDataURL(file);
-                      }} />
-                  </label>
-                )}
-                {["admin","dp"].includes(user.perfil) && !["cancelado","finalizado"].includes(sol.status) && (
-                  <button onClick={async () => {
-                    if (!window.confirm(`Cancelar a solicitação de desligamento de ${sol.colaborador_nome}?\n\nEsta ação não pode ser desfeita.`)) return;
-                    try {
-                      await api.cancelarDesligamento(sol.id);
-                      await carregar();
-                    } catch(e) { setErro(e.message); }
-                  }}
-                    style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #EF4444", background: "#FEF2F2", color: "#DC2626", fontSize: 13, cursor: "pointer", fontWeight: 600 }}>
-                    🚫 Cancelar
-                  </button>
-                )}
+                    <div style={{ display:"flex", gap:4, flexWrap:"nowrap", alignItems:"center" }}>
+                      <button onClick={() => abrirDetalhe(sol.id)} style={{ ...btnBase, border:"1px solid #E5E7EB", background:"#fff", color:"#374151" }}>Ver</button>
+
+                      {sol.tipo !== "pedido_demissao" && (
+                        <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalPDF(r); } catch(e){ setErro(e.message); } }}
+                          style={{ ...btnBase, border:"1px solid #D1D5DB", background:"#fff", color:"#374151" }}>📄 Doc</button>
+                      )}
+                      {sol.tipo === "pedido_demissao" && (
+                        <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalAnexoPedido(r); } catch(e){ setErro(e.message); } }}
+                          style={{ ...btnBase, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46" }}>📎 Anexo</button>
+                      )}
+                      {podeAgir(sol) && sol.tipo !== "pedido_demissao" && (
+                        <button onClick={() => setModalAcao({ id: sol.id, status: sol.status, acao: "aprovar", observacao: "" })}
+                          style={{ ...btnBase, border:"none", background:"#0F2447", color:"#fff" }}>Analisar</button>
+                      )}
+                      {sol.status === "rascunho" && sol.gestor_id === user.id && (
+                        <button onClick={async () => { try { await api.enviarDesligamento(sol.id); await carregar(); } catch(e){setErro(e.message);} }}
+                          style={{ ...btnBase, border:"none", background:"#10B981", color:"#fff" }}>Enviar</button>
+                      )}
+                      {["aprovado","finalizado"].includes(sol.status) && sol.tipo !== "pedido_demissao" && (
+                        <label style={{ ...btnBase, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46", display:"inline-block" }}>
+                          📎 Anexar
+                          <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display:"none" }}
+                            onChange={async (e) => {
+                              const file = e.target.files[0]; if (!file) return;
+                              if (file.size > 5*1024*1024) { setErro("Arquivo muito grande (max 5MB)"); return; }
+                              const reader = new FileReader();
+                              reader.onload = async (ev) => {
+                                try {
+                                  await api.post("/desligamentos/"+sol.id+"/anexos", { nome_arquivo: file.name, tipo_arquivo: file.type, dados_base64: ev.target.result });
+                                  alert("Anexo adicionado com sucesso!"); setErro("");
+                                } catch(err) { setErro(err.message); }
+                              };
+                              reader.readAsDataURL(file);
+                            }} />
+                        </label>
+                      )}
+                      {["admin","dp"].includes(user.perfil) && !["cancelado","finalizado"].includes(sol.status) && (
+                        <button onClick={async () => {
+                          if (!window.confirm(`Cancelar a solicitação de desligamento de ${sol.colaborador_nome}?\n\nEsta ação não pode ser desfeita.`)) return;
+                          try { await api.cancelarDesligamento(sol.id); await carregar(); } catch(e) { setErro(e.message); }
+                        }} style={{ ...btnBase, border:"1px solid #EF4444", background:"#FEF2F2", color:"#DC2626" }}>🚫</button>
+                      )}
                     </div>
                   </td>
                 </tr>
