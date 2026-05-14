@@ -4148,8 +4148,8 @@ function Autorizacoes({ user, colaboradores }) {
               </div>
             )}
             {colaboradorSel && (
-              <div style={{ marginTop: 6, padding: "8px 12px", background: "#F0FDF4", borderRadius: 8, fontSize: 12, color: "#166534" }}>
-                ✅ <b>{colaboradorSel.nome}</b> · CPF: {colaboradorSel.cpf || "—"} · Matrícula: {colaboradorSel.chapa}
+              <div style={{ marginTop: 6, padding: "8px 12px", background: "#F0FDF4", borderRadius: 8, fontSize: 12, color: "#166534", border: "1px solid #BBF7D0" }}>
+                ✅ <b>{colaboradorSel.nome}</b> · {colaboradorSel.descricao_filial || colaboradorSel.desc_cc || "—"} · Matrícula: {colaboradorSel.chapa} · Função: {colaboradorSel.desc_funcao || colaboradorSel.funcao || "—"} · CC: {colaboradorSel.centro_custo} — {colaboradorSel.desc_cc} · CPF: {colaboradorSel.cpf || "—"}
               </div>
             )}
           </div>
@@ -4273,8 +4273,11 @@ function Ocorrencias({ user, colaboradores }) {
 
   useEffect(() => { carregarOcorrencias(); }, []);
 
+  const [colabSel, setColabSel] = useState(null);
+
   const selecionarColaborador = (colab) => {
     const admissao = colab.data_admissao || colab.admissao || "";
+    setColabSel(colab);
     setForm(f => ({
       ...f,
       colaborador_id: colab.id,
@@ -4494,6 +4497,11 @@ function Ocorrencias({ user, colaboradores }) {
           <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
             <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Colaborador *</label>
             <ColabSelect colaboradores={colaboradores} onSelect={selecionarColaborador} selecionado={form.nome_colaborador} />
+            {colabSel && (
+              <div style={{ marginTop: 4, padding: "8px 12px", background: "#F0FDF4", borderRadius: 8, fontSize: 12, color: "#166534", border: "1px solid #BBF7D0" }}>
+                ✅ <b>{colabSel.nome}</b> · {colabSel.descricao_filial || colabSel.desc_cc || "—"} · Matrícula: {colabSel.chapa} · Função: {colabSel.desc_funcao || colabSel.funcao || "—"} · CC: {colabSel.centro_custo} — {colabSel.desc_cc}
+              </div>
+            )}
           </div>
 
           {/* Campos adicionais */}
