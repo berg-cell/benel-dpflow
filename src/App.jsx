@@ -483,12 +483,11 @@ const MOCK_SOLICITACOES_INIT = [
 ];
 
 // ─── UTILITÁRIOS ─────────────────────────────────────────────────────────────
-// Converte data do banco (UTC) para string local YYYY-MM-DD sem problema de fuso
+// Converte data do banco para YYYY-MM-DD usando UTC (sem conversão de fuso)
 function fmtDateLocal(val) {
   if (!val) return "";
   const d = new Date(val);
-  const local = new Date(d.getTime() + d.getTimezoneOffset() * -60000);
-  return local.toISOString().slice(0, 10);
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,"0")}-${String(d.getUTCDate()).padStart(2,"0")}`;
 }
 
 const STATUS_CONFIG = {
@@ -1430,7 +1429,7 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
     .filter(c => !fFuncao    || norm(c.desc_funcao||c.funcao).includes(norm(fFuncao)))
     .filter(c => !fSecao     || norm(c.desc_cc).includes(norm(fSecao)))
     .filter(c => !fCpf       || (c.cpf||"").includes(fCpf))
-    .filter(c => !fAdmissao  || fmtDateLocal(c.data_admissao).includes(fAdmissao))
+    .filter(c => !fAdmissao  || fmtDateLocal(c.data_admissao) === fAdmissao)
     .filter(c => !fCC        || norm((c.centro_custo||"")+" "+(c.desc_cc||"")).includes(norm(fCC)))
     .filter(c => !fSituacao  || norm(c.situacao) === norm(fSituacao));
 
@@ -1547,7 +1546,7 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
                   <th style={{ padding:"5px 8px" }}><input value={fFuncao}    onChange={e=>setFuncao(e.target.value)}     placeholder="🔍 Função"    {...inp} /></th>
                   <th style={{ padding:"5px 8px" }}><input value={fSecao}     onChange={e=>setFSecao(e.target.value)}     placeholder="🔍 Seção"     {...inp} /></th>
                   <th style={{ padding:"5px 8px" }}><input value={fCpf}       onChange={e=>setFCpf(e.target.value)}       placeholder="🔍 CPF"       {...inp} /></th>
-                  <th style={{ padding:"5px 8px" }}><input value={fAdmissao}  onChange={e=>setFAdmissao(e.target.value)}  placeholder="🔍 Admissão"  {...inp} /></th>
+                  <th style={{ padding:"5px 8px" }}><input type="date" value={fAdmissao} onChange={e=>setFAdmissao(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
                   <th style={{ padding:"5px 8px" }}><input value={fCC}        onChange={e=>setFCC(e.target.value)}        placeholder="🔍 C. Custo"  {...inp} /></th>
                   <th style={{ padding:"5px 8px" }}>
                     <select value={fSituacao} onChange={e=>setFSituacao(e.target.value)} {...sel}>
@@ -5187,7 +5186,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                     <div style={{ fontSize:11, color:"#6B7280" }}>Chapa: {sol.chapa}</div>
                   </td>
                   <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>{tipo?.label || sol.tipo}</td>
-                  <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>{sol.data_desligamento ? new Date(sol.data_desligamento).toLocaleDateString("pt-BR") : "—"}</td>
+                  <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>{sol.data_desligamento ? new Date(sol.data_desligamento).toLocaleDateString("pt-BR", { timeZone:"UTC" }) : "—"}</td>
                   <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>{sol.gestor_nome}</td>
                   <td style={{ padding:"10px 14px" }}>
                     <span style={{ background: st.color+"22", color: st.color, borderRadius:6, padding:"3px 8px", fontSize:11, fontWeight:600 }}>{st.label}</span>
