@@ -4881,11 +4881,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     setCarregando(true);
     try {
       const r = await api.listarDesligamentos("");
-      const dados = Array.isArray(r) ? r : (r.data || []);
-      if (dados.length > 0) {
-        console.log("DEBUG data_desligamento:", dados[0].data_desligamento, typeof dados[0].data_desligamento);
-      }
-      setLista(dados);
+      setLista(Array.isArray(r) ? r : (r.data || []));
     } catch (e) { setErro(e.message); }
     finally { setCarregando(false); }
   };
@@ -5117,12 +5113,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     .filter(s => !fTipo    || s.tipo === fTipo)
     .filter(s => !fStatus2 || s.status === fStatus2)
     .filter(s => !fGestor2 || norm2(s.gestor_nome).includes(norm2(fGestor2)))
-    .filter(s => !fDataD || (() => {
-      if (!s.data_desligamento) return false;
-      const d = new Date(s.data_desligamento + "T12:00:00");
-      const iso = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-      return iso === fDataD;
-    })());
+    .filter(s => !fDataD || (s.data_desligamento||"").slice(0,10) === fDataD);
 
   const podeAgir = (sol) => {
     if (!ALCADA_DESL[sol.status]?.includes(user.perfil)) return false;
