@@ -4881,7 +4881,11 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     setCarregando(true);
     try {
       const r = await api.listarDesligamentos("");
-      setLista(Array.isArray(r) ? r : (r.data || []));
+      const dados = Array.isArray(r) ? r : (r.data || []);
+      if (dados.length > 0) {
+        console.log("DEBUG data_desligamento:", dados[0].data_desligamento, typeof dados[0].data_desligamento);
+      }
+      setLista(dados);
     } catch (e) { setErro(e.message); }
     finally { setCarregando(false); }
   };
