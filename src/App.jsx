@@ -4313,7 +4313,12 @@ function Ocorrencias({ user, colaboradores }) {
     .filter(o => !fTipo   || o.tipo === fTipo)
     .filter(o => !fGestor || norm(o.gestor_nome).includes(norm(fGestor)))
     .filter(o => !fStatus || o.status === fStatus)
-    .filter(o => !fData   || (o.data_ocorrencia||"").slice(0,10) === fData);
+    .filter(o => !fData || (() => {
+      if (!o.data_ocorrencia) return false;
+      const d = new Date(o.data_ocorrencia);
+      const iso = `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,"0")}-${String(d.getUTCDate()).padStart(2,"0")}`;
+      return iso === fData;
+    })());
 
   const carregarOcorrencias = async () => {
     setLoading(true);
@@ -5109,7 +5114,12 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     .filter(s => !fTipo    || s.tipo === fTipo)
     .filter(s => !fStatus2 || s.status === fStatus2)
     .filter(s => !fGestor2 || norm2(s.gestor_nome).includes(norm2(fGestor2)))
-    .filter(s => !fDataD   || (s.data_desligamento||"").slice(0,10) === fDataD);
+    .filter(s => !fDataD || (() => {
+      if (!s.data_desligamento) return false;
+      const d = new Date(s.data_desligamento + "T12:00:00");
+      const iso = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+      return iso === fDataD;
+    })());
 
   const podeAgir = (sol) => {
     if (!ALCADA_DESL[sol.status]?.includes(user.perfil)) return false;
