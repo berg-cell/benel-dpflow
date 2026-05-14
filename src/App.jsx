@@ -4260,6 +4260,19 @@ function Ocorrencias({ user, colaboradores }) {
   const [exportando, setExportando] = useState(false);
   const [msg, setMsg] = useState(null);
 
+  // Filtros inline da tabela
+  const [fColab,  setFColab]  = useState("");
+  const [fTipo,   setFTipo]   = useState("");
+  const [fGestor, setFGestor] = useState("");
+  const [fStatus, setFStatus] = useState("");
+  const norm = s => (s||"").toLowerCase();
+
+  const listaFiltrada = lista
+    .filter(o => !fColab  || norm(o.nome_colaborador).includes(norm(fColab)) || (o.chapa||"").includes(fColab))
+    .filter(o => !fTipo   || o.tipo === fTipo)
+    .filter(o => !fGestor || norm(o.gestor_nome).includes(norm(fGestor)))
+    .filter(o => !fStatus || o.status === fStatus);
+
   const carregarOcorrencias = async () => {
     setLoading(true);
     try {
@@ -4408,13 +4421,22 @@ function Ocorrencias({ user, colaboradores }) {
                 <th key={h} style={{ padding: "10px 14px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
+            <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
+              <th style={{ padding:"5px 8px" }}><input value={fColab} onChange={e=>setFColab(e.target.value)} placeholder="🔍 Colaborador/Chapa" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding:"5px 8px" }}><select value={fTipo} onChange={e=>setFTipo(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ADVERTENCIA">Advertência</option><option value="SUSPENSAO">Suspensão</option></select></th>
+              <th style={{ padding:"5px 8px" }} />
+              <th style={{ padding:"5px 8px" }} />
+              <th style={{ padding:"5px 8px" }}><input value={fGestor} onChange={e=>setFGestor(e.target.value)} placeholder="🔍 Gestor" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding:"5px 8px" }}><select value={fStatus} onChange={e=>setFStatus(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ATIVO">Ativo</option><option value="EXPORTADO">Exportado</option><option value="CANCELADO">Cancelado</option></select></th>
+              <th style={{ padding:"5px 8px" }}><button onClick={()=>{setFColab("");setFTipo("");setFGestor("");setFStatus("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
+            </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr><td colSpan={7} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Carregando...</td></tr>
-            ) : lista.length === 0 ? (
-              <tr><td colSpan={7} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Nenhuma ocorrência registrada</td></tr>
-            ) : lista.map((oc, i) => (
+            ) : listaFiltrada.length === 0 ? (
+              <tr><td colSpan={7} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Nenhuma ocorrência encontrada</td></tr>
+            ) : listaFiltrada.map((oc, i) => (
               <tr key={oc.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
                 <td style={{ padding: "10px 14px" }}>
                   <div style={{ fontSize: 12, fontWeight: 600, color: "#111827" }}>{oc.nome_colaborador}</div>
