@@ -5113,7 +5113,14 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     .filter(s => !fTipo    || s.tipo === fTipo)
     .filter(s => !fStatus2 || s.status === fStatus2)
     .filter(s => !fGestor2 || norm2(s.gestor_nome).includes(norm2(fGestor2)))
-    .filter(s => !fDataD || (s.data_desligamento||"").slice(0,10) === fDataD);
+    .filter(s => !fDataD || (() => {
+      if (!s.data_desligamento) return false;
+      const d = new Date(s.data_desligamento);
+      // Compensar UTC: adiciona offset local para pegar a data correta
+      const local = new Date(d.getTime() + d.getTimezoneOffset() * -60000);
+      const iso = local.toISOString().slice(0,10);
+      return iso === fDataD;
+    })());
 
   const podeAgir = (sol) => {
     if (!ALCADA_DESL[sol.status]?.includes(user.perfil)) return false;
