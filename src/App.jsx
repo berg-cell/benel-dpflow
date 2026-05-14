@@ -4313,7 +4313,7 @@ function Ocorrencias({ user, colaboradores }) {
     .filter(o => !fTipo   || o.tipo === fTipo)
     .filter(o => !fGestor || norm(o.gestor_nome).includes(norm(fGestor)))
     .filter(o => !fStatus || o.status === fStatus)
-    .filter(o => !fData   || (o.data_ocorrencia||"").startsWith(fData));
+    .filter(o => !fData   || (o.data_ocorrencia||"").slice(0,10) === fData);
 
   const carregarOcorrencias = async () => {
     setLoading(true);
@@ -5109,7 +5109,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     .filter(s => !fTipo    || s.tipo === fTipo)
     .filter(s => !fStatus2 || s.status === fStatus2)
     .filter(s => !fGestor2 || norm2(s.gestor_nome).includes(norm2(fGestor2)))
-    .filter(s => !fDataD   || (s.data_desligamento||"").startsWith(fDataD));
+    .filter(s => !fDataD   || (s.data_desligamento||"").slice(0,10) === fDataD);
 
   const podeAgir = (sol) => {
     if (!ALCADA_DESL[sol.status]?.includes(user.perfil)) return false;
