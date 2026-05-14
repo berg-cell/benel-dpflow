@@ -4305,17 +4305,13 @@ function Ocorrencias({ user, colaboradores }) {
   const [fTipo,   setFTipo]   = useState("");
   const [fGestor, setFGestor] = useState("");
   const [fStatus, setFStatus] = useState("");
-  const [fDataIni, setFDataIni] = useState("");
-  const [fDataFim, setFDataFim] = useState("");
   const norm = s => (s||"").toLowerCase();
 
   const listaFiltrada = lista
-    .filter(o => !fColab   || norm(o.nome_colaborador).includes(norm(fColab)) || (o.chapa||"").includes(fColab))
-    .filter(o => !fTipo    || o.tipo === fTipo)
-    .filter(o => !fGestor  || norm(o.gestor_nome).includes(norm(fGestor)))
-    .filter(o => !fStatus  || o.status === fStatus)
-    .filter(o => !fDataIni || (o.data_ocorrencia||"") >= fDataIni)
-    .filter(o => !fDataFim || (o.data_ocorrencia||"") <= fDataFim);
+    .filter(o => !fColab  || norm(o.nome_colaborador).includes(norm(fColab)) || (o.chapa||"").includes(fColab))
+    .filter(o => !fTipo   || o.tipo === fTipo)
+    .filter(o => !fGestor || norm(o.gestor_nome).includes(norm(fGestor)))
+    .filter(o => !fStatus || o.status === fStatus);
 
   const carregarOcorrencias = async () => {
     setLoading(true);
@@ -4468,16 +4464,11 @@ function Ocorrencias({ user, colaboradores }) {
             <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
               <th style={{ padding:"5px 8px" }}><input value={fColab} onChange={e=>setFColab(e.target.value)} placeholder="🔍 Colaborador/Chapa" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
               <th style={{ padding:"5px 8px" }}><select value={fTipo} onChange={e=>setFTipo(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ADVERTENCIA">Advertência</option><option value="SUSPENSAO">Suspensão</option></select></th>
-              <th style={{ padding:"5px 8px" }}>
-                <div style={{ display:"flex", gap:3 }}>
-                  <input type="date" value={fDataIni} onChange={e=>setFDataIni(e.target.value)} title="Data início" style={{ width:"50%", padding:"5px 4px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:10, fontFamily:"inherit", boxSizing:"border-box" }} />
-                  <input type="date" value={fDataFim} onChange={e=>setFDataFim(e.target.value)} title="Data fim" style={{ width:"50%", padding:"5px 4px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:10, fontFamily:"inherit", boxSizing:"border-box" }} />
-                </div>
-              </th>
+              <th style={{ padding:"5px 8px" }} />
               <th style={{ padding:"5px 8px" }} />
               <th style={{ padding:"5px 8px" }}><input value={fGestor} onChange={e=>setFGestor(e.target.value)} placeholder="🔍 Gestor" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
               <th style={{ padding:"5px 8px" }}><select value={fStatus} onChange={e=>setFStatus(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ATIVO">Ativo</option><option value="EXPORTADO">Exportado</option><option value="CANCELADO">Cancelado</option></select></th>
-              <th style={{ padding:"5px 8px" }}><button onClick={()=>{setFColab("");setFTipo("");setFGestor("");setFStatus("");setFDataIni("");setFDataFim("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
+              <th style={{ padding:"5px 8px" }}><button onClick={()=>{setFColab("");setFTipo("");setFGestor("");setFStatus("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
             </tr>
           </thead>
           <tbody>
