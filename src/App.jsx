@@ -4497,7 +4497,8 @@ function Ocorrencias({ user, colaboradores }) {
                   <span style={{
                     padding: "3px 8px", borderRadius: 6, fontSize: 11, fontWeight: 600,
                     background: oc.tipo === "ADVERTENCIA" ? "#FEF3C7" : "#FEE2E2",
-                    color: oc.tipo === "ADVERTENCIA" ? "#92400E" : "#991B1B"
+                    color: oc.tipo === "ADVERTENCIA" ? "#92400E" : "#991B1B",
+                    whiteSpace: "nowrap", display: "inline-block"
                   }}>
                     {oc.tipo === "ADVERTENCIA" ? "⚠️ Advertência" : "🚫 Suspensão"}
                   </span>
