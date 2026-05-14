@@ -483,6 +483,14 @@ const MOCK_SOLICITACOES_INIT = [
 ];
 
 // ─── UTILITÁRIOS ─────────────────────────────────────────────────────────────
+// Converte data do banco (UTC) para string local YYYY-MM-DD sem problema de fuso
+function fmtDateLocal(val) {
+  if (!val) return "";
+  const d = new Date(val);
+  const local = new Date(d.getTime() + d.getTimezoneOffset() * -60000);
+  return local.toISOString().slice(0, 10);
+}
+
 const STATUS_CONFIG = {
   pendente_gestor:   { label: "Pendente Gestor",   color: "#F59E0B", bg: "#FEF3C7", dot: "#F59E0B" },
   pendente_superior: { label: "Pendente Superior", color: "#8B5CF6", bg: "#EDE9FE", dot: "#8B5CF6" },
@@ -1422,7 +1430,7 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
     .filter(c => !fFuncao    || norm(c.desc_funcao||c.funcao).includes(norm(fFuncao)))
     .filter(c => !fSecao     || norm(c.desc_cc).includes(norm(fSecao)))
     .filter(c => !fCpf       || (c.cpf||"").includes(fCpf))
-    .filter(c => !fAdmissao  || (c.data_admissao||"").includes(fAdmissao))
+    .filter(c => !fAdmissao  || fmtDateLocal(c.data_admissao).includes(fAdmissao))
     .filter(c => !fCC        || norm((c.centro_custo||"")+" "+(c.desc_cc||"")).includes(norm(fCC)))
     .filter(c => !fSituacao  || norm(c.situacao) === norm(fSituacao));
 
@@ -4313,12 +4321,7 @@ function Ocorrencias({ user, colaboradores }) {
     .filter(o => !fTipo   || o.tipo === fTipo)
     .filter(o => !fGestor || norm(o.gestor_nome).includes(norm(fGestor)))
     .filter(o => !fStatus || o.status === fStatus)
-    .filter(o => !fData || (() => {
-      if (!o.data_ocorrencia) return false;
-      const d = new Date(o.data_ocorrencia);
-      const iso = `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,"0")}-${String(d.getUTCDate()).padStart(2,"0")}`;
-      return iso === fData;
-    })());
+    .filter(o => !fData || fmtDateLocal(o.data_ocorrencia) === fData);
 
   const carregarOcorrencias = async () => {
     setLoading(true);
@@ -5113,14 +5116,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     .filter(s => !fTipo    || s.tipo === fTipo)
     .filter(s => !fStatus2 || s.status === fStatus2)
     .filter(s => !fGestor2 || norm2(s.gestor_nome).includes(norm2(fGestor2)))
-    .filter(s => !fDataD || (() => {
-      if (!s.data_desligamento) return false;
-      const d = new Date(s.data_desligamento);
-      // Compensar UTC: adiciona offset local para pegar a data correta
-      const local = new Date(d.getTime() + d.getTimezoneOffset() * -60000);
-      const iso = local.toISOString().slice(0,10);
-      return iso === fDataD;
-    })());
+    .filter(s => !fDataD || fmtDateLocal(s.data_desligamento) === fDataD);
 
   const podeAgir = (sol) => {
     if (!ALCADA_DESL[sol.status]?.includes(user.perfil)) return false;
