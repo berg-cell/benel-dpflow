@@ -4780,6 +4780,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
   const [erro,           setErro]           = useState("");
   const [filtroStatus,   setFiltroStatus]   = useState("");
   const [modalPDF,       setModalPDF]       = useState(null);
+  const [modalAnexoPedido, setModalAnexoPedido] = useState(null);
 
   const FORM_VAZIO = {
     colaborador_id: "", tipo: "", data_desligamento: "",
@@ -5093,8 +5094,8 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                     📄 Doc
                   </button>
                 )}
-                {sol.tipo === "pedido_demissao" && (sol.pedido_anexo_dados || sol.pedido_anexo_nome) && (
-                  <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalPDF(r); } catch(e){ setErro(e.message); } }}
+                {sol.tipo === "pedido_demissao" && (
+                  <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalAnexoPedido(r); } catch(e){ setErro(e.message); } }}
                     style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #10B981", background: "#F0FDF4", color: "#065F46", fontSize: 13, cursor: "pointer", fontWeight: 600 }}>
                     📎 Ver Anexo
                   </button>
@@ -5111,7 +5112,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                     Enviar
                   </button>
                 )}
-                {["aprovado","finalizado"].includes(sol.status) && (
+                {["aprovado","finalizado"].includes(sol.status) && sol.tipo !== "pedido_demissao" && (
                   <label style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #10B981", background: "#F0FDF4", color: "#065F46", fontSize: 13, cursor: "pointer", fontWeight: 600 }}>
                     📎 Anexar
                     <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display: "none" }}
@@ -5446,6 +5447,49 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
       )}
 
       {/* Modal PDF Desligamento */}
+      {/* Modal Ver Anexo — Pedido de Demissão */}
+      {modalAnexoPedido && (
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.55)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1100 }}>
+          <div style={{ background:"#fff", borderRadius:16, width:"100%", maxWidth:700, maxHeight:"90vh", overflowY:"auto", padding:28 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
+              <h3 style={{ margin:0, fontSize:16, fontWeight:700 }}>📎 Pedido de Demissão — {modalAnexoPedido.colaborador_nome}</h3>
+              <button onClick={() => setModalAnexoPedido(null)} style={{ background:"none", border:"none", fontSize:22, cursor:"pointer" }}>×</button>
+            </div>
+            {(modalAnexoPedido.pedido_anexo_dados || modalAnexoPedido.pedido_anexo_base64) ? (
+              <div style={{ textAlign:"center" }}>
+                <div style={{ fontSize:12, color:"#6B7280", marginBottom:12 }}>📄 {modalAnexoPedido.pedido_anexo_nome}</div>
+                {(modalAnexoPedido.pedido_anexo_dados || modalAnexoPedido.pedido_anexo_base64).startsWith("data:image") ? (
+                  <img src={modalAnexoPedido.pedido_anexo_dados || modalAnexoPedido.pedido_anexo_base64}
+                    alt="Pedido de Demissão"
+                    style={{ maxWidth:"100%", border:"1px solid #E5E7EB", borderRadius:8 }} />
+                ) : (
+                  <div style={{ padding:"30px 0" }}>
+                    <div style={{ fontSize:48, marginBottom:12 }}>📄</div>
+                    <div style={{ fontSize:14, color:"#374151", marginBottom:16, fontWeight:600 }}>{modalAnexoPedido.pedido_anexo_nome}</div>
+                    <a href={modalAnexoPedido.pedido_anexo_dados || modalAnexoPedido.pedido_anexo_base64}
+                      download={modalAnexoPedido.pedido_anexo_nome}
+                      style={{ padding:"10px 24px", background:"#0F2447", color:"#fff", borderRadius:8, fontSize:14, fontWeight:600, textDecoration:"none" }}>
+                      ⬇ Baixar PDF
+                    </a>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div style={{ textAlign:"center", padding:"40px 0", color:"#9CA3AF" }}>
+                <div style={{ fontSize:40, marginBottom:10 }}>📎</div>
+                <div>Nenhum documento anexado nesta solicitação</div>
+              </div>
+            )}
+            <div style={{ display:"flex", justifyContent:"flex-end", paddingTop:16, borderTop:"1px solid #F3F4F6", marginTop:20 }}>
+              <button onClick={() => setModalAnexoPedido(null)}
+                style={{ padding:"9px 20px", borderRadius:8, border:"1px solid #E5E7EB", background:"#fff", fontSize:14, cursor:"pointer" }}>
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {modalPDF && <ModalPDFDesligamento sol={modalPDF} onClose={() => setModalPDF(null)} />}
     </div>
   );
