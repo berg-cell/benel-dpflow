@@ -4863,7 +4863,6 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
   const [carregando,     setCarregando]     = useState(true);
   const [salvando,       setSalvando]       = useState(false);
   const [erro,           setErro]           = useState("");
-  const [filtroStatus,   setFiltroStatus]   = useState("");
   const [modalPDF,       setModalPDF]       = useState(null);
   const [modalAnexoPedido, setModalAnexoPedido] = useState(null);
 
@@ -4881,13 +4880,13 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
   const carregar = async () => {
     setCarregando(true);
     try {
-      const r = await api.listarDesligamentos(filtroStatus);
+      const r = await api.listarDesligamentos("");
       setLista(Array.isArray(r) ? r : (r.data || []));
     } catch (e) { setErro(e.message); }
     finally { setCarregando(false); }
   };
 
-  useEffect(() => { carregar(); }, [filtroStatus]);
+  useEffect(() => { carregar(); }, []);
 
   const normalizar = (s) =>
     (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
