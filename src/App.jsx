@@ -51,7 +51,7 @@ const PATTERNS = {
   hora:        /^\d{1,3}:\d{2}$/,
   competencia: /^\d{6}$/,
   texto:       /^[^<>'"`;]{0,500}$/,
-  senha:       /^.{3,128}$/,
+  senha:       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_\-#])[A-Za-z\d@$!%*?&_\-#]{8,128}$/,
 };
 
 export function validateField(tipo, valor) {
@@ -692,6 +692,49 @@ function Modal({ open, onClose, title, children, width = 540 }) {
           }}>×</button>
         </div>
         <div style={{ padding: "20px 24px" }}>{children}</div>
+      </div>
+    </div>
+  );
+}
+
+// ─── VALIDADOR DE FORÇA DE SENHA ─────────────────────────────────────────────
+function verificarForcaSenha(senha) {
+  const checks = [
+    { ok: senha.length >= 8,                        label: "Mínimo 8 caracteres" },
+    { ok: /[A-Z]/.test(senha),                       label: "Letra maiúscula" },
+    { ok: /[a-z]/.test(senha),                       label: "Letra minúscula" },
+    { ok: /\d/.test(senha),                          label: "Número" },
+    { ok: /[@$!%*?&_\-#]/.test(senha),              label: "Caractere especial (@$!%*?&_-#)" },
+  ];
+  const score = checks.filter(c => c.ok).length;
+  const forca = score <= 2 ? "fraca" : score <= 3 ? "média" : score === 4 ? "boa" : "forte";
+  const cor   = score <= 2 ? "#EF4444" : score <= 3 ? "#F59E0B" : score === 4 ? "#3B82F6" : "#10B981";
+  return { checks, score, forca, cor, valida: score === 5 };
+}
+
+function IndicadorSenha({ senha }) {
+  if (!senha) return null;
+  const { checks, score, forca, cor } = verificarForcaSenha(senha);
+  return (
+    <div style={{ marginTop: 6 }}>
+      <div style={{ display: "flex", gap: 4, marginBottom: 6 }}>
+        {[1,2,3,4,5].map(i => (
+          <div key={i} style={{
+            flex: 1, height: 4, borderRadius: 2,
+            background: i <= score ? cor : "#E5E7EB",
+            transition: "background 0.2s"
+          }} />
+        ))}
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+        <span style={{ fontSize: 11, fontWeight: 600, color: cor }}>Força: {forca}</span>
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "3px 12px" }}>
+        {checks.map(c => (
+          <span key={c.label} style={{ fontSize: 10, color: c.ok ? "#10B981" : "#9CA3AF" }}>
+            {c.ok ? "✓" : "○"} {c.label}
+          </span>
+        ))}
       </div>
     </div>
   );
@@ -2213,8 +2256,8 @@ function CadUsuarios({ usuarios, setUsuarios }) {
   };
 
   const executarReset = async () => {
-    if (!novaSenha || novaSenha.length < 6) {
-      setMsgReset({ tipo: "erro", texto: "A senha deve ter no mínimo 6 caracteres." });
+    if (!novaSenha || !verificarForcaSenha(novaSenha).valida) {
+      setMsgReset({ tipo: "erro", texto: "A senha deve ter 8+ caracteres, letra maiúscula, minúscula, número e caractere especial (@$!%*?&_-#)." });
       return;
     }
     if (novaSenha !== confirmaSenha) {
@@ -2344,7 +2387,10 @@ function CadUsuarios({ usuarios, setUsuarios }) {
             <Input label="Seção / Departamento" value={form.secao || ""} onChange={v => setForm(p => ({ ...p, secao: v }))} placeholder="Ex: Logística, RH..." />
           </div>
           {modalForm === "novo" && (
-            <Input label="Senha inicial *" value={form.senha} onChange={v => setForm(p => ({ ...p, senha: v }))} type="password" placeholder="Ex: Benel@2025" required />
+            <div>
+              <Input label="Senha inicial *" value={form.senha} onChange={v => setForm(p => ({ ...p, senha: v }))} type="password" placeholder="Ex: Benel@2026" required />
+              <IndicadorSenha senha={form.senha} />
+            </div>
           )}
           <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", paddingTop: 6, borderTop: "1px solid #F3F4F6" }}>
             <Button variant="secondary" onClick={() => setModalForm(null)}>Cancelar</Button>
@@ -2373,14 +2419,17 @@ function CadUsuarios({ usuarios, setUsuarios }) {
                 {msgReset.tipo === "ok" ? "✅" : "❌"} {msgReset.texto}
               </div>
             )}
-            <Input
-              label="Nova Senha *"
-              value={novaSenha}
-              onChange={setNovaSenha}
-              type="password"
-              placeholder="Mínimo 6 caracteres"
-              required
-            />
+            <div>
+              <Input
+                label="Nova Senha *"
+                value={novaSenha}
+                onChange={setNovaSenha}
+                type="password"
+                placeholder="Mín. 8 chars, maiúscula, número e especial"
+                required
+              />
+              <IndicadorSenha senha={novaSenha} />
+            </div>
             <Input
               label="Confirmar Nova Senha *"
               value={confirmaSenha}
@@ -4697,6 +4746,7 @@ function PDFOcorrencia({ oc }) {
 const TIPOS_DESL = [
   { value: "aviso_trabalhado",    label: "Aviso Prévio Trabalhado" },
   { value: "aviso_indenizado",    label: "Aviso Prévio Indenizado" },
+  { value: "pedido_demissao",     label: "Pedido de Demissão" },
   { value: "termino_contrato",    label: "Término de Contrato" },
   { value: "antecipacao_contrato",label: "Antecipação de Término de Contrato" },
 ];
@@ -4735,6 +4785,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     colaborador_id: "", tipo: "", data_desligamento: "",
     data_aviso: "", reducao_jornada: false,
     justificativa: "", observacoes: "",
+    pedido_anexo_nome: "", pedido_anexo_base64: "",
   };
   const [form, setForm] = useState(FORM_VAZIO);
   const [colaboradorSel, setColaboradorSel] = useState(null);
@@ -5194,12 +5245,63 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
             </div>
 
             {/* Observações */}
-            <div style={{ marginBottom: 20 }}>
+            <div style={{ marginBottom: form.tipo === "pedido_demissao" ? 12 : 20 }}>
               <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Observações</label>
               <textarea value={form.observacoes} onChange={e => setForm(f => ({ ...f, observacoes: e.target.value }))}
                 rows={2} placeholder="Observações adicionais..."
                 style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, resize: "vertical", boxSizing: "border-box" }} />
             </div>
+
+            {/* Anexo do Pedido de Demissão — só para pedido_demissao */}
+            {form.tipo === "pedido_demissao" && (
+              <div style={{ marginBottom: 20 }}>
+                <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
+                  📎 Pedido de Demissão Assinado *
+                </label>
+                <div style={{
+                  border: form.pedido_anexo_nome ? "2px solid #10B981" : "2px dashed #D1D5DB",
+                  borderRadius: 10, padding: "14px 16px", background: form.pedido_anexo_nome ? "#F0FDF4" : "#FAFAFA",
+                  display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12
+                }}>
+                  <div>
+                    {form.pedido_anexo_nome ? (
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: "#065F46" }}>✅ {form.pedido_anexo_nome}</div>
+                        <div style={{ fontSize: 11, color: "#6B7280", marginTop: 2 }}>Documento anexado com sucesso</div>
+                      </div>
+                    ) : (
+                      <div>
+                        <div style={{ fontSize: 13, color: "#374151", fontWeight: 600 }}>Nenhum arquivo selecionado</div>
+                        <div style={{ fontSize: 11, color: "#9CA3AF", marginTop: 2 }}>PDF, JPG ou PNG — máx. 5MB</div>
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <label style={{
+                      padding: "7px 14px", borderRadius: 8, fontSize: 12, fontWeight: 600,
+                      background: "#0F2447", color: "#fff", cursor: "pointer", whiteSpace: "nowrap"
+                    }}>
+                      {form.pedido_anexo_nome ? "Trocar arquivo" : "Selecionar arquivo"}
+                      <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display: "none" }}
+                        onChange={e => {
+                          const file = e.target.files[0];
+                          if (!file) return;
+                          if (file.size > 5 * 1024 * 1024) { alert("Arquivo muito grande (máx 5MB)"); return; }
+                          const reader = new FileReader();
+                          reader.onload = ev => setForm(f => ({ ...f, pedido_anexo_nome: file.name, pedido_anexo_base64: ev.target.result }));
+                          reader.readAsDataURL(file);
+                        }} />
+                    </label>
+                    {form.pedido_anexo_nome && (
+                      <button onClick={() => setForm(f => ({ ...f, pedido_anexo_nome: "", pedido_anexo_base64: "" }))}
+                        style={{ padding: "7px 10px", borderRadius: 8, border: "1px solid #EF4444", background: "#FEF2F2", color: "#DC2626", fontSize: 12, cursor: "pointer" }}>
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, borderTop: "1px solid #F3F4F6", paddingTop: 16 }}>
               <button onClick={() => setModalNovo(false)} disabled={salvando}
@@ -5330,6 +5432,7 @@ function ModalPDFDesligamento({ sol, onClose }) {
   const TIPOS = {
     aviso_trabalhado:     "AVISO PRÉVIO TRABALHADO",
     aviso_indenizado:     "AVISO PRÉVIO INDENIZADO",
+    pedido_demissao:      "PEDIDO DE DEMISSÃO",
     termino_contrato:     "TÉRMINO DE CONTRATO DE TRABALHO",
     antecipacao_contrato: "RESCISÃO ANTECIPADA DO CONTRATO DE EXPERIÊNCIA PELO EMPREGADOR",
   };
@@ -5425,6 +5528,39 @@ function ModalPDFDesligamento({ sol, onClose }) {
           </>)}
           {sol.tipo === "antecipacao_contrato" && (<>
             <p style={{ textAlign: "justify", marginBottom: 24 }}>Vimos pela presente comunicar-lhe que por não mais convir a esta empresa manter seu contrato de experiência{sol.data_fim_contrato ? `, cujo término estava previsto para o dia ${fmt(sol.data_fim_contrato)},` : ","} achamos por bem rescindi-lo antes do prazo acordado. Sendo assim, a partir de <strong>{fmt(sol.data_desligamento)}</strong>, não serão mais necessários seus serviços.</p>
+            <Assinaturas />
+          </>)}
+          {sol.tipo === "pedido_demissao" && (<>
+            <div style={{ background: "#F0FDF4", border: "1px solid #6EE7B7", borderRadius: 10, padding: "16px 20px", marginBottom: 20 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#065F46", marginBottom: 8 }}>
+                📎 Pedido de Demissão — Documento Original do Colaborador
+              </div>
+              <p style={{ fontSize: 12, color: "#374151", margin: 0 }}>
+                Este tipo de desligamento é formalizado pelo próprio colaborador a próprio punho.
+                O documento original deve ser anexado abaixo.
+              </p>
+            </div>
+            {sol.pedido_anexo_base64 ? (
+              <div style={{ textAlign: "center", marginBottom: 20 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#374151", marginBottom: 8 }}>
+                  📄 {sol.pedido_anexo_nome}
+                </div>
+                {sol.pedido_anexo_base64.startsWith("data:image") ? (
+                  <img src={sol.pedido_anexo_base64} alt="Pedido de Demissão"
+                    style={{ maxWidth: "100%", maxHeight: 500, border: "1px solid #E5E7EB", borderRadius: 8 }} />
+                ) : (
+                  <a href={sol.pedido_anexo_base64} download={sol.pedido_anexo_nome}
+                    style={{ padding: "10px 20px", background: "#0F2447", color: "#fff", borderRadius: 8, fontSize: 13, fontWeight: 600, textDecoration: "none" }}>
+                    ⬇ Baixar PDF anexado
+                  </a>
+                )}
+              </div>
+            ) : (
+              <div style={{ textAlign: "center", padding: "30px 0", color: "#9CA3AF" }}>
+                <div style={{ fontSize: 32, marginBottom: 8 }}>📎</div>
+                <div>Nenhum documento anexado ainda</div>
+              </div>
+            )}
             <Assinaturas />
           </>)}
         </div>
