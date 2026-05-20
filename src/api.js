@@ -1,6 +1,6 @@
 // src/api.js — Camada de comunicação com o backend DP Flow
 
-const BASE = import.meta.env.VITE_API_URL || "https://benel-dpflow-backend-production.up.railway.app";
+const BASE = import.meta.env.VITE_API_URL || "https://benel-dpflow-backend.vercel.app";
 
 let _accessToken = null;
 let _refreshToken = null;
