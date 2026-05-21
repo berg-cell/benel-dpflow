@@ -900,6 +900,10 @@ const CADASTROS_SUBMENU = [
   { id: "cad_usuarios",      label: "Usuários",        icon: "🔑", perfis: ["admin"] },
 ];
 
+const BENEFICIOS_SUBMENU = [
+  { id: "plano_saude", label: "Solicitação de Plano de Saúde", icon: "💊", perfis: ["dp","admin","gestor"] },
+];
+
 const NAV_ITEMS = [
   { id: "cadastros",     label: "Cadastros",                            icon: "🗂",  perfis: ["dp","admin"], submenu: CADASTROS_SUBMENU },
   { id: "ocorrencias",      label: "Solicitações de Advertências/Suspensões", icon: "⚠️", perfis: ["gestor","dp","admin"] },
