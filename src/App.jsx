@@ -914,6 +914,7 @@ const NAV_ITEMS = [
   { id: "dashboard",     label: "Dashboard",                            icon: "◉",  perfis: ["gestor","superior","dp","admin"] },
   { id: "exportacao",    label: "Exportação TXT",                       icon: "↓",  perfis: ["dp","admin"] },
   { id: "auditoria",     label: "Auditoria",                            icon: "📜", perfis: ["dp","admin"] },
+  { id: "beneficios", label: "Benefícios", icon: "🏥", perfis: ["dp","admin","gestor"], submenu: BENEFICIOS_SUBMENU },
 ];
 
 
