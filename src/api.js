@@ -214,6 +214,23 @@ export const api = {
       method: "POST",
       body: JSON.stringify(dados),
     }),
+
+  // ── Plano de Saúde ─────────────────────────────────────────────────────────
+  listarPlanoSaude: () => request("/plano-saude"),
+
+  buscarPlanoSaude: (id) => request(`/plano-saude/${id}`),
+
+  criarPlanoSaude: (data) =>
+    request("/plano-saude", { method: "POST", body: JSON.stringify(data) }),
+
+  addAnexoPlanoSaude: (id, dados) =>
+    request(`/plano-saude/${id}/anexos`, {
+      method: "POST",
+      body: JSON.stringify(dados),
+    }),
+
+  cancelarPlanoSaude: (id) =>
+    request(`/plano-saude/${id}/cancelar`, { method: "PUT", body: JSON.stringify({}) }),
   
   getToken: () => _accessToken,
 };
