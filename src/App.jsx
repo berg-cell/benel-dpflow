@@ -1192,6 +1192,24 @@ function parseCSV(text) {
     "prazo45": "prazo45", "prazo90": "prazo90",
     "data_fim_estabilidade": "data_fim_estabilidade", "data fim estabilidade": "data_fim_estabilidade",
     "descricao_estabilidade": "descricao_estabilidade", "descrição estabilidade": "descricao_estabilidade",
+    // Novos campos pessoais/endereço
+    "rg": "rg",
+    "rg_orgemissor": "rg_orgao", "rg_orgao": "rg_orgao",
+    "rg_uf": "rg_uf",
+    "ctps": "ctps",
+    "ctps_serie": "ctps_serie",
+    "rua_func": "logradouro", "logradouro": "logradouro",
+    "numero_func": "numero", "numero": "numero",
+    "compl_func": "complemento", "complemento": "complemento",
+    "bairro": "bairro",
+    "cidade": "cidade",
+    "uf": "uf",
+    "cep": "cep",
+    "telefone1": "telefone1",
+    "sexo": "sexo",
+    "estado_civil": "estado_civil", "estadocivil": "estado_civil",
+    "nome_mae": "nome_mae",
+    "pis": "pis",
   };
 
   const rawHeaders = splitLine(lines[0]);
