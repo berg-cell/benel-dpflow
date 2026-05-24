@@ -5742,403 +5742,390 @@ function ModalPDFDesligamento({ sol, onClose }) {
   );
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+
+// ── Helpers PlanoSaude ────────────────────────────────────────────────────────
 function fmtDataPS(v) {
   if (!v) return "";
   try {
     const d = new Date(v.includes("T") ? v : v + "T12:00:00");
-    if (isNaN(d.getTime())) return v;
-    return d.toLocaleDateString("pt-BR");
+    return isNaN(d.getTime()) ? v : d.toLocaleDateString("pt-BR");
   } catch { return v; }
 }
 
 function gerarHTMLTitular(colab, movimentacao) {
-  const nome       = colab?.nome          || "__________________________";
-  const cpf        = colab?.cpf           || "_______________";
-  const admissao   = fmtDataPS(colab?.data_admissao) || "___/___/______";
-  const rg         = colab?.rg            || "_______________";
-  const rgOrgao    = colab?.rg_orgao      || "_______";
-  const rgUf       = colab?.rg_uf         || "___";
-  const estCivil   = colab?.estado_civil  || "_______________";
-  const nomeMae    = colab?.nome_mae      || "_________________________________";
-  const matricula  = colab?.chapa         || "___________";
-  const pis        = colab?.pis           || "___________________";
-  const ctps       = colab?.ctps          || "____________";
-  const ctpsSerie  = colab?.ctps_serie    || "_______";
-  const logradouro = colab?.logradouro    || "_________________________________________";
-  const complement = colab?.complemento   || "________________";
-  const bairro     = colab?.bairro        || "______________________________";
-  const cidade     = colab?.cidade        || "____________________________";
-  const uf         = colab?.uf            || "___";
-  const cep        = colab?.cep           || "____________";
-  const tel1       = colab?.telefone1     || "______________";
-  const tel2       = colab?.telefone2     || "______________";
-  const tel3       = colab?.telefone3     || "______________";
-
+  const f = (v) => v || "_______________";
   const movMap = {
-    INCLUSAO:    "(X) INCLUSÃO &nbsp;&nbsp; ( ) NÃO OPTANTE &nbsp;&nbsp; ( ) ALTERAÇÃO &nbsp;&nbsp; ( ) EXCLUSÃO",
-    NAO_OPTANTE: "( ) INCLUSÃO &nbsp;&nbsp; (X) NÃO OPTANTE &nbsp;&nbsp; ( ) ALTERAÇÃO &nbsp;&nbsp; ( ) EXCLUSÃO",
-    ALTERACAO:   "( ) INCLUSÃO &nbsp;&nbsp; ( ) NÃO OPTANTE &nbsp;&nbsp; (X) ALTERAÇÃO &nbsp;&nbsp; ( ) EXCLUSÃO",
-    EXCLUSAO:    "( ) INCLUSÃO &nbsp;&nbsp; ( ) NÃO OPTANTE &nbsp;&nbsp; ( ) ALTERAÇÃO &nbsp;&nbsp; (X) EXCLUSÃO",
+    INCLUSAO:    "(X) INCLUSÃO &nbsp; ( ) NÃO OPTANTE &nbsp; ( ) ALTERAÇÃO &nbsp; ( ) EXCLUSÃO",
+    NAO_OPTANTE: "( ) INCLUSÃO &nbsp; (X) NÃO OPTANTE &nbsp; ( ) ALTERAÇÃO &nbsp; ( ) EXCLUSÃO",
+    ALTERACAO:   "( ) INCLUSÃO &nbsp; ( ) NÃO OPTANTE &nbsp; (X) ALTERAÇÃO &nbsp; ( ) EXCLUSÃO",
+    EXCLUSAO:    "( ) INCLUSÃO &nbsp; ( ) NÃO OPTANTE &nbsp; ( ) ALTERAÇÃO &nbsp; (X) EXCLUSÃO",
   };
-
   return `
-    <div style="font-family:Arial,sans-serif;font-size:10pt;line-height:1.6;max-width:700px;margin:0 auto;padding:24px 32px;color:#000;">
-      <div style="text-align:center;margin-bottom:8px;">
-        <img src="${LOGO_BENEL}" alt="Benel" style="height:60px;" />
+    <div style="font-family:Arial,sans-serif;font-size:10pt;line-height:1.5;max-width:700px;margin:0 auto;padding:20px 28px;color:#000;">
+      <div style="text-align:center;margin-bottom:6px;"><img src="${LOGO_BENEL}" alt="Benel" style="height:55px;" /></div>
+      <h2 style="text-align:center;font-size:12pt;font-weight:bold;text-transform:uppercase;margin:0 0 2px 0;">PROPOSTA PLANO DE ASSISTÊNCIA MÉDICA</h2>
+      <h3 style="text-align:center;font-size:11pt;font-weight:bold;text-transform:uppercase;margin:0 0 12px 0;">TITULAR</h3>
+      <p style="font-weight:bold;text-align:center;margin:0 0 6px 0;font-size:9pt;">DADOS DA MOVIMENTAÇÃO</p>
+      <div style="border:1px solid #000;padding:6px 14px;margin-bottom:12px;font-size:9.5pt;">${movMap[movimentacao] || movMap.INCLUSAO}</div>
+      <p style="font-weight:bold;text-align:center;margin:0 0 6px 0;font-size:9pt;">DADOS PESSOAIS</p>
+      <div style="border:1px solid #000;padding:10px 14px;margin-bottom:12px;font-size:9.5pt;">
+        <p style="margin:0 0 6px 0;">C.P.F.: <u>${f(colab?.cpf)}</u> &nbsp;&nbsp; DATA DE ADMISSÃO: <u>${fmtDataPS(colab?.data_admissao) || "___/___/______"}</u></p>
+        <p style="margin:0 0 6px 0;">NOME: <u>${f(colab?.nome)}</u> &nbsp;&nbsp; DATA DE NASC.: <u>___/___/______</u></p>
+        <p style="margin:0 0 6px 0;">SEXO: ( ) MASCULINO &nbsp; ( ) FEMININO &nbsp;&nbsp; RG: <u>${f(colab?.rg)}</u> &nbsp; ÓRGÃO: <u>${f(colab?.rg_orgao)}</u> &nbsp; UF: <u>${f(colab?.rg_uf)}</u></p>
+        <p style="margin:0 0 6px 0;">ESTADO CIVIL: <u>${f(colab?.estado_civil)}</u> &nbsp;&nbsp; NOME DA MÃE: <u>${f(colab?.nome_mae)}</u></p>
+        <p style="margin:0;">MATRÍCULA: <u>${f(colab?.chapa)}</u> &nbsp; PIS: <u>${f(colab?.pis)}</u> &nbsp; CTPS: <u>${f(colab?.ctps)}</u> &nbsp; SÉRIE: <u>${f(colab?.ctps_serie)}</u></p>
       </div>
-      <h2 style="text-align:center;font-size:13pt;font-weight:bold;text-transform:uppercase;margin:0 0 4px 0;">PROPOSTA PLANO DE ASSISTÊNCIA MÉDICA</h2>
-      <h3 style="text-align:center;font-size:12pt;font-weight:bold;text-transform:uppercase;margin:0 0 16px 0;">TITULAR</h3>
-      <p style="font-weight:bold;text-align:center;margin:0 0 8px 0;">DADOS DA MOVIMENTAÇÃO</p>
-      <div style="border:1px solid #000;padding:8px 16px;margin-bottom:16px;font-size:10pt;">
-        ${movMap[movimentacao] || movMap.INCLUSAO}
+      <p style="font-weight:bold;text-align:center;margin:0 0 6px 0;font-size:9pt;">DADOS DO ENDEREÇO</p>
+      <div style="border:1px solid #000;padding:10px 14px;margin-bottom:12px;font-size:9.5pt;">
+        <p style="margin:0 0 6px 0;">LOGRADOURO: <u>${f(colab?.logradouro)}</u> &nbsp; Nº: <u>${f(colab?.numero)}</u></p>
+        <p style="margin:0 0 6px 0;">COMPLEMENTO: <u>${f(colab?.complemento)}</u> &nbsp; BAIRRO: <u>${f(colab?.bairro)}</u></p>
+        <p style="margin:0 0 6px 0;">CIDADE: <u>${f(colab?.cidade)}</u> &nbsp; UF: <u>${f(colab?.uf)}</u> &nbsp; CEP: <u>${f(colab?.cep)}</u></p>
+        <p style="margin:0;">TELEFONES: ( ) <u>${f(colab?.telefone1)}</u></p>
       </div>
-      <p style="font-weight:bold;text-align:center;margin:0 0 8px 0;">DADOS PESSOAIS</p>
-      <div style="border:1px solid #000;padding:12px 16px;margin-bottom:16px;font-size:10pt;">
-        <p style="margin:0 0 8px 0;">C.P.F.: <u>${cpf}</u> &nbsp;&nbsp;&nbsp; DATA DE ADMISSÃO: <u>${admissao}</u></p>
-        <p style="margin:0 0 8px 0;">NOME: <u>${nome}</u> &nbsp;&nbsp; DATA DE NASC.: <u>___/___/______</u></p>
-        <p style="margin:0 0 8px 0;">SEXO: ( ) MASCULINO &nbsp; ( ) FEMININO &nbsp;&nbsp; RG: <u>${rg}</u> &nbsp; ÓRGÃO EXP: <u>${rgOrgao}</u> &nbsp; UF: <u>${rgUf}</u></p>
-        <p style="margin:0 0 8px 0;">ESTADO CIVIL: <u>${estCivil}</u> &nbsp;&nbsp; NOME DA MÃE: <u>${nomeMae}</u></p>
-        <p style="margin:0;">MATRÍCULA: <u>${matricula}</u> &nbsp; PIS: <u>${pis}</u> &nbsp; CTPS: <u>${ctps}</u> &nbsp; SÉRIE: <u>${ctpsSerie}</u></p>
-      </div>
-      <p style="font-weight:bold;text-align:center;margin:0 0 8px 0;">DADOS DO ENDEREÇO</p>
-      <div style="border:1px solid #000;padding:12px 16px;margin-bottom:16px;font-size:10pt;">
-        <p style="margin:0 0 8px 0;">LOGRADOURO: <u>${logradouro}</u> &nbsp; Nº: <u>____</u></p>
-        <p style="margin:0 0 8px 0;">COMPLEMENTO: <u>${complement}</u> &nbsp;&nbsp; BAIRRO: <u>${bairro}</u></p>
-        <p style="margin:0 0 8px 0;">CIDADE: <u>${cidade}</u> &nbsp;&nbsp; UF: <u>${uf}</u> &nbsp;&nbsp; CEP: <u>${cep}</u></p>
-        <p style="margin:0;">TELEFONES: ( ) <u>${tel1}</u> &nbsp; ( ) <u>${tel2}</u> &nbsp; ( ) <u>${tel3}</u></p>
-      </div>
-      <p style="margin:0 0 48px 0;">_________________, _____ de ________________ de _________.</p>
-      <div style="border-top:1px solid #000;width:280px;padding-top:6px;font-size:10pt;text-align:center;">ASSINATURA DO TITULAR</div>
-    </div>
-  `;
+      <p style="margin:0 0 40px 0;font-size:9.5pt;">_________________, _____ de ________________ de _________.</p>
+      <div style="border-top:1px solid #000;width:260px;padding-top:5px;font-size:9.5pt;text-align:center;">ASSINATURA DO TITULAR</div>
+    </div>`;
 }
 
 function gerarHTMLDependente(colab, dep, movimentacao) {
   const movMap = {
-    INCLUSAO: "(X) INCLUSÃO &nbsp;&nbsp; ( ) ALTERAÇÃO &nbsp;&nbsp; ( ) EXCLUSÃO",
-    ALTERACAO: "( ) INCLUSÃO &nbsp;&nbsp; (X) ALTERAÇÃO &nbsp;&nbsp; ( ) EXCLUSÃO",
-    EXCLUSAO:  "( ) INCLUSÃO &nbsp;&nbsp; ( ) ALTERAÇÃO &nbsp;&nbsp; (X) EXCLUSÃO",
+    INCLUSAO: "(X) INCLUSÃO &nbsp; ( ) ALTERAÇÃO &nbsp; ( ) EXCLUSÃO",
+    ALTERACAO: "( ) INCLUSÃO &nbsp; (X) ALTERAÇÃO &nbsp; ( ) EXCLUSÃO",
+    EXCLUSAO:  "( ) INCLUSÃO &nbsp; ( ) ALTERAÇÃO &nbsp; (X) EXCLUSÃO",
   };
   const parentescoMap = {
-    CONJUGE:     "(X) CÔNJUGE &nbsp;&nbsp; ( ) FILHO(A) &nbsp;&nbsp; ( ) COMPANHEIRO(A) &nbsp;&nbsp; ( ) OUTROS",
-    FILHO:       "( ) CÔNJUGE &nbsp;&nbsp; (X) FILHO(A) &nbsp;&nbsp; ( ) COMPANHEIRO(A) &nbsp;&nbsp; ( ) OUTROS",
-    COMPANHEIRO: "( ) CÔNJUGE &nbsp;&nbsp; ( ) FILHO(A) &nbsp;&nbsp; (X) COMPANHEIRO(A) &nbsp;&nbsp; ( ) OUTROS",
-    OUTROS:      "( ) CÔNJUGE &nbsp;&nbsp; ( ) FILHO(A) &nbsp;&nbsp; ( ) COMPANHEIRO(A) &nbsp;&nbsp; (X) OUTROS",
+    CONJUGE:     "(X) CÔNJUGE &nbsp; ( ) FILHO(A) &nbsp; ( ) COMPANHEIRO(A) &nbsp; ( ) OUTROS",
+    FILHO:       "( ) CÔNJUGE &nbsp; (X) FILHO(A) &nbsp; ( ) COMPANHEIRO(A) &nbsp; ( ) OUTROS",
+    COMPANHEIRO: "( ) CÔNJUGE &nbsp; ( ) FILHO(A) &nbsp; (X) COMPANHEIRO(A) &nbsp; ( ) OUTROS",
+    OUTROS:      "( ) CÔNJUGE &nbsp; ( ) FILHO(A) &nbsp; ( ) COMPANHEIRO(A) &nbsp; (X) OUTROS",
   };
   return `
-    <div style="font-family:Arial,sans-serif;font-size:10pt;line-height:1.6;max-width:700px;margin:0 auto;padding:24px 32px;color:#000;">
-      <div style="text-align:center;margin-bottom:8px;">
-        <img src="${LOGO_BENEL}" alt="Benel" style="height:60px;" />
-      </div>
-      <h2 style="text-align:center;font-size:13pt;font-weight:bold;text-transform:uppercase;margin:0 0 4px 0;">PROPOSTA PLANO DE ASSISTÊNCIA MÉDICA</h2>
-      <h3 style="text-align:center;font-size:12pt;font-weight:bold;text-transform:uppercase;margin:0 0 16px 0;">DEPENDENTES</h3>
-      <p style="font-weight:bold;text-align:center;margin:0 0 8px 0;">DADOS DA MOVIMENTAÇÃO</p>
-      <div style="border:1px solid #000;padding:8px 16px;margin-bottom:16px;font-size:10pt;">
-        ${movMap[movimentacao] || movMap.INCLUSAO}
-      </div>
-      <p style="font-weight:bold;text-align:center;margin:0 0 8px 0;">DADOS PESSOAIS DO DEPENDENTE</p>
-      <div style="border:1px solid #000;padding:12px 16px;margin-bottom:16px;font-size:10pt;">
-        <p style="margin:0 0 8px 0;">C.P.F.: <u>${dep?.dep_cpf || "_______________"}</u> &nbsp;&nbsp; NOME: <u>${dep?.dep_nome || "__________________________"}</u></p>
-        <p style="margin:0 0 8px 0;">
-          SEXO: ${dep?.dep_sexo === "M" ? "(X) MASCULINO &nbsp; ( ) FEMININO" : dep?.dep_sexo === "F" ? "( ) MASCULINO &nbsp; (X) FEMININO" : "( ) MASCULINO &nbsp; ( ) FEMININO"}
-          &nbsp;&nbsp; DATA DE NASC.: <u>${fmtDataPS(dep?.dep_data_nasc) || "___/___/______"}</u>
-          &nbsp;&nbsp; ESTADO CIVIL: <u>${dep?.dep_estado_civil || "_______________"}</u>
-        </p>
-        <p style="margin:0 0 8px 0;">DATA DE CASAMENTO: <u>${fmtDataPS(dep?.dep_data_casamento) || "___/___/______"}</u></p>
+    <div style="font-family:Arial,sans-serif;font-size:10pt;line-height:1.5;max-width:700px;margin:0 auto;padding:20px 28px;color:#000;">
+      <div style="text-align:center;margin-bottom:6px;"><img src="${LOGO_BENEL}" alt="Benel" style="height:55px;" /></div>
+      <h2 style="text-align:center;font-size:12pt;font-weight:bold;text-transform:uppercase;margin:0 0 2px 0;">PROPOSTA PLANO DE ASSISTÊNCIA MÉDICA</h2>
+      <h3 style="text-align:center;font-size:11pt;font-weight:bold;text-transform:uppercase;margin:0 0 12px 0;">DEPENDENTES</h3>
+      <p style="font-weight:bold;text-align:center;margin:0 0 6px 0;font-size:9pt;">DADOS DA MOVIMENTAÇÃO</p>
+      <div style="border:1px solid #000;padding:6px 14px;margin-bottom:12px;font-size:9.5pt;">${movMap[movimentacao] || movMap.INCLUSAO}</div>
+      <p style="font-weight:bold;text-align:center;margin:0 0 6px 0;font-size:9pt;">DADOS PESSOAIS DO DEPENDENTE</p>
+      <div style="border:1px solid #000;padding:10px 14px;margin-bottom:12px;font-size:9.5pt;">
+        <p style="margin:0 0 6px 0;">C.P.F.: <u>${dep?.dep_cpf || "_______________"}</u> &nbsp;&nbsp; NOME: <u>${dep?.dep_nome || "___________________________"}</u></p>
+        <p style="margin:0 0 6px 0;">SEXO: ${dep?.dep_sexo === "M" ? "(X) MASCULINO &nbsp; ( ) FEMININO" : "(  ) MASCULINO &nbsp; (X) FEMININO"} &nbsp;&nbsp; DATA NASC.: <u>${fmtDataPS(dep?.dep_data_nasc) || "___/___/______"}</u> &nbsp; ESTADO CIVIL: <u>${dep?.dep_estado_civil || "_______________"}</u></p>
+        <p style="margin:0 0 6px 0;">DATA DE CASAMENTO: <u>${fmtDataPS(dep?.dep_data_casamento) || "___/___/______"}</u></p>
         <p style="margin:0 0 4px 0;">GRAU DE PARENTESCO:</p>
-        <p style="margin:0 0 8px 16px;">${parentescoMap[dep?.dep_grau_parentesco] || parentescoMap.CONJUGE}</p>
-        <p style="margin:0;">NOME DA MÃE DO DEPENDENTE: <u>${dep?.dep_nome_mae || "_________________________________"}</u></p>
+        <p style="margin:0 0 6px 16px;">${parentescoMap[dep?.dep_grau_parentesco] || parentescoMap.CONJUGE}</p>
+        <p style="margin:0;">NOME DA MÃE: <u>${dep?.dep_nome_mae || "___________________________"}</u></p>
       </div>
-      <p style="font-size:9pt;color:#555;margin:0 0 8px 0;">* Titular: ${colab?.nome || ""} — Matrícula: ${colab?.chapa || ""}</p>
-      <p style="margin:0 0 48px 0;">_________________, _____ de ________________ de _________.</p>
-      <div style="border-top:1px solid #000;width:280px;padding-top:6px;font-size:10pt;text-align:center;">ASSINATURA DO TITULAR</div>
-    </div>
-  `;
+      <p style="font-size:8.5pt;color:#555;margin:0 0 6px 0;">Titular: ${colab?.nome || ""} — Matrícula: ${colab?.chapa || ""}</p>
+      <p style="margin:0 0 40px 0;font-size:9.5pt;">_________________, _____ de ________________ de _________.</p>
+      <div style="border-top:1px solid #000;width:260px;padding-top:5px;font-size:9.5pt;text-align:center;">ASSINATURA DO TITULAR</div>
+    </div>`;
 }
 
 // ── Componente PlanoSaude ─────────────────────────────────────────────────────
 function PlanoSaude({ user, colaboradores }) {
-  const [lista, setLista] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [modalTipo, setModalTipo] = useState(null);
+  const [lista, setLista]         = useState([]);
+  const [loading, setLoading]     = useState(false);
+  const [tipo, setTipo]           = useState(null); // null | "TITULAR" | "DEPENDENTE"
   const [modalPreview, setModalPreview] = useState(null);
-  const [salvando, setSalvando] = useState(false);
-  const [msg, setMsg] = useState(null);
+  const [salvando, setSalvando]   = useState(false);
+  const [msg, setMsg]             = useState(null);
   const [anexosModal, setAnexosModal] = useState(null);
 
-  const [colabSel, setColabSel] = useState(null);
+  const [colabSel, setColabSel]   = useState(null);
   const [buscaColab, setBuscaColab] = useState("");
   const [movimentacao, setMovimentacao] = useState("INCLUSAO");
 
   const [depTitularSel, setDepTitularSel] = useState(null);
-  const [buscaDepTitular, setBuscaDepTitular] = useState("");
-  const [depMovimentacao, setDepMovimentacao] = useState("INCLUSAO");
-  const [dep, setDep] = useState({ dep_cpf: "", dep_nome: "", dep_sexo: "M", dep_data_nasc: "", dep_estado_civil: "", dep_data_casamento: "", dep_grau_parentesco: "CONJUGE", dep_nome_mae: "" });
-  const [anexos, setAnexos] = useState([]);
+  const [buscaDep, setBuscaDep]   = useState("");
+  const [depMov, setDepMov]       = useState("INCLUSAO");
+  const [dep, setDep]             = useState({ dep_cpf:"", dep_nome:"", dep_sexo:"M", dep_data_nasc:"", dep_estado_civil:"", dep_data_casamento:"", dep_grau_parentesco:"CONJUGE", dep_nome_mae:"" });
+  const [anexos, setAnexos]       = useState([]);
 
-  const norm = s => (s || "").toLowerCase();
-
-  const colabsFiltrados = colaboradores
+  const norm = s => (s||"").toLowerCase();
+  const colsFilt = colaboradores
     .filter(c => c.cod_situacao !== "D")
-    .filter(c => !buscaColab || norm(c.nome).includes(norm(buscaColab)) || (c.chapa || "").includes(buscaColab));
-
-  const colabsDepFiltrados = colaboradores
+    .filter(c => !buscaColab || norm(c.nome).includes(norm(buscaColab)) || (c.chapa||"").includes(buscaColab));
+  const colsDepFilt = colaboradores
     .filter(c => c.cod_situacao !== "D")
-    .filter(c => !buscaDepTitular || norm(c.nome).includes(norm(buscaDepTitular)) || (c.chapa || "").includes(buscaDepTitular));
+    .filter(c => !buscaDep || norm(c.nome).includes(norm(buscaDep)) || (c.chapa||"").includes(buscaDep));
 
-  const carregarLista = async () => {
+  const carregar = async () => {
     setLoading(true);
-    try {
-      const data = await api.listarPlanoSaude();
-      setLista(Array.isArray(data) ? data : []);
-    } catch (e) {
-      setMsg({ tipo: "erro", texto: "Erro ao carregar: " + e.message });
-    } finally { setLoading(false); }
+    try { const d = await api.listarPlanoSaude(); setLista(Array.isArray(d) ? d : []); }
+    catch (e) { setMsg({ tipo:"erro", texto:"Erro: "+e.message }); }
+    finally { setLoading(false); }
   };
+  useEffect(() => { carregar(); }, []);
 
-  useEffect(() => { carregarLista(); }, []);
-
-  const resetForms = () => {
+  const reset = () => {
     setColabSel(null); setBuscaColab(""); setMovimentacao("INCLUSAO");
-    setDepTitularSel(null); setBuscaDepTitular(""); setDepMovimentacao("INCLUSAO");
-    setDep({ dep_cpf: "", dep_nome: "", dep_sexo: "M", dep_data_nasc: "", dep_estado_civil: "", dep_data_casamento: "", dep_grau_parentesco: "CONJUGE", dep_nome_mae: "" });
+    setDepTitularSel(null); setBuscaDep(""); setDepMov("INCLUSAO");
+    setDep({ dep_cpf:"", dep_nome:"", dep_sexo:"M", dep_data_nasc:"", dep_estado_civil:"", dep_data_casamento:"", dep_grau_parentesco:"CONJUGE", dep_nome_mae:"" });
     setAnexos([]);
   };
 
   const onAnexo = (tipo_anexo) => (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const file = e.target.files[0]; if (!file) return;
     const reader = new FileReader();
-    reader.onload = ev => {
-      setAnexos(prev => [...prev.filter(a => a.tipo_anexo !== tipo_anexo), {
-        nome_arquivo: file.name, tipo_anexo, dados_base64: ev.target.result.split(",")[1],
-      }]);
-    };
+    reader.onload = ev => setAnexos(prev => [...prev.filter(a=>a.tipo_anexo!==tipo_anexo), { nome_arquivo:file.name, tipo_anexo, dados_base64:ev.target.result.split(",")[1] }]);
     reader.readAsDataURL(file);
   };
 
   const salvarTitular = async () => {
-    if (!colabSel) { setMsg({ tipo: "erro", texto: "Selecione o colaborador." }); return; }
+    if (!colabSel) { setMsg({ tipo:"erro", texto:"Selecione o colaborador." }); return; }
     setSalvando(true);
     try {
-      const novo = await api.criarPlanoSaude({ tipo: "TITULAR", movimentacao, colaborador_id: colabSel.id });
+      const novo = await api.criarPlanoSaude({ tipo:"TITULAR", movimentacao, colaborador_id:colabSel.id });
       for (const a of anexos) await api.addAnexoPlanoSaude(novo.id, a);
-      setMsg({ tipo: "ok", texto: "Solicitação criada com sucesso!" });
-      setModalTipo(null); resetForms(); carregarLista();
-    } catch (e) { setMsg({ tipo: "erro", texto: e.message }); }
+      setMsg({ tipo:"ok", texto:"Solicitação criada!" }); setTipo(null); reset(); carregar();
+    } catch(e) { setMsg({ tipo:"erro", texto:e.message }); }
     finally { setSalvando(false); }
   };
 
   const salvarDependente = async () => {
-    if (!depTitularSel) { setMsg({ tipo: "erro", texto: "Selecione o titular." }); return; }
-    if (!dep.dep_nome.trim()) { setMsg({ tipo: "erro", texto: "Informe o nome do dependente." }); return; }
+    if (!depTitularSel) { setMsg({ tipo:"erro", texto:"Selecione o titular." }); return; }
+    if (!dep.dep_nome.trim()) { setMsg({ tipo:"erro", texto:"Informe o nome do dependente." }); return; }
     setSalvando(true);
     try {
-      const novo = await api.criarPlanoSaude({ tipo: "DEPENDENTE", movimentacao: depMovimentacao, colaborador_id: depTitularSel.id, ...dep });
+      const novo = await api.criarPlanoSaude({ tipo:"DEPENDENTE", movimentacao:depMov, colaborador_id:depTitularSel.id, ...dep });
       for (const a of anexos) await api.addAnexoPlanoSaude(novo.id, a);
-      setMsg({ tipo: "ok", texto: "Dependente registrado com sucesso!" });
-      setModalTipo(null); resetForms(); carregarLista();
-    } catch (e) { setMsg({ tipo: "erro", texto: e.message }); }
+      setMsg({ tipo:"ok", texto:"Dependente registrado!" }); setTipo(null); reset(); carregar();
+    } catch(e) { setMsg({ tipo:"erro", texto:e.message }); }
     finally { setSalvando(false); }
   };
 
   const imprimir = () => {
-    const w = window.open("", "_blank");
-    w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Proposta Plano de Saúde</title></head><body>${modalPreview}</body></html>`);
-    w.document.close();
-    setTimeout(() => { w.focus(); w.print(); }, 400);
+    const w = window.open("","_blank");
+    w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Plano de Saúde</title></head><body>${modalPreview}</body></html>`);
+    w.document.close(); setTimeout(()=>{ w.focus(); w.print(); }, 400);
   };
 
-  const INPUT  = { width: "100%", padding: "8px 12px", border: "1px solid #D1D5DB", borderRadius: 6, fontSize: 13, boxSizing: "border-box" };
-  const LABEL  = { fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 };
-  const BTN_P  = { background: "#0F2447", color: "#fff", border: "none", borderRadius: 8, padding: "10px 22px", fontSize: 13, fontWeight: 700, cursor: "pointer" };
-  const BTN_S  = { background: "#F3F4F6", color: "#374151", border: "1px solid #D1D5DB", borderRadius: 8, padding: "10px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer" };
-  const CARD   = { background: "#fff", borderRadius: 12, border: "1px solid #E5E7EB", boxShadow: "0 1px 4px rgba(0,0,0,.06)", padding: "14px 20px", marginBottom: 10 };
-  const MODAL  = { position: "fixed", inset: 0, background: "rgba(0,0,0,.5)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center" };
-  const MBOX   = { background: "#fff", borderRadius: 16, padding: 32, width: "100%", maxWidth: 700, maxHeight: "90vh", overflowY: "auto", boxShadow: "0 20px 60px rgba(0,0,0,.25)" };
+  // ── Estilos compactos seguindo padrão do sistema ──────────────────────────
+  const S = {
+    page:   { padding:"16px 20px", maxWidth:960, margin:"0 auto" },
+    header: { display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 },
+    title:  { margin:0, fontSize:16, fontWeight:800, color:"#111827" },
+    sub:    { margin:"2px 0 0", fontSize:11, color:"#6B7280" },
+    btnP:   { background:"#0F2447", color:"#fff", border:"none", borderRadius:8, padding:"8px 18px", fontSize:12, fontWeight:700, cursor:"pointer" },
+    btnS:   { background:"#F3F4F6", color:"#374151", border:"1px solid #D1D5DB", borderRadius:8, padding:"8px 14px", fontSize:12, fontWeight:600, cursor:"pointer" },
+    card:   { background:"#fff", borderRadius:10, border:"1px solid #E5E7EB", padding:"10px 16px", marginBottom:8, display:"flex", alignItems:"center", justifyContent:"space-between" },
+    inp:    { width:"100%", padding:"6px 10px", border:"1px solid #D1D5DB", borderRadius:6, fontSize:12, boxSizing:"border-box" },
+    lbl:    { fontSize:11, fontWeight:600, color:"#374151", display:"block", marginBottom:3 },
+    modal:  { position:"fixed", inset:0, background:"rgba(0,0,0,.5)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center" },
+    mbox:   { background:"#fff", borderRadius:14, padding:"24px 28px", width:"100%", maxWidth:680, maxHeight:"90vh", overflowY:"auto", boxShadow:"0 20px 60px rgba(0,0,0,.25)" },
+  };
 
-  const BuscaColab = ({ busca, setBusca, lista, onSelect, label }) => (
-    <div style={{ marginBottom: 16 }}>
-      <label style={LABEL}>{label} *</label>
-      <input style={INPUT} placeholder="Buscar por nome ou matrícula..." value={busca} onChange={e => setBusca(e.target.value)} />
-      {busca && (
-        <div style={{ border: "1px solid #E5E7EB", borderRadius: 8, maxHeight: 180, overflowY: "auto", marginTop: 4 }}>
-          {lista.slice(0, 8).map(c => (
-            <div key={c.id} onClick={() => { onSelect(c); setBusca(""); }}
-              style={{ padding: "8px 12px", cursor: "pointer", fontSize: 13, borderBottom: "1px solid #F3F4F6" }}
-              onMouseEnter={e => e.currentTarget.style.background = "#F3F4F6"}
-              onMouseLeave={e => e.currentTarget.style.background = ""}>
-              <strong>{c.nome}</strong> <span style={{ color: "#6B7280" }}>• {c.chapa} • {c.funcao}</span>
-            </div>
-          ))}
+  // Seletor de tipo igual ao padrão Advertência/Suspensão
+  const SeletorTipo = () => (
+    <div style={S.modal}>
+      <div style={{ ...S.mbox, maxWidth:420 }}>
+        <h3 style={{ margin:"0 0 20px", fontSize:15, fontWeight:800, color:"#0F2447" }}>Nova Solicitação — Plano de Saúde</h3>
+        <div style={{ display:"flex", gap:12, marginBottom:20 }}>
+          <button
+            onClick={() => setTipo("TITULAR")}
+            style={{ flex:1, padding:"18px 12px", borderRadius:10, border:"2px solid #0F2447", background:"#EFF6FF", cursor:"pointer", textAlign:"center" }}>
+            <div style={{ fontSize:22, marginBottom:6 }}>👤</div>
+            <div style={{ fontSize:13, fontWeight:700, color:"#0F2447" }}>Titular</div>
+            <div style={{ fontSize:11, color:"#6B7280", marginTop:2 }}>Inclusão do colaborador</div>
+          </button>
+          <button
+            onClick={() => setTipo("DEPENDENTE")}
+            style={{ flex:1, padding:"18px 12px", borderRadius:10, border:"2px solid #7C3AED", background:"#F5F3FF", cursor:"pointer", textAlign:"center" }}>
+            <div style={{ fontSize:22, marginBottom:6 }}>👨‍👩‍👧</div>
+            <div style={{ fontSize:13, fontWeight:700, color:"#7C3AED" }}>Dependente</div>
+            <div style={{ fontSize:11, color:"#6B7280", marginTop:2 }}>Inclusão de dependente</div>
+          </button>
         </div>
+        <div style={{ textAlign:"right" }}>
+          <button style={S.btnS} onClick={() => { setTipo(null); reset(); }}>Cancelar</button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const BuscaColab = ({ busca, setBusca, sel, onSel, lista, label }) => (
+    <div style={{ marginBottom:14 }}>
+      <label style={S.lbl}>{label} *</label>
+      {sel ? (
+        <div style={{ padding:"6px 10px", background:"#EFF6FF", borderRadius:6, fontSize:12, color:"#1E40AF", fontWeight:600, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+          ✓ {sel.nome} — {sel.chapa}
+          <button onClick={() => { onSel(null); setBusca(""); }} style={{ background:"none", border:"none", cursor:"pointer", color:"#6B7280", fontSize:14 }}>×</button>
+        </div>
+      ) : (
+        <>
+          <input style={S.inp} placeholder="Digite nome ou matrícula..." value={busca}
+            onChange={e => setBusca(e.target.value)} autoFocus />
+          {busca.length > 0 && lista.length > 0 && (
+            <div style={{ border:"1px solid #E5E7EB", borderRadius:6, maxHeight:160, overflowY:"auto", marginTop:2, background:"#fff", boxShadow:"0 4px 12px rgba(0,0,0,.1)" }}>
+              {lista.slice(0,8).map(c => (
+                <div key={c.id} onClick={() => { onSel(c); setBusca(""); }}
+                  style={{ padding:"7px 10px", cursor:"pointer", fontSize:12, borderBottom:"1px solid #F3F4F6" }}
+                  onMouseEnter={e=>e.currentTarget.style.background="#F3F4F6"}
+                  onMouseLeave={e=>e.currentTarget.style.background=""}>
+                  <strong>{c.nome}</strong> <span style={{ color:"#6B7280" }}>• {c.chapa} • {c.funcao}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          {busca.length > 0 && lista.length === 0 && (
+            <div style={{ padding:"8px 10px", fontSize:12, color:"#9CA3AF", border:"1px solid #E5E7EB", borderRadius:6, marginTop:2 }}>Nenhum resultado.</div>
+          )}
+        </>
       )}
     </div>
   );
 
+  const InfoColab = ({ c }) => c ? (
+    <div style={{ background:"#FFFBEB", border:"1px solid #FDE68A", borderRadius:8, padding:"10px 14px", marginBottom:14 }}>
+      <p style={{ margin:"0 0 8px", fontSize:11, fontWeight:700, color:"#92400E" }}>ℹ️ Dados no sistema — campos em vermelho aparecerão em branco no formulário</p>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:6, fontSize:11 }}>
+        {[["CPF",c.cpf],["RG",c.rg],["PIS",c.pis],["CTPS",c.ctps],["Nome da Mãe",c.nome_mae],["Endereço",c.logradouro]].map(([k,v])=>(
+          <div key={k} style={{ background:v?"#F0FDF4":"#FEF2F2", border:`1px solid ${v?"#BBF7D0":"#FECACA"}`, borderRadius:5, padding:"3px 8px" }}>
+            <span style={{ color:"#6B7280" }}>{k}: </span>
+            <strong style={{ color:v?"#065F46":"#991B1B" }}>{v||"Não informado"}</strong>
+          </div>
+        ))}
+      </div>
+    </div>
+  ) : null;
+
   return (
-    <div style={{ padding: "20px 24px", maxWidth: 900, margin: "0 auto" }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+    <div style={S.page}>
+      {/* Header */}
+      <div style={S.header}>
         <div>
-          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: "#0F2447" }}>💊 Solicitação de Plano de Saúde</h2>
-          <p style={{ margin: "4px 0 0", fontSize: 13, color: "#6B7280" }}>Proposta de Assistência Médica — Hapvida</p>
+          <h2 style={S.title}>💊 Solicitação de Plano de Saúde</h2>
+          <p style={S.sub}>Proposta de Assistência Médica — Hapvida</p>
         </div>
-        <div style={{ display: "flex", gap: 10 }}>
-          <button style={BTN_S} onClick={() => { setModalTipo("DEPENDENTE"); resetForms(); }}>+ Dependente</button>
-          <button style={BTN_P} onClick={() => { setModalTipo("TITULAR"); resetForms(); }}>+ Titular</button>
-        </div>
+        <button style={S.btnP} onClick={() => { reset(); setTipo("SELECIONAR"); }}>+ Nova Solicitação</button>
       </div>
 
+      {/* Msg */}
       {msg && (
-        <div style={{ padding: "10px 16px", borderRadius: 8, marginBottom: 16, background: msg.tipo === "ok" ? "#D1FAE5" : "#FEE2E2", color: msg.tipo === "ok" ? "#065F46" : "#991B1B", fontSize: 13, fontWeight: 600 }}>
+        <div style={{ padding:"8px 14px", borderRadius:7, marginBottom:12, background:msg.tipo==="ok"?"#D1FAE5":"#FEE2E2", color:msg.tipo==="ok"?"#065F46":"#991B1B", fontSize:12, fontWeight:600, display:"flex", justifyContent:"space-between" }}>
           {msg.texto}
-          <button onClick={() => setMsg(null)} style={{ marginLeft: 12, background: "none", border: "none", cursor: "pointer", fontSize: 16 }}>×</button>
+          <button onClick={()=>setMsg(null)} style={{ background:"none", border:"none", cursor:"pointer", fontSize:14 }}>×</button>
         </div>
       )}
 
+      {/* Lista */}
       {loading ? (
-        <div style={{ textAlign: "center", padding: 40, color: "#6B7280" }}>Carregando...</div>
+        <div style={{ textAlign:"center", padding:40, color:"#9CA3AF", fontSize:13 }}>Carregando solicitações...</div>
       ) : lista.length === 0 ? (
-        <div style={{ textAlign: "center", padding: 60, color: "#9CA3AF" }}>Nenhuma solicitação registrada.</div>
+        <div style={{ textAlign:"center", padding:60, color:"#9CA3AF", fontSize:13 }}>Nenhuma solicitação registrada.</div>
       ) : lista.map(s => (
-        <div key={s.id} style={CARD}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <div>
-              <span style={{ fontSize: 12, fontWeight: 700, padding: "2px 10px", borderRadius: 10, background: s.tipo === "TITULAR" ? "#DBEAFE" : "#EDE9FE", color: s.tipo === "TITULAR" ? "#1E40AF" : "#5B21B6", marginRight: 8 }}>{s.tipo}</span>
-              <span style={{ marginLeft: 4, fontSize: 13, fontWeight: 700, color: "#111827" }}>{s.colaborador_nome}</span>
-              <span style={{ marginLeft: 8, fontSize: 12, color: "#6B7280" }}>Chapa {s.chapa}</span>
-              {s.tipo === "DEPENDENTE" && <span style={{ marginLeft: 8, fontSize: 12, color: "#7C3AED" }}>→ Dep: {s.dep_nome}</span>}
-            </div>
-            <div style={{ display: "flex", gap: 8 }}>
-              <button style={{ ...BTN_S, padding: "6px 14px", fontSize: 12 }}
-                onClick={() => setModalPreview(s.tipo === "TITULAR" ? gerarHTMLTitular(s, s.movimentacao) : gerarHTMLDependente(s, s, s.movimentacao))}>
-                🖨 Imprimir
-              </button>
-              <button style={{ ...BTN_S, padding: "6px 14px", fontSize: 12 }} onClick={() => setAnexosModal(s)}>📎 Anexos</button>
-            </div>
+        <div key={s.id} style={S.card}>
+          <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+            <span style={{ fontSize:11, fontWeight:700, padding:"2px 8px", borderRadius:8, background:s.tipo==="TITULAR"?"#DBEAFE":"#EDE9FE", color:s.tipo==="TITULAR"?"#1E40AF":"#5B21B6" }}>{s.tipo}</span>
+            <span style={{ fontSize:12, fontWeight:700, color:"#111827" }}>{s.colaborador_nome}</span>
+            <span style={{ fontSize:11, color:"#6B7280" }}>#{s.chapa}</span>
+            {s.tipo==="DEPENDENTE" && <span style={{ fontSize:11, color:"#7C3AED" }}>→ {s.dep_nome}</span>}
+            <span style={{ fontSize:10, color:"#9CA3AF" }}>• {s.movimentacao} • {new Date(s.criado_em).toLocaleDateString("pt-BR")}</span>
           </div>
-          <div style={{ marginTop: 6, fontSize: 11, color: "#9CA3AF" }}>{s.movimentacao} • {new Date(s.criado_em).toLocaleDateString("pt-BR")}</div>
+          <div style={{ display:"flex", gap:6 }}>
+            <button style={{ ...S.btnS, padding:"4px 10px", fontSize:11 }}
+              onClick={() => setModalPreview(s.tipo==="TITULAR" ? gerarHTMLTitular(s,s.movimentacao) : gerarHTMLDependente(s,s,s.movimentacao))}>
+              🖨 Imprimir
+            </button>
+            <button style={{ ...S.btnS, padding:"4px 10px", fontSize:11 }} onClick={() => setAnexosModal(s)}>📎 Anexos</button>
+          </div>
         </div>
       ))}
 
+      {/* MODAL SELETOR TIPO */}
+      {tipo === "SELECIONAR" && <SeletorTipo />}
+
       {/* MODAL TITULAR */}
-      {modalTipo === "TITULAR" && (
-        <div style={MODAL}>
-          <div style={MBOX}>
-            <h3 style={{ margin: "0 0 20px", fontSize: 17, fontWeight: 800, color: "#0F2447" }}>Nova Solicitação — Titular</h3>
-            <BuscaColab busca={buscaColab} setBusca={setBuscaColab} lista={colabsFiltrados} onSelect={setColabSel} label="Colaborador" />
-            {colabSel && (
-              <div style={{ marginBottom: 16, padding: "8px 12px", background: "#EFF6FF", borderRadius: 8, fontSize: 13, color: "#1E40AF", fontWeight: 600 }}>
-                ✓ {colabSel.nome} — {colabSel.chapa}
-                <button onClick={() => setColabSel(null)} style={{ marginLeft: 8, background: "none", border: "none", cursor: "pointer", color: "#6B7280" }}>×</button>
-              </div>
-            )}
-            {colabSel && (
-              <div style={{ background: "#FFFBEB", border: "1px solid #FDE68A", borderRadius: 10, padding: 14, marginBottom: 16 }}>
-                <p style={{ margin: "0 0 10px", fontSize: 12, fontWeight: 700, color: "#92400E" }}>ℹ️ Dados do colaborador no sistema — campos vazios aparecerão em branco no formulário</p>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, fontSize: 12 }}>
-                  {[["CPF", colabSel.cpf], ["RG", colabSel.rg], ["PIS", colabSel.pis], ["CTPS", colabSel.ctps], ["Nome da Mãe", colabSel.nome_mae], ["Endereço", colabSel.logradouro]].map(([k, v]) => (
-                    <div key={k} style={{ background: v ? "#F0FDF4" : "#FEF2F2", border: `1px solid ${v ? "#BBF7D0" : "#FECACA"}`, borderRadius: 6, padding: "4px 10px" }}>
-                      <span style={{ color: "#6B7280" }}>{k}: </span>
-                      <strong style={{ color: v ? "#065F46" : "#991B1B" }}>{v || "Não informado"}</strong>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-            <div style={{ marginBottom: 16 }}>
-              <label style={LABEL}>Movimentação *</label>
-              <select style={INPUT} value={movimentacao} onChange={e => setMovimentacao(e.target.value)}>
+      {tipo === "TITULAR" && (
+        <div style={S.modal}>
+          <div style={S.mbox}>
+            <h3 style={{ margin:"0 0 16px", fontSize:15, fontWeight:800, color:"#0F2447" }}>Nova Solicitação — Titular</h3>
+            <BuscaColab busca={buscaColab} setBusca={setBuscaColab} sel={colabSel} onSel={setColabSel} lista={colsFilt} label="Colaborador" />
+            <InfoColab c={colabSel} />
+            <div style={{ marginBottom:14 }}>
+              <label style={S.lbl}>Movimentação *</label>
+              <select style={S.inp} value={movimentacao} onChange={e=>setMovimentacao(e.target.value)}>
                 <option value="INCLUSAO">Inclusão</option>
                 <option value="NAO_OPTANTE">Não Optante</option>
                 <option value="ALTERACAO">Alteração</option>
                 <option value="EXCLUSAO">Exclusão</option>
               </select>
             </div>
-            <button style={{ ...BTN_S, width: "100%", marginBottom: 6 }} onClick={() => { if (!colabSel) { setMsg({ tipo: "erro", texto: "Selecione o colaborador primeiro." }); return; } setModalPreview(gerarHTMLTitular(colabSel, movimentacao)); }}>
+            <button style={{ ...S.btnS, width:"100%", marginBottom:4 }}
+              onClick={() => { if (!colabSel) { setMsg({tipo:"erro",texto:"Selecione o colaborador."}); return; } setModalPreview(gerarHTMLTitular(colabSel,movimentacao)); }}>
               👁 Visualizar / Imprimir Formulário
             </button>
-            <p style={{ fontSize: 11, color: "#6B7280", margin: "0 0 20px" }}>Após imprimir, o titular assina e data manualmente.</p>
-            <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-              <button style={BTN_S} onClick={() => setModalTipo(null)}>Cancelar</button>
-              <button style={BTN_P} onClick={salvarTitular} disabled={salvando}>{salvando ? "Salvando..." : "Registrar Solicitação"}</button>
+            <p style={{ fontSize:10, color:"#6B7280", margin:"0 0 16px" }}>Após imprimir, o titular assina e data manualmente.</p>
+            <div style={{ display:"flex", gap:8, justifyContent:"flex-end" }}>
+              <button style={S.btnS} onClick={() => { setTipo(null); reset(); }}>Cancelar</button>
+              <button style={S.btnP} onClick={salvarTitular} disabled={salvando}>{salvando?"Salvando...":"Registrar Solicitação"}</button>
             </div>
           </div>
         </div>
       )}
 
       {/* MODAL DEPENDENTE */}
-      {modalTipo === "DEPENDENTE" && (
-        <div style={MODAL}>
-          <div style={MBOX}>
-            <h3 style={{ margin: "0 0 20px", fontSize: 17, fontWeight: 800, color: "#0F2447" }}>Nova Solicitação — Dependente</h3>
-            <BuscaColab busca={buscaDepTitular} setBusca={setBuscaDepTitular} lista={colabsDepFiltrados} onSelect={setDepTitularSel} label="Titular (Colaborador)" />
-            {depTitularSel && (
-              <div style={{ marginBottom: 16, padding: "8px 12px", background: "#EFF6FF", borderRadius: 8, fontSize: 13, color: "#1E40AF", fontWeight: 600 }}>
-                ✓ Titular: {depTitularSel.nome} — {depTitularSel.chapa}
-                <button onClick={() => setDepTitularSel(null)} style={{ marginLeft: 8, background: "none", border: "none", cursor: "pointer", color: "#6B7280" }}>×</button>
-              </div>
-            )}
-            <div style={{ marginBottom: 16 }}>
-              <label style={LABEL}>Movimentação *</label>
-              <select style={INPUT} value={depMovimentacao} onChange={e => setDepMovimentacao(e.target.value)}>
+      {tipo === "DEPENDENTE" && (
+        <div style={S.modal}>
+          <div style={S.mbox}>
+            <h3 style={{ margin:"0 0 16px", fontSize:15, fontWeight:800, color:"#0F2447" }}>Nova Solicitação — Dependente</h3>
+            <BuscaColab busca={buscaDep} setBusca={setBuscaDep} sel={depTitularSel} onSel={setDepTitularSel} lista={colsDepFilt} label="Titular (Colaborador)" />
+            <div style={{ marginBottom:14 }}>
+              <label style={S.lbl}>Movimentação *</label>
+              <select style={S.inp} value={depMov} onChange={e=>setDepMov(e.target.value)}>
                 <option value="INCLUSAO">Inclusão</option>
                 <option value="ALTERACAO">Alteração</option>
                 <option value="EXCLUSAO">Exclusão</option>
               </select>
             </div>
-            <div style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 10, padding: 16, marginBottom: 16 }}>
-              <p style={{ margin: "0 0 12px", fontSize: 12, fontWeight: 700, color: "#374151" }}>DADOS DO DEPENDENTE</p>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                <div><label style={LABEL}>CPF</label><input style={INPUT} value={dep.dep_cpf} onChange={e => setDep(p => ({ ...p, dep_cpf: e.target.value }))} placeholder="000.000.000-00" /></div>
-                <div><label style={LABEL}>Nome *</label><input style={INPUT} value={dep.dep_nome} onChange={e => setDep(p => ({ ...p, dep_nome: e.target.value }))} /></div>
-                <div>
-                  <label style={LABEL}>Sexo</label>
-                  <select style={INPUT} value={dep.dep_sexo} onChange={e => setDep(p => ({ ...p, dep_sexo: e.target.value }))}>
+            <div style={{ background:"#F9FAFB", border:"1px solid #E5E7EB", borderRadius:8, padding:"12px 14px", marginBottom:14 }}>
+              <p style={{ margin:"0 0 10px", fontSize:11, fontWeight:700, color:"#374151" }}>DADOS DO DEPENDENTE</p>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+                <div><label style={S.lbl}>CPF</label><input style={S.inp} value={dep.dep_cpf} onChange={e=>setDep(p=>({...p,dep_cpf:e.target.value}))} placeholder="000.000.000-00" /></div>
+                <div><label style={S.lbl}>Nome *</label><input style={S.inp} value={dep.dep_nome} onChange={e=>setDep(p=>({...p,dep_nome:e.target.value}))} /></div>
+                <div><label style={S.lbl}>Sexo</label>
+                  <select style={S.inp} value={dep.dep_sexo} onChange={e=>setDep(p=>({...p,dep_sexo:e.target.value}))}>
                     <option value="M">Masculino</option><option value="F">Feminino</option>
                   </select>
                 </div>
-                <div><label style={LABEL}>Data de Nascimento</label><input type="date" style={INPUT} value={dep.dep_data_nasc} onChange={e => setDep(p => ({ ...p, dep_data_nasc: e.target.value }))} /></div>
-                <div>
-                  <label style={LABEL}>Estado Civil</label>
-                  <select style={INPUT} value={dep.dep_estado_civil} onChange={e => setDep(p => ({ ...p, dep_estado_civil: e.target.value }))}>
+                <div><label style={S.lbl}>Data de Nascimento</label><input type="date" style={S.inp} value={dep.dep_data_nasc} onChange={e=>setDep(p=>({...p,dep_data_nasc:e.target.value}))} /></div>
+                <div><label style={S.lbl}>Estado Civil</label>
+                  <select style={S.inp} value={dep.dep_estado_civil} onChange={e=>setDep(p=>({...p,dep_estado_civil:e.target.value}))}>
                     <option value="">Selecione</option><option>Solteiro(a)</option><option>Casado(a)</option>
                     <option>Divorciado(a)</option><option>Viúvo(a)</option><option>União Estável</option>
                   </select>
                 </div>
-                <div><label style={LABEL}>Data de Casamento</label><input type="date" style={INPUT} value={dep.dep_data_casamento} onChange={e => setDep(p => ({ ...p, dep_data_casamento: e.target.value }))} /></div>
-                <div style={{ gridColumn: "1/-1" }}>
-                  <label style={LABEL}>Grau de Parentesco</label>
-                  <select style={INPUT} value={dep.dep_grau_parentesco} onChange={e => setDep(p => ({ ...p, dep_grau_parentesco: e.target.value }))}>
+                <div><label style={S.lbl}>Data de Casamento</label><input type="date" style={S.inp} value={dep.dep_data_casamento} onChange={e=>setDep(p=>({...p,dep_data_casamento:e.target.value}))} /></div>
+                <div style={{ gridColumn:"1/-1" }}><label style={S.lbl}>Grau de Parentesco</label>
+                  <select style={S.inp} value={dep.dep_grau_parentesco} onChange={e=>setDep(p=>({...p,dep_grau_parentesco:e.target.value}))}>
                     <option value="CONJUGE">Cônjuge</option><option value="FILHO">Filho(a)</option>
                     <option value="COMPANHEIRO">Companheiro(a)</option><option value="OUTROS">Outros</option>
                   </select>
                 </div>
-                <div style={{ gridColumn: "1/-1" }}><label style={LABEL}>Nome da Mãe do Dependente</label><input style={INPUT} value={dep.dep_nome_mae} onChange={e => setDep(p => ({ ...p, dep_nome_mae: e.target.value }))} /></div>
+                <div style={{ gridColumn:"1/-1" }}><label style={S.lbl}>Nome da Mãe do Dependente</label><input style={S.inp} value={dep.dep_nome_mae} onChange={e=>setDep(p=>({...p,dep_nome_mae:e.target.value}))} /></div>
               </div>
             </div>
-            <div style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 10, padding: 16, marginBottom: 16 }}>
-              <p style={{ margin: "0 0 12px", fontSize: 12, fontWeight: 700, color: "#374151" }}>📎 DOCUMENTOS PARA ANEXAR</p>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+            <div style={{ background:"#F9FAFB", border:"1px solid #E5E7EB", borderRadius:8, padding:"12px 14px", marginBottom:14 }}>
+              <p style={{ margin:"0 0 10px", fontSize:11, fontWeight:700, color:"#374151" }}>📎 DOCUMENTOS</p>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8 }}>
                 {[
-                  { key: "FORMULARIO_ASSINADO", label: "Formulário Assinado" },
-                  { key: "RG_DEPENDENTE", label: "RG do Dependente" },
-                  { key: dep.dep_grau_parentesco === "FILHO" ? "CERTIDAO_NASCIMENTO" : "CERTIDAO_CASAMENTO", label: dep.dep_grau_parentesco === "FILHO" ? "Certidão de Nascimento" : "Certidão de Casamento" },
-                ].map(({ key, label }) => {
-                  const found = anexos.find(a => a.tipo_anexo === key);
+                  { key:"FORMULARIO_ASSINADO", label:"Formulário Assinado" },
+                  { key:"RG_DEPENDENTE", label:"RG do Dependente" },
+                  { key:dep.dep_grau_parentesco==="FILHO"?"CERTIDAO_NASCIMENTO":"CERTIDAO_CASAMENTO", label:dep.dep_grau_parentesco==="FILHO"?"Certidão de Nascimento":"Certidão de Casamento" },
+                ].map(({key,label}) => {
+                  const found = anexos.find(a=>a.tipo_anexo===key);
                   return (
-                    <div key={key} style={{ border: `1px dashed ${found ? "#34D399" : "#D1D5DB"}`, borderRadius: 8, padding: 12, textAlign: "center", background: found ? "#F0FDF4" : "#fff" }}>
-                      <p style={{ margin: "0 0 8px", fontSize: 11, fontWeight: 600, color: found ? "#065F46" : "#6B7280" }}>{label}</p>
+                    <div key={key} style={{ border:`1px dashed ${found?"#34D399":"#D1D5DB"}`, borderRadius:7, padding:10, textAlign:"center", background:found?"#F0FDF4":"#fff" }}>
+                      <p style={{ margin:"0 0 6px", fontSize:10, fontWeight:600, color:found?"#065F46":"#6B7280" }}>{label}</p>
                       {found ? (
                         <div>
-                          <p style={{ margin: "0 0 4px", fontSize: 11, color: "#065F46" }}>✓ {found.nome_arquivo}</p>
-                          <button onClick={() => setAnexos(prev => prev.filter(a => a.tipo_anexo !== key))} style={{ fontSize: 10, color: "#991B1B", background: "none", border: "none", cursor: "pointer" }}>Remover</button>
+                          <p style={{ margin:"0 0 3px", fontSize:10, color:"#065F46" }}>✓ {found.nome_arquivo}</p>
+                          <button onClick={()=>setAnexos(prev=>prev.filter(a=>a.tipo_anexo!==key))} style={{ fontSize:10, color:"#991B1B", background:"none", border:"none", cursor:"pointer" }}>Remover</button>
                         </div>
                       ) : (
-                        <label style={{ cursor: "pointer", fontSize: 11, color: "#3B82F6" }}>
+                        <label style={{ cursor:"pointer", fontSize:11, color:"#3B82F6" }}>
                           📁 Selecionar
-                          <input type="file" style={{ display: "none" }} accept=".pdf,.jpg,.jpeg,.png" onChange={onAnexo(key)} />
+                          <input type="file" style={{ display:"none" }} accept=".pdf,.jpg,.jpeg,.png" onChange={onAnexo(key)} />
                         </label>
                       )}
                     </div>
@@ -6146,15 +6133,16 @@ function PlanoSaude({ user, colaboradores }) {
                 })}
               </div>
             </div>
-            <button style={{ ...BTN_S, width: "100%", marginBottom: 6 }} onClick={() => { if (!depTitularSel) { setMsg({ tipo: "erro", texto: "Selecione o titular primeiro." }); return; } setModalPreview(gerarHTMLDependente(depTitularSel, dep, depMovimentacao)); }}>
-              👁 Visualizar / Imprimir Formulário do Dependente
+            <button style={{ ...S.btnS, width:"100%", marginBottom:4 }}
+              onClick={() => { if (!depTitularSel) { setMsg({tipo:"erro",texto:"Selecione o titular."}); return; } setModalPreview(gerarHTMLDependente(depTitularSel,dep,depMov)); }}>
+              👁 Visualizar / Imprimir Formulário
             </button>
-            <p style={{ fontSize: 11, color: "#6B7280", margin: "0 0 20px" }}>
-              Imprima, o titular assina e data manualmente, depois anexe junto com RG e {dep.dep_grau_parentesco === "FILHO" ? "certidão de nascimento" : "certidão de casamento"}.
+            <p style={{ fontSize:10, color:"#6B7280", margin:"0 0 16px" }}>
+              Imprima, assine e date manualmente. Anexe RG e {dep.dep_grau_parentesco==="FILHO"?"certidão de nascimento":"certidão de casamento"}.
             </p>
-            <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-              <button style={BTN_S} onClick={() => setModalTipo(null)}>Cancelar</button>
-              <button style={BTN_P} onClick={salvarDependente} disabled={salvando}>{salvando ? "Salvando..." : "Registrar Solicitação"}</button>
+            <div style={{ display:"flex", gap:8, justifyContent:"flex-end" }}>
+              <button style={S.btnS} onClick={() => { setTipo(null); reset(); }}>Cancelar</button>
+              <button style={S.btnP} onClick={salvarDependente} disabled={salvando}>{salvando?"Salvando...":"Registrar Solicitação"}</button>
             </div>
           </div>
         </div>
@@ -6162,45 +6150,43 @@ function PlanoSaude({ user, colaboradores }) {
 
       {/* MODAL PREVIEW */}
       {modalPreview && (
-        <div style={{ ...MODAL, zIndex: 1100 }}>
-          <div style={{ background: "#fff", borderRadius: 12, width: "100%", maxWidth: 780, maxHeight: "90vh", overflowY: "auto", boxShadow: "0 20px 60px rgba(0,0,0,.3)" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 24px", borderBottom: "1px solid #E5E7EB" }}>
-              <h4 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: "#0F2447" }}>📄 Pré-visualização</h4>
-              <div style={{ display: "flex", gap: 10 }}>
-                <button style={{ ...BTN_P, padding: "8px 18px" }} onClick={imprimir}>🖨 Imprimir</button>
-                <button style={BTN_S} onClick={() => setModalPreview(null)}>Fechar</button>
+        <div style={{ ...S.modal, zIndex:1100 }}>
+          <div style={{ background:"#fff", borderRadius:12, width:"100%", maxWidth:760, maxHeight:"90vh", overflowY:"auto", boxShadow:"0 20px 60px rgba(0,0,0,.3)" }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 20px", borderBottom:"1px solid #E5E7EB" }}>
+              <h4 style={{ margin:0, fontSize:14, fontWeight:700, color:"#0F2447" }}>📄 Pré-visualização</h4>
+              <div style={{ display:"flex", gap:8 }}>
+                <button style={{ ...S.btnP, padding:"6px 14px" }} onClick={imprimir}>🖨 Imprimir</button>
+                <button style={S.btnS} onClick={()=>setModalPreview(null)}>Fechar</button>
               </div>
             </div>
-            <div dangerouslySetInnerHTML={{ __html: modalPreview }} style={{ padding: "16px 24px" }} />
+            <div dangerouslySetInnerHTML={{ __html:modalPreview }} style={{ padding:"12px 20px" }} />
           </div>
         </div>
       )}
 
       {/* MODAL ANEXOS */}
       {anexosModal && (
-        <div style={{ ...MODAL, zIndex: 1100 }}>
-          <div style={{ background: "#fff", borderRadius: 12, padding: 28, width: "100%", maxWidth: 520, maxHeight: "80vh", overflowY: "auto" }}>
-            <h4 style={{ margin: "0 0 16px", fontSize: 15, fontWeight: 700, color: "#0F2447" }}>📎 Adicionar Anexos</h4>
-            <p style={{ fontSize: 13, color: "#374151", margin: "0 0 16px" }}>Solicitação #{anexosModal.id} — {anexosModal.colaborador_nome}</p>
+        <div style={{ ...S.modal, zIndex:1100 }}>
+          <div style={{ background:"#fff", borderRadius:12, padding:"20px 24px", width:"100%", maxWidth:480 }}>
+            <h4 style={{ margin:"0 0 12px", fontSize:14, fontWeight:700, color:"#0F2447" }}>📎 Anexos — #{anexosModal.id} {anexosModal.colaborador_nome}</h4>
             {[
-              { key: "FORMULARIO_ASSINADO", label: "Formulário Assinado" },
-              { key: "RG_DEPENDENTE", label: "RG do Dependente" },
-              { key: "CERTIDAO_CASAMENTO", label: "Certidão de Casamento/Nascimento" },
-            ].map(({ key, label }) => (
-              <div key={key} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid #F3F4F6" }}>
-                <span style={{ fontSize: 13, color: "#374151" }}>{label}</span>
-                <label style={{ cursor: "pointer", fontSize: 12, color: "#3B82F6", fontWeight: 600 }}>
+              { key:"FORMULARIO_ASSINADO", label:"Formulário Assinado" },
+              { key:"RG_DEPENDENTE", label:"RG do Dependente" },
+              { key:"CERTIDAO_CASAMENTO", label:"Certidão de Casamento/Nascimento" },
+            ].map(({key,label}) => (
+              <div key={key} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"8px 0", borderBottom:"1px solid #F3F4F6" }}>
+                <span style={{ fontSize:12, color:"#374151" }}>{label}</span>
+                <label style={{ cursor:"pointer", fontSize:11, color:"#3B82F6", fontWeight:600 }}>
                   📁 Enviar
-                  <input type="file" style={{ display: "none" }} accept=".pdf,.jpg,.jpeg,.png"
-                    onChange={async (e) => {
-                      const file = e.target.files[0];
-                      if (!file) return;
+                  <input type="file" style={{ display:"none" }} accept=".pdf,.jpg,.jpeg,.png"
+                    onChange={async(e) => {
+                      const file = e.target.files[0]; if (!file) return;
                       const reader = new FileReader();
-                      reader.onload = async (ev) => {
+                      reader.onload = async(ev) => {
                         try {
-                          await api.addAnexoPlanoSaude(anexosModal.id, { nome_arquivo: file.name, tipo_anexo: key, dados_base64: ev.target.result.split(",")[1] });
-                          setMsg({ tipo: "ok", texto: `${label} enviado com sucesso!` });
-                        } catch (err) { setMsg({ tipo: "erro", texto: err.message }); }
+                          await api.addAnexoPlanoSaude(anexosModal.id, { nome_arquivo:file.name, tipo_anexo:key, dados_base64:ev.target.result.split(",")[1] });
+                          setMsg({tipo:"ok",texto:`${label} enviado!`});
+                        } catch(err) { setMsg({tipo:"erro",texto:err.message}); }
                       };
                       reader.readAsDataURL(file);
                     }}
@@ -6208,8 +6194,8 @@ function PlanoSaude({ user, colaboradores }) {
                 </label>
               </div>
             ))}
-            <div style={{ marginTop: 20, textAlign: "right" }}>
-              <button style={BTN_S} onClick={() => setAnexosModal(null)}>Fechar</button>
+            <div style={{ marginTop:14, textAlign:"right" }}>
+              <button style={S.btnS} onClick={()=>setAnexosModal(null)}>Fechar</button>
             </div>
           </div>
         </div>
