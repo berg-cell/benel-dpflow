@@ -910,11 +910,11 @@ const NAV_ITEMS = [
   { id: "autorizacoes",     label: "Autorização de Desconto",                icon: "📋", perfis: ["gestor","dp","admin"] },
   { id: "solicitacoes",     label: "Solicitações de Pagamento",               icon: "≡",  perfis: ["gestor","superior","dp","admin"] },
   { id: "desligamentos", label: "Solicitações de Desligamento",         icon: "🚪", perfis: ["gestor","superior","dp","admin"] },
+  { id: "beneficios",    label: "Benefícios",                           icon: "🏥", perfis: ["dp","admin","gestor"], submenu: BENEFICIOS_SUBMENU },
   { id: "aprovacoes",    label: "Aprovações",                           icon: "✓",  perfis: ["superior","dp","admin"] },
   { id: "dashboard",     label: "Dashboard",                            icon: "◉",  perfis: ["gestor","superior","dp","admin"] },
   { id: "exportacao",    label: "Exportação TXT",                       icon: "↓",  perfis: ["dp","admin"] },
   { id: "auditoria",     label: "Auditoria",                            icon: "📜", perfis: ["dp","admin"] },
-  { id: "beneficios", label: "Benefícios", icon: "🏥", perfis: ["dp","admin","gestor"], submenu: BENEFICIOS_SUBMENU },
 ];
 
 
@@ -5907,8 +5907,18 @@ function PlanoSaude({ user, colaboradores }) {
     reader.readAsDataURL(file);
   };
 
+  const FILIAIS_BLOQUEADAS = ["7"];
+  const checarFilialBloqueada = (colab) => {
+    if (colab && FILIAIS_BLOQUEADAS.includes(String(colab.cod_filial))) {
+      setMsg({ tipo:"erro", texto:"⚠️ O plano Hapvida não atende a filial 7 — São Mateus. Solicitação não permitida." });
+      return true;
+    }
+    return false;
+  };
+
   const salvarTitular = async () => {
     if (!colabSel) { setMsg({ tipo:"erro", texto:"Selecione o colaborador." }); return; }
+    if (checarFilialBloqueada(colabSel)) return;
     setSalvando(true);
     try {
       const novo = await api.criarPlanoSaude({ tipo:"TITULAR", movimentacao, colaborador_id:colabSel.id });
@@ -5920,6 +5930,7 @@ function PlanoSaude({ user, colaboradores }) {
 
   const salvarDependente = async () => {
     if (!depTitularSel) { setMsg({ tipo:"erro", texto:"Selecione o titular." }); return; }
+    if (checarFilialBloqueada(depTitularSel)) return;
     if (!dep.dep_nome.trim()) { setMsg({ tipo:"erro", texto:"Informe o nome do dependente." }); return; }
     setSalvando(true);
     try {
@@ -6013,6 +6024,11 @@ function PlanoSaude({ user, colaboradores }) {
 
   const InfoColab = ({ c }) => c ? (
     <div style={{ background:"#FFFBEB", border:"1px solid #FDE68A", borderRadius:8, padding:"10px 14px", marginBottom:14 }}>
+      {["7"].includes(String(c.cod_filial)) && (
+        <div style={{ background:"#FEE2E2", border:"1px solid #FECACA", borderRadius:6, padding:"8px 12px", marginBottom:10, fontSize:12, fontWeight:700, color:"#991B1B" }}>
+          ⚠️ Filial 7 — São Mateus: o plano Hapvida não atende esta localidade. Solicitação não permitida.
+        </div>
+      )}
       <p style={{ margin:"0 0 8px", fontSize:11, fontWeight:700, color:"#92400E" }}>ℹ️ Dados no sistema — campos em vermelho aparecerão em branco no formulário</p>
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:6, fontSize:11 }}>
         {[["CPF",c.cpf],["RG",c.rg],["PIS",c.pis],["CTPS",c.ctps],["Nome da Mãe",c.nome_mae],["Endereço",c.logradouro]].map(([k,v])=>(
@@ -6045,9 +6061,7 @@ function PlanoSaude({ user, colaboradores }) {
       )}
 
       {/* Lista */}
-      {loading ? (
-        <div style={{ textAlign:"center", padding:40, color:"#9CA3AF", fontSize:13 }}>Carregando solicitações...</div>
-      ) : lista.length === 0 ? (
+      {loading ? null : lista.length === 0 ? (
         <div style={{ textAlign:"center", padding:60, color:"#9CA3AF", fontSize:13 }}>Nenhuma solicitação registrada.</div>
       ) : lista.map(s => (
         <div key={s.id} style={S.card}>
@@ -6341,6 +6355,7 @@ export default function App() {
     cad_alcadas:      { title: "Regras de Alçadas",       subtitle: "Cadastros › Alçadas" },
     cad_usuarios:     { title: "Usuários do Sistema",     subtitle: "Cadastros › Usuários" },
     auditoria:        { title: "Auditoria",               subtitle: "Log completo de ações" },
+    plano_saude:      { title: "Benefícios",               subtitle: "Solicitação de Plano de Saúde — Hapvida" },
     desligamentos:    { title: "Solicitações de Desligamento",              subtitle: "Gerencie solicitações de desligamento de colaboradores" },
     ocorrencias:      { title: "Solicitações de Advertências/Suspensões",   subtitle: "Registro de ocorrências disciplinares" },
     autorizacoes:     { title: "Autorização de Desconto",                   subtitle: "Autorização para desconto na folha de pagamento" },
