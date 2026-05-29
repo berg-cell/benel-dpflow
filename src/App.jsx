@@ -6263,7 +6263,6 @@ function PlanoSaude({ user, colaboradores }) {
 
 // ════════════════════════════════════════════════════════════════════════════
 // COMPONENTE: AtualizacaoCadastral
-// Inserir no App.jsx ANTES de "export default function App()"
 // ════════════════════════════════════════════════════════════════════════════
 
 const DOMINIO_POSICAO_ESCALA = [
@@ -6273,12 +6272,9 @@ const DOMINIO_POSICAO_ESCALA = [
   { cod: "NA", desc: "Não Aplica" },
   { cod: "TI", desc: "Titular" },
 ];
-const DOMINIO_SIM_NAO = [
-  { cod: "T", desc: "Sim" },
-  { cod: "F", desc: "Não" },
-];
+const DOMINIO_SIM_NAO = [{ cod: "T", desc: "Sim" }, { cod: "F", desc: "Não" }];
 const DOMINIO_MACACAO = ["PP","P","M","G","GG","EG","EEG"];
-const DOMINIO_BOTA = Array.from({ length: 15 }, (_, i) => String(34 + i));
+const DOMINIO_BOTA    = Array.from({ length: 15 }, (_, i) => String(34 + i));
 
 const CAMPOS_CONFIG = {
   posicao_escala:  { label: "Posição Escala",  dominio: DOMINIO_POSICAO_ESCALA, tipo: "select_obj" },
@@ -6297,10 +6293,6 @@ const AC_STATUS_CONFIG = {
   finalizado:  { label: "Finalizado", bg: "#F3F4F6", color: "#374151" },
 };
 
-function labelCampo(campo) {
-  return CAMPOS_CONFIG[campo]?.label || campo;
-}
-
 function labelValor(campo, val) {
   if (!val) return "—";
   const cfg = CAMPOS_CONFIG[campo];
@@ -6313,70 +6305,66 @@ function labelValor(campo, val) {
 }
 
 function AtualizacaoCadastral({ user, colaboradores }) {
-  const [lista, setLista]       = useState([]);
-  const [loading, setLoading]   = useState(false);
+  const [aba, setAba]           = useState("colaboradores"); // "colaboradores" | "solicitacoes"
+  const [solicitacoes, setSolicitacoes] = useState([]);
+  const [loadingSols, setLoadingSols]   = useState(false);
   const [msg, setMsg]           = useState(null);
   const [salvando, setSalvando] = useState(false);
 
-  // Filtros
-  const [fStatus, setFStatus]         = useState("todos");
-  const [fDataIni, setFDataIni]       = useState("");
-  const [fDataFim, setFDataFim]       = useState("");
-  const [fSolicitante, setFSolicitante] = useState("");
-  const [fSoComSol, setFSoComSol]     = useState(false);
+  // Filtros colaboradores
+  const [fNome, setFNome]       = useState("");
+  const [fFilial, setFFilial]   = useState("");
 
-  // Modal nova solicitação
-  const [modalNova, setModalNova]     = useState(false);
-  const [colabSel, setColabSel]       = useState(null);
-  const [buscaColab, setBuscaColab]   = useState("");
-  const [itens, setItens]             = useState({});
-  const [observacao, setObservacao]   = useState("");
+  // Filtros solicitações
+  const [fStatus, setFStatus]   = useState("todos");
+  const [fDataIni, setFDataIni] = useState("");
+  const [fDataFim, setFDataFim] = useState("");
+  const [fSolic, setFSolic]     = useState("");
 
-  // Modal detalhe / aprovação
+  // Modal solicitação
+  const [modalNova, setModalNova]   = useState(null); // colaborador selecionado
+  const [itens, setItens]           = useState({});
+  const [observacao, setObservacao] = useState("");
+
+  // Modal detalhe
   const [modalDetalhe, setModalDetalhe] = useState(null);
   const [obsAprov, setObsAprov]         = useState("");
 
   const norm = s => (s || "").toLowerCase();
+  const canAprovar = user.perfil === "dp" || user.perfil === "admin";
 
   const colabsAtivos = colaboradores.filter(c => c.cod_situacao !== "D");
-  const colabsFilt = colabsAtivos.filter(c =>
-    !buscaColab ||
-    norm(c.nome).includes(norm(buscaColab)) ||
-    (c.chapa || "").includes(buscaColab)
+  const colabsFiltrados = colabsAtivos.filter(c =>
+    (!fNome   || norm(c.nome).includes(norm(fNome)) || (c.chapa||"").includes(fNome)) &&
+    (!fFilial || norm(c.descricao_filial||"").includes(norm(fFilial)) || norm(c.desc_cc||"").includes(norm(fFilial)))
   );
 
-  const carregar = async () => {
-    setLoading(true);
+  const carregarSols = async () => {
+    setLoadingSols(true);
     try {
       const params = {};
       if (fStatus !== "todos") params.status = fStatus;
       if (fDataIni) params.data_inicio = fDataIni;
       if (fDataFim) params.data_fim = fDataFim;
-      if (fSolicitante) params.solicitante = fSolicitante;
+      if (fSolic)   params.solicitante = fSolic;
       const data = await api.listarAtualizacaoCadastral(params);
-      setLista(Array.isArray(data) ? data : []);
-    } catch (e) {
-      setMsg({ tipo: "erro", texto: e.message });
-    } finally { setLoading(false); }
+      setSolicitacoes(Array.isArray(data) ? data : []);
+    } catch (e) { setMsg({ tipo: "erro", texto: e.message }); }
+    finally { setLoadingSols(false); }
   };
 
-  useEffect(() => { carregar(); }, []);
-
-  const listaFiltrada = fSoComSol
-    ? lista.filter(s => s.status !== "finalizado" || true)
-    : lista;
+  useEffect(() => { if (aba === "solicitacoes") carregarSols(); }, [aba]);
 
   const salvar = async () => {
-    if (!colabSel) { setMsg({ tipo: "erro", texto: "Selecione o colaborador." }); return; }
-    const itensList = Object.entries(itens)
-      .filter(([, v]) => v)
-      .map(([campo, novo_valor]) => ({ campo, novo_valor }));
+    if (!modalNova) return;
+    const itensList = Object.entries(itens).filter(([,v]) => v).map(([campo, novo_valor]) => ({ campo, novo_valor }));
     if (itensList.length === 0) { setMsg({ tipo: "erro", texto: "Selecione ao menos um campo para alterar." }); return; }
     setSalvando(true);
     try {
-      await api.criarAtualizacaoCadastral({ colaborador_id: colabSel.id, itens: itensList, observacao });
+      await api.criarAtualizacaoCadastral({ colaborador_id: modalNova.id, itens: itensList, observacao });
       setMsg({ tipo: "ok", texto: "Solicitação criada com sucesso!" });
-      setModalNova(false); resetNova(); carregar();
+      setModalNova(null); setItens({}); setObservacao("");
+      if (aba === "solicitacoes") carregarSols();
     } catch (e) { setMsg({ tipo: "erro", texto: e.message }); }
     finally { setSalvando(false); }
   };
@@ -6385,14 +6373,10 @@ function AtualizacaoCadastral({ user, colaboradores }) {
     setSalvando(true);
     try {
       await api.aprovarAtualizacaoCadastral(modalDetalhe.id, acao, obsAprov);
-      setMsg({ tipo: "ok", texto: `Solicitação ${acao === "aprovar" ? "aprovada" : "reprovada"} com sucesso!` });
-      setModalDetalhe(null); setObsAprov(""); carregar();
+      setMsg({ tipo: "ok", texto: `Solicitação ${acao === "aprovar" ? "aprovada" : "reprovada"}!` });
+      setModalDetalhe(null); setObsAprov(""); carregarSols();
     } catch (e) { setMsg({ tipo: "erro", texto: e.message }); }
     finally { setSalvando(false); }
-  };
-
-  const resetNova = () => {
-    setColabSel(null); setBuscaColab(""); setItens({}); setObservacao("");
   };
 
   const S = {
@@ -6402,22 +6386,25 @@ function AtualizacaoCadastral({ user, colaboradores }) {
     btnS: { background: "#F3F4F6", color: "#374151", border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer" },
     btnV: { background: "#059669", color: "#fff", border: "none", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" },
     btnR: { background: "#DC2626", color: "#fff", border: "none", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" },
-    card: { background: "#fff", borderRadius: 10, border: "1px solid #E5E7EB", padding: "12px 16px", marginBottom: 8 },
     modal:{ position: "fixed", inset: 0, background: "rgba(0,0,0,.5)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center" },
-    mbox: { background: "#fff", borderRadius: 14, padding: "24px 28px", width: "100%", maxWidth: 680, maxHeight: "90vh", overflowY: "auto", boxShadow: "0 20px 60px rgba(0,0,0,.25)" },
+    mbox: { background: "#fff", borderRadius: 14, padding: "24px 28px", width: "100%", maxWidth: 700, maxHeight: "90vh", overflowY: "auto", boxShadow: "0 20px 60px rgba(0,0,0,.25)" },
+    th:   { padding: "10px 10px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: 0.5, whiteSpace: "nowrap" },
+    td:   { padding: "9px 10px", fontSize: 11, borderBottom: "1px solid #F3F4F6" },
   };
 
-  const canAprovar = user.perfil === "dp" || user.perfil === "admin";
+  const SimNaoTag = ({ val }) => {
+    if (!val) return <span style={{ color: "#9CA3AF" }}>—</span>;
+    return <span style={{ padding: "2px 8px", borderRadius: 8, fontSize: 10, fontWeight: 700, background: val === "T" ? "#D1FAE5" : "#FEE2E2", color: val === "T" ? "#065F46" : "#991B1B" }}>{val === "T" ? "Sim" : "Não"}</span>;
+  };
 
   return (
-    <div style={{ padding: "16px 20px", maxWidth: 1000, margin: "0 auto" }}>
+    <div style={{ padding: "16px 20px", maxWidth: 1200, margin: "0 auto" }}>
       {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
         <div>
           <h2 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: "#111827" }}>📝 Atualização de Dados Cadastrais</h2>
-          <p style={{ margin: "2px 0 0", fontSize: 11, color: "#6B7280" }}>Solicitação de alteração cadastral com aprovação</p>
+          <p style={{ margin: "2px 0 0", fontSize: 11, color: "#6B7280" }}>Solicitação de alteração com aprovação do DP</p>
         </div>
-        <button style={S.btnP} onClick={() => { resetNova(); setModalNova(true); }}>+ Nova Solicitação</button>
       </div>
 
       {/* Msg */}
@@ -6428,234 +6415,236 @@ function AtualizacaoCadastral({ user, colaboradores }) {
         </div>
       )}
 
-      {/* Filtros */}
-      <div style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 10, padding: "12px 16px", marginBottom: 16 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr auto", gap: 10, alignItems: "end" }}>
-          <div>
-            <label style={S.lbl}>Status</label>
-            <select style={S.inp} value={fStatus} onChange={e => setFStatus(e.target.value)}>
-              <option value="todos">Todos</option>
-              <option value="solicitado">Solicitado</option>
-              <option value="em_analise">Em Análise</option>
-              <option value="aprovado">Aprovado</option>
-              <option value="reprovado">Reprovado</option>
-              <option value="finalizado">Finalizado</option>
-            </select>
-          </div>
-          <div>
-            <label style={S.lbl}>Data início</label>
-            <input type="date" style={S.inp} value={fDataIni} onChange={e => setFDataIni(e.target.value)} />
-          </div>
-          <div>
-            <label style={S.lbl}>Data fim</label>
-            <input type="date" style={S.inp} value={fDataFim} onChange={e => setFDataFim(e.target.value)} />
-          </div>
-          <div>
-            <label style={S.lbl}>Solicitante</label>
-            <input style={S.inp} placeholder="Nome do solicitante..." value={fSolicitante} onChange={e => setFSolicitante(e.target.value)} />
-          </div>
-          <button style={S.btnP} onClick={carregar}>🔍 Filtrar</button>
-        </div>
-        <div style={{ marginTop: 10 }}>
-          <label style={{ fontSize: 12, color: "#374151", cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
-            <input type="checkbox" checked={fSoComSol} onChange={e => setFSoComSol(e.target.checked)} />
-            Exibir apenas colaboradores com solicitação aberta
-          </label>
-        </div>
+      {/* Abas */}
+      <div style={{ display: "flex", gap: 4, marginBottom: 16, borderBottom: "2px solid #E5E7EB" }}>
+        {[["colaboradores","👥 Colaboradores"], ["solicitacoes","📋 Solicitações"]].map(([id, label]) => (
+          <button key={id} onClick={() => setAba(id)} style={{
+            padding: "8px 18px", fontSize: 12, fontWeight: 600, border: "none", cursor: "pointer",
+            background: "none", borderBottom: aba === id ? "2px solid #0F2447" : "2px solid transparent",
+            color: aba === id ? "#0F2447" : "#6B7280", marginBottom: -2
+          }}>{label}</button>
+        ))}
       </div>
 
-      {/* Lista */}
-      {loading ? (
-        <div style={{ textAlign: "center", padding: 40, color: "#9CA3AF", fontSize: 13 }}>Carregando...</div>
-      ) : listaFiltrada.length === 0 ? (
-        <div style={{ textAlign: "center", padding: 60, color: "#9CA3AF", fontSize: 13 }}>Nenhuma solicitação encontrada.</div>
-      ) : (
-        <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff", borderRadius: 10, overflow: "hidden", border: "1px solid #E5E7EB", fontSize: 12 }}>
-          <thead>
-            <tr style={{ background: "#F9FAFB", borderBottom: "1px solid #E5E7EB" }}>
-              {["Filial","Matrícula","Nome","Função","Admissão","Solicitante","Data Solic.","Status","Ações"].map(h => (
-                <th key={h} style={{ padding: "10px 12px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: 0.5 }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {listaFiltrada.map(s => {
-              const stCfg = AC_STATUS_CONFIG[s.status] || {};
-              return (
-                <tr key={s.id} style={{ borderBottom: "1px solid #F3F4F6" }}
-                  onMouseEnter={e => e.currentTarget.style.background = "#F9FAFB"}
-                  onMouseLeave={e => e.currentTarget.style.background = ""}>
-                  <td style={{ padding: "10px 12px", color: "#6B7280" }}>{s.descricao_filial || "—"}</td>
-                  <td style={{ padding: "10px 12px", fontWeight: 700 }}>{s.chapa}</td>
-                  <td style={{ padding: "10px 12px" }}>{s.colaborador_nome}</td>
-                  <td style={{ padding: "10px 12px", color: "#6B7280" }}>{s.funcao}</td>
-                  <td style={{ padding: "10px 12px", color: "#6B7280" }}>{s.data_admissao ? new Date(s.data_admissao).toLocaleDateString("pt-BR") : "—"}</td>
-                  <td style={{ padding: "10px 12px" }}>{s.usuario_solicitante_nome}</td>
-                  <td style={{ padding: "10px 12px", color: "#6B7280" }}>{new Date(s.criado_em).toLocaleDateString("pt-BR")}</td>
-                  <td style={{ padding: "10px 12px" }}>
-                    <span style={{ padding: "2px 8px", borderRadius: 8, fontSize: 11, fontWeight: 700, background: stCfg.bg, color: stCfg.color }}>
-                      {stCfg.label || s.status}
-                    </span>
-                  </td>
-                  <td style={{ padding: "10px 12px" }}>
-                    <button style={{ ...S.btnS, padding: "4px 10px", fontSize: 11 }} onClick={() => { setModalDetalhe(s); setObsAprov(""); }}>
-                      Ver detalhes
-                    </button>
-                  </td>
+      {/* ABA COLABORADORES */}
+      {aba === "colaboradores" && (
+        <>
+          {/* Filtros */}
+          <div style={{ display: "flex", gap: 10, marginBottom: 12 }}>
+            <input style={{ ...S.inp, maxWidth: 280 }} placeholder="🔍 Buscar por nome ou matrícula..." value={fNome} onChange={e => setFNome(e.target.value)} />
+            <input style={{ ...S.inp, maxWidth: 240 }} placeholder="🔍 Filtrar por filial..." value={fFilial} onChange={e => setFFilial(e.target.value)} />
+            <span style={{ fontSize: 11, color: "#6B7280", alignSelf: "center" }}>{colabsFiltrados.length} colaborador(es)</span>
+          </div>
+
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff", borderRadius: 10, overflow: "hidden", border: "1px solid #E5E7EB", fontSize: 12 }}>
+              <thead>
+                <tr style={{ background: "#F9FAFB", borderBottom: "2px solid #E5E7EB" }}>
+                  {["Filial","Matrícula","Nome","Função","Pos. Escala","Mot. Líder","Munkeiro","Prancheiro","Macacão","Bota","Ação"].map(h => (
+                    <th key={h} style={S.th}>{h}</th>
+                  ))}
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              </thead>
+              <tbody>
+                {colabsFiltrados.slice(0, 100).map(c => (
+                  <tr key={c.id} onMouseEnter={e => e.currentTarget.style.background = "#F9FAFB"} onMouseLeave={e => e.currentTarget.style.background = ""}>
+                    <td style={S.td}>{c.descricao_filial || c.desc_cc || "—"}</td>
+                    <td style={{ ...S.td, fontWeight: 700 }}>{c.chapa}</td>
+                    <td style={S.td}>{c.nome}</td>
+                    <td style={{ ...S.td, color: "#6B7280" }}>{c.funcao}</td>
+                    <td style={S.td}>{c.posicao_escala ? labelValor("posicao_escala", c.posicao_escala) : <span style={{ color: "#9CA3AF" }}>—</span>}</td>
+                    <td style={S.td}><SimNaoTag val={c.motorista_lider} /></td>
+                    <td style={S.td}><SimNaoTag val={c.munkeiro} /></td>
+                    <td style={S.td}><SimNaoTag val={c.prancheiro} /></td>
+                    <td style={S.td}>{c.tamanho_macacao || <span style={{ color: "#9CA3AF" }}>—</span>}</td>
+                    <td style={S.td}>{c.tamanho_bota || <span style={{ color: "#9CA3AF" }}>—</span>}</td>
+                    <td style={S.td}>
+                      <button style={{ ...S.btnP, padding: "4px 10px", fontSize: 11 }}
+                        onClick={() => { setModalNova(c); setItens({}); setObservacao(""); }}>
+                        Solicitar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {colabsFiltrados.length > 100 && (
+                  <tr><td colSpan={11} style={{ ...S.td, textAlign: "center", color: "#6B7280" }}>
+                    Mostrando 100 de {colabsFiltrados.length}. Use os filtros para refinar.
+                  </td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
 
-      {/* MODAL NOVA SOLICITAÇÃO */}
+      {/* ABA SOLICITAÇÕES */}
+      {aba === "solicitacoes" && (
+        <>
+          <div style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 10, padding: "12px 16px", marginBottom: 12 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr auto", gap: 10, alignItems: "end" }}>
+              <div>
+                <label style={S.lbl}>Status</label>
+                <select style={S.inp} value={fStatus} onChange={e => setFStatus(e.target.value)}>
+                  <option value="todos">Todos</option>
+                  <option value="solicitado">Solicitado</option>
+                  <option value="em_analise">Em Análise</option>
+                  <option value="aprovado">Aprovado</option>
+                  <option value="reprovado">Reprovado</option>
+                  <option value="finalizado">Finalizado</option>
+                </select>
+              </div>
+              <div><label style={S.lbl}>Data início</label><input type="date" style={S.inp} value={fDataIni} onChange={e => setFDataIni(e.target.value)} /></div>
+              <div><label style={S.lbl}>Data fim</label><input type="date" style={S.inp} value={fDataFim} onChange={e => setFDataFim(e.target.value)} /></div>
+              <div><label style={S.lbl}>Solicitante</label><input style={S.inp} placeholder="Nome..." value={fSolic} onChange={e => setFSolic(e.target.value)} /></div>
+              <button style={S.btnP} onClick={carregarSols}>🔍 Filtrar</button>
+            </div>
+          </div>
+
+          {loadingSols ? (
+            <div style={{ textAlign: "center", padding: 40, color: "#9CA3AF" }}>Carregando...</div>
+          ) : solicitacoes.length === 0 ? (
+            <div style={{ textAlign: "center", padding: 60, color: "#9CA3AF" }}>Nenhuma solicitação encontrada.</div>
+          ) : (
+            <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff", borderRadius: 10, overflow: "hidden", border: "1px solid #E5E7EB" }}>
+              <thead>
+                <tr style={{ background: "#F9FAFB", borderBottom: "2px solid #E5E7EB" }}>
+                  {["Matrícula","Nome","Função","Admissão","Solicitante","Data","Status","Ações"].map(h => (
+                    <th key={h} style={S.th}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {solicitacoes.map(s => {
+                  const stCfg = AC_STATUS_CONFIG[s.status] || {};
+                  return (
+                    <tr key={s.id} onMouseEnter={e => e.currentTarget.style.background = "#F9FAFB"} onMouseLeave={e => e.currentTarget.style.background = ""}>
+                      <td style={{ ...S.td, fontWeight: 700 }}>{s.chapa}</td>
+                      <td style={S.td}>{s.colaborador_nome}</td>
+                      <td style={{ ...S.td, color: "#6B7280" }}>{s.funcao}</td>
+                      <td style={{ ...S.td, color: "#6B7280" }}>{s.data_admissao ? new Date(s.data_admissao).toLocaleDateString("pt-BR") : "—"}</td>
+                      <td style={S.td}>{s.usuario_solicitante_nome}</td>
+                      <td style={{ ...S.td, color: "#6B7280" }}>{new Date(s.criado_em).toLocaleDateString("pt-BR")}</td>
+                      <td style={S.td}>
+                        <span style={{ padding: "2px 8px", borderRadius: 8, fontSize: 10, fontWeight: 700, background: stCfg.bg, color: stCfg.color }}>
+                          {stCfg.label || s.status}
+                        </span>
+                      </td>
+                      <td style={S.td}>
+                        <button style={{ ...S.btnS, padding: "4px 10px", fontSize: 11 }} onClick={() => { setModalDetalhe(s); setObsAprov(""); }}>
+                          Ver
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+        </>
+      )}
+
+      {/* MODAL SOLICITAR ALTERAÇÃO */}
       {modalNova && (
         <div style={S.modal}>
           <div style={S.mbox}>
-            <h3 style={{ margin: "0 0 16px", fontSize: 15, fontWeight: 800, color: "#0F2447" }}>Nova Solicitação de Atualização Cadastral</h3>
-
-            {/* Busca colaborador */}
-            <div style={{ marginBottom: 14 }}>
-              <label style={S.lbl}>Colaborador *</label>
-              {colabSel ? (
-                <div style={{ padding: "6px 10px", background: "#EFF6FF", borderRadius: 6, fontSize: 12, color: "#1E40AF", fontWeight: 600, display: "flex", justifyContent: "space-between" }}>
-                  {colabSel.descricao_filial || colabSel.desc_cc || "—"} | {colabSel.chapa} | {colabSel.nome} | {colabSel.funcao} | {colabSel.data_admissao ? new Date(colabSel.data_admissao).toLocaleDateString("pt-BR") : "—"}
-                  <button onClick={() => { setColabSel(null); setBuscaColab(""); setItens({}); }} style={{ background: "none", border: "none", cursor: "pointer", color: "#6B7280" }}>×</button>
-                </div>
-              ) : (
-                <>
-                  <input style={S.inp} placeholder="Digite nome ou matrícula..." value={buscaColab} onChange={e => setBuscaColab(e.target.value)} autoFocus />
-                  {buscaColab.length > 0 && colabsFilt.length > 0 && (
-                    <div style={{ border: "1px solid #E5E7EB", borderRadius: 6, maxHeight: 160, overflowY: "auto", marginTop: 2, background: "#fff", boxShadow: "0 4px 12px rgba(0,0,0,.1)" }}>
-                      {colabsFilt.slice(0, 8).map(c => (
-                        <div key={c.id} onClick={() => { setColabSel(c); setBuscaColab(""); }}
-                          style={{ padding: "7px 10px", cursor: "pointer", fontSize: 12, borderBottom: "1px solid #F3F4F6" }}
-                          onMouseEnter={e => e.currentTarget.style.background = "#F3F4F6"}
-                          onMouseLeave={e => e.currentTarget.style.background = ""}>
-<span style={{ color: "#6B7280" }}>{c.descricao_filial || c.desc_cc || "—"}</span> | <strong>{c.chapa}</strong> | {c.nome} | {c.funcao}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </>
-              )}
+            <h3 style={{ margin: "0 0 6px", fontSize: 15, fontWeight: 800, color: "#0F2447" }}>Solicitar Alteração Cadastral</h3>
+            <div style={{ padding: "8px 12px", background: "#EFF6FF", borderRadius: 8, marginBottom: 16, fontSize: 12, color: "#1E40AF" }}>
+              <strong>{modalNova.descricao_filial || modalNova.desc_cc || "—"}</strong> | {modalNova.chapa} | {modalNova.nome} | {modalNova.funcao} | {modalNova.data_admissao ? new Date(modalNova.data_admissao).toLocaleDateString("pt-BR") : "—"}
             </div>
 
-            {/* Campos para alterar */}
-            {colabSel && (
-              <div style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 8, padding: "14px", marginBottom: 14 }}>
-                <p style={{ margin: "0 0 12px", fontSize: 11, fontWeight: 700, color: "#374151" }}>CAMPOS PARA ALTERAR</p>
-                <p style={{ margin: "0 0 12px", fontSize: 11, color: "#6B7280" }}>Selecione apenas os campos que deseja alterar. Os campos não selecionados não serão modificados.</p>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                  {Object.entries(CAMPOS_CONFIG).map(([campo, cfg]) => (
-                    <div key={campo}>
-                      <label style={S.lbl}>{cfg.label}</label>
-                      <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: 10, color: "#6B7280", marginBottom: 3 }}>
-                            Atual: <strong style={{ color: colabSel[campo] ? "#374151" : "#9CA3AF" }}>{colabSel[campo] ? labelValor(campo, colabSel[campo]) : "Não informado"}</strong>
-                          </div>
-                          <select style={S.inp}
-                            value={itens[campo] || ""}
-                            onChange={e => setItens(p => ({ ...p, [campo]: e.target.value || undefined }))}>
-                            <option value="">— sem alteração —</option>
-                            {cfg.tipo === "select_obj"
-                              ? cfg.dominio.map(d => <option key={d.cod} value={d.cod}>{d.cod} — {d.desc}</option>)
-                              : cfg.dominio.map(v => <option key={v} value={v}>{v}</option>)
-                            }
-                          </select>
-                        </div>
-                      </div>
+            <div style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 8, padding: "14px", marginBottom: 14 }}>
+              <p style={{ margin: "0 0 4px", fontSize: 11, fontWeight: 700, color: "#374151" }}>CAMPOS PARA ALTERAR</p>
+              <p style={{ margin: "0 0 12px", fontSize: 11, color: "#6B7280" }}>Selecione apenas os campos que deseja alterar.</p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                {Object.entries(CAMPOS_CONFIG).map(([campo, cfg]) => (
+                  <div key={campo}>
+                    <label style={S.lbl}>{cfg.label}</label>
+                    <div style={{ fontSize: 10, color: "#6B7280", marginBottom: 4 }}>
+                      Atual: <strong style={{ color: modalNova[campo] ? "#374151" : "#9CA3AF" }}>
+                        {modalNova[campo] ? labelValor(campo, modalNova[campo]) : "Não informado"}
+                      </strong>
                     </div>
-                  ))}
-                </div>
+                    <select style={S.inp} value={itens[campo] || ""} onChange={e => setItens(p => ({ ...p, [campo]: e.target.value || undefined }))}>
+                      <option value="">— sem alteração —</option>
+                      {cfg.tipo === "select_obj"
+                        ? cfg.dominio.map(d => <option key={d.cod} value={d.cod}>{d.cod} — {d.desc}</option>)
+                        : cfg.dominio.map(v => <option key={v} value={v}>{v}</option>)
+                      }
+                    </select>
+                  </div>
+                ))}
               </div>
-            )}
+            </div>
 
-            {/* Observação */}
             <div style={{ marginBottom: 16 }}>
               <label style={S.lbl}>Observação</label>
-              <textarea style={{ ...S.inp, height: 60, resize: "vertical" }} value={observacao} onChange={e => setObservacao(e.target.value)} placeholder="Justificativa ou observação..." />
+              <textarea style={{ ...S.inp, height: 56, resize: "vertical" }} value={observacao} onChange={e => setObservacao(e.target.value)} placeholder="Justificativa ou observação..." />
             </div>
 
             <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-              <button style={S.btnS} onClick={() => { setModalNova(false); resetNova(); }}>Cancelar</button>
+              <button style={S.btnS} onClick={() => setModalNova(null)}>Cancelar</button>
               <button style={S.btnP} onClick={salvar} disabled={salvando}>{salvando ? "Salvando..." : "Registrar Solicitação"}</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* MODAL DETALHE / APROVAÇÃO */}
+      {/* MODAL DETALHE */}
       {modalDetalhe && (
         <div style={{ ...S.modal, zIndex: 1100 }}>
-          <div style={{ ...S.mbox, maxWidth: 620 }}>
-            <h3 style={{ margin: "0 0 4px", fontSize: 15, fontWeight: 800, color: "#0F2447" }}>Detalhe da Solicitação #{modalDetalhe.id}</h3>
-            <p style={{ margin: "0 0 16px", fontSize: 11, color: "#6B7280" }}>
-              {modalDetalhe.chapa} | {modalDetalhe.colaborador_nome} | {modalDetalhe.funcao}
-            </p>
+          <div style={{ ...S.mbox, maxWidth: 580 }}>
+            <h3 style={{ margin: "0 0 4px", fontSize: 15, fontWeight: 800, color: "#0F2447" }}>Solicitação #{modalDetalhe.id}</h3>
+            <p style={{ margin: "0 0 14px", fontSize: 11, color: "#6B7280" }}>{modalDetalhe.chapa} | {modalDetalhe.colaborador_nome}</p>
 
-            {/* Info */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 16, fontSize: 12 }}>
-              <div style={{ background: "#F9FAFB", borderRadius: 6, padding: "8px 12px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 14, fontSize: 12 }}>
+              <div style={{ background: "#F9FAFB", borderRadius: 6, padding: "8px 10px" }}>
                 <div style={{ fontSize: 10, color: "#6B7280", marginBottom: 2 }}>SOLICITANTE</div>
                 <strong>{modalDetalhe.usuario_solicitante_nome}</strong>
               </div>
-              <div style={{ background: "#F9FAFB", borderRadius: 6, padding: "8px 12px" }}>
+              <div style={{ background: "#F9FAFB", borderRadius: 6, padding: "8px 10px" }}>
                 <div style={{ fontSize: 10, color: "#6B7280", marginBottom: 2 }}>DATA</div>
                 <strong>{new Date(modalDetalhe.criado_em).toLocaleDateString("pt-BR")}</strong>
               </div>
-              <div style={{ background: "#F9FAFB", borderRadius: 6, padding: "8px 12px" }}>
+              <div style={{ background: "#F9FAFB", borderRadius: 6, padding: "8px 10px" }}>
                 <div style={{ fontSize: 10, color: "#6B7280", marginBottom: 2 }}>STATUS</div>
-                <span style={{ padding: "2px 8px", borderRadius: 8, fontSize: 11, fontWeight: 700, background: AC_STATUS_CONFIG[modalDetalhe.status]?.bg, color: AC_STATUS_CONFIG[modalDetalhe.status]?.color }}>
+                <span style={{ padding: "2px 8px", borderRadius: 8, fontSize: 10, fontWeight: 700, background: AC_STATUS_CONFIG[modalDetalhe.status]?.bg, color: AC_STATUS_CONFIG[modalDetalhe.status]?.color }}>
                   {AC_STATUS_CONFIG[modalDetalhe.status]?.label}
                 </span>
               </div>
             </div>
 
-            {/* Itens antes x depois */}
-            <div style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 8, padding: "12px 14px", marginBottom: 16 }}>
-              <p style={{ margin: "0 0 10px", fontSize: 11, fontWeight: 700, color: "#374151" }}>ALTERAÇÕES SOLICITADAS</p>
+            <div style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 8, padding: "12px 14px", marginBottom: 14 }}>
+              <p style={{ margin: "0 0 8px", fontSize: 11, fontWeight: 700, color: "#374151" }}>ALTERAÇÕES</p>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
                 <thead>
                   <tr style={{ borderBottom: "1px solid #E5E7EB" }}>
-                    <th style={{ padding: "6px 8px", textAlign: "left", fontSize: 11, color: "#6B7280" }}>Campo</th>
-                    <th style={{ padding: "6px 8px", textAlign: "left", fontSize: 11, color: "#6B7280" }}>Antes</th>
-                    <th style={{ padding: "6px 8px", textAlign: "left", fontSize: 11, color: "#6B7280" }}>Depois</th>
+                    <th style={{ padding: "4px 8px", textAlign: "left", fontSize: 10, color: "#6B7280" }}>Campo</th>
+                    <th style={{ padding: "4px 8px", textAlign: "left", fontSize: 10, color: "#6B7280" }}>Antes</th>
+                    <th style={{ padding: "4px 8px", textAlign: "left", fontSize: 10, color: "#6B7280" }}>Depois</th>
                   </tr>
                 </thead>
                 <tbody>
                   {(modalDetalhe.itens || []).map((item, i) => (
                     <tr key={i} style={{ borderBottom: "1px solid #F3F4F6" }}>
-                      <td style={{ padding: "6px 8px", fontWeight: 600 }}>{labelCampo(item.campo)}</td>
-                      <td style={{ padding: "6px 8px", color: "#991B1B" }}>{labelValor(item.campo, item.valor_anterior)}</td>
-                      <td style={{ padding: "6px 8px", color: "#065F46", fontWeight: 700 }}>{labelValor(item.campo, item.novo_valor)}</td>
+                      <td style={{ padding: "5px 8px", fontWeight: 600 }}>{CAMPOS_CONFIG[item.campo]?.label || item.campo}</td>
+                      <td style={{ padding: "5px 8px", color: "#991B1B" }}>{labelValor(item.campo, item.valor_anterior)}</td>
+                      <td style={{ padding: "5px 8px", color: "#065F46", fontWeight: 700 }}>{labelValor(item.campo, item.novo_valor)}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
 
-            {/* Observação */}
             {modalDetalhe.observacao && (
-              <div style={{ background: "#FFFBEB", border: "1px solid #FDE68A", borderRadius: 6, padding: "8px 12px", marginBottom: 16, fontSize: 12 }}>
-                <strong>Observação:</strong> {modalDetalhe.observacao}
+              <div style={{ background: "#FFFBEB", border: "1px solid #FDE68A", borderRadius: 6, padding: "8px 12px", marginBottom: 14, fontSize: 12 }}>
+                <strong>Obs:</strong> {modalDetalhe.observacao}
               </div>
             )}
 
-            {/* Aprovador */}
-            {modalDetalhe.usuario_aprovador_nome && (
-              <div style={{ background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: 6, padding: "8px 12px", marginBottom: 16, fontSize: 12 }}>
-                <strong>Aprovador:</strong> {modalDetalhe.usuario_aprovador_nome} — {modalDetalhe.data_aprovacao ? new Date(modalDetalhe.data_aprovacao).toLocaleDateString("pt-BR") : ""}
-              </div>
-            )}
-
-            {/* Ações de aprovação */}
             {canAprovar && ["solicitado","em_analise"].includes(modalDetalhe.status) && (
-              <div style={{ marginBottom: 16 }}>
+              <div style={{ marginBottom: 14 }}>
                 <label style={S.lbl}>Observação do aprovador</label>
-                <textarea style={{ ...S.inp, height: 50, resize: "vertical" }} value={obsAprov} onChange={e => setObsAprov(e.target.value)} placeholder="Opcional..." />
+                <textarea style={{ ...S.inp, height: 44, resize: "vertical" }} value={obsAprov} onChange={e => setObsAprov(e.target.value)} placeholder="Opcional..." />
               </div>
             )}
 
@@ -6674,6 +6663,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
     </div>
   );
 }
+
 
 export default function App() {
   const [user, setUser] = useState(null);
