@@ -6289,7 +6289,7 @@ const CAMPOS_CONFIG = {
   tamanho_bota:    { label: "Tamanho Bota",     dominio: DOMINIO_BOTA,           tipo: "select_str" },
 };
 
-const STATUS_CONFIG = {
+const AC_STATUS_CONFIG = {
   solicitado:  { label: "Solicitado",  bg: "#FEF3C7", color: "#92400E" },
   em_analise:  { label: "Em Análise", bg: "#DBEAFE", color: "#1E40AF" },
   aprovado:    { label: "Aprovado",   bg: "#D1FAE5", color: "#065F46" },
@@ -6480,7 +6480,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
           </thead>
           <tbody>
             {listaFiltrada.map(s => {
-              const stCfg = STATUS_CONFIG[s.status] || {};
+              const stCfg = AC_STATUS_CONFIG[s.status] || {};
               return (
                 <tr key={s.id} style={{ borderBottom: "1px solid #F3F4F6" }}
                   onMouseEnter={e => e.currentTarget.style.background = "#F9FAFB"}
@@ -6607,8 +6607,8 @@ function AtualizacaoCadastral({ user, colaboradores }) {
               </div>
               <div style={{ background: "#F9FAFB", borderRadius: 6, padding: "8px 12px" }}>
                 <div style={{ fontSize: 10, color: "#6B7280", marginBottom: 2 }}>STATUS</div>
-                <span style={{ padding: "2px 8px", borderRadius: 8, fontSize: 11, fontWeight: 700, background: STATUS_CONFIG[modalDetalhe.status]?.bg, color: STATUS_CONFIG[modalDetalhe.status]?.color }}>
-                  {STATUS_CONFIG[modalDetalhe.status]?.label}
+                <span style={{ padding: "2px 8px", borderRadius: 8, fontSize: 11, fontWeight: 700, background: AC_STATUS_CONFIG[modalDetalhe.status]?.bg, color: AC_STATUS_CONFIG[modalDetalhe.status]?.color }}>
+                  {AC_STATUS_CONFIG[modalDetalhe.status]?.label}
                 </span>
               </div>
             </div>
