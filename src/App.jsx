@@ -1217,6 +1217,12 @@ function parseCSV(text) {
     "estado_civil": "estado_civil", "estadocivil": "estado_civil",
     "nome_mae": "nome_mae",
     "pis": "pis",
+    "posicao_escala": "posicao_escala",
+    "motorista_lider": "motorista_lider",
+    "munkeiro": "munkeiro",
+    "prancheiro": "prancheiro",
+    "tamanho_macacao": "tamanho_macacao",
+    "tamanho_bota": "tamanho_bota",
   };
 
   const rawHeaders = splitLine(lines[0]);
@@ -1544,6 +1550,13 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
       estado_civil:           r.estado_civil || null,
       nome_mae:               r.nome_mae || null,
       pis:                    r.pis || null,
+      // Campos de atualização cadastral
+      posicao_escala:         r.posicao_escala || null,
+      motorista_lider:        r.motorista_lider || null,
+      munkeiro:               r.munkeiro || null,
+      prancheiro:             r.prancheiro || null,
+      tamanho_macacao:        r.tamanho_macacao || null,
+      tamanho_bota:           r.tamanho_bota || null,
     })).filter(r => r.chapa && r.nome);
 
     await api.importarColaboradores(novos);
