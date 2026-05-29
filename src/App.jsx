@@ -6312,8 +6312,10 @@ function AtualizacaoCadastral({ user, colaboradores }) {
   const [salvando, setSalvando] = useState(false);
 
   // Filtros colaboradores
-  const [fNome, setFNome]       = useState("");
-  const [fFilial, setFFilial]   = useState("");
+  const [fNome, setFNome]             = useState("");
+  const [fNomeCompleto, setFNomeCompleto] = useState("");
+  const [fFuncao, setFuncao]          = useState("");
+  const [fFilial, setFFilial]         = useState("");
 
   // Filtros solicitações
   const [fStatus, setFStatus]   = useState("todos");
@@ -6334,9 +6336,16 @@ function AtualizacaoCadastral({ user, colaboradores }) {
   const canAprovar = user.perfil === "dp" || user.perfil === "admin";
 
   const colabsAtivos = colaboradores.filter(c => c.cod_situacao !== "D");
+  const fmtFilial = (c) => {
+    const f = c.descricao_filial || c.desc_cc || "";
+    return f.replace(/^BENEL TRANSPORTES\s*[-–]\s*/i, "").trim();
+  };
+
   const colabsFiltrados = colabsAtivos.filter(c =>
-    (!fNome   || norm(c.nome).includes(norm(fNome)) || (c.chapa||"").includes(fNome)) &&
-    (!fFilial || norm(c.descricao_filial||"").includes(norm(fFilial)) || norm(c.desc_cc||"").includes(norm(fFilial)))
+    (!fNome          || (c.chapa||"").toLowerCase().includes(fNome.toLowerCase())) &&
+    (!fNomeCompleto  || norm(c.nome).includes(norm(fNomeCompleto))) &&
+    (!fFuncao        || norm(c.funcao||"").includes(norm(fFuncao))) &&
+    (!fFilial        || norm(fmtFilial(c)).includes(norm(fFilial)) || norm(c.desc_cc||"").includes(norm(fFilial)))
   );
 
   const carregarSols = async () => {
@@ -6430,10 +6439,13 @@ function AtualizacaoCadastral({ user, colaboradores }) {
       {aba === "colaboradores" && (
         <>
           {/* Filtros */}
-          <div style={{ display: "flex", gap: 10, marginBottom: 12 }}>
-            <input style={{ ...S.inp, maxWidth: 280 }} placeholder="🔍 Buscar por nome ou matrícula..." value={fNome} onChange={e => setFNome(e.target.value)} />
-            <input style={{ ...S.inp, maxWidth: 240 }} placeholder="🔍 Filtrar por filial..." value={fFilial} onChange={e => setFFilial(e.target.value)} />
-            <span style={{ fontSize: 11, color: "#6B7280", alignSelf: "center" }}>{colabsFiltrados.length} colaborador(es)</span>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12, alignItems: "center" }}>
+            <input style={{ ...S.inp, width: 130 }} placeholder="🔍 Matrícula" value={fNome} onChange={e => setFNome(e.target.value)} />
+            <input style={{ ...S.inp, width: 200 }} placeholder="🔍 Nome" value={fNomeCompleto} onChange={e => setFNomeCompleto(e.target.value)} />
+            <input style={{ ...S.inp, width: 160 }} placeholder="🔍 Função" value={fFuncao} onChange={e => setFuncao(e.target.value)} />
+            <input style={{ ...S.inp, width: 160 }} placeholder="🔍 Filial/Seção" value={fFilial} onChange={e => setFFilial(e.target.value)} />
+            <button style={{ ...S.btnS, padding: "6px 14px" }} onClick={() => { setFNome(""); setFNomeCompleto(""); setFuncao(""); setFFilial(""); }}>× Limpar</button>
+            <span style={{ fontSize: 11, color: "#6B7280" }}>{colabsFiltrados.length} colaborador(es)</span>
           </div>
 
           <div style={{ overflowX: "auto" }}>
@@ -6448,7 +6460,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
               <tbody>
                 {colabsFiltrados.slice(0, 100).map(c => (
                   <tr key={c.id} onMouseEnter={e => e.currentTarget.style.background = "#F9FAFB"} onMouseLeave={e => e.currentTarget.style.background = ""}>
-                    <td style={S.td}>{c.descricao_filial || c.desc_cc || "—"}</td>
+                    <td style={S.td}>{fmtFilial(c)}</td>
                     <td style={{ ...S.td, fontWeight: 700 }}>{c.chapa}</td>
                     <td style={S.td}>{c.nome}</td>
                     <td style={{ ...S.td, color: "#6B7280" }}>{c.funcao}</td>
@@ -6549,7 +6561,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
           <div style={S.mbox}>
             <h3 style={{ margin: "0 0 6px", fontSize: 15, fontWeight: 800, color: "#0F2447" }}>Solicitar Alteração Cadastral</h3>
             <div style={{ padding: "8px 12px", background: "#EFF6FF", borderRadius: 8, marginBottom: 16, fontSize: 12, color: "#1E40AF" }}>
-              <strong>{modalNova.descricao_filial || modalNova.desc_cc || "—"}</strong> | {modalNova.chapa} | {modalNova.nome} | {modalNova.funcao} | {modalNova.data_admissao ? new Date(modalNova.data_admissao).toLocaleDateString("pt-BR") : "—"}
+              <strong>{fmtFilial(modalNova)}</strong> | {modalNova.chapa} | {modalNova.nome} | {modalNova.funcao} | {modalNova.data_admissao ? new Date(modalNova.data_admissao).toLocaleDateString("pt-BR") : "—"}
             </div>
 
             <div style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 8, padding: "14px", marginBottom: 14 }}>
