@@ -232,5 +232,17 @@ export const api = {
   cancelarPlanoSaude: (id) =>
     request(`/plano-saude/${id}/cancelar`, { method: "PUT", body: JSON.stringify({}) }),
   
+  // ── Atualização Cadastral ─────────────────────────────────────────────────
+  listarAtualizacaoCadastral: (params = {}) => {
+    const qs = new URLSearchParams(Object.fromEntries(Object.entries(params).filter(([,v])=>v))).toString();
+    return request(`/atualizacao-cadastral${qs ? "?" + qs : ""}`);
+  },
+  criarAtualizacaoCadastral: (data) =>
+    request("/atualizacao-cadastral", { method: "POST", body: JSON.stringify(data) }),
+  aprovarAtualizacaoCadastral: (id, acao, observacao) =>
+    request(`/atualizacao-cadastral/${id}/aprovar`, { method: "PUT", body: JSON.stringify({ acao, observacao }) }),
+  cancelarAtualizacaoCadastral: (id) =>
+    request(`/atualizacao-cadastral/${id}/cancelar`, { method: "PUT", body: JSON.stringify({}) }),
+
   getToken: () => _accessToken,
 };
