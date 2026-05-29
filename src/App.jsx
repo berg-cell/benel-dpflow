@@ -1027,11 +1027,14 @@ function Dashboard({ solicitacoes, blocos, user }) {
 }
 
 function Sidebar({ active, onNav, user }) {
-  const [cadastrosAberto, setCadastrosAberto] = useState(
-    active && active.startsWith("cad_")
-  );
+  const [abertos, setAbertos] = useState(() => {
+    const init = {};
+    if (active && active.startsWith("cad_")) init["cadastros"] = true;
+    if (active === "plano_saude") init["beneficios"] = true;
+    return init;
+  });
 
-  const isCadActive = active && active.startsWith("cad_");
+  const toggleMenu = (id) => setAbertos(o => ({ ...o, [id]: !o[id] }));
 
   const items = NAV_ITEMS.filter(i => i.perfis.includes(user.perfil));
 
@@ -1070,12 +1073,15 @@ function Sidebar({ active, onNav, user }) {
         {items.map(item => {
           if (item.submenu) {
             const subItems = item.submenu.filter(s => s.perfis.includes(user.perfil));
-            const isParentActive = isCadActive || active === "cadastros";
+            const isOpen = !!abertos[item.id];
+            const isParentActive = item.id === "cadastros"
+              ? (active && active.startsWith("cad_"))
+              : subItems.some(s => s.id === active);
             return (
               <div key={item.id}>
                 {/* Botão pai */}
                 <button
-                  onClick={() => setCadastrosAberto(o => !o)}
+                  onClick={() => toggleMenu(item.id)}
                   style={{
                     ...btnStyle(isParentActive),
                     justifyContent: "space-between"
@@ -1087,13 +1093,13 @@ function Sidebar({ active, onNav, user }) {
                   </div>
                   <span style={{
                     fontSize: 10, transition: "transform 0.2s",
-                    transform: cadastrosAberto ? "rotate(180deg)" : "rotate(0deg)",
+                    transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
                     color: "rgba(255,255,255,0.4)"
                   }}>▼</span>
                 </button>
 
                 {/* Submenu */}
-                {cadastrosAberto && (
+                {isOpen && (
                   <div style={{
                     marginLeft: 10, marginTop: 2, marginBottom: 4,
                     borderLeft: "1px solid rgba(255,255,255,0.1)",
@@ -6355,7 +6361,7 @@ export default function App() {
     cad_alcadas:      { title: "Regras de Alçadas",       subtitle: "Cadastros › Alçadas" },
     cad_usuarios:     { title: "Usuários do Sistema",     subtitle: "Cadastros › Usuários" },
     auditoria:        { title: "Auditoria",               subtitle: "Log completo de ações" },
-    plano_saude:      { title: "Benefícios",               subtitle: "Solicitação de Plano de Saúde — Hapvida" },
+    plano_saude:      { title: "Benefícios",               subtitle: "" },
     desligamentos:    { title: "Solicitações de Desligamento",              subtitle: "Gerencie solicitações de desligamento de colaboradores" },
     ocorrencias:      { title: "Solicitações de Advertências/Suspensões",   subtitle: "Registro de ocorrências disciplinares" },
     autorizacoes:     { title: "Autorização de Desconto",                   subtitle: "Autorização para desconto na folha de pagamento" },
