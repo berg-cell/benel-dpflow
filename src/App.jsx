@@ -611,9 +611,9 @@ function Button({ children, onClick, variant = "primary", size = "md", disabled 
     ghost: { background: "transparent", color: "#1B3A6B", border: "1px solid #1B3A6B" },
   };
   const sizes = {
-    sm: { padding: "5px 12px", fontSize: 12 },
-    md: { padding: "8px 18px", fontSize: 13 },
-    lg: { padding: "11px 24px", fontSize: 14 },
+    sm: { padding: "3px 8px", fontSize: 11 },
+    md: { padding: "6px 14px", fontSize: 11 },
+    lg: { padding: "8px 18px", fontSize: 13 },
   };
   return (
     <button
@@ -635,7 +635,7 @@ function Input({ label, value, onChange, type = "text", placeholder = "", requir
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
       {label && (
-        <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: 0.3 }}>
+        <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", letterSpacing: 0.3 }}>
           {label}{required && <span style={{ color: "#EF4444" }}> *</span>}
         </label>
       )}
@@ -643,7 +643,7 @@ function Input({ label, value, onChange, type = "text", placeholder = "", requir
         type={type} value={value} onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
         style={{
-          border: "1px solid #D1D5DB", borderRadius: 8, padding: "5px 8px",
+          border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px",
           fontSize: 11, color: "#111827", outline: "none", fontFamily: "inherit",
           background: "#FAFAFA", ...style
         }}
@@ -656,14 +656,14 @@ function Select({ label, value, onChange, options, required = false }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
       {label && (
-        <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: 0.3 }}>
+        <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", letterSpacing: 0.3 }}>
           {label}{required && <span style={{ color: "#EF4444" }}> *</span>}
         </label>
       )}
       <select
         value={value} onChange={e => onChange(e.target.value)}
         style={{
-          border: "1px solid #D1D5DB", borderRadius: 8, padding: "5px 8px",
+          border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px",
           fontSize: 11, color: "#111827", outline: "none", fontFamily: "inherit",
           background: "#FAFAFA", cursor: "pointer"
         }}
@@ -844,7 +844,7 @@ function Login({ onLogin }) {
           padding: "32px", boxShadow: "0 24px 80px rgba(0,0,0,0.35)"
         }}>
           <h2 style={{ margin: "0 0 6px", fontSize: 18, fontWeight: 700, color: "#0F2447" }}>Entrar</h2>
-          <p style={{ margin: "0 0 24px", fontSize: 12, color: "#6B7280" }}>
+          <p style={{ margin: "0 0 24px", fontSize: 11, color: "#6B7280" }}>
             Acesse com suas credenciais corporativas
           </p>
 
@@ -855,7 +855,7 @@ function Login({ onLogin }) {
             {aviso && (
               <div style={{
                 background: "#FFFBEB", border: "1px solid #FCD34D",
-                borderRadius: 8, padding: "5px 8px", fontSize: 12, color: "#92400E"
+                borderRadius: 8, padding: "3px 6px", fontSize: 12, color: "#92400E"
               }}>
                 ⚠️ {aviso}
               </div>
@@ -863,7 +863,7 @@ function Login({ onLogin }) {
             {erro && (
               <div style={{
                 background: "#FEF2F2", border: "1px solid #FCA5A5",
-                borderRadius: 8, padding: "5px 8px", fontSize: 12, color: "#DC2626"
+                borderRadius: 8, padding: "3px 6px", fontSize: 12, color: "#DC2626"
               }}>
                 🔒 {erro}
               </div>
@@ -876,7 +876,7 @@ function Login({ onLogin }) {
 
           {/* Suporte */}
           <div style={{
-            marginTop: 20, padding: "5px 8px", background: "#F8FAFC",
+            marginTop: 20, padding: "3px 6px", background: "#F8FAFC",
             borderRadius: 8, border: "1px solid #E2E8F0", textAlign: "center"
           }}>
             <p style={{ margin: 0, fontSize: 11, color: "#94A3B8" }}>
@@ -934,7 +934,7 @@ function Topbar({ title, subtitle, user, onLogout }) {
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <button onClick={onLogout} style={{
           background: "none", border: "1px solid #E5E7EB", borderRadius: 8,
-          padding: "5px 12px", fontSize: 12, color: "#6B7280", cursor: "pointer", fontFamily: "inherit"
+          padding: "5px 12px", fontSize: 11, color: "#6B7280", cursor: "pointer", fontFamily: "inherit"
         }}>Sair</button>
       </div>
     </div>
@@ -981,7 +981,7 @@ function Dashboard({ solicitacoes, blocos, user }) {
           <div style={{ fontSize: 32, fontWeight: 700, color: "#10B981" }}>
             R$ {valorTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
           </div>
-          <p style={{ margin: "6px 0 0", fontSize: 12, color: "#6B7280" }}>{aprovados} bloco(s) aprovado(s) no período</p>
+          <p style={{ margin: "6px 0 0", fontSize: 11, color: "#6B7280" }}>{aprovados} bloco(s) aprovado(s) no período</p>
         </Card>
 
         {/* Últimos blocos */}
@@ -991,7 +991,7 @@ function Dashboard({ solicitacoes, blocos, user }) {
             {blocos.slice(-4).reverse().map(b => (
               <div key={b.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "7px 0", borderBottom: "1px solid #F3F4F6" }}>
                 <div>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: "#111827" }}>{b.descricao}</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: "#111827" }}>{b.descricao}</div>
                   <div style={{ fontSize: 11, color: "#6B7280" }}>{b.linhas.length} lançamento(s) · {b.competencia}</div>
                 </div>
                 <Badge status={b.status} />
@@ -1041,7 +1041,7 @@ function Sidebar({ active, onNav, user }) {
 
   const btnStyle = (isActive) => ({
     display: "flex", alignItems: "center", gap: 10,
-    padding: "5px 8px", borderRadius: 8, border: "none",
+    padding: "3px 6px", borderRadius: 8, border: "none",
     background: isActive ? "rgba(59,130,246,0.2)" : "transparent",
     color: isActive ? "#93C5FD" : "rgba(255,255,255,0.55)",
     cursor: "pointer", textAlign: "left", fontFamily: "inherit",
@@ -1060,7 +1060,7 @@ function Sidebar({ active, onNav, user }) {
       <div style={{ padding: "16px 16px 14px", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
         <div style={{
           background: "rgba(255,255,255,0.95)", borderRadius: 10,
-          padding: "5px 8px", display: "flex", alignItems: "center", justifyContent: "center"
+          padding: "3px 6px", display: "flex", alignItems: "center", justifyContent: "center"
         }}>
           <img src={LOGO_BENEL} alt="Benel" style={{ height: 38, display: "block", maxWidth: "100%" }} />
         </div>
@@ -1121,7 +1121,7 @@ function Sidebar({ active, onNav, user }) {
                           transition: "all 0.15s", width: "100%"
                         }}
                       >
-                        <span style={{ fontSize: 12 }}>{sub.icon}</span>
+                        <span style={{ fontSize: 11 }}>{sub.icon}</span>
                         {sub.label}
                       </button>
                     ))}
@@ -1146,10 +1146,10 @@ function Sidebar({ active, onNav, user }) {
             width: 34, height: 34, borderRadius: 10,
             background: PERFIL_CONFIG[user.perfil]?.color,
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 12, fontWeight: 700, color: "#fff", flexShrink: 0
+            fontSize: 11, fontWeight: 700, color: "#fff", flexShrink: 0
           }}>{user.avatar}</div>
           <div style={{ overflow: "hidden" }}>
-            <div style={{ color: "#fff", fontSize: 12, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.nome}</div>
+            <div style={{ color: "#fff", fontSize: 11, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.nome}</div>
             <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: 0.5, color: PERFIL_CONFIG[user.perfil]?.color, textTransform: "uppercase" }}>
               {PERFIL_CONFIG[user.perfil]?.label}
             </div>
@@ -1372,7 +1372,7 @@ function ImportacaoModal({ open, onClose, titulo, colunas, exemplo, onImportar }
           </div>
           <label style={{
             padding: "7px 16px", background: "#1B3A6B", color: "#fff",
-            borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: "pointer"
+            borderRadius: 8, fontSize: 11, fontWeight: 600, cursor: "pointer"
           }}>
             {arquivo ? "Trocar arquivo" : "Selecionar CSV"}
             <input type="file" accept=".csv,.txt" onChange={onArquivo} style={{ display: "none" }} />
@@ -1381,7 +1381,7 @@ function ImportacaoModal({ open, onClose, titulo, colunas, exemplo, onImportar }
 
         {/* Ou colar texto */}
         <div>
-          <div style={{ fontSize: 12, fontWeight: 600, color: "#374151", marginBottom: 6 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: "#374151", marginBottom: 6 }}>
             Ou cole o conteúdo CSV diretamente:
           </div>
           <textarea
@@ -1390,7 +1390,7 @@ function ImportacaoModal({ open, onClose, titulo, colunas, exemplo, onImportar }
             rows={5}
             style={{
               width: "100%", border: "1px solid #D1D5DB", borderRadius: 8,
-              padding: "5px 8px", fontSize: 12, fontFamily: "monospace",
+              padding: "3px 6px", fontSize: 11, fontFamily: "monospace",
               resize: "vertical", boxSizing: "border-box", background: "#FAFAFA"
             }}
           />
@@ -1400,17 +1400,17 @@ function ImportacaoModal({ open, onClose, titulo, colunas, exemplo, onImportar }
         {resultado && (
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             <div style={{ display: "flex", gap: 10 }}>
-              <div style={{ flex: 1, background: "#D1FAE5", border: "1px solid #6EE7B7", borderRadius: 8, padding: "5px 8px", textAlign: "center" }}>
+              <div style={{ flex: 1, background: "#D1FAE5", border: "1px solid #6EE7B7", borderRadius: 8, padding: "3px 6px", textAlign: "center" }}>
                 <div style={{ fontSize: 22, fontWeight: 800, color: "#065F46" }}>{resultado.validos.length}</div>
                 <div style={{ fontSize: 11, color: "#065F46", fontWeight: 600 }}>Registros válidos</div>
               </div>
-              <div style={{ flex: 1, background: resultado.erros.length > 0 ? "#FEE2E2" : "#F3F4F6", border: "1px solid " + (resultado.erros.length > 0 ? "#FCA5A5" : "#E5E7EB"), borderRadius: 8, padding: "5px 8px", textAlign: "center" }}>
+              <div style={{ flex: 1, background: resultado.erros.length > 0 ? "#FEE2E2" : "#F3F4F6", border: "1px solid " + (resultado.erros.length > 0 ? "#FCA5A5" : "#E5E7EB"), borderRadius: 8, padding: "3px 6px", textAlign: "center" }}>
                 <div style={{ fontSize: 22, fontWeight: 800, color: resultado.erros.length > 0 ? "#991B1B" : "#6B7280" }}>{resultado.erros.length}</div>
                 <div style={{ fontSize: 11, color: resultado.erros.length > 0 ? "#991B1B" : "#6B7280", fontWeight: 600 }}>Erros</div>
               </div>
             </div>
             {resultado.erros.length > 0 && (
-              <div style={{ background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, padding: "5px 8px", maxHeight: 120, overflowY: "auto" }}>
+              <div style={{ background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, padding: "3px 6px", maxHeight: 120, overflowY: "auto" }}>
                 {resultado.erros.map((e, i) => (
                   <div key={i} style={{ fontSize: 11, color: "#DC2626", marginBottom: 3 }}>
                     Linha {e.linha}: {e.msg}
@@ -1580,7 +1580,7 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
     <div style={{ padding: 28 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
-<p style={{ margin: 0, fontSize: 12, color: "#6B7280" }}>{colaboradores.length} colaborador(es) cadastrado(s)</p>
+<p style={{ margin: 0, fontSize: 11, color: "#6B7280" }}>{colaboradores.length} colaborador(es) cadastrado(s)</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <Button variant="secondary" onClick={() => setModalImport(true)}>⬆ Importar CSV</Button>
@@ -1594,20 +1594,20 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
               {["Matrícula", "Nome", "Função", "Seção", "CPF", "Admissão", "C. Custo", "Situação", "Ações"].map(h => (
-                <th key={h} style={{ padding: "5px 8px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+                <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
             <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
               {(() => {
-                const inp = { style: { width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" } };
-                const sel = { style: { width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" } };
+                const inp = { style: { width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" } };
+                const sel = { style: { width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" } };
                 return (<>
                   <th style={{ padding:"5px 8px" }}><input value={fMatricula} onChange={e=>setFMatricula(e.target.value)} placeholder="🔍 Matrícula" {...inp} /></th>
                   <th style={{ padding:"5px 8px" }}><input value={fNome}      onChange={e=>setFNome(e.target.value)}      placeholder="🔍 Nome"      {...inp} /></th>
                   <th style={{ padding:"5px 8px" }}><input value={fFuncao}    onChange={e=>setFuncao(e.target.value)}     placeholder="🔍 Função"    {...inp} /></th>
                   <th style={{ padding:"5px 8px" }}><input value={fSecao}     onChange={e=>setFSecao(e.target.value)}     placeholder="🔍 Seção"     {...inp} /></th>
                   <th style={{ padding:"5px 8px" }}><input value={fCpf}       onChange={e=>setFCpf(e.target.value)}       placeholder="🔍 CPF"       {...inp} /></th>
-                  <th style={{ padding:"5px 8px" }}><input type="date" value={fAdmissao} onChange={e=>setFAdmissao(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+                  <th style={{ padding:"5px 8px" }}><input type="date" value={fAdmissao} onChange={e=>setFAdmissao(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
                   <th style={{ padding:"5px 8px" }}><input value={fCC}        onChange={e=>setFCC(e.target.value)}        placeholder="🔍 C. Custo"  {...inp} /></th>
                   <th style={{ padding:"5px 8px" }}>
                     <select value={fSituacao} onChange={e=>setFSituacao(e.target.value)} {...sel}>
@@ -1627,21 +1627,21 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
               <tr><td colSpan={6} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Nenhum colaborador encontrado</td></tr>
             ) : lista.map((c, i) => (
               <tr key={c.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
-                <td style={{ padding: "5px 10px" }}>
-                  <span style={{ fontFamily: "monospace", fontSize: 12, fontWeight: 700, background: "#F3F4F6", padding: "2px 8px", borderRadius: 4 }}>{c.chapa}</span>
+                <td style={{ padding: "3px 7px" }}>
+                  <span style={{ fontFamily: "monospace", fontSize: 11, fontWeight: 700, background: "#F3F4F6", padding: "1px 6px", borderRadius: 4 }}>{c.chapa}</span>
                 </td>
-                <td style={{ padding: "5px 10px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{c.nome}</td>
-                <td style={{ padding: "5px 10px", fontSize: 12, color: "#374151" }}>{c.desc_funcao || c.funcao || "—"}</td>
-                <td style={{ padding: "5px 10px", fontSize: 12, color: "#374151" }}>{c.desc_cc || "—"}</td>
-                <td style={{ padding: "5px 10px", fontSize: 12, color: "#374151", fontFamily: "monospace" }}>{c.cpf || "—"}</td>
-                <td style={{ padding: "5px 10px", fontSize: 12, color: "#374151" }}>{c.data_admissao ? new Date(c.data_admissao.split("T")[0]).toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "—"}</td>
-                <td style={{ padding: "5px 10px", fontSize: 12, color: "#374151" }}>{c.centro_custo ? (c.centro_custo + " — " + c.desc_cc) : "—"}</td>
-                <td style={{ padding: "5px 10px" }}>
-                  <span style={{ padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: c.situacao === "Ativo" ? "#D1FAE5" : "#FEE2E2", color: c.situacao === "Ativo" ? "#065F46" : "#991B1B" }}>
+                <td style={{ padding: "3px 7px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{c.nome}</td>
+                <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151" }}>{c.desc_funcao || c.funcao || "—"}</td>
+                <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151" }}>{c.desc_cc || "—"}</td>
+                <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151", fontFamily: "monospace" }}>{c.cpf || "—"}</td>
+                <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151" }}>{c.data_admissao ? new Date(c.data_admissao.split("T")[0]).toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "—"}</td>
+                <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151" }}>{c.centro_custo ? (c.centro_custo + " — " + c.desc_cc) : "—"}</td>
+                <td style={{ padding: "3px 7px" }}>
+                  <span style={{ padding: "1px 7px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: c.situacao === "Ativo" ? "#D1FAE5" : "#FEE2E2", color: c.situacao === "Ativo" ? "#065F46" : "#991B1B" }}>
                     {c.situacao}
                   </span>
                 </td>
-                <td style={{ padding: "5px 10px", display: "flex", gap: 6 }}>
+                <td style={{ padding: "3px 7px", display: "flex", gap: 6 }}>
                   <Button variant="ghost" size="sm" onClick={() => abrirEditar(c)}>✏ Editar</Button>
                   <Button variant={c.situacao === "Ativo" ? "secondary" : "success"} size="sm" onClick={() => inativar(c.id)}>
                     {c.situacao === "Ativo" ? "Inativar" : "Ativar"}
@@ -1662,9 +1662,9 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <Input label="Matrícula (Chapa) *" value={form.chapa} onChange={v => setForm(p => ({ ...p, chapa: v }))} placeholder="0001" required />
             <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Situação</label>
+              <label style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>Situação</label>
               <select value={form.situacao} onChange={e => setForm(p => ({ ...p, situacao: e.target.value }))}
-                style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "5px 8px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
+                style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
                 <option value="Ativo">Ativo</option>
                 <option value="Inativo">Inativo</option>
               </select>
@@ -1763,9 +1763,9 @@ function CadEventos({ eventos, setEventos }) {
 
   const sel = (label, val, onChange, opts) => (
     <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-      <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>{label}</label>
+      <label style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>{label}</label>
       <select value={val} onChange={e => onChange(e.target.value)}
-        style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "5px 8px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
+        style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
         {opts.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
     </div>
@@ -1775,7 +1775,7 @@ function CadEventos({ eventos, setEventos }) {
     <div style={{ padding: 28 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
-          <p style={{ margin: 0, fontSize: 12, color: "#6B7280" }}>{eventos.length} evento(s) cadastrado(s)</p>
+          <p style={{ margin: 0, fontSize: 11, color: "#6B7280" }}>{eventos.length} evento(s) cadastrado(s)</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <Button variant="secondary" onClick={() => setModalImport(true)}>⬆ Importar CSV</Button>
@@ -1788,29 +1788,29 @@ function CadEventos({ eventos, setEventos }) {
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
               {["Código", "Descrição", "Tipo", "Forma de Lançamento", "Ações"].map(h => (
-                <th key={h} style={{ padding: "5px 8px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+                <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
             <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
-              <th style={{ padding: "5px 8px" }}><input value={fCodigo} onChange={e=>setFCodigo(e.target.value)} placeholder="🔍 Código" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
-              <th style={{ padding: "5px 8px" }}><input value={fDesc}   onChange={e=>setFDesc(e.target.value)}   placeholder="🔍 Descrição" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
-              <th style={{ padding: "5px 8px" }}><select value={fTipo}  onChange={e=>setFTipo(e.target.value)}   style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="provento">Provento</option><option value="desconto">Desconto</option></select></th>
-              <th style={{ padding: "5px 8px" }}><select value={fForma} onChange={e=>setFForma(e.target.value)}  style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="valor">Valor</option><option value="hora">Hora</option><option value="referencia">Referência</option></select></th>
-              <th style={{ padding: "5px 8px" }}><button onClick={()=>{setFCodigo("");setFDesc("");setFTipo("");setFForma("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
+              <th style={{ padding: "3px 6px" }}><input value={fCodigo} onChange={e=>setFCodigo(e.target.value)} placeholder="🔍 Código" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding: "3px 6px" }}><input value={fDesc}   onChange={e=>setFDesc(e.target.value)}   placeholder="🔍 Descrição" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding: "3px 6px" }}><select value={fTipo}  onChange={e=>setFTipo(e.target.value)}   style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="provento">Provento</option><option value="desconto">Desconto</option></select></th>
+              <th style={{ padding: "3px 6px" }}><select value={fForma} onChange={e=>setFForma(e.target.value)}  style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="valor">Valor</option><option value="hora">Hora</option><option value="referencia">Referência</option></select></th>
+              <th style={{ padding: "3px 6px" }}><button onClick={()=>{setFCodigo("");setFDesc("");setFTipo("");setFForma("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
             </tr>
           </thead>
           <tbody>
             {eventosFiltrados.map((e, i) => (
               <tr key={e.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
-                <td style={{ padding: "5px 10px" }}>
+                <td style={{ padding: "3px 7px" }}>
                   <span style={{ fontFamily: "monospace", fontSize: 11, fontWeight: 700, color: "#1B3A6B" }}>{e.codigo}</span>
                 </td>
-                <td style={{ padding: "5px 10px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{e.descricao}</td>
-                <td style={{ padding: "5px 10px" }}>
-                  <span style={{ padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: e.tipo === "provento" ? "#D1FAE5" : "#FEE2E2", color: e.tipo === "provento" ? "#065F46" : "#991B1B" }}>{e.tipo}</span>
+                <td style={{ padding: "3px 7px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{e.descricao}</td>
+                <td style={{ padding: "3px 7px" }}>
+                  <span style={{ padding: "1px 7px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: e.tipo === "provento" ? "#D1FAE5" : "#FEE2E2", color: e.tipo === "provento" ? "#065F46" : "#991B1B" }}>{e.tipo}</span>
                 </td>
-                <td style={{ padding: "5px 10px", fontSize: 12, color: "#374151", textTransform: "capitalize" }}>{e.forma}</td>
-                <td style={{ padding: "5px 10px", display: "flex", gap: 6 }}>
+                <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151", textTransform: "capitalize" }}>{e.forma}</td>
+                <td style={{ padding: "3px 7px", display: "flex", gap: 6 }}>
                   <Button variant="ghost" size="sm" onClick={() => abrirEditar(e)}>✏ Editar</Button>
                   <Button variant="danger" size="sm" onClick={() => excluir(e.id)}>🗑</Button>
                 </td>
@@ -1938,7 +1938,7 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
     <div style={{ padding: 28 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
-          <p style={{ margin: 0, fontSize: 12, color: "#6B7280" }}>Define quem aprova as solicitações de cada gestor</p>
+          <p style={{ margin: 0, fontSize: 11, color: "#6B7280" }}>Define quem aprova as solicitações de cada gestor</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <Button variant="secondary" onClick={() => setModalImport(true)}>⬆ Importar CSV</Button>
@@ -1951,36 +1951,36 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
               {["1ª Alçada", "2ª Alçada", "Centro de Custo", "Status", "Ações"].map(h => (
-                <th key={h} style={{ padding: "5px 8px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+                <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
             <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
-              <th style={{ padding: "5px 8px" }}>
+              <th style={{ padding: "3px 6px" }}>
                 <input value={filtroGestor} onChange={e => setFiltroGestor(e.target.value)}
                   placeholder="🔍 Buscar 1ª alçada..."
-                  style={{ width: "100%", padding: "5px 8px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 11, fontFamily: "inherit", boxSizing: "border-box" }} />
+                  style={{ width: "100%", padding: "3px 6px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 11, fontFamily: "inherit", boxSizing: "border-box" }} />
               </th>
-              <th style={{ padding: "5px 8px" }}>
+              <th style={{ padding: "3px 6px" }}>
                 <input value={filtroSuperior} onChange={e => setFiltroSuperior(e.target.value)}
                   placeholder="🔍 Buscar 2ª alçada..."
-                  style={{ width: "100%", padding: "5px 8px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 11, fontFamily: "inherit", boxSizing: "border-box" }} />
+                  style={{ width: "100%", padding: "3px 6px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 11, fontFamily: "inherit", boxSizing: "border-box" }} />
               </th>
-              <th style={{ padding: "5px 8px" }}>
+              <th style={{ padding: "3px 6px" }}>
                 <input value={filtroCC} onChange={e => setFiltroCC(e.target.value)}
                   placeholder="🔍 Buscar CC..."
-                  style={{ width: "100%", padding: "5px 8px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 11, fontFamily: "inherit", boxSizing: "border-box" }} />
+                  style={{ width: "100%", padding: "3px 6px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 11, fontFamily: "inherit", boxSizing: "border-box" }} />
               </th>
-              <th style={{ padding: "5px 8px" }}>
+              <th style={{ padding: "3px 6px" }}>
                 <select value={filtroAtivo} onChange={e => setFiltroAtivo(e.target.value)}
-                  style={{ width: "100%", padding: "5px 8px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 11, fontFamily: "inherit" }}>
+                  style={{ width: "100%", padding: "3px 6px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 11, fontFamily: "inherit" }}>
                   <option value="">Todos</option>
                   <option value="ativo">Ativo</option>
                   <option value="inativo">Inativo</option>
                 </select>
               </th>
-              <th style={{ padding: "5px 8px" }}>
+              <th style={{ padding: "3px 6px" }}>
                 <button onClick={() => { setFiltroGestor(""); setFiltroSuperior(""); setFiltroCC(""); setFiltroAtivo(""); }}
-                  style={{ fontSize: 10, padding: "4px 8px", borderRadius: 6, border: "1px solid #D1D5DB", background: "#fff", cursor: "pointer", color: "#6B7280" }}>
+                  style={{ fontSize: 10, padding: "3px 6px", borderRadius: 6, border: "1px solid #D1D5DB", background: "#fff", cursor: "pointer", color: "#6B7280" }}>
                   ✕ Limpar
                 </button>
               </th>
@@ -1991,7 +1991,7 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
               <tr><td colSpan={5} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Nenhuma regra encontrada</td></tr>
             ) : hierarquiaFiltrada.map((h, i) => (
               <tr key={h.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
-                <td style={{ padding: "5px 10px" }}>
+                <td style={{ padding: "3px 7px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <div style={{ width: 28, height: 28, borderRadius: 8, background: "#3B82F6", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#fff" }}>
                       {h.gestor_nome?.charAt(0)}
@@ -1999,7 +1999,7 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
                     <span style={{ fontSize: 11, fontWeight: 600, color: "#111827" }}>{h.gestor_nome}</span>
                   </div>
                 </td>
-                <td style={{ padding: "5px 10px" }}>
+                <td style={{ padding: "3px 7px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <div style={{ width: 28, height: 28, borderRadius: 8, background: "#8B5CF6", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#fff" }}>
                       {h.superior_nome?.charAt(0)}
@@ -2007,13 +2007,13 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
                     <span style={{ fontSize: 11, fontWeight: 600, color: "#111827" }}>{h.superior_nome}</span>
                   </div>
                 </td>
-                <td style={{ padding: "5px 10px", fontSize: 12, color: "#374151" }}>{h.centro_custo ? (h.centro_custo + " — " + h.desc_cc) : "Todos"}</td>
-                <td style={{ padding: "5px 10px" }}>
-                  <span style={{ padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: h.ativo ? "#D1FAE5" : "#FEE2E2", color: h.ativo ? "#065F46" : "#991B1B" }}>
+                <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151" }}>{h.centro_custo ? (h.centro_custo + " — " + h.desc_cc) : "Todos"}</td>
+                <td style={{ padding: "3px 7px" }}>
+                  <span style={{ padding: "1px 7px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: h.ativo ? "#D1FAE5" : "#FEE2E2", color: h.ativo ? "#065F46" : "#991B1B" }}>
                     {h.ativo ? "Ativo" : "Inativo"}
                   </span>
                 </td>
-                <td style={{ padding: "5px 10px", display: "flex", gap: 6 }}>
+                <td style={{ padding: "3px 7px", display: "flex", gap: 6 }}>
                   <Button variant="ghost" size="sm" onClick={() => abrirEditar(h)}>✏ Editar</Button>
                   <Button variant={h.ativo ? "secondary" : "success"} size="sm" onClick={() => toggleAtivo(h.id)}>
                     {h.ativo ? "Inativar" : "Ativar"}
@@ -2032,24 +2032,24 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
         title={modalForm === "novo" ? "Nova Regra de Hierarquia" : "Editar Hierarquia"} width={480}>
         <div style={{ display: "flex", flexDirection: "column", gap: 13 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>1ª Alçada *</label>
+            <label style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>1ª Alçada *</label>
             <select value={form.gestor_id} onChange={e => setForm(p => ({ ...p, gestor_id: e.target.value }))}
-              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "5px 8px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
+              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
               <option value="">Selecione...</option>
               {gestores.map(u => <option key={u.id} value={u.id}>{u.nome}</option>)}
             </select>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>2ª Alçada *</label>
+            <label style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>2ª Alçada *</label>
             <select value={form.superior_id} onChange={e => setForm(p => ({ ...p, superior_id: e.target.value }))}
-              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "5px 8px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
+              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
               <option value="">Selecione...</option>
               {superiores.map(u => <option key={u.id} value={u.id}>{u.nome}</option>)}
             </select>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 12 }}>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Cód. Centro de Custo</label>
+              <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Cód. Centro de Custo</label>
               <select value={form.centro_custo || ""} onChange={e => {
                 const cod = e.target.value;
                 const cc = centrosCusto.find(c => c.codccusto === cod);
@@ -2062,7 +2062,7 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
               </select>
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Descrição CC</label>
+              <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Descrição CC</label>
               <input value={form.desc_cc || ""} readOnly
                 style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid #D1D5DB", fontSize: 13, background: "#F9FAFB", color: "#6B7280", boxSizing: "border-box" }}
                 placeholder="Preenchido automaticamente" />
@@ -2153,7 +2153,7 @@ function CadAlcadas({ alcadas, setAlcadas, eventos }) {
     <div style={{ padding: 28 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
-          <p style={{ margin: 0, fontSize: 12, color: "#6B7280" }}>Define quantas aprovações cada tipo de evento exige</p>
+          <p style={{ margin: 0, fontSize: 11, color: "#6B7280" }}>Define quantas aprovações cada tipo de evento exige</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <Button variant="secondary" onClick={() => setModalImport(true)}>⬆ Importar CSV</Button>
@@ -2166,15 +2166,15 @@ function CadAlcadas({ alcadas, setAlcadas, eventos }) {
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
               {["Evento", "Nº de Alçadas", "Exige Anexo", "Status", "Ações"].map(h => (
-                <th key={h} style={{ padding: "5px 8px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+                <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
             <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
-              <th style={{ padding: "5px 8px" }}><input value={fEvento} onChange={e=>setFEvento(e.target.value)} placeholder="🔍 Evento" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
-              <th style={{ padding: "5px 8px" }} />
-              <th style={{ padding: "5px 8px" }}><select value={fAnexo} onChange={e=>setFAnexo(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="sim">Obrigatório</option><option value="nao">Não exige</option></select></th>
-              <th style={{ padding: "5px 8px" }}><select value={fStatus} onChange={e=>setFStatus(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select></th>
-              <th style={{ padding: "5px 8px" }}><button onClick={()=>{setFEvento("");setFAnexo("");setFStatus("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
+              <th style={{ padding: "3px 6px" }}><input value={fEvento} onChange={e=>setFEvento(e.target.value)} placeholder="🔍 Evento" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding: "3px 6px" }} />
+              <th style={{ padding: "3px 6px" }}><select value={fAnexo} onChange={e=>setFAnexo(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="sim">Obrigatório</option><option value="nao">Não exige</option></select></th>
+              <th style={{ padding: "3px 6px" }}><select value={fStatus} onChange={e=>setFStatus(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select></th>
+              <th style={{ padding: "3px 6px" }}><button onClick={()=>{setFEvento("");setFAnexo("");setFStatus("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
             </tr>
           </thead>
           <tbody>
@@ -2182,30 +2182,30 @@ function CadAlcadas({ alcadas, setAlcadas, eventos }) {
               <tr><td colSpan={5} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Nenhuma regra encontrada</td></tr>
             ) : alcadasFiltradas.map((a, i) => (
               <tr key={a.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
-                <td style={{ padding: "5px 10px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{a.evento_nome}</td>
-                <td style={{ padding: "5px 10px" }}>
+                <td style={{ padding: "3px 7px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{a.evento_nome}</td>
+                <td style={{ padding: "3px 7px" }}>
                   <div style={{ display: "flex", gap: 4 }}>
                     {[...Array(a.num_alcadas)].map((_, idx) => (
                       <span key={idx} style={{ width: 24, height: 24, borderRadius: 6, background: idx === 0 ? "#3B82F6" : "#8B5CF6", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#fff" }}>
                         {idx + 1}
                       </span>
                     ))}
-                    <span style={{ fontSize: 12, color: "#6B7280", marginLeft: 4, alignSelf: "center" }}>
+                    <span style={{ fontSize: 11, color: "#6B7280", marginLeft: 4, alignSelf: "center" }}>
                       {a.num_alcadas === 1 ? "Apenas gestor" : "Gestor + Superior"}
                     </span>
                   </div>
                 </td>
-                <td style={{ padding: "5px 10px" }}>
-                  <span style={{ padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: a.exige_anexo ? "#FEF3C7" : "#F3F4F6", color: a.exige_anexo ? "#92400E" : "#6B7280" }}>
+                <td style={{ padding: "3px 7px" }}>
+                  <span style={{ padding: "1px 7px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: a.exige_anexo ? "#FEF3C7" : "#F3F4F6", color: a.exige_anexo ? "#92400E" : "#6B7280" }}>
                     {a.exige_anexo ? "📎 Obrigatório" : "Não exige"}
                   </span>
                 </td>
-                <td style={{ padding: "5px 10px" }}>
-                  <span style={{ padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: a.ativo ? "#D1FAE5" : "#FEE2E2", color: a.ativo ? "#065F46" : "#991B1B" }}>
+                <td style={{ padding: "3px 7px" }}>
+                  <span style={{ padding: "1px 7px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: a.ativo ? "#D1FAE5" : "#FEE2E2", color: a.ativo ? "#065F46" : "#991B1B" }}>
                     {a.ativo ? "Ativo" : "Inativo"}
                   </span>
                 </td>
-                <td style={{ padding: "5px 10px", display: "flex", gap: 6 }}>
+                <td style={{ padding: "3px 7px", display: "flex", gap: 6 }}>
                   <Button variant="ghost" size="sm" onClick={() => abrirEditar(a)}>✏ Editar</Button>
                   <Button variant={a.ativo ? "secondary" : "success"} size="sm" onClick={() => toggleAtivo(a.id)}>
                     {a.ativo ? "Inativar" : "Ativar"}
@@ -2224,22 +2224,22 @@ function CadAlcadas({ alcadas, setAlcadas, eventos }) {
         title={modalForm === "novo" ? "Nova Regra de Alçada" : "Editar Alçada"} width={460}>
         <div style={{ display: "flex", flexDirection: "column", gap: 13 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Evento *</label>
+            <label style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>Evento *</label>
             <select value={form.evento_id} onChange={e => setForm(p => ({ ...p, evento_id: e.target.value }))}
-              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "5px 8px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
+              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
               <option value="">Selecione...</option>
               {eventos.map(e => <option key={e.id} value={e.id}>{e.codigo} — {e.descricao}</option>)}
             </select>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Número de Alçadas *</label>
+            <label style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>Número de Alçadas *</label>
             <select value={form.num_alcadas} onChange={e => setForm(p => ({ ...p, num_alcadas: e.target.value }))}
-              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "5px 8px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
+              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
               <option value={1}>1 alçada — Apenas Gestor</option>
               <option value={2}>2 alçadas — Gestor + Superior</option>
             </select>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "5px 8px", background: "#FFFBEB", borderRadius: 8, border: "1px solid #FCD34D" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "3px 6px", background: "#FFFBEB", borderRadius: 8, border: "1px solid #FCD34D" }}>
             <input type="checkbox" id="exige_anexo" checked={!!form.exige_anexo}
               onChange={e => setForm(p => ({ ...p, exige_anexo: e.target.checked }))}
               style={{ width: 16, height: 16, cursor: "pointer" }} />
@@ -2377,7 +2377,7 @@ function CadUsuarios({ usuarios, setUsuarios }) {
     <div style={{ padding: 28 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
-          <p style={{ margin: 0, fontSize: 12, color: "#6B7280" }}>{usuarios.length} usuário(s) cadastrado(s)</p>
+          <p style={{ margin: 0, fontSize: 11, color: "#6B7280" }}>{usuarios.length} usuário(s) cadastrado(s)</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <Button variant="secondary" onClick={() => setModalImport(true)}>⬆ Importar CSV</Button>
@@ -2390,37 +2390,37 @@ function CadUsuarios({ usuarios, setUsuarios }) {
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
               {["Avatar", "Nome", "E-mail", "Perfil", "Status", "Ações"].map(h => (
-                <th key={h} style={{ padding: "5px 8px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+                <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
             <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
-              <th style={{ padding: "5px 8px" }} />
-              <th style={{ padding: "5px 8px" }}><input value={fNomeU}  onChange={e=>setFNomeU(e.target.value)}  placeholder="🔍 Nome"   style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
-              <th style={{ padding: "5px 8px" }}><input value={fEmailU} onChange={e=>setFEmailU(e.target.value)} placeholder="🔍 E-mail" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
-              <th style={{ padding: "5px 8px" }}><select value={fPerfilU} onChange={e=>setFPerfilU(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="gestor">Gestor</option><option value="superior">Superior</option><option value="dp">DP</option><option value="admin">Admin</option></select></th>
-              <th style={{ padding: "5px 8px" }}><select value={fStatusU} onChange={e=>setFStatusU(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select></th>
-              <th style={{ padding: "5px 8px" }}><button onClick={()=>{setFNomeU("");setFEmailU("");setFPerfilU("");setFStatusU("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
+              <th style={{ padding: "3px 6px" }} />
+              <th style={{ padding: "3px 6px" }}><input value={fNomeU}  onChange={e=>setFNomeU(e.target.value)}  placeholder="🔍 Nome"   style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding: "3px 6px" }}><input value={fEmailU} onChange={e=>setFEmailU(e.target.value)} placeholder="🔍 E-mail" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding: "3px 6px" }}><select value={fPerfilU} onChange={e=>setFPerfilU(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="gestor">Gestor</option><option value="superior">Superior</option><option value="dp">DP</option><option value="admin">Admin</option></select></th>
+              <th style={{ padding: "3px 6px" }}><select value={fStatusU} onChange={e=>setFStatusU(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select></th>
+              <th style={{ padding: "3px 6px" }}><button onClick={()=>{setFNomeU("");setFEmailU("");setFPerfilU("");setFStatusU("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
             </tr>
           </thead>
           <tbody>
             {usuariosFiltrados.map((u, i) => (
               <tr key={u.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
-                <td style={{ padding: "5px 10px" }}>
+                <td style={{ padding: "3px 7px" }}>
                   <div style={{ width: 32, height: 32, borderRadius: 8, background: PERFIL_CONFIG[u.perfil]?.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#fff" }}>{u.avatar}</div>
                 </td>
-                <td style={{ padding: "5px 10px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{u.nome}</td>
-                <td style={{ padding: "5px 10px", fontSize: 12, color: "#374151" }}>{u.email}</td>
-                <td style={{ padding: "5px 10px" }}>
-                  <span style={{ padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: PERFIL_CONFIG[u.perfil]?.color + "22", color: PERFIL_CONFIG[u.perfil]?.color }}>
+                <td style={{ padding: "3px 7px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{u.nome}</td>
+                <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151" }}>{u.email}</td>
+                <td style={{ padding: "3px 7px" }}>
+                  <span style={{ padding: "1px 7px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: PERFIL_CONFIG[u.perfil]?.color + "22", color: PERFIL_CONFIG[u.perfil]?.color }}>
                     {PERFIL_CONFIG[u.perfil]?.label}
                   </span>
                 </td>
-                <td style={{ padding: "5px 10px" }}>
-                  <span style={{ padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: u.ativo !== false ? "#D1FAE5" : "#FEE2E2", color: u.ativo !== false ? "#065F46" : "#991B1B" }}>
+                <td style={{ padding: "3px 7px" }}>
+                  <span style={{ padding: "1px 7px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: u.ativo !== false ? "#D1FAE5" : "#FEE2E2", color: u.ativo !== false ? "#065F46" : "#991B1B" }}>
                     {u.ativo !== false ? "Ativo" : "Inativo"}
                   </span>
                 </td>
-                <td style={{ padding: "5px 10px", display: "flex", gap: 6 }}>
+                <td style={{ padding: "3px 7px", display: "flex", gap: 6 }}>
                   <Button variant="ghost" size="sm" onClick={() => abrirEditar(u)}>✏ Editar</Button>
                   <Button variant="warning" size="sm" onClick={() => abrirReset(u)}>🔑 Senha</Button>
                   <Button variant={u.ativo !== false ? "secondary" : "success"} size="sm" onClick={() => toggleAtivo(u.id)}>
@@ -2443,9 +2443,9 @@ function CadUsuarios({ usuarios, setUsuarios }) {
           <Input label="E-mail *" value={form.email} onChange={v => setForm(p => ({ ...p, email: v }))} type="email" placeholder="email@empresa.com" required />
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Perfil</label>
+              <label style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>Perfil</label>
               <select value={form.perfil} onChange={e => setForm(p => ({ ...p, perfil: e.target.value }))}
-                style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "5px 8px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
+                style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
                 <option value="gestor">Gestor</option>
                 <option value="superior">Superior</option>
                 <option value="dp">DP</option>
@@ -2472,14 +2472,14 @@ function CadUsuarios({ usuarios, setUsuarios }) {
         title="🔑 Redefinir Senha" width={420}>
         {modalReset && (
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <div style={{ background: "#FFF7ED", border: "1px solid #FCD34D", borderRadius: 8, padding: "5px 8px" }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: "#92400E" }}>Usuário</div>
+            <div style={{ background: "#FFF7ED", border: "1px solid #FCD34D", borderRadius: 8, padding: "3px 6px" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#92400E" }}>Usuário</div>
               <div style={{ fontSize: 14, fontWeight: 600, color: "#111827" }}>{modalReset.nome}</div>
-              <div style={{ fontSize: 12, color: "#6B7280" }}>{modalReset.email}</div>
+              <div style={{ fontSize: 11, color: "#6B7280" }}>{modalReset.email}</div>
             </div>
             {msgReset && (
               <div style={{
-                padding: "5px 8px", borderRadius: 8, fontSize: 12,
+                padding: "3px 6px", borderRadius: 8, fontSize: 12,
                 background: msgReset.tipo === "ok" ? "#D1FAE5" : "#FEE2E2",
                 color: msgReset.tipo === "ok" ? "#065F46" : "#991B1B",
                 border: `1px solid ${msgReset.tipo === "ok" ? "#6EE7B7" : "#FCA5A5"}`
@@ -2674,14 +2674,14 @@ function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user, 
               <tbody>
                 {bloco.linhas.map((l, i) => (
                   <tr key={i} style={{ borderTop: "1px solid #F3F4F6" }}>
-                    <td style={{ padding: "5px 10px" }}>
-                      <span style={{ fontFamily: "monospace", fontSize: 12, fontWeight: 700, background: "#F3F4F6", padding: "2px 8px", borderRadius: 4 }}>{l.colaborador?.chapa}</span>
+                    <td style={{ padding: "3px 7px" }}>
+                      <span style={{ fontFamily: "monospace", fontSize: 11, fontWeight: 700, background: "#F3F4F6", padding: "1px 6px", borderRadius: 4 }}>{l.colaborador?.chapa}</span>
                     </td>
-                    <td style={{ padding: "5px 10px", fontSize: 12, fontWeight: 600, color: "#111827" }}>{l.colaborador?.nome}</td>
-                    <td style={{ padding: "5px 10px", fontSize: 12, color: "#374151" }}>{l.data}</td>
-                    <td style={{ padding: "5px 10px", fontSize: 12, color: "#374151" }}>{l.hora || "—"}</td>
-                    <td style={{ padding: "5px 10px", fontSize: 12, fontWeight: 700, color: "#059669" }}>R$ {parseFloat(l.valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td>
-                    <td style={{ padding: "5px 10px", fontSize: 11, color: "#6B7280", fontStyle: "italic" }}>{l.observacao || "—"}</td>
+                    <td style={{ padding: "3px 7px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{l.colaborador?.nome}</td>
+                    <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151" }}>{l.data}</td>
+                    <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151" }}>{l.hora || "—"}</td>
+                    <td style={{ padding: "3px 7px", fontSize: 11, fontWeight: 700, color: "#059669" }}>R$ {parseFloat(l.valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td>
+                    <td style={{ padding: "3px 7px", fontSize: 11, color: "#6B7280", fontStyle: "italic" }}>{l.observacao || "—"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -2888,7 +2888,7 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
 
             {/* Competência — select de meses */}
             <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: 0.3 }}>
+              <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", letterSpacing: 0.3 }}>
                 Competência <span style={{ color: "#EF4444" }}>*</span>
               </label>
               <select
@@ -2911,7 +2911,7 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
                   }));
                 }}
                 style={{
-                  border: "1px solid #D1D5DB", borderRadius: 8, padding: "5px 8px",
+                  border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px",
                   fontSize: 13, fontFamily: "inherit", background: "#fff", cursor: "pointer",
                   color: bloco.competencia ? "#111827" : "#9CA3AF"
                 }}
@@ -2923,14 +2923,14 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
 
             {/* Evento único do bloco */}
             <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: 0.3 }}>
+              <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", letterSpacing: 0.3 }}>
                 Evento do Bloco <span style={{ color: "#EF4444" }}>*</span>
               </label>
               <select
                 value={bloco.evento_id || ""}
                 onChange={e => setBloco(b => ({ ...b, evento_id: e.target.value }))}
                 style={{
-                  border: "1px solid #D1D5DB", borderRadius: 8, padding: "5px 8px",
+                  border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px",
                   fontSize: 13, fontFamily: "inherit", background: "#fff", cursor: "pointer",
                   color: bloco.evento_id ? "#111827" : "#9CA3AF"
                 }}
@@ -2947,7 +2947,7 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
           {eventoSelecionado && (
             <div style={{
               marginTop: 10, display: "flex", alignItems: "center", gap: 10,
-              padding: "5px 8px", background: "#EFF6FF", borderRadius: 8, border: "1px solid #BFDBFE"
+              padding: "3px 6px", background: "#EFF6FF", borderRadius: 8, border: "1px solid #BFDBFE"
             }}>
               <span style={{ fontSize: 11, color: "#1D4ED8" }}>
                 ⚡ Todos os lançamentos deste bloco serão do evento
@@ -2973,14 +2973,14 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
         }}>
           <span style={{ fontSize: 20 }}>📎</span>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: "#92400E" }}>Anexo do Bloco</div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#92400E" }}>Anexo do Bloco</div>
             {bloco.anexo_nome ? (
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
                 <span style={{ fontSize: 12, color: "#065F46", fontWeight: 600 }}>✓ {bloco.anexo_nome}</span>
                 <span style={{ fontSize: 11, color: "#6B7280" }}>({bloco.anexo_tamanho})</span>
                 <button
                   onClick={() => setBloco(b => ({ ...b, anexo_nome: null, anexo_tamanho: null }))}
-                  style={{ background: "none", border: "none", color: "#EF4444", cursor: "pointer", fontSize: 12 }}
+                  style={{ background: "none", border: "none", color: "#EF4444", cursor: "pointer", fontSize: 11 }}
                 >✕ Remover</button>
               </div>
             ) : (
@@ -2991,7 +2991,7 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
           </div>
           <label style={{
             padding: "7px 14px", background: "#F59E0B", color: "#fff", borderRadius: 8,
-            fontSize: 12, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap"
+            fontSize: 11, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap"
           }}>
             {bloco.anexo_nome ? "Trocar arquivo" : "Selecionar arquivo"}
             <input type="file" accept=".pdf,.jpg,.jpeg,.png,.xlsx,.xls" onChange={onAnexo}
@@ -3013,7 +3013,7 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
         ) : (
           <div style={{ overflowX: "auto" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-              <span style={{ fontSize: 12, fontWeight: 700, color: "#374151" }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "#374151" }}>
                 Lançamentos — <span style={{ color: "#1D4ED8" }}>{eventoSelecionado?.descricao}</span>
                 <span style={{ marginLeft: 6, fontSize: 11, color: "#6B7280" }}>({bloco.linhas.length} linha{bloco.linhas.length !== 1 ? "s" : ""})</span>
               </span>
@@ -3076,7 +3076,7 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
                       {bloco.linhas.length > 1 && (
                         <button onClick={() => removeLinha(idx)} style={{
                           background: "#FEE2E2", border: "none", borderRadius: 6,
-                          padding: "5px 8px", color: "#EF4444", cursor: "pointer", fontSize: 12, fontWeight: 700
+                          padding: "3px 6px", color: "#EF4444", cursor: "pointer", fontSize: 11, fontWeight: 700
                         }}>✕</button>
                       )}
                     </td>
@@ -3085,10 +3085,10 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
               </tbody>
               <tfoot>
                 <tr style={{ background: "#F0FDF4", borderTop: "2px solid #10B981" }}>
-                  <td colSpan={3} style={{ padding: "5px 8px", fontSize: 12, fontWeight: 700, color: "#065F46" }}>
+                  <td colSpan={3} style={{ padding: "3px 6px", fontSize: 11, fontWeight: 700, color: "#065F46" }}>
                     TOTAL — {bloco.linhas.filter(l => l.valor && l.colaborador_id).length} lançamento(s) preenchidos
                   </td>
-                  <td colSpan={3} style={{ padding: "5px 8px", fontSize: 15, fontWeight: 800, color: "#065F46" }}>
+                  <td colSpan={3} style={{ padding: "3px 6px", fontSize: 15, fontWeight: 800, color: "#065F46" }}>
                     R$ {totalBloco.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                   </td>
                 </tr>
@@ -3122,7 +3122,7 @@ function DetalhesBloco({ bloco }) {
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
         <Badge status={bloco.status} />
-        <span style={{ fontSize: 12, color: "#6B7280" }}>Competência: <b>{bloco.competencia}</b> · {bloco.linhas.length} lançamento(s)</span>
+        <span style={{ fontSize: 11, color: "#6B7280" }}>Competência: <b>{bloco.competencia}</b> · {bloco.linhas.length} lançamento(s)</span>
         <span style={{ marginLeft: "auto", fontSize: 15, fontWeight: 700, color: "#10B981" }}>
           R$ {total.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
         </span>
@@ -3131,19 +3131,19 @@ function DetalhesBloco({ bloco }) {
         <thead>
           <tr style={{ background: "#F9FAFB" }}>
             {["Colaborador", "Evento", "Data", "Hora", "Valor", "Observação"].map(h => (
-              <th key={h} style={{ padding: "5px 8px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+              <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {bloco.linhas.map((l, i) => (
             <tr key={i} style={{ borderTop: "1px solid #F3F4F6" }}>
-              <td style={{ padding: "5px 8px", fontSize: 12, fontWeight: 600, color: "#111827" }}>{l.colaborador?.nome}</td>
-              <td style={{ padding: "5px 8px", fontSize: 12, color: "#374151" }}>{l.evento?.descricao}</td>
-              <td style={{ padding: "5px 8px", fontSize: 12, color: "#374151" }}>{l.data}</td>
-              <td style={{ padding: "5px 8px", fontSize: 12, color: "#374151" }}>{l.hora || "—"}</td>
-              <td style={{ padding: "5px 8px", fontSize: 12, fontWeight: 700, color: "#10B981" }}>R$ {parseFloat(l.valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td>
-              <td style={{ padding: "5px 8px", fontSize: 11, color: "#6B7280", fontStyle: "italic" }}>{l.observacao || "—"}</td>
+              <td style={{ padding: "3px 6px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{l.colaborador?.nome}</td>
+              <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{l.evento?.descricao}</td>
+              <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{l.data}</td>
+              <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{l.hora || "—"}</td>
+              <td style={{ padding: "3px 6px", fontSize: 11, fontWeight: 700, color: "#10B981" }}>R$ {parseFloat(l.valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td>
+              <td style={{ padding: "3px 6px", fontSize: 11, color: "#6B7280", fontStyle: "italic" }}>{l.observacao || "—"}</td>
             </tr>
           ))}
         </tbody>
@@ -3154,11 +3154,11 @@ function DetalhesBloco({ bloco }) {
           {bloco.historico.map((h, i) => (
             <div key={i} style={{
               display: "flex", alignItems: "center", gap: 12,
-              padding: "5px 8px", background: "#F9FAFB", borderRadius: 8,
+              padding: "3px 6px", background: "#F9FAFB", borderRadius: 8,
               borderLeft: `3px solid ${ACAO_COLOR[h.acao] || "#6B7280"}`
             }}>
               <div style={{ flex: 1 }}>
-                <span style={{ fontSize: 12, fontWeight: 700, color: "#111827" }}>{h.usuario}</span>
+                <span style={{ fontSize: 11, fontWeight: 700, color: "#111827" }}>{h.usuario}</span>
                 <span style={{ fontSize: 11, color: "#6B7280" }}> · {h.acao.replace(/_/g, " ")} · {h.data}</span>
                 {h.obs && <div style={{ fontSize: 11, color: "#F97316", marginTop: 2 }}>"{h.obs}"</div>}
               </div>
@@ -3214,7 +3214,7 @@ function RelatorioBloco({ bloco }) {
             { label: "Valor total", value: `R$ ${total.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` },
             { label: "Etapas no histórico", value: bloco.historico.length },
           ].map(c => (
-            <div key={c.label} style={{ background: "rgba(255,255,255,0.07)", borderRadius: 8, padding: "5px 8px" }}>
+            <div key={c.label} style={{ background: "rgba(255,255,255,0.07)", borderRadius: 8, padding: "3px 6px" }}>
               <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", textTransform: "uppercase", letterSpacing: 0.5 }}>{c.label}</div>
               <div style={{ fontSize: 18, fontWeight: 800, marginTop: 2 }}>{c.value}</div>
             </div>
@@ -3231,22 +3231,22 @@ function RelatorioBloco({ bloco }) {
           <thead>
             <tr style={{ background: "#1B3A6B" }}>
               {["#", "Colaborador", "Chapa", "C.Custo", "Evento", "Cód.", "Data", "Hora", "Valor"].map(h => (
-                <th key={h} style={{ padding: "5px 8px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.75)", textTransform: "uppercase" }}>{h}</th>
+                <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.75)", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {bloco.linhas.map((l, i) => (
               <tr key={i} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#F8FAFC" }}>
-                <td style={{ padding: "5px 8px", fontSize: 11, color: "#9CA3AF" }}>{i + 1}</td>
-                <td style={{ padding: "5px 8px", fontSize: 12, fontWeight: 600, color: "#111827" }}>{l.colaborador?.nome}</td>
-                <td style={{ padding: "5px 8px", fontSize: 11, fontFamily: "monospace", color: "#374151" }}>{l.colaborador?.chapa}</td>
-                <td style={{ padding: "5px 8px", fontSize: 11, color: "#374151" }}>{l.colaborador?.centro_custo} — {l.colaborador?.desc_cc}</td>
-                <td style={{ padding: "5px 8px", fontSize: 12, color: "#374151" }}>{l.evento?.descricao}</td>
-                <td style={{ padding: "5px 8px", fontSize: 11, fontFamily: "monospace", color: "#374151" }}>{l.evento?.codigo}</td>
-                <td style={{ padding: "5px 8px", fontSize: 12, color: "#374151" }}>{l.data}</td>
-                <td style={{ padding: "5px 8px", fontSize: 12, color: "#374151" }}>{l.hora || "—"}</td>
-                <td style={{ padding: "5px 8px", fontSize: 12, fontWeight: 800, color: "#059669" }}>
+                <td style={{ padding: "3px 6px", fontSize: 11, color: "#9CA3AF" }}>{i + 1}</td>
+                <td style={{ padding: "3px 6px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{l.colaborador?.nome}</td>
+                <td style={{ padding: "3px 6px", fontSize: 11, fontFamily: "monospace", color: "#374151" }}>{l.colaborador?.chapa}</td>
+                <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{l.colaborador?.centro_custo} — {l.colaborador?.desc_cc}</td>
+                <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{l.evento?.descricao}</td>
+                <td style={{ padding: "3px 6px", fontSize: 11, fontFamily: "monospace", color: "#374151" }}>{l.evento?.codigo}</td>
+                <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{l.data}</td>
+                <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{l.hora || "—"}</td>
+                <td style={{ padding: "3px 6px", fontSize: 11, fontWeight: 800, color: "#059669" }}>
                   R$ {parseFloat(l.valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                 </td>
               </tr>
@@ -3254,8 +3254,8 @@ function RelatorioBloco({ bloco }) {
           </tbody>
           <tfoot>
             <tr style={{ background: "#F0FDF4", borderTop: "2px solid #10B981" }}>
-              <td colSpan={8} style={{ padding: "5px 8px", fontSize: 12, fontWeight: 700, color: "#065F46" }}>TOTAL</td>
-              <td style={{ padding: "5px 8px", fontSize: 11, fontWeight: 800, color: "#065F46" }}>
+              <td colSpan={8} style={{ padding: "3px 6px", fontSize: 11, fontWeight: 700, color: "#065F46" }}>TOTAL</td>
+              <td style={{ padding: "3px 6px", fontSize: 11, fontWeight: 800, color: "#065F46" }}>
                 R$ {total.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
               </td>
             </tr>
@@ -3279,7 +3279,7 @@ function RelatorioBloco({ bloco }) {
                 border: "3px solid #fff",
                 boxShadow: `0 0 0 2px ${ACAO_COLOR[h.acao] || "#6B7280"}33`
               }} />
-              <div style={{ background: "#F9FAFB", borderRadius: 10, padding: "5px 8px", border: "1px solid #E5E7EB" }}>
+              <div style={{ background: "#F9FAFB", borderRadius: 10, padding: "3px 6px", border: "1px solid #E5E7EB" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <div>
                     <span style={{
@@ -3287,7 +3287,7 @@ function RelatorioBloco({ bloco }) {
                       background: (ACAO_COLOR[h.acao] || "#6B7280") + "18",
                       color: ACAO_COLOR[h.acao] || "#6B7280"
                     }}>{ACAO_LABEL[h.acao] || h.acao}</span>
-                    <span style={{ marginLeft: 8, fontSize: 12, fontWeight: 600, color: "#111827" }}>{h.usuario}</span>
+                    <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 600, color: "#111827" }}>{h.usuario}</span>
                   </div>
                   <span style={{ fontSize: 11, color: "#9CA3AF" }}>{h.data}</span>
                 </div>
@@ -3386,28 +3386,28 @@ function Exportacao({ solicitacoes, blocos }) {
         <Card style={{ marginBottom: 20, padding: 0, overflow: "hidden" }}>
           <div style={{ padding: "12px 16px", background: "#0F2447", display: "flex", alignItems: "center", gap: 10 }}>
             <span style={{ fontSize: 11, fontWeight: 700, color: "#fff" }}>Layout de Importação do Movimento (RM Labore)</span>
-            <span style={{ fontSize: 11, color: "#93C5FD", background: "rgba(255,255,255,0.1)", padding: "2px 8px", borderRadius: 4 }}>81 caracteres por linha</span>
+            <span style={{ fontSize: 11, color: "#93C5FD", background: "rgba(255,255,255,0.1)", padding: "1px 6px", borderRadius: 4 }}>81 caracteres por linha</span>
           </div>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ background: "#F1F5F9" }}>
                 {["Coluna", "Tamanho", "Tipo", "Descrição"].map(h => (
-                  <th key={h} style={{ padding: "5px 8px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#475569", textTransform: "uppercase", letterSpacing: 0.4 }}>{h}</th>
+                  <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#475569", textTransform: "uppercase", letterSpacing: 0.4 }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {LAYOUT_RM.map((row, i) => (
                 <tr key={i} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#F8FAFC" }}>
-                  <td style={{ padding: "5px 8px", fontFamily: "monospace", fontSize: 12, fontWeight: 700, color: "#1B3A6B" }}>{row.col}</td>
-                  <td style={{ padding: "5px 8px", fontSize: 12, color: "#374151" }}>{row.tam}</td>
-                  <td style={{ padding: "5px 8px" }}>
+                  <td style={{ padding: "3px 6px", fontFamily: "monospace", fontSize: 11, fontWeight: 700, color: "#1B3A6B" }}>{row.col}</td>
+                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{row.tam}</td>
+                  <td style={{ padding: "3px 6px" }}>
                     <span style={{ padding: "2px 8px", borderRadius: 6, fontSize: 11, fontWeight: 600,
                       background: row.tipo === "Real" ? "#EFF6FF" : row.tipo === "String" ? "#F0FDF4" : "#FEF3C7",
                       color: row.tipo === "Real" ? "#1D4ED8" : row.tipo === "String" ? "#065F46" : "#92400E"
                     }}>{row.tipo}</span>
                   </td>
-                  <td style={{ padding: "5px 8px", fontSize: 12, color: "#374151" }}>{row.desc}</td>
+                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{row.desc}</td>
                 </tr>
               ))}
             </tbody>
@@ -3438,7 +3438,7 @@ function Exportacao({ solicitacoes, blocos }) {
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
               {["Bloco", "Chapa", "Colaborador", "Evento (Cód.)", "Data", "Hora", "Referência", "Valor", "Valor Original"].map(h => (
-                <th key={h} style={{ padding: "5px 8px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+                <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
           </thead>
@@ -3450,21 +3450,21 @@ function Exportacao({ solicitacoes, blocos }) {
             ) : blocosAprov.flatMap(bloco =>
               bloco.linhas.map((l, i) => (
                 <tr key={bloco.id + "-" + i} style={{ borderTop: "1px solid #F3F4F6" }}>
-                  <td style={{ padding: "5px 8px", fontSize: 11, color: "#6B7280" }}>{bloco.descricao}</td>
-                  <td style={{ padding: "5px 8px" }}>
+                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#6B7280" }}>{bloco.descricao}</td>
+                  <td style={{ padding: "3px 6px" }}>
                     <span style={{ fontFamily: "monospace", fontSize: 11, fontWeight: 700, background: "#F3F4F6", padding: "1px 6px", borderRadius: 4 }}>{l.colaborador?.chapa}</span>
                   </td>
-                  <td style={{ padding: "5px 8px", fontSize: 12, fontWeight: 600, color: "#111827" }}>{l.colaborador?.nome}</td>
-                  <td style={{ padding: "5px 8px", fontSize: 11, color: "#374151" }}>
+                  <td style={{ padding: "3px 6px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{l.colaborador?.nome}</td>
+                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>
                     {l.evento?.descricao} <span style={{ color: "#9CA3AF" }}>({l.evento?.codigo})</span>
                   </td>
-                  <td style={{ padding: "5px 8px", fontSize: 11, color: "#374151" }}>{l.data}</td>
-                  <td style={{ padding: "5px 8px", fontSize: 11, color: "#374151" }}>{l.hora || "—"}</td>
-                  <td style={{ padding: "5px 8px", fontSize: 11, color: "#374151" }}>{l.referencia || "0.00"}</td>
-                  <td style={{ padding: "5px 8px", fontSize: 12, fontWeight: 700, color: "#059669" }}>
+                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{l.data}</td>
+                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{l.hora || "—"}</td>
+                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{l.referencia || "0.00"}</td>
+                  <td style={{ padding: "3px 6px", fontSize: 11, fontWeight: 700, color: "#059669" }}>
                     R$ {parseFloat(l.valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                   </td>
-                  <td style={{ padding: "5px 8px", fontSize: 11, color: "#374151" }}>
+                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>
                     R$ {parseFloat(l.valor_original || l.valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                   </td>
                 </tr>
@@ -3608,7 +3608,7 @@ function Auditoria({ solicitacoes, blocos, sessao }) {
             <thead>
               <tr style={{ background: "#F9FAFB" }}>
                 {["Data/Hora", "Ação", "Usuário", "Perfil", "Detalhes"].map(h => (
-                  <th key={h} style={{ padding: "5px 8px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+                  <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -3617,17 +3617,17 @@ function Auditoria({ solicitacoes, blocos, sessao }) {
                 <tr><td colSpan={5} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Nenhum evento registrado nesta sessão</td></tr>
               ) : logsSeguranca.map((l, i) => (
                 <tr key={i} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
-                  <td style={{ padding: "5px 8px", fontSize: 11, color: "#6B7280", fontFamily: "monospace" }}>{l.dataHora}</td>
-                  <td style={{ padding: "5px 8px" }}>
+                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#6B7280", fontFamily: "monospace" }}>{l.dataHora}</td>
+                  <td style={{ padding: "3px 6px" }}>
                     <span style={{
                       padding: "2px 8px", borderRadius: 6, fontSize: 10, fontWeight: 700,
                       background: (ACAO_COLOR[l.acao] || "#6B7280") + "18",
                       color: ACAO_COLOR[l.acao] || "#6B7280"
                     }}>{l.acao}</span>
                   </td>
-                  <td style={{ padding: "5px 8px", fontSize: 12, fontWeight: 600, color: "#111827" }}>{l.usuario}</td>
-                  <td style={{ padding: "5px 8px", fontSize: 11, color: "#374151", textTransform: "capitalize" }}>{l.perfil || "—"}</td>
-                  <td style={{ padding: "5px 8px", fontSize: 11, color: "#6B7280" }}>
+                  <td style={{ padding: "3px 6px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{l.usuario}</td>
+                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151", textTransform: "capitalize" }}>{l.perfil || "—"}</td>
+                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#6B7280" }}>
                     {Object.keys(l.detalhes || {}).length > 0
                       ? Object.entries(l.detalhes).map(([k, v]) => (
                         <span key={k} style={{ marginRight: 8 }}>
@@ -3650,7 +3650,7 @@ function Auditoria({ solicitacoes, blocos, sessao }) {
             <thead>
               <tr style={{ background: "#F9FAFB" }}>
                 {["Bloco", "Ação", "Usuário", "Data/Hora", "Observação"].map(h => (
-                  <th key={h} style={{ padding: "5px 8px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+                  <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -3659,17 +3659,17 @@ function Auditoria({ solicitacoes, blocos, sessao }) {
                 <tr><td colSpan={5} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Nenhum evento de bloco registrado</td></tr>
               ) : logsBlocos.map((l, i) => (
                 <tr key={i} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
-                  <td style={{ padding: "5px 8px", fontSize: 12, color: "#374151" }}>{l.bloco}</td>
-                  <td style={{ padding: "5px 8px" }}>
+                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{l.bloco}</td>
+                  <td style={{ padding: "3px 6px" }}>
                     <span style={{
                       padding: "2px 8px", borderRadius: 6, fontSize: 10, fontWeight: 700,
                       background: (ACAO_COLOR[l.acao] || "#6B7280") + "18",
                       color: ACAO_COLOR[l.acao] || "#6B7280"
                     }}>{l.acao.replace(/_/g, " ")}</span>
                   </td>
-                  <td style={{ padding: "5px 8px", fontSize: 12, fontWeight: 600, color: "#111827" }}>{l.usuario}</td>
-                  <td style={{ padding: "5px 8px", fontSize: 11, color: "#6B7280" }}>{l.data}</td>
-                  <td style={{ padding: "5px 8px", fontSize: 11, color: l.obs ? "#F97316" : "#9CA3AF", fontStyle: l.obs ? "italic" : "normal" }}>{l.obs || "—"}</td>
+                  <td style={{ padding: "3px 6px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{l.usuario}</td>
+                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#6B7280" }}>{l.data}</td>
+                  <td style={{ padding: "3px 6px", fontSize: 11, color: l.obs ? "#F97316" : "#9CA3AF", fontStyle: l.obs ? "italic" : "normal" }}>{l.obs || "—"}</td>
                 </tr>
               ))}
             </tbody>
@@ -3689,7 +3689,7 @@ function Usuarios() {
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
               {["Avatar", "Nome", "E-mail", "Perfil", "Status", "Ações"].map(h => (
-                <th key={h} style={{ padding: "5px 8px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+                <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
           </thead>
@@ -3701,20 +3701,20 @@ function Usuarios() {
                     width: 32, height: 32, borderRadius: 8,
                     background: PERFIL_CONFIG[u.perfil]?.color,
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: 12, fontWeight: 700, color: "#fff"
+                    fontSize: 11, fontWeight: 700, color: "#fff"
                   }}>{u.avatar}</div>
                 </td>
                 <td style={{ padding: "12px 16px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{u.nome}</td>
-                <td style={{ padding: "12px 16px", fontSize: 12, color: "#374151" }}>{u.email}</td>
+                <td style={{ padding: "12px 16px", fontSize: 11, color: "#374151" }}>{u.email}</td>
                 <td style={{ padding: "12px 16px" }}>
                   <span style={{
-                    padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600,
+                    padding: "1px 7px", borderRadius: 10, fontSize: 11, fontWeight: 600,
                     background: PERFIL_CONFIG[u.perfil]?.color + "22",
                     color: PERFIL_CONFIG[u.perfil]?.color
                   }}>{PERFIL_CONFIG[u.perfil]?.label}</span>
                 </td>
                 <td style={{ padding: "12px 16px" }}>
-                  <span style={{ padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: "#D1FAE5", color: "#065F46" }}>Ativo</span>
+                  <span style={{ padding: "1px 7px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: "#D1FAE5", color: "#065F46" }}>Ativo</span>
                 </td>
                 <td style={{ padding: "12px 16px" }}>
                   <Button variant="ghost" size="sm">Editar</Button>
@@ -3878,15 +3878,15 @@ function Aprovacoes({ blocos, setBlocos, user, recarregarDados }) {
               <tbody>
                 {bloco.linhas.map((l, i) => (
                   <tr key={i} style={{ borderTop: "1px solid #F3F4F6" }}>
-                    <td style={{ padding: "5px 10px" }}>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: "#111827" }}>{l.colaborador?.nome}</div>
+                    <td style={{ padding: "3px 7px" }}>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: "#111827" }}>{l.colaborador?.nome}</div>
                       <div style={{ fontSize: 10, color: "#6B7280" }}>Chapa: {l.colaborador?.chapa}</div>
                     </td>
-                    <td style={{ padding: "5px 10px", fontSize: 12, color: "#374151" }}>{l.evento?.descricao}</td>
-                    <td style={{ padding: "5px 10px", fontSize: 12, color: "#374151" }}>{l.data}</td>
-                    <td style={{ padding: "5px 10px", fontSize: 12, color: "#374151" }}>{l.hora || "—"}</td>
-                    <td style={{ padding: "5px 10px", fontSize: 12, fontWeight: 700, color: "#059669" }}>R$ {parseFloat(l.valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td>
-                    <td style={{ padding: "5px 10px", fontSize: 11, color: "#6B7280", fontStyle: "italic" }}>{l.observacao || "—"}</td>
+                    <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151" }}>{l.evento?.descricao}</td>
+                    <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151" }}>{l.data}</td>
+                    <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151" }}>{l.hora || "—"}</td>
+                    <td style={{ padding: "3px 7px", fontSize: 11, fontWeight: 700, color: "#059669" }}>R$ {parseFloat(l.valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td>
+                    <td style={{ padding: "3px 7px", fontSize: 11, color: "#6B7280", fontStyle: "italic" }}>{l.observacao || "—"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -4168,16 +4168,16 @@ function Autorizacoes({ user, colaboradores }) {
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
               {["Colaborador", "Valor / Parcelas", "Início", "Solicitante", "Status", "Ações"].map(h => (
-                <th key={h} style={{ padding: "5px 8px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+                <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
             <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
-              <th style={{ padding:"5px 8px" }}><input value={fAColab} onChange={e=>setFAColab(e.target.value)} placeholder="🔍 Colaborador/Chapa" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding:"5px 8px" }}><input value={fAColab} onChange={e=>setFAColab(e.target.value)} placeholder="🔍 Colaborador/Chapa" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
               <th style={{ padding:"5px 8px" }} />
               <th style={{ padding:"5px 8px" }} />
-              <th style={{ padding:"5px 8px" }}><input value={fAGestor} onChange={e=>setFAGestor(e.target.value)} placeholder="🔍 Solicitante" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding:"5px 8px" }}><input value={fAGestor} onChange={e=>setFAGestor(e.target.value)} placeholder="🔍 Solicitante" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
               <th style={{ padding:"5px 8px" }}>
-                <select value={fAStatus} onChange={e=>setFAStatus(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}>
+                <select value={fAStatus} onChange={e=>setFAStatus(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}>
                   <option value="">Todos</option>
                   <option value="pendente">Pendente</option>
                   <option value="anexado">Anexado</option>
@@ -4240,14 +4240,14 @@ function Autorizacoes({ user, colaboradores }) {
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {/* Colaborador */}
           <div style={{ position: "relative" }}>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Colaborador *</label>
+            <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Colaborador *</label>
             <input value={buscaColab} onChange={e => onBusca(e.target.value)} placeholder="Buscar por nome ou matrícula..."
-              style={{ width: "100%", padding: "5px 8px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }} />
+              style={{ width: "100%", padding: "3px 6px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }} />
             {sugestoes.length > 0 && (
               <div style={{ position: "absolute", top: "100%", left: 0, right: 0, background: "#fff", border: "1px solid #E5E7EB", borderRadius: 8, boxShadow: "0 4px 12px rgba(0,0,0,0.1)", zIndex: 100, maxHeight: 200, overflowY: "auto" }}>
                 {sugestoes.map(c => (
                   <div key={c.id} onMouseDown={() => selecionarColab(c)}
-                    style={{ padding: "5px 8px", cursor: "pointer", fontSize: 13, borderBottom: "1px solid #F3F4F6" }}
+                    style={{ padding: "3px 6px", cursor: "pointer", fontSize: 13, borderBottom: "1px solid #F3F4F6" }}
                     onMouseEnter={e => e.currentTarget.style.background="#F9FAFB"}
                     onMouseLeave={e => e.currentTarget.style.background="#fff"}>
                     <b>{c.chapa}</b> — {c.nome} · {c.desc_funcao || c.funcao}
@@ -4256,7 +4256,7 @@ function Autorizacoes({ user, colaboradores }) {
               </div>
             )}
             {colaboradorSel && (
-              <div style={{ marginTop: 6, padding: "5px 8px", background: "#F0FDF4", borderRadius: 8, fontSize: 12, color: "#166534", border: "1px solid #BBF7D0" }}>
+              <div style={{ marginTop: 6, padding: "3px 6px", background: "#F0FDF4", borderRadius: 8, fontSize: 12, color: "#166534", border: "1px solid #BBF7D0" }}>
                 ✅ <b>{colaboradorSel.nome}</b> · {colaboradorSel.descricao_filial || colaboradorSel.desc_cc || "—"} · Matrícula: {colaboradorSel.chapa} · Função: {colaboradorSel.desc_funcao || colaboradorSel.funcao || "—"} · CC: {colaboradorSel.centro_custo} — {colaboradorSel.desc_cc} · CPF: {colaboradorSel.cpf || "—"}
               </div>
             )}
@@ -4265,38 +4265,38 @@ function Autorizacoes({ user, colaboradores }) {
           {/* Valor e Parcelas */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Valor Total (R$) *</label>
+              <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Valor Total (R$) *</label>
               <input type="number" step="0.01" min="0" value={form.valor_total}
                 onChange={e => setForm(f => ({ ...f, valor_total: e.target.value }))}
                 placeholder="0.00"
-                style={{ width: "100%", padding: "5px 8px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }} />
+                style={{ width: "100%", padding: "3px 6px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }} />
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Nº de Parcelas *</label>
+              <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Nº de Parcelas *</label>
               <input type="number" min="1" max="24" value={form.num_parcelas}
                 onChange={e => setForm(f => ({ ...f, num_parcelas: e.target.value }))}
-                style={{ width: "100%", padding: "5px 8px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }} />
+                style={{ width: "100%", padding: "3px 6px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }} />
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Valor da Parcela</label>
+              <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Valor da Parcela</label>
               <input readOnly value={"R$ " + valorParc().replace(".",",")}
-                style={{ width: "100%", padding: "5px 8px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, background: "#F9FAFB", color: "#6B7280", boxSizing: "border-box" }} />
+                style={{ width: "100%", padding: "3px 6px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, background: "#F9FAFB", color: "#6B7280", boxSizing: "border-box" }} />
             </div>
           </div>
 
           {/* Início do desconto */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Mês de Início do Desconto *</label>
+              <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Mês de Início do Desconto *</label>
               <select value={form.mes_inicio} onChange={e => setForm(f => ({ ...f, mes_inicio: e.target.value }))}
-                style={{ width: "100%", padding: "5px 8px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }}>
+                style={{ width: "100%", padding: "3px 6px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }}>
                 {MESES_AUTORIZACAO.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
               </select>
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Ano de Início do Desconto *</label>
+              <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Ano de Início do Desconto *</label>
               <select value={form.ano_inicio} onChange={e => setForm(f => ({ ...f, ano_inicio: e.target.value }))}
-                style={{ width: "100%", padding: "5px 8px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }}>
+                style={{ width: "100%", padding: "3px 6px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }}>
                 {[0,1,2].map(i => <option key={i} value={anoAtual+i}>{anoAtual+i}</option>)}
               </select>
             </div>
@@ -4304,20 +4304,20 @@ function Autorizacoes({ user, colaboradores }) {
 
           {/* Data do ocorrido */}
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Data do Ocorrido *</label>
+            <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Data do Ocorrido *</label>
             <input type="date" value={form.data_ocorrido} onChange={e => setForm(f => ({ ...f, data_ocorrido: e.target.value }))}
-              style={{ padding: "5px 8px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13 }} />
+              style={{ padding: "3px 6px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13 }} />
           </div>
 
           {/* Descrição do prejuízo */}
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Descrição do Prejuízo *</label>
+            <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Descrição do Prejuízo *</label>
             <textarea value={form.descricao_prejuizo} onChange={e => setForm(f => ({ ...f, descricao_prejuizo: e.target.value }))}
               rows={3} placeholder="Descreva o motivo do desconto..."
-              style={{ width: "100%", padding: "5px 8px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, resize: "vertical", boxSizing: "border-box", fontFamily: "inherit" }} />
+              style={{ width: "100%", padding: "3px 6px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, resize: "vertical", boxSizing: "border-box", fontFamily: "inherit" }} />
           </div>
 
-          {erro && <div style={{ padding: "5px 8px", background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, fontSize: 11, color: "#DC2626" }}>⚠️ {erro}</div>}
+          {erro && <div style={{ padding: "3px 6px", background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, fontSize: 11, color: "#DC2626" }}>⚠️ {erro}</div>}
 
           <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, paddingTop: 8, borderTop: "1px solid #F3F4F6" }}>
             <Button variant="secondary" onClick={() => setModalNovo(false)}>Cancelar</Button>
@@ -4479,7 +4479,7 @@ function Ocorrencias({ user, colaboradores }) {
       {/* Cabeçalho */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
-          <p style={{ margin: "4px 0 0", fontSize: 12, color: "#6B7280" }}>Registro de ocorrências disciplinares</p>
+          <p style={{ margin: "4px 0 0", fontSize: 11, color: "#6B7280" }}>Registro de ocorrências disciplinares</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           {(user.perfil === "dp" || user.perfil === "admin") && (
@@ -4494,7 +4494,7 @@ function Ocorrencias({ user, colaboradores }) {
       {/* Mensagem */}
       {msg && (
         <div style={{
-          marginBottom: 16, padding: "5px 8px", borderRadius: 8, fontSize: 13,
+          marginBottom: 16, padding: "3px 6px", borderRadius: 8, fontSize: 13,
           background: msg.tipo === "ok" ? "#D1FAE5" : "#FEE2E2",
           color: msg.tipo === "ok" ? "#065F46" : "#991B1B",
           border: `1px solid ${msg.tipo === "ok" ? "#6EE7B7" : "#FCA5A5"}`
@@ -4528,18 +4528,18 @@ function Ocorrencias({ user, colaboradores }) {
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
               {["Colaborador", "Tipo", "Data", "Período/Dias", "Gestor", "Status", "Ações"].map(h => (
-                <th key={h} style={{ padding: "5px 8px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+                <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
             <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
-              <th style={{ padding:"5px 8px" }}><input value={fColab} onChange={e=>setFColab(e.target.value)} placeholder="🔍 Colaborador/Chapa" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
-              <th style={{ padding:"5px 8px" }}><select value={fTipo} onChange={e=>setFTipo(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ADVERTENCIA">Advertência</option><option value="SUSPENSAO">Suspensão</option></select></th>
+              <th style={{ padding:"5px 8px" }}><input value={fColab} onChange={e=>setFColab(e.target.value)} placeholder="🔍 Colaborador/Chapa" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding:"5px 8px" }}><select value={fTipo} onChange={e=>setFTipo(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ADVERTENCIA">Advertência</option><option value="SUSPENSAO">Suspensão</option></select></th>
               <th style={{ padding:"5px 8px" }}>
-                <input type="date" value={fData} onChange={e=>setFData(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} />
+                <input type="date" value={fData} onChange={e=>setFData(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} />
               </th>
               <th style={{ padding:"5px 8px" }} />
-              <th style={{ padding:"5px 8px" }}><input value={fGestor} onChange={e=>setFGestor(e.target.value)} placeholder="🔍 Gestor" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
-              <th style={{ padding:"5px 8px" }}><select value={fStatus} onChange={e=>setFStatus(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ATIVO">Ativo</option><option value="EXPORTADO">Exportado</option><option value="CANCELADO">Cancelado</option></select></th>
+              <th style={{ padding:"5px 8px" }}><input value={fGestor} onChange={e=>setFGestor(e.target.value)} placeholder="🔍 Gestor" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding:"5px 8px" }}><select value={fStatus} onChange={e=>setFStatus(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ATIVO">Ativo</option><option value="EXPORTADO">Exportado</option><option value="CANCELADO">Cancelado</option></select></th>
               <th style={{ padding:"5px 8px" }}><button onClick={()=>{setFColab("");setFTipo("");setFGestor("");setFStatus("");setFData("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
             </tr>
           </thead>
@@ -4552,11 +4552,11 @@ function Ocorrencias({ user, colaboradores }) {
               const btnBase = { padding:"5px 10px", borderRadius:6, fontSize:11, fontWeight:600, cursor:"pointer", whiteSpace:"nowrap", fontFamily:"inherit" };
               return (
               <tr key={oc.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
-                <td style={{ padding: "5px 8px" }}>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: "#111827" }}>{oc.nome_colaborador}</div>
+                <td style={{ padding: "3px 6px" }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: "#111827" }}>{oc.nome_colaborador}</div>
                   <div style={{ fontSize: 10, color: "#6B7280" }}>Chapa: {oc.chapa}</div>
                 </td>
-                <td style={{ padding: "5px 8px" }}>
+                <td style={{ padding: "3px 6px" }}>
                   <span style={{
                     padding: "3px 8px", borderRadius: 6, fontSize: 11, fontWeight: 600,
                     background: oc.tipo === "ADVERTENCIA" ? "#FEF3C7" : "#FEE2E2",
@@ -4566,21 +4566,21 @@ function Ocorrencias({ user, colaboradores }) {
                     {oc.tipo === "ADVERTENCIA" ? "⚠️ Advertência" : "🚫 Suspensão"}
                   </span>
                 </td>
-                <td style={{ padding: "5px 8px", fontSize: 12, color: "#374151" }}>{formatarData(oc.data_ocorrencia)}</td>
-                <td style={{ padding: "5px 8px", fontSize: 12, color: "#374151" }}>
+                <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{formatarData(oc.data_ocorrencia)}</td>
+                <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>
                   {oc.tipo === "SUSPENSAO"
                     ? <span>{formatarData(oc.data_inicio)} → {formatarData(oc.data_fim)}<br/><b>{oc.dias_suspensao} dia(s)</b></span>
                     : "—"}
                 </td>
-                <td style={{ padding: "5px 8px", fontSize: 12, color: "#374151" }}>{oc.gestor_nome}</td>
-                <td style={{ padding: "5px 8px" }}>
+                <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{oc.gestor_nome}</td>
+                <td style={{ padding: "3px 6px" }}>
                   <span style={{
                     padding: "3px 8px", borderRadius: 6, fontSize: 11, fontWeight: 600,
                     background: oc.status === "ATIVO" ? "#D1FAE5" : oc.status === "EXPORTADO" ? "#DBEAFE" : "#FEE2E2",
                     color: oc.status === "ATIVO" ? "#065F46" : oc.status === "EXPORTADO" ? "#1D4ED8" : "#991B1B"
                   }}>{oc.status}</span>
                 </td>
-                <td style={{ padding: "5px 8px" }}>
+                <td style={{ padding: "3px 6px" }}>
                   <div style={{ display:"flex", gap:4, alignItems:"center", flexWrap:"nowrap" }}>
                     <button onClick={() => gerarPDF(oc)} style={{ ...btnBase, border:"1px solid #D1D5DB", background:"#fff", color:"#374151" }}>📄 PDF</button>
                     <label style={{ ...btnBase, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46", display:"inline-block" }}>
@@ -4615,7 +4615,7 @@ function Ocorrencias({ user, colaboradores }) {
       <Modal open={modalForm} onClose={() => setModalForm(false)} title="Registrar Ocorrência Disciplinar" width={600}>
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {msg && modalForm && (
-            <div style={{ padding: "5px 8px", borderRadius: 8, fontSize: 12, background: "#FEE2E2", color: "#991B1B" }}>❌ {msg.texto}</div>
+            <div style={{ padding: "3px 6px", borderRadius: 8, fontSize: 12, background: "#FEE2E2", color: "#991B1B" }}>❌ {msg.texto}</div>
           )}
 
           {/* Tipo */}
@@ -4635,10 +4635,10 @@ function Ocorrencias({ user, colaboradores }) {
 
           {/* Colaborador */}
           <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Colaborador *</label>
+            <label style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>Colaborador *</label>
             <ColabSelect colaboradores={colaboradores} onSelect={selecionarColaborador} selecionado={form.nome_colaborador} />
             {colabSel && (
-              <div style={{ marginTop: 4, padding: "5px 8px", background: "#F0FDF4", borderRadius: 8, fontSize: 12, color: "#166534", border: "1px solid #BBF7D0" }}>
+              <div style={{ marginTop: 4, padding: "3px 6px", background: "#F0FDF4", borderRadius: 8, fontSize: 12, color: "#166534", border: "1px solid #BBF7D0" }}>
                 ✅ <b>{colabSel.nome}</b> · {colabSel.descricao_filial || colabSel.desc_cc || "—"} · Matrícula: {colabSel.chapa} · Função: {colabSel.desc_funcao || colabSel.funcao || "—"} · CC: {colabSel.centro_custo} — {colabSel.desc_cc}
               </div>
             )}
@@ -4653,10 +4653,10 @@ function Ocorrencias({ user, colaboradores }) {
 
           {/* Motivo */}
           <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Motivo *</label>
+            <label style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>Motivo *</label>
             <textarea value={form.motivo} onChange={e => setForm(f => ({ ...f, motivo: e.target.value }))}
               placeholder="Descreva detalhadamente o motivo da ocorrência..." rows={4}
-              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "5px 8px", fontSize: 13, fontFamily: "inherit", resize: "vertical" }} />
+              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px", fontSize: 13, fontFamily: "inherit", resize: "vertical" }} />
           </div>
 
           {/* Campos por tipo */}
@@ -4670,8 +4670,8 @@ function Ocorrencias({ user, colaboradores }) {
               <Input label="Quantidade de Dias *" value={form.dias_suspensao}
                 onChange={v => setForm(f => ({ ...f, dias_suspensao: v }))} type="number" placeholder="Ex: 3" required />
               <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Data de Fim</label>
-                <div style={{ padding: "5px 8px", border: "1px solid #E5E7EB", borderRadius: 8, fontSize: 13, background: "#F9FAFB", color: "#374151" }}>
+                <label style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>Data de Fim</label>
+                <div style={{ padding: "3px 6px", border: "1px solid #E5E7EB", borderRadius: 8, fontSize: 13, background: "#F9FAFB", color: "#374151" }}>
                   {calcularDataFim() ? new Date(calcularDataFim()).toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "—"}
                 </div>
               </div>
@@ -4724,12 +4724,12 @@ function ColabSelect({ colaboradores, onSelect, selecionado }) {
     <div style={{ position: "relative" }}>
       <input value={busca} onChange={e => onBusca(e.target.value)}
         placeholder="Digite nome ou matrícula..."
-        style={{ width: "100%", border: "1px solid #D1D5DB", borderRadius: 8, padding: "5px 8px", fontSize: 13, fontFamily: "inherit", boxSizing: "border-box" }} />
+        style={{ width: "100%", border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px", fontSize: 13, fontFamily: "inherit", boxSizing: "border-box" }} />
       {sugestoes.length > 0 && (
         <div style={{ position: "absolute", top: "100%", left: 0, right: 0, zIndex: 100, background: "#fff", border: "1px solid #D1D5DB", borderRadius: 8, boxShadow: "0 4px 16px rgba(0,0,0,0.12)", maxHeight: 200, overflowY: "auto" }}>
           {sugestoes.map(c => (
             <div key={c.id} onMouseDown={() => { onSelect(c); setBusca(c.nome); setSugestoes([]); }}
-              style={{ padding: "5px 8px", fontSize: 13, cursor: "pointer", borderBottom: "1px solid #F3F4F6", display: "flex", gap: 10 }}>
+              style={{ padding: "3px 6px", fontSize: 13, cursor: "pointer", borderBottom: "1px solid #F3F4F6", display: "flex", gap: 10 }}>
               <span style={{ fontFamily: "monospace", fontSize: 11, color: "#6B7280", minWidth: 50 }}>{c.chapa}</span>
               <span style={{ fontWeight: 600, color: "#111827" }}>{c.nome}</span>
               <span style={{ fontSize: 11, color: "#9CA3AF", marginLeft: "auto" }}>{c.funcao}</span>
@@ -4799,7 +4799,7 @@ function PDFOcorrencia({ oc }) {
         </div>
 
         {/* Ficha do colaborador */}
-        <div style={{ border: "1.5px solid #000", padding: "5px 8px", marginBottom: 20, display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 20px" }}>
+        <div style={{ border: "1.5px solid #000", padding: "3px 6px", marginBottom: 20, display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 20px" }}>
           <div style={{ fontWeight: 700 }}>Sr. (a) {oc.nome_colaborador}</div>
           <div style={{ fontWeight: 700 }}>{oc.chapa}{oc.secao ? `    SEÇÃO : ${oc.secao}` : ""}</div>
           <div>C.P.F : {oc.cpf || "___.___.___-__"}</div>
@@ -4852,13 +4852,13 @@ function PDFOcorrencia({ oc }) {
           <div style={{ borderTop: "1px solid #000", width: 320, margin: "0 auto 6px", paddingTop: 6, fontWeight: 700 }}>
             {oc.nome_colaborador}
           </div>
-          <div style={{ fontSize: 12 }}>Assinatura do Empregado</div>
+          <div style={{ fontSize: 11 }}>Assinatura do Empregado</div>
         </div>
 
         {/* Anexo no PDF */}
         {oc.anexo_base64 && (
           <div style={{ marginTop: 20, textAlign: "center" }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: "#374151", marginBottom: 8 }}>📎 ANEXO: {oc.anexo_nome}</div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#374151", marginBottom: 8 }}>📎 ANEXO: {oc.anexo_nome}</div>
             <img src={oc.anexo_base64} alt="Anexo" style={{ maxWidth: "100%", maxHeight: 300, border: "1px solid #E5E7EB", borderRadius: 4 }} />
           </div>
         )}
@@ -4876,7 +4876,7 @@ function PDFOcorrencia({ oc }) {
         {/* Anexo no PDF */}
         {oc.anexo_base64 && (
           <div style={{ marginTop: 24, borderTop: "1px solid #E5E7EB", paddingTop: 16 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: "#374151", marginBottom: 8 }}>📎 ANEXO: {oc.anexo_nome}</div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#374151", marginBottom: 8 }}>📎 ANEXO: {oc.anexo_nome}</div>
             <img src={oc.anexo_base64} alt="Anexo" style={{ maxWidth: "100%", maxHeight: 400, border: "1px solid #E5E7EB", borderRadius: 4 }} />
           </div>
         )}
@@ -5198,30 +5198,30 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
         )}
       </div>
 
-      {erro && <div style={{ background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, padding: "5px 8px", marginBottom: 16, color: "#DC2626", fontSize: 13 }}>⚠️ {erro}</div>}
+      {erro && <div style={{ background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, padding: "3px 6px", marginBottom: 16, color: "#DC2626", fontSize: 13 }}>⚠️ {erro}</div>}
 
       <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #E5E7EB", overflow: "hidden" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
               {["Colaborador", "Tipo", "Desligamento", "Solicitante", "Status", "Ações"].map(h => (
-                <th key={h} style={{ padding: "5px 8px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+                <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
             <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
-              <th style={{ padding:"5px 8px" }}><input value={fColab} onChange={e=>setFColab(e.target.value)} placeholder="🔍 Colaborador/Chapa" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding:"5px 8px" }}><input value={fColab} onChange={e=>setFColab(e.target.value)} placeholder="🔍 Colaborador/Chapa" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
               <th style={{ padding:"5px 8px" }}>
-                <select value={fTipo} onChange={e=>setFTipo(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}>
+                <select value={fTipo} onChange={e=>setFTipo(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}>
                   <option value="">Todos</option>
                   {TIPOS_DESL.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
               </th>
               <th style={{ padding:"5px 8px" }}>
-                <input type="date" value={fDataD} onChange={e=>setFDataD(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} />
+                <input type="date" value={fDataD} onChange={e=>setFDataD(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} />
               </th>
-              <th style={{ padding:"5px 8px" }}><input value={fGestor2} onChange={e=>setFGestor2(e.target.value)} placeholder="🔍 Solicitante" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding:"5px 8px" }}><input value={fGestor2} onChange={e=>setFGestor2(e.target.value)} placeholder="🔍 Solicitante" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
               <th style={{ padding:"5px 8px" }}>
-                <select value={fStatus2} onChange={e=>setFStatus2(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}>
+                <select value={fStatus2} onChange={e=>setFStatus2(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}>
                   <option value="">Todos</option>
                   {Object.entries(STATUS_DESL).map(([v,d]) => <option key={v} value={v}>{d.label}</option>)}
                 </select>
@@ -5315,7 +5315,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
             </div>
 
             {erro && (
-              <div style={{ background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, padding: "5px 8px", marginBottom: 16, color: "#DC2626", fontSize: 12 }}>
+              <div style={{ background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, padding: "3px 6px", marginBottom: 16, color: "#DC2626", fontSize: 11 }}>
                 {erro.split("\n").map((linha, i) => (
                   <div key={i} style={{ marginBottom: linha === "" ? 6 : 2 }}>{linha ? `${i === 0 ? "⚠️ " : ""}${linha}` : ""}</div>
                 ))}
@@ -5328,12 +5328,12 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
               <div style={{ position: "relative" }}>
                 <input value={buscaColab} onChange={e => onBuscaColab(e.target.value)}
                   placeholder="Buscar por nome ou matrícula..."
-                  style={{ width: "100%", padding: "5px 8px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, boxSizing: "border-box" }} />
+                  style={{ width: "100%", padding: "3px 6px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, boxSizing: "border-box" }} />
                 {sugestoesColab.length > 0 && (
                   <div style={{ position: "absolute", top: "100%", left: 0, right: 0, background: "#fff", border: "1px solid #E5E7EB", borderRadius: 8, zIndex: 10, maxHeight: 200, overflowY: "auto", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}>
                     {sugestoesColab.map(c => (
                       <div key={c.id} onClick={() => selecionarColab(c)}
-                        style={{ padding: "5px 8px", cursor: "pointer", fontSize: 13, borderBottom: "1px solid #F3F4F6" }}
+                        style={{ padding: "3px 6px", cursor: "pointer", fontSize: 13, borderBottom: "1px solid #F3F4F6" }}
                         onMouseEnter={e => e.target.style.background="#F8FAFC"}
                         onMouseLeave={e => e.target.style.background="#fff"}>
                         <b>{c.chapa}</b> — {c.nome} <span style={{ color: "#94A3B8" }}>{c.funcao}</span>
@@ -5343,12 +5343,12 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                 )}
               </div>
               {validandoColab && (
-                <div style={{ marginTop: 8, padding: "5px 8px", background: "#EFF6FF", borderRadius: 8, fontSize: 12, color: "#1D4ED8" }}>
+                <div style={{ marginTop: 8, padding: "3px 6px", background: "#EFF6FF", borderRadius: 8, fontSize: 12, color: "#1D4ED8" }}>
                   🔄 Verificando aptidão do colaborador...
                 </div>
               )}
               {!validandoColab && colaboradorSel && !bloqueioColab && (
-                <div style={{ marginTop: 8, padding: "5px 8px", background: "#F0FDF4", borderRadius: 8, fontSize: 12, color: "#166534" }}>
+                <div style={{ marginTop: 8, padding: "3px 6px", background: "#F0FDF4", borderRadius: 8, fontSize: 12, color: "#166534" }}>
                   ✅ <b>{colaboradorSel.nome}</b> · {colaboradorSel.descricao_filial || colaboradorSel.desc_cc || "—"} · Matrícula: {colaboradorSel.chapa} · Função: {colaboradorSel.desc_funcao || colaboradorSel.funcao || "—"} · CC: {colaboradorSel.centro_custo} — {colaboradorSel.desc_cc}
                   {colaboradorSel.tipo_contrato === "determinado" && <span style={{ marginLeft: 8, background: "#FEF3C7", color: "#92400E", padding: "1px 6px", borderRadius: 4 }}>Contrato até {colaboradorSel.data_fim_contrato ? new Date(colaboradorSel.data_fim_contrato).toLocaleDateString("pt-BR") : "—"}</span>}
                 </div>
@@ -5372,7 +5372,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                   setForm(f => ({ ...f, tipo: novoTipo }));
                 }
               }}
-                style={{ width: "100%", padding: "5px 8px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13 }}>
+                style={{ width: "100%", padding: "3px 6px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13 }}>
                 <option value="">Selecione...</option>
                 {TIPOS_DESL.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>
@@ -5385,7 +5385,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                 <input type="date" value={form.data_desligamento}
                   onChange={e => setForm(f => ({ ...f, data_desligamento: e.target.value }))}
                   readOnly={form.tipo === "termino_contrato"}
-                  style={{ width: "100%", padding: "5px 8px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, boxSizing: "border-box",
+                  style={{ width: "100%", padding: "3px 6px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, boxSizing: "border-box",
                     background: form.tipo === "termino_contrato" ? "#F3F4F6" : "#fff",
                     cursor: form.tipo === "termino_contrato" ? "not-allowed" : "auto" }} />
               </div>
@@ -5394,7 +5394,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                   <label style={{ display: "block", fontSize: 11, fontWeight: 600, marginBottom: 6 }}>Data de Aviso</label>
                   <input type="date" value={form.data_aviso || calcularDataAviso(form.data_desligamento)}
                     onChange={e => setForm(f => ({ ...f, data_aviso: e.target.value }))}
-                    style={{ width: "100%", padding: "5px 8px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, boxSizing: "border-box" }} />
+                    style={{ width: "100%", padding: "3px 6px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, boxSizing: "border-box" }} />
                 </div>
               )}
             </div>
@@ -5417,7 +5417,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
               </label>
               <textarea value={form.justificativa} onChange={e => setForm(f => ({ ...f, justificativa: e.target.value }))}
                 rows={3} placeholder="Descreva o motivo do desligamento..."
-                style={{ width: "100%", padding: "5px 8px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, resize: "vertical", boxSizing: "border-box" }} />
+                style={{ width: "100%", padding: "3px 6px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, resize: "vertical", boxSizing: "border-box" }} />
             </div>
 
             {/* Observações */}
@@ -5425,7 +5425,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
               <label style={{ display: "block", fontSize: 11, fontWeight: 600, marginBottom: 6 }}>Observações</label>
               <textarea value={form.observacoes} onChange={e => setForm(f => ({ ...f, observacoes: e.target.value }))}
                 rows={2} placeholder="Observações adicionais..."
-                style={{ width: "100%", padding: "5px 8px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, resize: "vertical", boxSizing: "border-box" }} />
+                style={{ width: "100%", padding: "3px 6px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, resize: "vertical", boxSizing: "border-box" }} />
             </div>
 
             {/* Anexo do Pedido de Demissão — só para pedido_demissao */}
@@ -5454,7 +5454,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                   </div>
                   <div style={{ display: "flex", gap: 8 }}>
                     <label style={{
-                      padding: "7px 14px", borderRadius: 8, fontSize: 12, fontWeight: 600,
+                      padding: "7px 14px", borderRadius: 8, fontSize: 11, fontWeight: 600,
                       background: "#0F2447", color: "#fff", cursor: "pointer", whiteSpace: "nowrap"
                     }}>
                       {form.pedido_anexo_nome ? "Trocar arquivo" : "Selecionar arquivo"}
@@ -5526,7 +5526,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                 ["Solicitante",  modalDetalhe.gestor_nome],
                 ["Centro Custo", `${modalDetalhe.centro_custo || "—"} — ${modalDetalhe.desc_cc || "—"}`],
               ].map(([l, v]) => (
-                <div key={l} style={{ background: "#F8FAFC", borderRadius: 8, padding: "5px 8px" }}>
+                <div key={l} style={{ background: "#F8FAFC", borderRadius: 8, padding: "3px 6px" }}>
                   <div style={{ fontSize: 11, color: "#94A3B8", fontWeight: 600, marginBottom: 2 }}>{l}</div>
                   <div style={{ fontSize: 11, fontWeight: 600 }}>{v || "—"}</div>
                 </div>
@@ -5535,17 +5535,17 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
 
             {modalDetalhe.justificativa && (
               <div style={{ marginBottom: 16 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: "#94A3B8", marginBottom: 4 }}>JUSTIFICATIVA</div>
-                <div style={{ background: "#F8FAFC", borderRadius: 8, padding: "5px 8px", fontSize: 13 }}>{modalDetalhe.justificativa}</div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: "#94A3B8", marginBottom: 4 }}>JUSTIFICATIVA</div>
+                <div style={{ background: "#F8FAFC", borderRadius: 8, padding: "3px 6px", fontSize: 13 }}>{modalDetalhe.justificativa}</div>
               </div>
             )}
 
             {/* Histórico */}
             {modalDetalhe.logs?.length > 0 && (
               <div style={{ marginBottom: 16 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: "#94A3B8", marginBottom: 8 }}>HISTÓRICO</div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: "#94A3B8", marginBottom: 8 }}>HISTÓRICO</div>
                 {modalDetalhe.logs.map((l, i) => (
-                  <div key={i} style={{ display: "flex", gap: 10, marginBottom: 8, fontSize: 12 }}>
+                  <div key={i} style={{ display: "flex", gap: 10, marginBottom: 8, fontSize: 11 }}>
                     <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#0F2447", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700, flexShrink: 0 }}>
                       {l.usuario_nome?.slice(0,2).toUpperCase()}
                     </div>
@@ -5580,7 +5580,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                     borderColor: modalAcao.acao === a ? "#0F2447" : "#E5E7EB",
                     background: modalAcao.acao === a ? "#0F2447" : "#fff",
                     color: modalAcao.acao === a ? "#fff" : "#374151",
-                    fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                    fontSize: 11, fontWeight: 600, cursor: "pointer" }}>
                   {a === "aprovar" ? "✅ Aprovar" : a === "reprovar" ? "❌ Reprovar" : "🔄 Ajuste"}
                 </button>
               ))}
@@ -5588,7 +5588,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
             <textarea value={modalAcao.observacao}
               onChange={e => setModalAcao(m => ({ ...m, observacao: e.target.value }))}
               rows={3} placeholder="Observação (opcional para aprovação)..."
-              style={{ width: "100%", padding: "5px 8px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, resize: "none", boxSizing: "border-box", marginBottom: 16 }} />
+              style={{ width: "100%", padding: "3px 6px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, resize: "none", boxSizing: "border-box", marginBottom: 16 }} />
             <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
               <button onClick={() => setModalAcao(null)} disabled={salvando}
                 style={{ padding: "9px 20px", borderRadius: 8, border: "1px solid #E5E7EB", background: "#fff", fontSize: 14, cursor: "pointer" }}>
@@ -5675,7 +5675,7 @@ function ModalPDFDesligamento({ sol, onClose }) {
   };
 
   const Ficha = () => (
-    <div style={{ border: "1.5px solid #000", padding: "5px 8px", marginBottom: 20,
+    <div style={{ border: "1.5px solid #000", padding: "3px 6px", marginBottom: 20,
       display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 20px" }}>
       <div style={{ fontWeight: 700 }}>Sr. (a) &nbsp;{sol.colaborador_nome}</div>
       <div style={{ fontWeight: 700 }}>{sol.chapa}{sol.desc_cc ? `    SEÇÃO : ${sol.desc_cc}` : ""}</div>
@@ -5697,7 +5697,7 @@ function ModalPDFDesligamento({ sol, onClose }) {
       <div style={{ textAlign: "center", marginTop: 20 }}>
         <div style={{ height: 56 }} />
         <div style={{ borderTop: "1px solid #000", width: 320, margin: "0 auto 4px", paddingTop: 6, fontWeight: 700 }}>{sol.colaborador_nome}</div>
-        <div style={{ fontSize: 12 }}>Assinatura do Empregado</div>
+        <div style={{ fontSize: 11 }}>Assinatura do Empregado</div>
       </div>
     </>
   );
@@ -5711,7 +5711,7 @@ function ModalPDFDesligamento({ sol, onClose }) {
       <div style={{ textAlign: "center", marginTop: 20 }}>
         <div style={{ height: 56 }} />
         <div style={{ borderTop: "1px solid #000", width: 320, margin: "0 auto 4px", paddingTop: 6, fontWeight: 700 }}>{sol.colaborador_nome}</div>
-        <div style={{ fontSize: 12 }}>Assinatura do Empregado</div>
+        <div style={{ fontSize: 11 }}>Assinatura do Empregado</div>
       </div>
     </>
   );
@@ -5760,14 +5760,14 @@ function ModalPDFDesligamento({ sol, onClose }) {
               <div style={{ fontSize: 11, fontWeight: 700, color: "#065F46", marginBottom: 8 }}>
                 📎 Pedido de Demissão — Documento Original do Colaborador
               </div>
-              <p style={{ fontSize: 12, color: "#374151", margin: 0 }}>
+              <p style={{ fontSize: 11, color: "#374151", margin: 0 }}>
                 Este tipo de desligamento é formalizado pelo próprio colaborador a próprio punho.
                 O documento original deve ser anexado abaixo.
               </p>
             </div>
             {sol.pedido_anexo_dados || sol.pedido_anexo_base64 ? (
               <div style={{ textAlign: "center", marginBottom: 20 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#374151", marginBottom: 8 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#374151", marginBottom: 8 }}>
                   📄 {sol.pedido_anexo_nome}
                 </div>
                 {sol.pedido_anexo_dados || sol.pedido_anexo_base64.startsWith("data:image") ? (
@@ -6414,21 +6414,21 @@ function AtualizacaoCadastral({ user, colaboradores }) {
   };
 
   const S = {
-    inp:  { width: "100%", padding: "5px 8px", border: "1px solid #D1D5DB", borderRadius: 6, fontSize: 12, boxSizing: "border-box" },
+    inp:  { width: "100%", padding: "3px 6px", border: "1px solid #D1D5DB", borderRadius: 6, fontSize: 12, boxSizing: "border-box" },
     lbl:  { fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 3 },
-    btnP: { background: "#0F2447", color: "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontSize: 12, fontWeight: 700, cursor: "pointer" },
-    btnS: { background: "#F3F4F6", color: "#374151", border: "1px solid #D1D5DB", borderRadius: 8, padding: "5px 8px", fontSize: 12, fontWeight: 600, cursor: "pointer" },
-    btnV: { background: "#059669", color: "#fff", border: "none", borderRadius: 8, padding: "5px 8px", fontSize: 12, fontWeight: 700, cursor: "pointer" },
-    btnR: { background: "#DC2626", color: "#fff", border: "none", borderRadius: 8, padding: "5px 8px", fontSize: 12, fontWeight: 700, cursor: "pointer" },
+    btnP: { background: "#0F2447", color: "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontSize: 11, fontWeight: 700, cursor: "pointer" },
+    btnS: { background: "#F3F4F6", color: "#374151", border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px", fontSize: 11, fontWeight: 600, cursor: "pointer" },
+    btnV: { background: "#059669", color: "#fff", border: "none", borderRadius: 8, padding: "3px 6px", fontSize: 11, fontWeight: 700, cursor: "pointer" },
+    btnR: { background: "#DC2626", color: "#fff", border: "none", borderRadius: 8, padding: "3px 6px", fontSize: 11, fontWeight: 700, cursor: "pointer" },
     modal:{ position: "fixed", inset: 0, background: "rgba(0,0,0,.5)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center" },
     mbox: { background: "#fff", borderRadius: 14, padding: "24px 28px", width: "100%", maxWidth: 700, maxHeight: "90vh", overflowY: "auto", boxShadow: "0 20px 60px rgba(0,0,0,.25)" },
-    th:   { padding: "5px 8px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: 0.5, whiteSpace: "nowrap" },
-    td:   { padding: "4px 8px", fontSize: 11, borderBottom: "1px solid #F3F4F6" },
+    th:   { padding: "3px 6px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: 0.5, whiteSpace: "nowrap" },
+    td:   { padding: "3px 6px", fontSize: 11, borderBottom: "1px solid #F3F4F6" },
   };
 
   const SimNaoTag = ({ val }) => {
     if (!val) return <span style={{ color: "#9CA3AF" }}>—</span>;
-    return <span style={{ padding: "2px 8px", borderRadius: 8, fontSize: 10, fontWeight: 700, background: val === "T" ? "#D1FAE5" : "#FEE2E2", color: val === "T" ? "#065F46" : "#991B1B" }}>{val === "T" ? "Sim" : "Não"}</span>;
+    return <span style={{ padding: "1px 6px", borderRadius: 8, fontSize: 10, fontWeight: 700, background: val === "T" ? "#D1FAE5" : "#FEE2E2", color: val === "T" ? "#065F46" : "#991B1B" }}>{val === "T" ? "Sim" : "Não"}</span>;
   };
 
   return (
@@ -6443,7 +6443,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
 
       {/* Msg */}
       {msg && (
-        <div style={{ padding: "5px 8px", borderRadius: 7, marginBottom: 12, background: msg.tipo === "ok" ? "#D1FAE5" : "#FEE2E2", color: msg.tipo === "ok" ? "#065F46" : "#991B1B", fontSize: 12, fontWeight: 600, display: "flex", justifyContent: "space-between" }}>
+        <div style={{ padding: "3px 6px", borderRadius: 7, marginBottom: 12, background: msg.tipo === "ok" ? "#D1FAE5" : "#FEE2E2", color: msg.tipo === "ok" ? "#065F46" : "#991B1B", fontSize: 11, fontWeight: 600, display: "flex", justifyContent: "space-between" }}>
           {msg.texto}
           <button onClick={() => setMsg(null)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 14 }}>×</button>
         </div>
@@ -6453,7 +6453,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
       <div style={{ display: "flex", gap: 4, marginBottom: 16, borderBottom: "2px solid #E5E7EB" }}>
         {[["colaboradores","👥 Colaboradores"], ["solicitacoes","📋 Solicitações"]].map(([id, label]) => (
           <button key={id} onClick={() => setAba(id)} style={{
-            padding: "8px 18px", fontSize: 12, fontWeight: 600, border: "none", cursor: "pointer",
+            padding: "8px 18px", fontSize: 11, fontWeight: 600, border: "none", cursor: "pointer",
             background: "none", borderBottom: aba === id ? "2px solid #0F2447" : "2px solid transparent",
             color: aba === id ? "#0F2447" : "#6B7280", marginBottom: -2
           }}>{label}</button>
@@ -6464,7 +6464,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
       {aba === "colaboradores" && (
         <>
           <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff", borderRadius: 10, overflow: "hidden", border: "1px solid #E5E7EB", fontSize: 12 }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", lineHeight: "1.2", background: "#fff", borderRadius: 10, overflow: "hidden", border: "1px solid #E5E7EB", fontSize: 11 }}>
               <thead>
                 <tr style={{ background: "#F9FAFB", borderBottom: "1px solid #E5E7EB" }}>
                   <th style={S.th}>Filial</th>
@@ -6480,11 +6480,11 @@ function AtualizacaoCadastral({ user, colaboradores }) {
                   <th style={S.th}>Ação</th>
                 </tr>
                 <tr style={{ background: "#F9FAFB", borderBottom: "2px solid #E5E7EB" }}>
-                  <td style={{ padding: "4px 6px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Filial" value={fFilial} onChange={e => setFFilial(e.target.value)} /></td>
-                  <td style={{ padding: "4px 6px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Matrícula" value={fNome} onChange={e => setFNome(e.target.value)} /></td>
-                  <td style={{ padding: "4px 6px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Nome" value={fNomeCompleto} onChange={e => setFNomeCompleto(e.target.value)} /></td>
-                  <td style={{ padding: "4px 6px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Função" value={fFuncao} onChange={e => setFuncao(e.target.value)} /></td>
-                  <td style={{ padding: "4px 6px" }}>
+                  <td style={{ padding: "3px 5px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Filial" value={fFilial} onChange={e => setFFilial(e.target.value)} /></td>
+                  <td style={{ padding: "3px 5px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Matrícula" value={fNome} onChange={e => setFNome(e.target.value)} /></td>
+                  <td style={{ padding: "3px 5px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Nome" value={fNomeCompleto} onChange={e => setFNomeCompleto(e.target.value)} /></td>
+                  <td style={{ padding: "3px 5px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Função" value={fFuncao} onChange={e => setFuncao(e.target.value)} /></td>
+                  <td style={{ padding: "3px 5px" }}>
                     <select style={{ ...S.inp, fontSize: 11 }} value={fPosEscala} onChange={e => setFPosEscala(e.target.value)}>
                       <option value="">Todas</option>
                       <option value="FA">FA</option>
@@ -6494,39 +6494,39 @@ function AtualizacaoCadastral({ user, colaboradores }) {
                       <option value="TI">TI</option>
                     </select>
                   </td>
-                  <td style={{ padding: "4px 6px" }}>
+                  <td style={{ padding: "3px 5px" }}>
                     <select style={{ ...S.inp, fontSize: 11 }} value={fMotLider} onChange={e => setFMotLider(e.target.value)}>
                       <option value="">Todos</option>
                       <option value="S">Sim</option>
                       <option value="N">Não</option>
                     </select>
                   </td>
-                  <td style={{ padding: "4px 6px" }}>
+                  <td style={{ padding: "3px 5px" }}>
                     <select style={{ ...S.inp, fontSize: 11 }} value={fMunkeiro} onChange={e => setFMunkeiro(e.target.value)}>
                       <option value="">Todos</option>
                       <option value="S">Sim</option>
                       <option value="N">Não</option>
                     </select>
                   </td>
-                  <td style={{ padding: "4px 6px" }}>
+                  <td style={{ padding: "3px 5px" }}>
                     <select style={{ ...S.inp, fontSize: 11 }} value={fPrancheiro} onChange={e => setFPrancheiro(e.target.value)}>
                       <option value="">Todos</option>
                       <option value="S">Sim</option>
                       <option value="N">Não</option>
                     </select>
                   </td>
-                  <td style={{ padding: "4px 6px" }}>
+                  <td style={{ padding: "3px 5px" }}>
                     <select style={{ ...S.inp, fontSize: 11 }} value={fMacacao} onChange={e => setFMacacao(e.target.value)}>
                       <option value="">Todos</option>
                       {["PP","P","M","G","GG","EG","EEG"].map(v => <option key={v} value={v}>{v}</option>)}
                     </select>
                   </td>
-                  <td style={{ padding: "4px 6px" }}>
+                  <td style={{ padding: "3px 5px" }}>
                     <input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Bota" value={fBota} onChange={e => setFBota(e.target.value)} />
                   </td>
-                  <td style={{ padding: "4px 6px", whiteSpace: "nowrap" }}>
+                  <td style={{ padding: "3px 5px", whiteSpace: "nowrap" }}>
                     <button onClick={() => { setFNome(""); setFNomeCompleto(""); setFuncao(""); setFFilial(""); setFPosEscala(""); setFMotLider(""); setFMunkeiro(""); setFPrancheiro(""); setFMacacao(""); setFBota(""); }}
-                      style={{ padding: "5px 10px", border: "1px solid #D1D5DB", borderRadius: 6, background: "#fff", color: "#374151", fontSize: 11, cursor: "pointer" }}>
+                      style={{ padding: "3px 7px", border: "1px solid #D1D5DB", borderRadius: 6, background: "#fff", color: "#374151", fontSize: 11, cursor: "pointer" }}>
                       × Limpar
                     </button>
                     <span style={{ marginLeft: 8, fontSize: 11, color: "#6B7280" }}>{colabsFiltrados.length}</span>
@@ -6593,7 +6593,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
           ) : solicitacoes.length === 0 ? (
             <div style={{ textAlign: "center", padding: 60, color: "#9CA3AF" }}>Nenhuma solicitação encontrada.</div>
           ) : (
-            <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff", borderRadius: 10, overflow: "hidden", border: "1px solid #E5E7EB" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", lineHeight: "1.2", background: "#fff", borderRadius: 10, overflow: "hidden", border: "1px solid #E5E7EB" }}>
               <thead>
                 <tr style={{ background: "#F9FAFB", borderBottom: "2px solid #E5E7EB" }}>
                   {["Matrícula","Nome","Função","Admissão","Solicitante","Data","Status","Ações"].map(h => (
@@ -6613,7 +6613,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
                       <td style={S.td}>{s.usuario_solicitante_nome}</td>
                       <td style={{ ...S.td, color: "#6B7280" }}>{new Date(s.criado_em).toLocaleDateString("pt-BR")}</td>
                       <td style={S.td}>
-                        <span style={{ padding: "2px 8px", borderRadius: 8, fontSize: 10, fontWeight: 700, background: stCfg.bg, color: stCfg.color }}>
+                        <span style={{ padding: "1px 6px", borderRadius: 8, fontSize: 10, fontWeight: 700, background: stCfg.bg, color: stCfg.color }}>
                           {stCfg.label || s.status}
                         </span>
                       </td>
@@ -6636,7 +6636,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
         <div style={S.modal}>
           <div style={S.mbox}>
             <h3 style={{ margin: "0 0 6px", fontSize: 15, fontWeight: 800, color: "#0F2447" }}>Solicitar Alteração Cadastral</h3>
-            <div style={{ padding: "5px 8px", background: "#EFF6FF", borderRadius: 8, marginBottom: 16, fontSize: 12, color: "#1E40AF" }}>
+            <div style={{ padding: "3px 6px", background: "#EFF6FF", borderRadius: 8, marginBottom: 16, fontSize: 12, color: "#1E40AF" }}>
               <strong>{fmtFilial(modalNova)}</strong> | {modalNova.chapa} | {modalNova.nome} | {modalNova.funcao} | {modalNova.data_admissao ? new Date(modalNova.data_admissao).toLocaleDateString("pt-BR") : "—"}
             </div>
 
@@ -6684,7 +6684,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
             <h3 style={{ margin: "0 0 4px", fontSize: 15, fontWeight: 800, color: "#0F2447" }}>Solicitação #{modalDetalhe.id}</h3>
             <p style={{ margin: "0 0 14px", fontSize: 11, color: "#6B7280" }}>{modalDetalhe.chapa} | {modalDetalhe.colaborador_nome}</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 14, fontSize: 12 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 14, fontSize: 11 }}>
               <div style={{ background: "#F9FAFB", borderRadius: 6, padding: "8px 10px" }}>
                 <div style={{ fontSize: 10, color: "#6B7280", marginBottom: 2 }}>SOLICITANTE</div>
                 <strong>{modalDetalhe.usuario_solicitante_nome}</strong>
@@ -6695,7 +6695,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
               </div>
               <div style={{ background: "#F9FAFB", borderRadius: 6, padding: "8px 10px" }}>
                 <div style={{ fontSize: 10, color: "#6B7280", marginBottom: 2 }}>STATUS</div>
-                <span style={{ padding: "2px 8px", borderRadius: 8, fontSize: 10, fontWeight: 700, background: AC_STATUS_CONFIG[modalDetalhe.status]?.bg, color: AC_STATUS_CONFIG[modalDetalhe.status]?.color }}>
+                <span style={{ padding: "1px 6px", borderRadius: 8, fontSize: 10, fontWeight: 700, background: AC_STATUS_CONFIG[modalDetalhe.status]?.bg, color: AC_STATUS_CONFIG[modalDetalhe.status]?.color }}>
                   {AC_STATUS_CONFIG[modalDetalhe.status]?.label}
                 </span>
               </div>
@@ -6703,20 +6703,20 @@ function AtualizacaoCadastral({ user, colaboradores }) {
 
             <div style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 8, padding: "12px 14px", marginBottom: 14 }}>
               <p style={{ margin: "0 0 8px", fontSize: 11, fontWeight: 700, color: "#374151" }}>ALTERAÇÕES</p>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
                 <thead>
                   <tr style={{ borderBottom: "1px solid #E5E7EB" }}>
-                    <th style={{ padding: "4px 8px", textAlign: "left", fontSize: 10, color: "#6B7280" }}>Campo</th>
-                    <th style={{ padding: "4px 8px", textAlign: "left", fontSize: 10, color: "#6B7280" }}>Antes</th>
-                    <th style={{ padding: "4px 8px", textAlign: "left", fontSize: 10, color: "#6B7280" }}>Depois</th>
+                    <th style={{ padding: "3px 6px", textAlign: "left", fontSize: 10, color: "#6B7280" }}>Campo</th>
+                    <th style={{ padding: "3px 6px", textAlign: "left", fontSize: 10, color: "#6B7280" }}>Antes</th>
+                    <th style={{ padding: "3px 6px", textAlign: "left", fontSize: 10, color: "#6B7280" }}>Depois</th>
                   </tr>
                 </thead>
                 <tbody>
                   {(modalDetalhe.itens || []).map((item, i) => (
                     <tr key={i} style={{ borderBottom: "1px solid #F3F4F6" }}>
-                      <td style={{ padding: "5px 8px", fontWeight: 600 }}>{CAMPOS_CONFIG[item.campo]?.label || item.campo}</td>
-                      <td style={{ padding: "5px 8px", color: "#991B1B" }}>{labelValor(item.campo, item.valor_anterior)}</td>
-                      <td style={{ padding: "5px 8px", color: "#065F46", fontWeight: 700 }}>{labelValor(item.campo, item.novo_valor)}</td>
+                      <td style={{ padding: "3px 6px", fontWeight: 600 }}>{CAMPOS_CONFIG[item.campo]?.label || item.campo}</td>
+                      <td style={{ padding: "3px 6px", color: "#991B1B" }}>{labelValor(item.campo, item.valor_anterior)}</td>
+                      <td style={{ padding: "3px 6px", color: "#065F46", fontWeight: 700 }}>{labelValor(item.campo, item.novo_valor)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -6724,7 +6724,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
             </div>
 
             {modalDetalhe.observacao && (
-              <div style={{ background: "#FFFBEB", border: "1px solid #FDE68A", borderRadius: 6, padding: "5px 8px", marginBottom: 14, fontSize: 12 }}>
+              <div style={{ background: "#FFFBEB", border: "1px solid #FDE68A", borderRadius: 6, padding: "3px 6px", marginBottom: 14, fontSize: 11 }}>
                 <strong>Obs:</strong> {modalDetalhe.observacao}
               </div>
             )}
