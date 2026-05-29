@@ -5806,8 +5806,8 @@ function gerarHTMLTitular(colab, movimentacao) {
       <p style="font-weight:bold;text-align:center;margin:0 0 6px 0;font-size:9pt;">DADOS PESSOAIS</p>
       <div style="border:1px solid #000;padding:10px 14px;margin-bottom:12px;font-size:9.5pt;">
         <p style="margin:0 0 6px 0;">C.P.F.: <u>${f(colab?.cpf)}</u> &nbsp;&nbsp; DATA DE ADMISSÃO: <u>${fmtDataPS(colab?.data_admissao) || "___/___/______"}</u></p>
-        <p style="margin:0 0 6px 0;">NOME: <u>${f(colab?.nome)}</u> &nbsp;&nbsp; DATA DE NASC.: <u>___/___/______</u></p>
-        <p style="margin:0 0 6px 0;">SEXO: ( ) MASCULINO &nbsp; ( ) FEMININO &nbsp;&nbsp; RG: <u>${f(colab?.rg)}</u> &nbsp; ÓRGÃO: <u>${f(colab?.rg_orgao)}</u> &nbsp; UF: <u>${f(colab?.rg_uf)}</u></p>
+        <p style="margin:0 0 6px 0;">NOME: <u>${f(colab?.nome)}</u> &nbsp;&nbsp; DATA DE NASC.: <u>${fmtDataPS(colab?.data_nascimento) || "___/___/______"}</u></p>
+        <p style="margin:0 0 6px 0;">SEXO: <u>${colab?.sexo || "___________"}</u> &nbsp;&nbsp; RG: <u>${f(colab?.rg)}</u> &nbsp; ÓRGÃO: <u>${f(colab?.rg_orgao)}</u> &nbsp; UF: <u>${f(colab?.rg_uf)}</u></p>
         <p style="margin:0 0 6px 0;">ESTADO CIVIL: <u>${f(colab?.estado_civil)}</u> &nbsp;&nbsp; NOME DA MÃE: <u>${f(colab?.nome_mae)}</u></p>
         <p style="margin:0;">MATRÍCULA: <u>${f(colab?.chapa)}</u> &nbsp; PIS: <u>${f(colab?.pis)}</u> &nbsp; CTPS: <u>${f(colab?.ctps)}</u> &nbsp; SÉRIE: <u>${f(colab?.ctps_serie)}</u></p>
       </div>
