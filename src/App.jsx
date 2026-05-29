@@ -6451,40 +6451,35 @@ function AtualizacaoCadastral({ user, colaboradores }) {
       {/* ABA COLABORADORES */}
       {aba === "colaboradores" && (
         <>
-          {/* Filtros */}
-          <div style={{ marginBottom: 12 }}>
-            <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: 8, top: "50%", transform: "translateY(-50%)", fontSize: 11, color: "#9CA3AF" }}>🔍</span>
-                <input style={{ ...S.inp, width: 130, paddingLeft: 26 }} placeholder="Matrícula" value={fNome} onChange={e => setFNome(e.target.value)} />
-              </div>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: 8, top: "50%", transform: "translateY(-50%)", fontSize: 11, color: "#9CA3AF" }}>🔍</span>
-                <input style={{ ...S.inp, width: 200, paddingLeft: 26 }} placeholder="Nome" value={fNomeCompleto} onChange={e => setFNomeCompleto(e.target.value)} />
-              </div>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: 8, top: "50%", transform: "translateY(-50%)", fontSize: 11, color: "#9CA3AF" }}>🔍</span>
-                <input style={{ ...S.inp, width: 150, paddingLeft: 26 }} placeholder="Função" value={fFuncao} onChange={e => setFuncao(e.target.value)} />
-              </div>
-              <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: 8, top: "50%", transform: "translateY(-50%)", fontSize: 11, color: "#9CA3AF" }}>🔍</span>
-                <input style={{ ...S.inp, width: 150, paddingLeft: 26 }} placeholder="Filial/Seção" value={fFilial} onChange={e => setFFilial(e.target.value)} />
-              </div>
-              <button
-                onClick={() => { setFNome(""); setFNomeCompleto(""); setFuncao(""); setFFilial(""); }}
-                style={{ padding: "6px 14px", border: "1px solid #D1D5DB", borderRadius: 6, background: "#fff", color: "#374151", fontSize: 12, cursor: "pointer" }}>
-                × Limpar
-              </button>
-            </div>
-          </div>
-
           <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff", borderRadius: 10, overflow: "hidden", border: "1px solid #E5E7EB", fontSize: 12 }}>
               <thead>
+                <tr style={{ background: "#F9FAFB", borderBottom: "1px solid #E5E7EB" }}>
+                  <th style={S.th}>Filial</th>
+                  <th style={S.th}>Matrícula</th>
+                  <th style={S.th}>Nome</th>
+                  <th style={S.th}>Função</th>
+                  <th style={S.th}>Pos. Escala</th>
+                  <th style={S.th}>Mot. Líder</th>
+                  <th style={S.th}>Munkeiro</th>
+                  <th style={S.th}>Prancheiro</th>
+                  <th style={S.th}>Macacão</th>
+                  <th style={S.th}>Bota</th>
+                  <th style={S.th}>Ação</th>
+                </tr>
                 <tr style={{ background: "#F9FAFB", borderBottom: "2px solid #E5E7EB" }}>
-                  {["Filial","Matrícula","Nome","Função","Pos. Escala","Mot. Líder","Munkeiro","Prancheiro","Macacão","Bota","Ação"].map(h => (
-                    <th key={h} style={S.th}>{h}</th>
-                  ))}
+                  <td style={{ padding: "4px 6px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Filial" value={fFilial} onChange={e => setFFilial(e.target.value)} /></td>
+                  <td style={{ padding: "4px 6px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Matrícula" value={fNome} onChange={e => setFNome(e.target.value)} /></td>
+                  <td style={{ padding: "4px 6px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Nome" value={fNomeCompleto} onChange={e => setFNomeCompleto(e.target.value)} /></td>
+                  <td style={{ padding: "4px 6px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Função" value={fFuncao} onChange={e => setFuncao(e.target.value)} /></td>
+                  <td colSpan={6} style={{ padding: "4px 6px" }}>
+                    <button onClick={() => { setFNome(""); setFNomeCompleto(""); setFuncao(""); setFFilial(""); }}
+                      style={{ padding: "5px 12px", border: "1px solid #D1D5DB", borderRadius: 6, background: "#fff", color: "#374151", fontSize: 11, cursor: "pointer" }}>
+                      × Limpar
+                    </button>
+                    <span style={{ marginLeft: 10, fontSize: 11, color: "#6B7280" }}>{colabsFiltrados.length} colaborador(es)</span>
+                  </td>
+                  <td></td>
                 </tr>
               </thead>
               <tbody>
