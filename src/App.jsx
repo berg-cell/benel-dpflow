@@ -6473,7 +6473,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
         <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff", borderRadius: 10, overflow: "hidden", border: "1px solid #E5E7EB", fontSize: 12 }}>
           <thead>
             <tr style={{ background: "#F9FAFB", borderBottom: "1px solid #E5E7EB" }}>
-              {["Matrícula","Nome","Função","Admissão","Solicitante","Data Solic.","Status","Ações"].map(h => (
+              {["Filial","Matrícula","Nome","Função","Admissão","Solicitante","Data Solic.","Status","Ações"].map(h => (
                 <th key={h} style={{ padding: "10px 12px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: 0.5 }}>{h}</th>
               ))}
             </tr>
@@ -6485,6 +6485,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
                 <tr key={s.id} style={{ borderBottom: "1px solid #F3F4F6" }}
                   onMouseEnter={e => e.currentTarget.style.background = "#F9FAFB"}
                   onMouseLeave={e => e.currentTarget.style.background = ""}>
+                  <td style={{ padding: "10px 12px", color: "#6B7280" }}>{s.descricao_filial || "—"}</td>
                   <td style={{ padding: "10px 12px", fontWeight: 700 }}>{s.chapa}</td>
                   <td style={{ padding: "10px 12px" }}>{s.colaborador_nome}</td>
                   <td style={{ padding: "10px 12px", color: "#6B7280" }}>{s.funcao}</td>
@@ -6519,7 +6520,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
               <label style={S.lbl}>Colaborador *</label>
               {colabSel ? (
                 <div style={{ padding: "6px 10px", background: "#EFF6FF", borderRadius: 6, fontSize: 12, color: "#1E40AF", fontWeight: 600, display: "flex", justifyContent: "space-between" }}>
-                  {colabSel.chapa} | {colabSel.nome} | {colabSel.funcao} | {colabSel.data_admissao ? new Date(colabSel.data_admissao).toLocaleDateString("pt-BR") : "—"}
+                  {colabSel.descricao_filial || colabSel.desc_cc || "—"} | {colabSel.chapa} | {colabSel.nome} | {colabSel.funcao} | {colabSel.data_admissao ? new Date(colabSel.data_admissao).toLocaleDateString("pt-BR") : "—"}
                   <button onClick={() => { setColabSel(null); setBuscaColab(""); setItens({}); }} style={{ background: "none", border: "none", cursor: "pointer", color: "#6B7280" }}>×</button>
                 </div>
               ) : (
@@ -6532,7 +6533,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
                           style={{ padding: "7px 10px", cursor: "pointer", fontSize: 12, borderBottom: "1px solid #F3F4F6" }}
                           onMouseEnter={e => e.currentTarget.style.background = "#F3F4F6"}
                           onMouseLeave={e => e.currentTarget.style.background = ""}>
-                          <strong>{c.chapa}</strong> | {c.nome} | <span style={{ color: "#6B7280" }}>{c.funcao}</span>
+<span style={{ color: "#6B7280" }}>{c.descricao_filial || c.desc_cc || "—"}</span> | <strong>{c.chapa}</strong> | {c.nome} | {c.funcao}
                         </div>
                       ))}
                     </div>
@@ -6551,20 +6552,20 @@ function AtualizacaoCadastral({ user, colaboradores }) {
                     <div key={campo}>
                       <label style={S.lbl}>{cfg.label}</label>
                       <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                        <select style={{ ...S.inp, flex: 1 }}
-                          value={itens[campo] || ""}
-                          onChange={e => setItens(p => ({ ...p, [campo]: e.target.value || undefined }))}>
-                          <option value="">— sem alteração —</option>
-                          {cfg.tipo === "select_obj"
-                            ? cfg.dominio.map(d => <option key={d.cod} value={d.cod}>{d.cod} — {d.desc}</option>)
-                            : cfg.dominio.map(v => <option key={v} value={v}>{v}</option>)
-                          }
-                        </select>
-                        {colabSel[campo] && (
-                          <span style={{ fontSize: 10, color: "#6B7280", whiteSpace: "nowrap" }}>
-                            Atual: <strong>{labelValor(campo, colabSel[campo])}</strong>
-                          </span>
-                        )}
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: 10, color: "#6B7280", marginBottom: 3 }}>
+                            Atual: <strong style={{ color: colabSel[campo] ? "#374151" : "#9CA3AF" }}>{colabSel[campo] ? labelValor(campo, colabSel[campo]) : "Não informado"}</strong>
+                          </div>
+                          <select style={S.inp}
+                            value={itens[campo] || ""}
+                            onChange={e => setItens(p => ({ ...p, [campo]: e.target.value || undefined }))}>
+                            <option value="">— sem alteração —</option>
+                            {cfg.tipo === "select_obj"
+                              ? cfg.dominio.map(d => <option key={d.cod} value={d.cod}>{d.cod} — {d.desc}</option>)
+                              : cfg.dominio.map(v => <option key={v} value={v}>{v}</option>)
+                            }
+                          </select>
+                        </div>
                       </div>
                     </div>
                   ))}
