@@ -6329,6 +6329,12 @@ function AtualizacaoCadastral({ user, colaboradores }) {
   const [fNomeCompleto, setFNomeCompleto] = useState("");
   const [fFuncao, setFuncao]          = useState("");
   const [fFilial, setFFilial]         = useState("");
+  const [fPosEscala, setFPosEscala]   = useState("");
+  const [fMotLider, setFMotLider]     = useState("");
+  const [fMunkeiro, setFMunkeiro]     = useState("");
+  const [fPrancheiro, setFPrancheiro] = useState("");
+  const [fMacacao, setFMacacao]       = useState("");
+  const [fBota, setFBota]             = useState("");
 
   // Filtros solicitações
   const [fStatus, setFStatus]   = useState("todos");
@@ -6358,7 +6364,13 @@ function AtualizacaoCadastral({ user, colaboradores }) {
     (!fNome          || (c.chapa||"").toLowerCase().includes(fNome.toLowerCase())) &&
     (!fNomeCompleto  || norm(c.nome).includes(norm(fNomeCompleto))) &&
     (!fFuncao        || norm(c.funcao||"").includes(norm(fFuncao))) &&
-    (!fFilial        || norm(fmtFilial(c)).includes(norm(fFilial)) || norm(c.desc_cc||"").includes(norm(fFilial)))
+    (!fFilial        || norm(fmtFilial(c)).includes(norm(fFilial)) || norm(c.desc_cc||"").includes(norm(fFilial))) &&
+    (!fPosEscala     || norm(c.posicao_escala||"").includes(norm(fPosEscala))) &&
+    (!fMotLider      || (fMotLider   === "S" ? c.motorista_lider === "T" : c.motorista_lider !== "T")) &&
+    (!fMunkeiro      || (fMunkeiro   === "S" ? c.munkeiro        === "T" : c.munkeiro        !== "T")) &&
+    (!fPrancheiro    || (fPrancheiro === "S" ? c.prancheiro      === "T" : c.prancheiro      !== "T")) &&
+    (!fMacacao       || norm(c.tamanho_macacao||"").includes(norm(fMacacao))) &&
+    (!fBota          || norm(String(c.tamanho_bota||"")).includes(norm(fBota)))
   );
 
   const carregarSols = async () => {
@@ -6472,14 +6484,53 @@ function AtualizacaoCadastral({ user, colaboradores }) {
                   <td style={{ padding: "4px 6px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Matrícula" value={fNome} onChange={e => setFNome(e.target.value)} /></td>
                   <td style={{ padding: "4px 6px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Nome" value={fNomeCompleto} onChange={e => setFNomeCompleto(e.target.value)} /></td>
                   <td style={{ padding: "4px 6px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Função" value={fFuncao} onChange={e => setFuncao(e.target.value)} /></td>
-                  <td colSpan={6} style={{ padding: "4px 6px" }}>
-                    <button onClick={() => { setFNome(""); setFNomeCompleto(""); setFuncao(""); setFFilial(""); }}
-                      style={{ padding: "5px 12px", border: "1px solid #D1D5DB", borderRadius: 6, background: "#fff", color: "#374151", fontSize: 11, cursor: "pointer" }}>
+                  <td style={{ padding: "4px 6px" }}>
+                    <select style={{ ...S.inp, fontSize: 11 }} value={fPosEscala} onChange={e => setFPosEscala(e.target.value)}>
+                      <option value="">Todas</option>
+                      <option value="FA">FA</option>
+                      <option value="FE">FE</option>
+                      <option value="FO">FO</option>
+                      <option value="NA">NA</option>
+                      <option value="TI">TI</option>
+                    </select>
+                  </td>
+                  <td style={{ padding: "4px 6px" }}>
+                    <select style={{ ...S.inp, fontSize: 11 }} value={fMotLider} onChange={e => setFMotLider(e.target.value)}>
+                      <option value="">Todos</option>
+                      <option value="S">Sim</option>
+                      <option value="N">Não</option>
+                    </select>
+                  </td>
+                  <td style={{ padding: "4px 6px" }}>
+                    <select style={{ ...S.inp, fontSize: 11 }} value={fMunkeiro} onChange={e => setFMunkeiro(e.target.value)}>
+                      <option value="">Todos</option>
+                      <option value="S">Sim</option>
+                      <option value="N">Não</option>
+                    </select>
+                  </td>
+                  <td style={{ padding: "4px 6px" }}>
+                    <select style={{ ...S.inp, fontSize: 11 }} value={fPrancheiro} onChange={e => setFPrancheiro(e.target.value)}>
+                      <option value="">Todos</option>
+                      <option value="S">Sim</option>
+                      <option value="N">Não</option>
+                    </select>
+                  </td>
+                  <td style={{ padding: "4px 6px" }}>
+                    <select style={{ ...S.inp, fontSize: 11 }} value={fMacacao} onChange={e => setFMacacao(e.target.value)}>
+                      <option value="">Todos</option>
+                      {["PP","P","M","G","GG","EG","EEG"].map(v => <option key={v} value={v}>{v}</option>)}
+                    </select>
+                  </td>
+                  <td style={{ padding: "4px 6px" }}>
+                    <input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Bota" value={fBota} onChange={e => setFBota(e.target.value)} />
+                  </td>
+                  <td style={{ padding: "4px 6px", whiteSpace: "nowrap" }}>
+                    <button onClick={() => { setFNome(""); setFNomeCompleto(""); setFuncao(""); setFFilial(""); setFPosEscala(""); setFMotLider(""); setFMunkeiro(""); setFPrancheiro(""); setFMacacao(""); setFBota(""); }}
+                      style={{ padding: "5px 10px", border: "1px solid #D1D5DB", borderRadius: 6, background: "#fff", color: "#374151", fontSize: 11, cursor: "pointer" }}>
                       × Limpar
                     </button>
-                    <span style={{ marginLeft: 10, fontSize: 11, color: "#6B7280" }}>{colabsFiltrados.length} colaborador(es)</span>
+                    <span style={{ marginLeft: 8, fontSize: 11, color: "#6B7280" }}>{colabsFiltrados.length}</span>
                   </td>
-                  <td></td>
                 </tr>
               </thead>
               <tbody>
