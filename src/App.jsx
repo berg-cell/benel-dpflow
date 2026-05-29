@@ -906,6 +906,7 @@ const BENEFICIOS_SUBMENU = [
 
 const NAV_ITEMS = [
   { id: "cadastros",     label: "Cadastros",                            icon: "🗂",  perfis: ["dp","admin"], submenu: CADASTROS_SUBMENU },
+  { id: "atualizacao_cadastral", label: "Atualização de Dados Cadastrais", icon: "📝", perfis: ["gestor","dp","admin"] },
   { id: "ocorrencias",      label: "Solicitações de Advertências/Suspensões", icon: "⚠️", perfis: ["gestor","dp","admin"] },
   { id: "autorizacoes",     label: "Autorização de Desconto",                icon: "📋", perfis: ["gestor","dp","admin"] },
   { id: "solicitacoes",     label: "Solicitações de Pagamento",               icon: "≡",  perfis: ["gestor","superior","dp","admin"] },
@@ -6260,6 +6261,419 @@ function PlanoSaude({ user, colaboradores }) {
   );
 }
 
+// ════════════════════════════════════════════════════════════════════════════
+// COMPONENTE: AtualizacaoCadastral
+// Inserir no App.jsx ANTES de "export default function App()"
+// ════════════════════════════════════════════════════════════════════════════
+
+const DOMINIO_POSICAO_ESCALA = [
+  { cod: "FA", desc: "Faltista" },
+  { cod: "FE", desc: "Ferista" },
+  { cod: "FO", desc: "Folguista" },
+  { cod: "NA", desc: "Não Aplica" },
+  { cod: "TI", desc: "Titular" },
+];
+const DOMINIO_SIM_NAO = [
+  { cod: "T", desc: "Sim" },
+  { cod: "F", desc: "Não" },
+];
+const DOMINIO_MACACAO = ["PP","P","M","G","GG","EG","EEG"];
+const DOMINIO_BOTA = Array.from({ length: 15 }, (_, i) => String(34 + i));
+
+const CAMPOS_CONFIG = {
+  posicao_escala:  { label: "Posição Escala",  dominio: DOMINIO_POSICAO_ESCALA, tipo: "select_obj" },
+  motorista_lider: { label: "Motorista Líder", dominio: DOMINIO_SIM_NAO,        tipo: "select_obj" },
+  munkeiro:        { label: "Munkeiro",         dominio: DOMINIO_SIM_NAO,        tipo: "select_obj" },
+  prancheiro:      { label: "Prancheiro",       dominio: DOMINIO_SIM_NAO,        tipo: "select_obj" },
+  tamanho_macacao: { label: "Tamanho Macacão",  dominio: DOMINIO_MACACAO,        tipo: "select_str" },
+  tamanho_bota:    { label: "Tamanho Bota",     dominio: DOMINIO_BOTA,           tipo: "select_str" },
+};
+
+const STATUS_CONFIG = {
+  solicitado:  { label: "Solicitado",  bg: "#FEF3C7", color: "#92400E" },
+  em_analise:  { label: "Em Análise", bg: "#DBEAFE", color: "#1E40AF" },
+  aprovado:    { label: "Aprovado",   bg: "#D1FAE5", color: "#065F46" },
+  reprovado:   { label: "Reprovado",  bg: "#FEE2E2", color: "#991B1B" },
+  finalizado:  { label: "Finalizado", bg: "#F3F4F6", color: "#374151" },
+};
+
+function labelCampo(campo) {
+  return CAMPOS_CONFIG[campo]?.label || campo;
+}
+
+function labelValor(campo, val) {
+  if (!val) return "—";
+  const cfg = CAMPOS_CONFIG[campo];
+  if (!cfg) return val;
+  if (cfg.tipo === "select_obj") {
+    const found = cfg.dominio.find(d => d.cod === val);
+    return found ? `${found.cod} — ${found.desc}` : val;
+  }
+  return val;
+}
+
+function AtualizacaoCadastral({ user, colaboradores }) {
+  const [lista, setLista]       = useState([]);
+  const [loading, setLoading]   = useState(false);
+  const [msg, setMsg]           = useState(null);
+  const [salvando, setSalvando] = useState(false);
+
+  // Filtros
+  const [fStatus, setFStatus]         = useState("todos");
+  const [fDataIni, setFDataIni]       = useState("");
+  const [fDataFim, setFDataFim]       = useState("");
+  const [fSolicitante, setFSolicitante] = useState("");
+  const [fSoComSol, setFSoComSol]     = useState(false);
+
+  // Modal nova solicitação
+  const [modalNova, setModalNova]     = useState(false);
+  const [colabSel, setColabSel]       = useState(null);
+  const [buscaColab, setBuscaColab]   = useState("");
+  const [itens, setItens]             = useState({});
+  const [observacao, setObservacao]   = useState("");
+
+  // Modal detalhe / aprovação
+  const [modalDetalhe, setModalDetalhe] = useState(null);
+  const [obsAprov, setObsAprov]         = useState("");
+
+  const norm = s => (s || "").toLowerCase();
+
+  const colabsAtivos = colaboradores.filter(c => c.cod_situacao !== "D");
+  const colabsFilt = colabsAtivos.filter(c =>
+    !buscaColab ||
+    norm(c.nome).includes(norm(buscaColab)) ||
+    (c.chapa || "").includes(buscaColab)
+  );
+
+  const carregar = async () => {
+    setLoading(true);
+    try {
+      const params = {};
+      if (fStatus !== "todos") params.status = fStatus;
+      if (fDataIni) params.data_inicio = fDataIni;
+      if (fDataFim) params.data_fim = fDataFim;
+      if (fSolicitante) params.solicitante = fSolicitante;
+      const data = await api.listarAtualizacaoCadastral(params);
+      setLista(Array.isArray(data) ? data : []);
+    } catch (e) {
+      setMsg({ tipo: "erro", texto: e.message });
+    } finally { setLoading(false); }
+  };
+
+  useEffect(() => { carregar(); }, []);
+
+  const listaFiltrada = fSoComSol
+    ? lista.filter(s => s.status !== "finalizado" || true)
+    : lista;
+
+  const salvar = async () => {
+    if (!colabSel) { setMsg({ tipo: "erro", texto: "Selecione o colaborador." }); return; }
+    const itensList = Object.entries(itens)
+      .filter(([, v]) => v)
+      .map(([campo, novo_valor]) => ({ campo, novo_valor }));
+    if (itensList.length === 0) { setMsg({ tipo: "erro", texto: "Selecione ao menos um campo para alterar." }); return; }
+    setSalvando(true);
+    try {
+      await api.criarAtualizacaoCadastral({ colaborador_id: colabSel.id, itens: itensList, observacao });
+      setMsg({ tipo: "ok", texto: "Solicitação criada com sucesso!" });
+      setModalNova(false); resetNova(); carregar();
+    } catch (e) { setMsg({ tipo: "erro", texto: e.message }); }
+    finally { setSalvando(false); }
+  };
+
+  const aprovar = async (acao) => {
+    setSalvando(true);
+    try {
+      await api.aprovarAtualizacaoCadastral(modalDetalhe.id, acao, obsAprov);
+      setMsg({ tipo: "ok", texto: `Solicitação ${acao === "aprovar" ? "aprovada" : "reprovada"} com sucesso!` });
+      setModalDetalhe(null); setObsAprov(""); carregar();
+    } catch (e) { setMsg({ tipo: "erro", texto: e.message }); }
+    finally { setSalvando(false); }
+  };
+
+  const resetNova = () => {
+    setColabSel(null); setBuscaColab(""); setItens({}); setObservacao("");
+  };
+
+  const S = {
+    inp:  { width: "100%", padding: "6px 10px", border: "1px solid #D1D5DB", borderRadius: 6, fontSize: 12, boxSizing: "border-box" },
+    lbl:  { fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 3 },
+    btnP: { background: "#0F2447", color: "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontSize: 12, fontWeight: 700, cursor: "pointer" },
+    btnS: { background: "#F3F4F6", color: "#374151", border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer" },
+    btnV: { background: "#059669", color: "#fff", border: "none", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" },
+    btnR: { background: "#DC2626", color: "#fff", border: "none", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" },
+    card: { background: "#fff", borderRadius: 10, border: "1px solid #E5E7EB", padding: "12px 16px", marginBottom: 8 },
+    modal:{ position: "fixed", inset: 0, background: "rgba(0,0,0,.5)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center" },
+    mbox: { background: "#fff", borderRadius: 14, padding: "24px 28px", width: "100%", maxWidth: 680, maxHeight: "90vh", overflowY: "auto", boxShadow: "0 20px 60px rgba(0,0,0,.25)" },
+  };
+
+  const canAprovar = user.perfil === "dp" || user.perfil === "admin";
+
+  return (
+    <div style={{ padding: "16px 20px", maxWidth: 1000, margin: "0 auto" }}>
+      {/* Header */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+        <div>
+          <h2 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: "#111827" }}>📝 Atualização de Dados Cadastrais</h2>
+          <p style={{ margin: "2px 0 0", fontSize: 11, color: "#6B7280" }}>Solicitação de alteração cadastral com aprovação</p>
+        </div>
+        <button style={S.btnP} onClick={() => { resetNova(); setModalNova(true); }}>+ Nova Solicitação</button>
+      </div>
+
+      {/* Msg */}
+      {msg && (
+        <div style={{ padding: "8px 14px", borderRadius: 7, marginBottom: 12, background: msg.tipo === "ok" ? "#D1FAE5" : "#FEE2E2", color: msg.tipo === "ok" ? "#065F46" : "#991B1B", fontSize: 12, fontWeight: 600, display: "flex", justifyContent: "space-between" }}>
+          {msg.texto}
+          <button onClick={() => setMsg(null)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 14 }}>×</button>
+        </div>
+      )}
+
+      {/* Filtros */}
+      <div style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 10, padding: "12px 16px", marginBottom: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr auto", gap: 10, alignItems: "end" }}>
+          <div>
+            <label style={S.lbl}>Status</label>
+            <select style={S.inp} value={fStatus} onChange={e => setFStatus(e.target.value)}>
+              <option value="todos">Todos</option>
+              <option value="solicitado">Solicitado</option>
+              <option value="em_analise">Em Análise</option>
+              <option value="aprovado">Aprovado</option>
+              <option value="reprovado">Reprovado</option>
+              <option value="finalizado">Finalizado</option>
+            </select>
+          </div>
+          <div>
+            <label style={S.lbl}>Data início</label>
+            <input type="date" style={S.inp} value={fDataIni} onChange={e => setFDataIni(e.target.value)} />
+          </div>
+          <div>
+            <label style={S.lbl}>Data fim</label>
+            <input type="date" style={S.inp} value={fDataFim} onChange={e => setFDataFim(e.target.value)} />
+          </div>
+          <div>
+            <label style={S.lbl}>Solicitante</label>
+            <input style={S.inp} placeholder="Nome do solicitante..." value={fSolicitante} onChange={e => setFSolicitante(e.target.value)} />
+          </div>
+          <button style={S.btnP} onClick={carregar}>🔍 Filtrar</button>
+        </div>
+        <div style={{ marginTop: 10 }}>
+          <label style={{ fontSize: 12, color: "#374151", cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
+            <input type="checkbox" checked={fSoComSol} onChange={e => setFSoComSol(e.target.checked)} />
+            Exibir apenas colaboradores com solicitação aberta
+          </label>
+        </div>
+      </div>
+
+      {/* Lista */}
+      {loading ? (
+        <div style={{ textAlign: "center", padding: 40, color: "#9CA3AF", fontSize: 13 }}>Carregando...</div>
+      ) : listaFiltrada.length === 0 ? (
+        <div style={{ textAlign: "center", padding: 60, color: "#9CA3AF", fontSize: 13 }}>Nenhuma solicitação encontrada.</div>
+      ) : (
+        <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff", borderRadius: 10, overflow: "hidden", border: "1px solid #E5E7EB", fontSize: 12 }}>
+          <thead>
+            <tr style={{ background: "#F9FAFB", borderBottom: "1px solid #E5E7EB" }}>
+              {["Matrícula","Nome","Função","Admissão","Solicitante","Data Solic.","Status","Ações"].map(h => (
+                <th key={h} style={{ padding: "10px 12px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: 0.5 }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {listaFiltrada.map(s => {
+              const stCfg = STATUS_CONFIG[s.status] || {};
+              return (
+                <tr key={s.id} style={{ borderBottom: "1px solid #F3F4F6" }}
+                  onMouseEnter={e => e.currentTarget.style.background = "#F9FAFB"}
+                  onMouseLeave={e => e.currentTarget.style.background = ""}>
+                  <td style={{ padding: "10px 12px", fontWeight: 700 }}>{s.chapa}</td>
+                  <td style={{ padding: "10px 12px" }}>{s.colaborador_nome}</td>
+                  <td style={{ padding: "10px 12px", color: "#6B7280" }}>{s.funcao}</td>
+                  <td style={{ padding: "10px 12px", color: "#6B7280" }}>{s.data_admissao ? new Date(s.data_admissao).toLocaleDateString("pt-BR") : "—"}</td>
+                  <td style={{ padding: "10px 12px" }}>{s.usuario_solicitante_nome}</td>
+                  <td style={{ padding: "10px 12px", color: "#6B7280" }}>{new Date(s.criado_em).toLocaleDateString("pt-BR")}</td>
+                  <td style={{ padding: "10px 12px" }}>
+                    <span style={{ padding: "2px 8px", borderRadius: 8, fontSize: 11, fontWeight: 700, background: stCfg.bg, color: stCfg.color }}>
+                      {stCfg.label || s.status}
+                    </span>
+                  </td>
+                  <td style={{ padding: "10px 12px" }}>
+                    <button style={{ ...S.btnS, padding: "4px 10px", fontSize: 11 }} onClick={() => { setModalDetalhe(s); setObsAprov(""); }}>
+                      Ver detalhes
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      )}
+
+      {/* MODAL NOVA SOLICITAÇÃO */}
+      {modalNova && (
+        <div style={S.modal}>
+          <div style={S.mbox}>
+            <h3 style={{ margin: "0 0 16px", fontSize: 15, fontWeight: 800, color: "#0F2447" }}>Nova Solicitação de Atualização Cadastral</h3>
+
+            {/* Busca colaborador */}
+            <div style={{ marginBottom: 14 }}>
+              <label style={S.lbl}>Colaborador *</label>
+              {colabSel ? (
+                <div style={{ padding: "6px 10px", background: "#EFF6FF", borderRadius: 6, fontSize: 12, color: "#1E40AF", fontWeight: 600, display: "flex", justifyContent: "space-between" }}>
+                  {colabSel.chapa} | {colabSel.nome} | {colabSel.funcao} | {colabSel.data_admissao ? new Date(colabSel.data_admissao).toLocaleDateString("pt-BR") : "—"}
+                  <button onClick={() => { setColabSel(null); setBuscaColab(""); setItens({}); }} style={{ background: "none", border: "none", cursor: "pointer", color: "#6B7280" }}>×</button>
+                </div>
+              ) : (
+                <>
+                  <input style={S.inp} placeholder="Digite nome ou matrícula..." value={buscaColab} onChange={e => setBuscaColab(e.target.value)} autoFocus />
+                  {buscaColab.length > 0 && colabsFilt.length > 0 && (
+                    <div style={{ border: "1px solid #E5E7EB", borderRadius: 6, maxHeight: 160, overflowY: "auto", marginTop: 2, background: "#fff", boxShadow: "0 4px 12px rgba(0,0,0,.1)" }}>
+                      {colabsFilt.slice(0, 8).map(c => (
+                        <div key={c.id} onClick={() => { setColabSel(c); setBuscaColab(""); }}
+                          style={{ padding: "7px 10px", cursor: "pointer", fontSize: 12, borderBottom: "1px solid #F3F4F6" }}
+                          onMouseEnter={e => e.currentTarget.style.background = "#F3F4F6"}
+                          onMouseLeave={e => e.currentTarget.style.background = ""}>
+                          <strong>{c.chapa}</strong> | {c.nome} | <span style={{ color: "#6B7280" }}>{c.funcao}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+
+            {/* Campos para alterar */}
+            {colabSel && (
+              <div style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 8, padding: "14px", marginBottom: 14 }}>
+                <p style={{ margin: "0 0 12px", fontSize: 11, fontWeight: 700, color: "#374151" }}>CAMPOS PARA ALTERAR</p>
+                <p style={{ margin: "0 0 12px", fontSize: 11, color: "#6B7280" }}>Selecione apenas os campos que deseja alterar. Os campos não selecionados não serão modificados.</p>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  {Object.entries(CAMPOS_CONFIG).map(([campo, cfg]) => (
+                    <div key={campo}>
+                      <label style={S.lbl}>{cfg.label}</label>
+                      <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                        <select style={{ ...S.inp, flex: 1 }}
+                          value={itens[campo] || ""}
+                          onChange={e => setItens(p => ({ ...p, [campo]: e.target.value || undefined }))}>
+                          <option value="">— sem alteração —</option>
+                          {cfg.tipo === "select_obj"
+                            ? cfg.dominio.map(d => <option key={d.cod} value={d.cod}>{d.cod} — {d.desc}</option>)
+                            : cfg.dominio.map(v => <option key={v} value={v}>{v}</option>)
+                          }
+                        </select>
+                        {colabSel[campo] && (
+                          <span style={{ fontSize: 10, color: "#6B7280", whiteSpace: "nowrap" }}>
+                            Atual: <strong>{labelValor(campo, colabSel[campo])}</strong>
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Observação */}
+            <div style={{ marginBottom: 16 }}>
+              <label style={S.lbl}>Observação</label>
+              <textarea style={{ ...S.inp, height: 60, resize: "vertical" }} value={observacao} onChange={e => setObservacao(e.target.value)} placeholder="Justificativa ou observação..." />
+            </div>
+
+            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+              <button style={S.btnS} onClick={() => { setModalNova(false); resetNova(); }}>Cancelar</button>
+              <button style={S.btnP} onClick={salvar} disabled={salvando}>{salvando ? "Salvando..." : "Registrar Solicitação"}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DETALHE / APROVAÇÃO */}
+      {modalDetalhe && (
+        <div style={{ ...S.modal, zIndex: 1100 }}>
+          <div style={{ ...S.mbox, maxWidth: 620 }}>
+            <h3 style={{ margin: "0 0 4px", fontSize: 15, fontWeight: 800, color: "#0F2447" }}>Detalhe da Solicitação #{modalDetalhe.id}</h3>
+            <p style={{ margin: "0 0 16px", fontSize: 11, color: "#6B7280" }}>
+              {modalDetalhe.chapa} | {modalDetalhe.colaborador_nome} | {modalDetalhe.funcao}
+            </p>
+
+            {/* Info */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 16, fontSize: 12 }}>
+              <div style={{ background: "#F9FAFB", borderRadius: 6, padding: "8px 12px" }}>
+                <div style={{ fontSize: 10, color: "#6B7280", marginBottom: 2 }}>SOLICITANTE</div>
+                <strong>{modalDetalhe.usuario_solicitante_nome}</strong>
+              </div>
+              <div style={{ background: "#F9FAFB", borderRadius: 6, padding: "8px 12px" }}>
+                <div style={{ fontSize: 10, color: "#6B7280", marginBottom: 2 }}>DATA</div>
+                <strong>{new Date(modalDetalhe.criado_em).toLocaleDateString("pt-BR")}</strong>
+              </div>
+              <div style={{ background: "#F9FAFB", borderRadius: 6, padding: "8px 12px" }}>
+                <div style={{ fontSize: 10, color: "#6B7280", marginBottom: 2 }}>STATUS</div>
+                <span style={{ padding: "2px 8px", borderRadius: 8, fontSize: 11, fontWeight: 700, background: STATUS_CONFIG[modalDetalhe.status]?.bg, color: STATUS_CONFIG[modalDetalhe.status]?.color }}>
+                  {STATUS_CONFIG[modalDetalhe.status]?.label}
+                </span>
+              </div>
+            </div>
+
+            {/* Itens antes x depois */}
+            <div style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 8, padding: "12px 14px", marginBottom: 16 }}>
+              <p style={{ margin: "0 0 10px", fontSize: 11, fontWeight: 700, color: "#374151" }}>ALTERAÇÕES SOLICITADAS</p>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+                <thead>
+                  <tr style={{ borderBottom: "1px solid #E5E7EB" }}>
+                    <th style={{ padding: "6px 8px", textAlign: "left", fontSize: 11, color: "#6B7280" }}>Campo</th>
+                    <th style={{ padding: "6px 8px", textAlign: "left", fontSize: 11, color: "#6B7280" }}>Antes</th>
+                    <th style={{ padding: "6px 8px", textAlign: "left", fontSize: 11, color: "#6B7280" }}>Depois</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(modalDetalhe.itens || []).map((item, i) => (
+                    <tr key={i} style={{ borderBottom: "1px solid #F3F4F6" }}>
+                      <td style={{ padding: "6px 8px", fontWeight: 600 }}>{labelCampo(item.campo)}</td>
+                      <td style={{ padding: "6px 8px", color: "#991B1B" }}>{labelValor(item.campo, item.valor_anterior)}</td>
+                      <td style={{ padding: "6px 8px", color: "#065F46", fontWeight: 700 }}>{labelValor(item.campo, item.novo_valor)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Observação */}
+            {modalDetalhe.observacao && (
+              <div style={{ background: "#FFFBEB", border: "1px solid #FDE68A", borderRadius: 6, padding: "8px 12px", marginBottom: 16, fontSize: 12 }}>
+                <strong>Observação:</strong> {modalDetalhe.observacao}
+              </div>
+            )}
+
+            {/* Aprovador */}
+            {modalDetalhe.usuario_aprovador_nome && (
+              <div style={{ background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: 6, padding: "8px 12px", marginBottom: 16, fontSize: 12 }}>
+                <strong>Aprovador:</strong> {modalDetalhe.usuario_aprovador_nome} — {modalDetalhe.data_aprovacao ? new Date(modalDetalhe.data_aprovacao).toLocaleDateString("pt-BR") : ""}
+              </div>
+            )}
+
+            {/* Ações de aprovação */}
+            {canAprovar && ["solicitado","em_analise"].includes(modalDetalhe.status) && (
+              <div style={{ marginBottom: 16 }}>
+                <label style={S.lbl}>Observação do aprovador</label>
+                <textarea style={{ ...S.inp, height: 50, resize: "vertical" }} value={obsAprov} onChange={e => setObsAprov(e.target.value)} placeholder="Opcional..." />
+              </div>
+            )}
+
+            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+              <button style={S.btnS} onClick={() => setModalDetalhe(null)}>Fechar</button>
+              {canAprovar && ["solicitado","em_analise"].includes(modalDetalhe.status) && (
+                <>
+                  <button style={S.btnR} onClick={() => aprovar("reprovar")} disabled={salvando}>✗ Reprovar</button>
+                  <button style={S.btnV} onClick={() => aprovar("aprovar")} disabled={salvando}>✓ Aprovar</button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function App() {
   const [user, setUser] = useState(null);
   const [page, setPage] = useState("dashboard");
@@ -6363,6 +6777,7 @@ export default function App() {
     auditoria:        { title: "Auditoria",               subtitle: "Log completo de ações" },
     plano_saude:      { title: "Benefícios",               subtitle: "" },
     desligamentos:    { title: "Solicitações de Desligamento",              subtitle: "Gerencie solicitações de desligamento de colaboradores" },
+    atualizacao_cadastral: { title: "Atualização de Dados Cadastrais", subtitle: "Solicitação de alteração cadastral" },
     ocorrencias:      { title: "Solicitações de Advertências/Suspensões",   subtitle: "Registro de ocorrências disciplinares" },
     autorizacoes:     { title: "Autorização de Desconto",                   subtitle: "Autorização para desconto na folha de pagamento" },
   };
@@ -6408,6 +6823,7 @@ export default function App() {
           {page === "auditoria"         && <Auditoria solicitacoes={solicitacoes} blocos={blocos} sessao={sessao} />}
           {page === "ocorrencias"       && <Ocorrencias user={user} colaboradores={colaboradores} />}
           {page === "autorizacoes"      && <Autorizacoes user={user} colaboradores={colaboradores} />}
+          {page === "atualizacao_cadastral" && <AtualizacaoCadastral user={user} colaboradores={colaboradores} />}
           {page === "plano_saude" && <PlanoSaude user={user} colaboradores={colaboradores} />}
         </div>
       </div>
