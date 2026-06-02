@@ -4135,16 +4135,12 @@ function Autorizacoes({ user, colaboradores }) {
     } catch(e) { alert("Erro: " + e.message); }
   };
 
+  const [modalAnexo, setModalAnexo] = useState(null); // { nome, dados }
+
   const verAnexo = (s) => {
     const dados = s.anexo_dados || s.anexo_base64;
     if (!dados) { alert("Anexo não disponível. Tente recarregar a página."); return; }
-    // Cria link de download temporário
-    const a = document.createElement("a");
-    a.href = dados;
-    a.download = s.anexo_nome || "anexo";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    setModalAnexo({ nome: s.anexo_nome || "anexo", dados });
   };
 
   const STATUS_CORES = {
@@ -4343,6 +4339,45 @@ function Autorizacoes({ user, colaboradores }) {
         </div>
       </Modal>
 
+      {/* Modal Visualizar Anexo */}
+      {modalAnexo && (
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.7)", zIndex:2000, display:"flex", alignItems:"center", justifyContent:"center" }}>
+          <div style={{ background:"#fff", borderRadius:14, width:"90vw", maxWidth:900, height:"90vh", display:"flex", flexDirection:"column", boxShadow:"0 20px 60px rgba(0,0,0,.4)" }}>
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 20px", borderBottom:"1px solid #E5E7EB" }}>
+              <span style={{ fontWeight:700, fontSize:14, color:"#0F2447" }}>📎 {modalAnexo.nome}</span>
+              <div style={{ display:"flex", gap:8 }}>
+                <button onClick={() => {
+                  const win = window.open("","_blank");
+                  win.document.write(`<!DOCTYPE html><html><head><title>${modalAnexo.nome}</title><style>body{margin:0;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;background:#f3f4f6;}iframe{border:none;}img{max-width:100%;}</style></head><body>`);
+                  if (modalAnexo.dados.startsWith("data:application/pdf") || modalAnexo.nome.toLowerCase().endsWith(".pdf")) {
+                    win.document.write(`<iframe src="${modalAnexo.dados}" width="100%" height="100%" style="position:fixed;inset:0;border:none;"></iframe>`);
+                  } else {
+                    win.document.write(`<img src="${modalAnexo.dados}" />`);
+                  }
+                  win.document.write(`</body></html>`);
+                  win.document.close();
+                  win.print();
+                }} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #3B82F6", background:"#EFF6FF", color:"#1D4ED8", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+                  🖨️ Imprimir / Salvar
+                </button>
+                <button onClick={() => setModalAnexo(null)} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #D1D5DB", background:"#F3F4F6", color:"#374151", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+                  ✕ Fechar
+                </button>
+              </div>
+            </div>
+            <div style={{ flex:1, overflow:"hidden", padding:8 }}>
+              {(modalAnexo.dados.startsWith("data:application/pdf") || modalAnexo.nome.toLowerCase().endsWith(".pdf")) ? (
+                <iframe src={modalAnexo.dados} style={{ width:"100%", height:"100%", border:"none", borderRadius:8 }} />
+              ) : (
+                <div style={{ width:"100%", height:"100%", overflow:"auto", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                  <img src={modalAnexo.dados} alt={modalAnexo.nome} style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain", borderRadius:8 }} />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Modal Visualizar Documento */}
       {modalDoc && (
         <Modal open={!!modalDoc} onClose={() => setModalDoc(null)} title="Autorização de Desconto" width={760}>
@@ -4384,6 +4419,7 @@ function Ocorrencias({ user, colaboradores }) {
   const [salvando, setSalvando] = useState(false);
   const [exportando, setExportando] = useState(false);
   const [msg, setMsg] = useState(null);
+  const [modalAnexoOc, setModalAnexoOc] = useState(null);
 
   // Filtros inline da tabela
   const [fColab,  setFColab]  = useState("");
@@ -4610,7 +4646,7 @@ function Ocorrencias({ user, colaboradores }) {
                           reader.onload = async (ev) => {
                             try {
                               await api.addAnexoOcorrencia(oc.id, { nome_arquivo: file.name, tipo_arquivo: file.type, dados_base64: ev.target.result });
-                              setOcorrencias(list => list.map(o => o.id === oc.id ? { ...o, anexo_nome: file.name, anexo_dados: ev.target.result } : o));
+                              setLista(list => list.map(o => o.id === oc.id ? { ...o, anexo_nome: file.name, anexo_dados: ev.target.result } : o));
                               alert("Anexo adicionado com sucesso!");
                             } catch(err) { alert(err.message); }
                           };
@@ -4621,9 +4657,7 @@ function Ocorrencias({ user, colaboradores }) {
                       <button onClick={() => {
                         const dados = oc.anexo_dados || oc.anexo_base64;
                         if (!dados) { alert("Recarregue a página para visualizar o anexo."); return; }
-                        const a = document.createElement("a");
-                        a.href = dados; a.download = oc.anexo_nome;
-                        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                        setModalAnexoOc({ nome: oc.anexo_nome, dados });
                       }} style={{ ...btnBase, border:"1px solid #3B82F6", background:"#EFF6FF", color:"#1D4ED8" }}>👁️ Ver</button>
                     )}
                     {oc.status === "ATIVO" && (
@@ -4637,6 +4671,45 @@ function Ocorrencias({ user, colaboradores }) {
           </tbody>
         </table>
       </Card>
+
+      {/* Modal Visualizar Anexo Ocorrência */}
+      {modalAnexoOc && (
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.7)", zIndex:2000, display:"flex", alignItems:"center", justifyContent:"center" }}>
+          <div style={{ background:"#fff", borderRadius:14, width:"90vw", maxWidth:900, height:"90vh", display:"flex", flexDirection:"column", boxShadow:"0 20px 60px rgba(0,0,0,.4)" }}>
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 20px", borderBottom:"1px solid #E5E7EB" }}>
+              <span style={{ fontWeight:700, fontSize:14, color:"#0F2447" }}>📎 {modalAnexoOc.nome}</span>
+              <div style={{ display:"flex", gap:8 }}>
+                <button onClick={() => {
+                  const win = window.open("","_blank");
+                  win.document.write(`<!DOCTYPE html><html><head><title>${modalAnexoOc.nome}</title></head><body style="margin:0">`);
+                  if (modalAnexoOc.dados.startsWith("data:application/pdf") || modalAnexoOc.nome.toLowerCase().endsWith(".pdf")) {
+                    win.document.write(`<iframe src="${modalAnexoOc.dados}" width="100%" height="100%" style="position:fixed;inset:0;border:none;"></iframe>`);
+                  } else {
+                    win.document.write(`<img src="${modalAnexoOc.dados}" style="max-width:100%" />`);
+                  }
+                  win.document.write(`</body></html>`);
+                  win.document.close();
+                  setTimeout(() => win.print(), 500);
+                }} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #3B82F6", background:"#EFF6FF", color:"#1D4ED8", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+                  🖨️ Imprimir / Salvar
+                </button>
+                <button onClick={() => setModalAnexoOc(null)} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #D1D5DB", background:"#F3F4F6", color:"#374151", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+                  ✕ Fechar
+                </button>
+              </div>
+            </div>
+            <div style={{ flex:1, overflow:"hidden", padding:8 }}>
+              {(modalAnexoOc.dados.startsWith("data:application/pdf") || modalAnexoOc.nome.toLowerCase().endsWith(".pdf")) ? (
+                <iframe src={modalAnexoOc.dados} style={{ width:"100%", height:"100%", border:"none", borderRadius:8 }} />
+              ) : (
+                <div style={{ width:"100%", height:"100%", overflow:"auto", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                  <img src={modalAnexoOc.dados} alt={modalAnexoOc.nome} style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain", borderRadius:8 }} />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal Nova Ocorrência */}
       <Modal open={modalForm} onClose={() => setModalForm(false)} title="Registrar Ocorrência Disciplinar" width={600}>
