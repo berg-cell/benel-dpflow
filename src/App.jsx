@@ -4232,13 +4232,15 @@ function Autorizacoes({ user, colaboradores }) {
                   <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>
                     {MESES_AUTORIZACAO.find(m=>m.value===s.mes_inicio)?.label}/{s.ano_inicio}
                   </td>
-                  <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>{s.gestor_nome}</td>
+                  <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>{
+                    (() => { const p = (s.gestor_nome||"").trim().split(/\s+/); return p.length >= 3 ? p[0]+" "+p[1]+" "+p[2] : p.join(" ") || "—"; })()
+                  }</td>
                   <td style={{ padding:"10px 14px" }}>
                     <span style={{ padding:"3px 10px", borderRadius:20, fontSize:11, fontWeight:600, background:st.bg, color:st.color }}>{st.label}</span>
                   </td>
                   <td style={{ padding:"10px 14px" }}>
                     <div style={{ display:"flex", gap:6 }}>
-                      <button onClick={() => setModalDoc({ ...docData, colaborador: colabData })} style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #D1D5DB", background:"#fff", fontSize:12, cursor:"pointer", fontWeight:600 }}>📄 Doc</button>
+                      <button onClick={() => setModalDoc({ ...docData, colaborador: colabData })} style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #D1D5DB", background:"#fff", fontSize:12, cursor:"pointer", fontWeight:600 }}>📄 PDF</button>
                       <label style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46", fontSize:12, cursor:"pointer", fontWeight:600 }}>
                         📎 {s.anexo_nome ? "Substituir" : "Anexar"}
                         <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display:"none" }}
@@ -4393,27 +4395,32 @@ function Autorizacoes({ user, colaboradores }) {
         </div>
       )}
 
-      {/* Modal Visualizar Documento */}
+      {/* Modal Visualizar Documento PDF */}
       {modalDoc && (
-        <Modal open={!!modalDoc} onClose={() => setModalDoc(null)} title="Autorização de Desconto" width={760}>
-          <div style={{ maxHeight: "65vh", overflowY: "auto", border: "1px solid #E5E7EB", borderRadius: 8 }}
-            dangerouslySetInnerHTML={{ __html: gerarHTMLAutorizacao(modalDoc, modalDoc.colaborador, LOGO_BENEL) }}
-          />
-          <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, paddingTop: 16, borderTop: "1px solid #F3F4F6", marginTop: 16 }}>
-            <Button variant="secondary" onClick={() => setModalDoc(null)}>Fechar</Button>
-            <Button onClick={() => {
-              const html = gerarHTMLAutorizacao(modalDoc, modalDoc.colaborador, LOGO_BENEL);
-              const janela = window.open("", "_blank");
-              janela.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8">
-                <title>Autorização de Desconto</title>
-                <style>body{margin:0;padding:0;}@media print{@page{margin:1.5cm;size:A4;}}</style>
-              </head><body>${html}</body></html>`);
-              janela.document.close();
-              janela.focus();
-              setTimeout(() => { janela.print(); }, 500);
-            }}>⬇ Baixar PDF</Button>
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.7)", zIndex:2000, display:"flex", alignItems:"center", justifyContent:"center" }}>
+          <div style={{ background:"#fff", borderRadius:14, width:"90vw", maxWidth:900, height:"90vh", display:"flex", flexDirection:"column", boxShadow:"0 20px 60px rgba(0,0,0,.4)" }}>
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 20px", borderBottom:"1px solid #E5E7EB" }}>
+              <span style={{ fontWeight:700, fontSize:14, color:"#0F2447" }}>📄 Autorização de Desconto</span>
+              <div style={{ display:"flex", gap:8 }}>
+                <button onClick={() => {
+                  const html = gerarHTMLAutorizacao(modalDoc, modalDoc.colaborador, LOGO_BENEL);
+                  const janela = window.open("","_blank");
+                  janela.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Autorização de Desconto</title><style>body{margin:0;padding:0;}@media print{@page{margin:1.5cm;size:A4;}}</style></head><body>${html}</body></html>`);
+                  janela.document.close();
+                  setTimeout(() => janela.print(), 500);
+                }} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #3B82F6", background:"#EFF6FF", color:"#1D4ED8", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+                  🖨️ Imprimir / Salvar
+                </button>
+                <button onClick={() => setModalDoc(null)} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #D1D5DB", background:"#F3F4F6", color:"#374151", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+                  ✕ Fechar
+                </button>
+              </div>
+            </div>
+            <div style={{ flex:1, overflow:"auto", padding:16 }}
+              dangerouslySetInnerHTML={{ __html: gerarHTMLAutorizacao(modalDoc, modalDoc.colaborador, LOGO_BENEL) }}
+            />
           </div>
-        </Modal>
+        </div>
       )}
     </div>
   );
