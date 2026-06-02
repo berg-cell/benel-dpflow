@@ -4222,38 +4222,38 @@ function Autorizacoes({ user, colaboradores }) {
               const colabData = s.colaborador || { nome: s.colaborador_nome, cpf: s.colaborador_cpf };
               return (
                 <tr key={s.id} style={{ borderTop:"1px solid #F3F4F6", background: i%2===0?"#fff":"#FAFAFA" }}>
-                  <td style={{ padding:"10px 14px" }}>
-                    <div style={{ fontWeight:600, fontSize:13, color:"#111827" }}>{nomeColab}</div>
+                  <td style={{ padding:"4px 8px" }}>
+                    <div style={{ fontWeight:600, fontSize:11, color:"#111827" }}>{nomeColab}</div>
                     <div style={{ fontSize:11, color:"#6B7280" }}>Data: {new Date(s.criado_em).toLocaleDateString("pt-BR")}</div>
                   </td>
-                  <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>
+                  <td style={{ padding:"4px 8px", fontSize:12, color:"#374151" }}>
                     R$ {parseFloat(s.valor_total).toFixed(2).replace(".",",")} · {s.num_parcelas}x de R$ {(parseFloat(s.valor_total)/parseInt(s.num_parcelas)).toFixed(2).replace(".",",")}
                   </td>
-                  <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>
+                  <td style={{ padding:"4px 8px", fontSize:12, color:"#374151" }}>
                     {MESES_AUTORIZACAO.find(m=>m.value===s.mes_inicio)?.label}/{s.ano_inicio}
                   </td>
-                  <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>{
+                  <td style={{ padding:"4px 8px", fontSize:12, color:"#374151" }}>{
                     (() => { const p = (s.gestor_nome||"").trim().split(/\s+/); return p.length >= 3 ? p[0]+" "+p[1]+" "+p[2] : p.join(" ") || "—"; })()
                   }</td>
-                  <td style={{ padding:"10px 14px" }}>
-                    <span style={{ padding:"3px 10px", borderRadius:20, fontSize:11, fontWeight:600, background:st.bg, color:st.color }}>{st.label}</span>
+                  <td style={{ padding:"4px 8px" }}>
+                    <span style={{ padding:"2px 8px", borderRadius:20, fontSize:10, fontWeight:600, background:st.bg, color:st.color }}>{st.label}</span>
                   </td>
-                  <td style={{ padding:"10px 14px" }}>
+                  <td style={{ padding:"4px 8px" }}>
                     <div style={{ display:"flex", gap:6 }}>
-                      <button onClick={() => setModalDoc({ ...docData, colaborador: colabData })} style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #D1D5DB", background:"#fff", fontSize:12, cursor:"pointer", fontWeight:600 }}>📄 PDF</button>
-                      <label style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46", fontSize:12, cursor:"pointer", fontWeight:600 }}>
+                      <button onClick={() => setModalDoc({ ...docData, colaborador: colabData })} style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #D1D5DB", background:"#fff", fontSize:11, cursor:"pointer", fontWeight:600 }}>📄 PDF</button>
+                      <label style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46", fontSize:11, cursor:"pointer", fontWeight:600 }}>
                         📎 {s.anexo_nome ? "Substituir" : "Anexar"}
                         <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display:"none" }}
                           onChange={e => { const f = e.target.files[0]; if (f) anexar(s.id, f); }} />
                       </label>
                       {s.anexo_nome && (
                         <button onClick={() => verAnexo(s)}
-                          style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #3B82F6", background:"#EFF6FF", color:"#1D4ED8", fontSize:12, cursor:"pointer", fontWeight:600 }}>
+                          style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #3B82F6", background:"#EFF6FF", color:"#1D4ED8", fontSize:11, cursor:"pointer", fontWeight:600 }}>
                           👁️ Ver
                         </button>
                       )}
                       {["dp","admin"].includes(user.perfil) && (
-                        <button onClick={() => cancelar(s.id)} style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #EF4444", background:"#FEF2F2", color:"#DC2626", fontSize:12, cursor:"pointer", fontWeight:600 }}>🚫</button>
+                        <button onClick={() => cancelar(s.id)} style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #EF4444", background:"#FEF2F2", color:"#DC2626", fontSize:11, cursor:"pointer", fontWeight:600 }}>🚫</button>
                       )}
                     </div>
                   </td>
@@ -5379,17 +5379,17 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
               const btnBase = { padding:"5px 10px", borderRadius:6, fontSize:11, fontWeight:600, cursor:"pointer", whiteSpace:"nowrap", fontFamily:"inherit" };
               return (
                 <tr key={sol.id} style={{ borderTop:"1px solid #F3F4F6", background: i%2===0?"#fff":"#FAFAFA" }}>
-                  <td style={{ padding:"10px 14px" }}>
-                    <div style={{ fontWeight:600, fontSize:13, color:"#111827" }}>{sol.colaborador_nome}</div>
+                  <td style={{ padding:"4px 8px" }}>
+                    <div style={{ fontWeight:600, fontSize:11, color:"#111827" }}>{sol.colaborador_nome}</div>
                     <div style={{ fontSize:11, color:"#6B7280" }}>Chapa: {sol.chapa}</div>
                   </td>
-                  <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>{tipo?.label || sol.tipo}</td>
-                  <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>{sol.data_desligamento ? new Date(sol.data_desligamento).toLocaleDateString("pt-BR", { timeZone:"UTC" }) : "—"}</td>
-                  <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>{sol.gestor_nome}</td>
-                  <td style={{ padding:"10px 14px" }}>
+                  <td style={{ padding:"4px 8px", fontSize:12, color:"#374151" }}>{tipo?.label || sol.tipo}</td>
+                  <td style={{ padding:"4px 8px", fontSize:12, color:"#374151" }}>{sol.data_desligamento ? new Date(sol.data_desligamento).toLocaleDateString("pt-BR", { timeZone:"UTC" }) : "—"}</td>
+                  <td style={{ padding:"4px 8px", fontSize:12, color:"#374151" }}>{sol.gestor_nome}</td>
+                  <td style={{ padding:"4px 8px" }}>
                     <span style={{ background: st.color+"22", color: st.color, borderRadius:6, padding:"3px 8px", fontSize:11, fontWeight:600 }}>{st.label}</span>
                   </td>
-                  <td style={{ padding:"10px 14px" }}>
+                  <td style={{ padding:"4px 8px" }}>
                     <div style={{ display:"flex", gap:4, flexWrap:"nowrap", alignItems:"center" }}>
                       <button onClick={() => abrirDetalhe(sol.id)} style={{ ...btnBase, border:"1px solid #E5E7EB", background:"#fff", color:"#374151" }}>Ver</button>
 
@@ -6195,7 +6195,7 @@ function PlanoSaude({ user, colaboradores }) {
   );
 
   const InfoColab = ({ c }) => c ? (
-    <div style={{ background:"#FFFBEB", border:"1px solid #FDE68A", borderRadius:8, padding:"10px 14px", marginBottom:14 }}>
+    <div style={{ background:"#FFFBEB", border:"1px solid #FDE68A", borderRadius:8, padding:"4px 8px", marginBottom:14 }}>
       {["7"].includes(String(c.cod_filial)) && (
         <div style={{ background:"#FEE2E2", border:"1px solid #FECACA", borderRadius:6, padding:"8px 12px", marginBottom:10, fontSize:12, fontWeight:700, color:"#991B1B" }}>
           ⚠️ Filial 7 — São Mateus: o plano Hapvida não atende esta localidade. Solicitação não permitida.
