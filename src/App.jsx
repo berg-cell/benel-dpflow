@@ -6611,7 +6611,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
                   const stCfg = AC_STATUS_CONFIG[s.status] || {};
                   return (
                     <tr key={s.id} onMouseEnter={e => e.currentTarget.style.background = "#F9FAFB"} onMouseLeave={e => e.currentTarget.style.background = ""}>
-                      <td style={{ ...S.td, fontSize: 10 }}>{(s.desc_cc||"").replace(/^BENEL TRANSPORTES\s*[-–]\s*/i,"").trim() || "—"}</td>
+                      <td style={{ ...S.td, fontSize: 10 }}>{(s.descricao_filial || s.desc_cc || "").replace(/^BENEL TRANSPORTES\s*[-–]\s*/i,"").trim() || "—"}</td>
                       <td style={{ ...S.td, fontWeight: 700 }}>{s.chapa}</td>
                       <td style={S.td}>{s.colaborador_nome}</td>
                       <td style={{ ...S.td, color: "#6B7280" }}>{s.funcao}</td>
