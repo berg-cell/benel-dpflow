@@ -4135,12 +4135,24 @@ function Autorizacoes({ user, colaboradores }) {
     } catch(e) { alert("Erro: " + e.message); }
   };
 
-  const [modalAnexo, setModalAnexo] = useState(null); // { nome, dados }
+  const [modalAnexo, setModalAnexo] = useState(null); // { nome, blobUrl, isPdf }
+
+  const abrirAnexo = (nome, dados) => {
+    if (!dados) { alert("Anexo não disponível. Tente recarregar a página."); return; }
+    // Converte base64 para Blob URL (contorna bloqueio CSP do iframe)
+    const [header, b64] = dados.split(",");
+    const mime = header.match(/:(.*?);/)?.[1] || "application/octet-stream";
+    const bytes = atob(b64);
+    const arr = new Uint8Array(bytes.length);
+    for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+    const blob = new Blob([arr], { type: mime });
+    const blobUrl = URL.createObjectURL(blob);
+    const isPdf = mime === "application/pdf" || nome.toLowerCase().endsWith(".pdf");
+    setModalAnexo({ nome, blobUrl, isPdf });
+  };
 
   const verAnexo = (s) => {
-    const dados = s.anexo_dados || s.anexo_base64;
-    if (!dados) { alert("Anexo não disponível. Tente recarregar a página."); return; }
-    setModalAnexo({ nome: s.anexo_nome || "anexo", dados });
+    abrirAnexo(s.anexo_nome || "anexo", s.anexo_dados || s.anexo_base64);
   };
 
   const STATUS_CORES = {
@@ -4347,30 +4359,22 @@ function Autorizacoes({ user, colaboradores }) {
               <span style={{ fontWeight:700, fontSize:14, color:"#0F2447" }}>📎 {modalAnexo.nome}</span>
               <div style={{ display:"flex", gap:8 }}>
                 <button onClick={() => {
-                  const win = window.open("","_blank");
-                  win.document.write(`<!DOCTYPE html><html><head><title>${modalAnexo.nome}</title><style>body{margin:0;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;background:#f3f4f6;}iframe{border:none;}img{max-width:100%;}</style></head><body>`);
-                  if (modalAnexo.dados.startsWith("data:application/pdf") || modalAnexo.nome.toLowerCase().endsWith(".pdf")) {
-                    win.document.write(`<iframe src="${modalAnexo.dados}" width="100%" height="100%" style="position:fixed;inset:0;border:none;"></iframe>`);
-                  } else {
-                    win.document.write(`<img src="${modalAnexo.dados}" />`);
-                  }
-                  win.document.write(`</body></html>`);
-                  win.document.close();
-                  win.print();
+                  const win = window.open(modalAnexo.blobUrl, "_blank");
+                  setTimeout(() => win?.print(), 800);
                 }} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #3B82F6", background:"#EFF6FF", color:"#1D4ED8", fontSize:12, fontWeight:700, cursor:"pointer" }}>
                   🖨️ Imprimir / Salvar
                 </button>
-                <button onClick={() => setModalAnexo(null)} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #D1D5DB", background:"#F3F4F6", color:"#374151", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+                <button onClick={() => { URL.revokeObjectURL(modalAnexo.blobUrl); setModalAnexo(null); }} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #D1D5DB", background:"#F3F4F6", color:"#374151", fontSize:12, fontWeight:700, cursor:"pointer" }}>
                   ✕ Fechar
                 </button>
               </div>
             </div>
             <div style={{ flex:1, overflow:"hidden", padding:8 }}>
-              {(modalAnexo.dados.startsWith("data:application/pdf") || modalAnexo.nome.toLowerCase().endsWith(".pdf")) ? (
-                <iframe src={modalAnexo.dados} style={{ width:"100%", height:"100%", border:"none", borderRadius:8 }} />
+              {modalAnexo.isPdf ? (
+                <iframe src={modalAnexo.blobUrl} style={{ width:"100%", height:"100%", border:"none", borderRadius:8 }} />
               ) : (
                 <div style={{ width:"100%", height:"100%", overflow:"auto", display:"flex", alignItems:"center", justifyContent:"center" }}>
-                  <img src={modalAnexo.dados} alt={modalAnexo.nome} style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain", borderRadius:8 }} />
+                  <img src={modalAnexo.blobUrl} alt={modalAnexo.nome} style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain", borderRadius:8 }} />
                 </div>
               )}
             </div>
@@ -4419,7 +4423,20 @@ function Ocorrencias({ user, colaboradores }) {
   const [salvando, setSalvando] = useState(false);
   const [exportando, setExportando] = useState(false);
   const [msg, setMsg] = useState(null);
-  const [modalAnexoOc, setModalAnexoOc] = useState(null);
+  const [modalAnexoOc, setModalAnexoOc] = useState(null); // { nome, blobUrl, isPdf }
+
+  const abrirAnexoOc = (nome, dados) => {
+    if (!dados) { alert("Anexo não disponível. Tente recarregar a página."); return; }
+    const [header, b64] = dados.split(",");
+    const mime = header.match(/:(.*?);/)?.[1] || "application/octet-stream";
+    const bytes = atob(b64);
+    const arr = new Uint8Array(bytes.length);
+    for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+    const blob = new Blob([arr], { type: mime });
+    const blobUrl = URL.createObjectURL(blob);
+    const isPdf = mime === "application/pdf" || nome.toLowerCase().endsWith(".pdf");
+    setModalAnexoOc({ nome, blobUrl, isPdf });
+  };
 
   // Filtros inline da tabela
   const [fColab,  setFColab]  = useState("");
@@ -4654,11 +4671,8 @@ function Ocorrencias({ user, colaboradores }) {
                         }} />
                     </label>
                     {oc.anexo_nome && (
-                      <button onClick={() => {
-                        const dados = oc.anexo_dados || oc.anexo_base64;
-                        if (!dados) { alert("Recarregue a página para visualizar o anexo."); return; }
-                        setModalAnexoOc({ nome: oc.anexo_nome, dados });
-                      }} style={{ ...btnBase, border:"1px solid #3B82F6", background:"#EFF6FF", color:"#1D4ED8" }}>👁️ Ver</button>
+                      <button onClick={() => abrirAnexoOc(oc.anexo_nome, oc.anexo_dados || oc.anexo_base64)}
+                        style={{ ...btnBase, border:"1px solid #3B82F6", background:"#EFF6FF", color:"#1D4ED8" }}>👁️ Ver</button>
                     )}
                     {oc.status === "ATIVO" && (
                       <button onClick={() => cancelarOcorrencia(oc.id)} style={{ ...btnBase, border:"1px solid #EF4444", background:"#FEF2F2", color:"#DC2626" }}>🚫</button>
@@ -4681,29 +4695,25 @@ function Ocorrencias({ user, colaboradores }) {
               <div style={{ display:"flex", gap:8 }}>
                 <button onClick={() => {
                   const win = window.open("","_blank");
-                  win.document.write(`<!DOCTYPE html><html><head><title>${modalAnexoOc.nome}</title></head><body style="margin:0">`);
-                  if (modalAnexoOc.dados.startsWith("data:application/pdf") || modalAnexoOc.nome.toLowerCase().endsWith(".pdf")) {
-                    win.document.write(`<iframe src="${modalAnexoOc.dados}" width="100%" height="100%" style="position:fixed;inset:0;border:none;"></iframe>`);
-                  } else {
-                    win.document.write(`<img src="${modalAnexoOc.dados}" style="max-width:100%" />`);
-                  }
-                  win.document.write(`</body></html>`);
-                  win.document.close();
-                  setTimeout(() => win.print(), 500);
+                  // usa blobUrl direto
+                  const win2 = window.open(modalAnexoOc.blobUrl, "_blank");
+                  setTimeout(() => win2?.print(), 800);
+                  return;
+                  void 0;
                 }} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #3B82F6", background:"#EFF6FF", color:"#1D4ED8", fontSize:12, fontWeight:700, cursor:"pointer" }}>
                   🖨️ Imprimir / Salvar
                 </button>
-                <button onClick={() => setModalAnexoOc(null)} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #D1D5DB", background:"#F3F4F6", color:"#374151", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+                <button onClick={() => { URL.revokeObjectURL(modalAnexoOc.blobUrl); setModalAnexoOc(null); }} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #D1D5DB", background:"#F3F4F6", color:"#374151", fontSize:12, fontWeight:700, cursor:"pointer" }}>
                   ✕ Fechar
                 </button>
               </div>
             </div>
             <div style={{ flex:1, overflow:"hidden", padding:8 }}>
-              {(modalAnexoOc.dados.startsWith("data:application/pdf") || modalAnexoOc.nome.toLowerCase().endsWith(".pdf")) ? (
-                <iframe src={modalAnexoOc.dados} style={{ width:"100%", height:"100%", border:"none", borderRadius:8 }} />
+              {modalAnexoOc.isPdf ? (
+                <iframe src={modalAnexoOc.blobUrl} style={{ width:"100%", height:"100%", border:"none", borderRadius:8 }} />
               ) : (
                 <div style={{ width:"100%", height:"100%", overflow:"auto", display:"flex", alignItems:"center", justifyContent:"center" }}>
-                  <img src={modalAnexoOc.dados} alt={modalAnexoOc.nome} style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain", borderRadius:8 }} />
+                  <img src={modalAnexoOc.blobUrl} alt={modalAnexoOc.nome} style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain", borderRadius:8 }} />
                 </div>
               )}
             </div>
