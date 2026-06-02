@@ -4664,7 +4664,7 @@ function Ocorrencias({ user, colaboradores }) {
                     ? <span>{formatarData(oc.data_inicio)} → {formatarData(oc.data_fim)}<br/><b>{oc.dias_suspensao} dia(s)</b></span>
                     : "—"}
                 </td>
-                <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{oc.gestor_nome}</td>
+                <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{(p => p.length >= 3 ? p[0]+" "+p[1]+" "+p[2] : p.join(" "))((oc.gestor_nome||"").trim().split(" "))}</td>
                 <td style={{ padding: "3px 6px" }}>
                   <span style={{
                     padding: "3px 8px", borderRadius: 6, fontSize: 11, fontWeight: 600,
