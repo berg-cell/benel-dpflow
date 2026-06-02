@@ -5968,6 +5968,21 @@ function PlanoSaude({ user, colaboradores }) {
   };
 
   // ── Estilos compactos seguindo padrão do sistema ──────────────────────────
+  const salvarEdicao = async () => {
+    const itensList = Object.entries(itensEdit).filter(([,v]) => v).map(([campo, novo_valor]) => ({ campo, novo_valor }));
+    if (itensList.length === 0) { setMsg({ tipo: "erro", texto: "Selecione ao menos um campo para alterar." }); return; }
+    setSalvando(true);
+    try {
+      // Cancela a atual e cria nova
+      await api.cancelarAtualizacaoCadastral(modalDetalhe.id);
+      await api.criarAtualizacaoCadastral({ colaborador_id: modalDetalhe.colaborador_id, itens: itensList, observacao: obsEdit });
+      setMsg({ tipo: "ok", texto: "Solicitação atualizada com sucesso!" });
+      setModalDetalhe(null); setEditando(false); setItensEdit({}); setObsEdit("");
+      carregarSols();
+    } catch (e) { setMsg({ tipo: "erro", texto: e.message }); }
+    finally { setSalvando(false); }
+  };
+
   const S = {
     page:   { padding:"16px 20px", maxWidth:960, margin:"0 auto" },
     header: { display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 },
@@ -6350,9 +6365,15 @@ function AtualizacaoCadastral({ user, colaboradores }) {
   // Modal detalhe
   const [modalDetalhe, setModalDetalhe] = useState(null);
   const [obsAprov, setObsAprov]         = useState("");
+  const [editando, setEditando]         = useState(false);
+  const [itensEdit, setItensEdit]       = useState({});
+  const [obsEdit, setObsEdit]           = useState("");
 
   const norm = s => (s || "").toLowerCase();
   const canAprovar = user.perfil === "dp" || user.perfil === "admin";
+  const canEditar  = (s) => s && s.status !== "finalizado" && s.status !== "reprovado" &&
+    (user.perfil === "gestor" || user.perfil === "superior" || user.perfil === "dp" || user.perfil === "admin") &&
+    (user.perfil === "dp" || user.perfil === "admin" || s.usuario_solicitante_id === user.id);
 
   const colabsAtivos = colaboradores.filter(c => c.cod_situacao !== "D");
   const fmtFilial = (c) => {
@@ -6414,6 +6435,21 @@ function AtualizacaoCadastral({ user, colaboradores }) {
       await api.aprovarAtualizacaoCadastral(modalDetalhe.id, acao, obsAprov);
       setMsg({ tipo: "ok", texto: `Solicitação ${acao === "aprovar" ? "aprovada" : "reprovada"}!` });
       setModalDetalhe(null); setObsAprov(""); carregarSols();
+    } catch (e) { setMsg({ tipo: "erro", texto: e.message }); }
+    finally { setSalvando(false); }
+  };
+
+  const salvarEdicao = async () => {
+    const itensList = Object.entries(itensEdit).filter(([,v]) => v).map(([campo, novo_valor]) => ({ campo, novo_valor }));
+    if (itensList.length === 0) { setMsg({ tipo: "erro", texto: "Selecione ao menos um campo para alterar." }); return; }
+    setSalvando(true);
+    try {
+      // Cancela a atual e cria nova
+      await api.cancelarAtualizacaoCadastral(modalDetalhe.id);
+      await api.criarAtualizacaoCadastral({ colaborador_id: modalDetalhe.colaborador_id, itens: itensList, observacao: obsEdit });
+      setMsg({ tipo: "ok", texto: "Solicitação atualizada com sucesso!" });
+      setModalDetalhe(null); setEditando(false); setItensEdit({}); setObsEdit("");
+      carregarSols();
     } catch (e) { setMsg({ tipo: "erro", texto: e.message }); }
     finally { setSalvando(false); }
   };
@@ -6742,9 +6778,55 @@ function AtualizacaoCadastral({ user, colaboradores }) {
               </div>
             )}
 
+            {/* EDIÇÃO INLINE */}
+            {editando && (
+              <div style={{ background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: 8, padding: "14px", marginBottom: 14 }}>
+                <p style={{ margin: "0 0 10px", fontSize: 11, fontWeight: 700, color: "#065F46" }}>✏️ EDITAR SOLICITAÇÃO</p>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                  {Object.entries(CAMPOS_CONFIG).map(([campo, cfg]) => (
+                    <div key={campo}>
+                      <label style={S.lbl}>{cfg.label}</label>
+                      <div style={{ fontSize: 10, color: "#6B7280", marginBottom: 3 }}>
+                        Atual: <strong>{(modalDetalhe.itens||[]).find(i=>i.campo===campo) ? labelValor(campo,(modalDetalhe.itens||[]).find(i=>i.campo===campo).novo_valor) : "—"}</strong>
+                      </div>
+                      <select style={S.inp} value={itensEdit[campo]||""} onChange={e => setItensEdit(p => ({ ...p, [campo]: e.target.value || undefined }))}>
+                        <option value="">— sem alteração —</option>
+                        {cfg.tipo === "select_obj"
+                          ? cfg.dominio.map(d => <option key={d.cod} value={d.cod}>{d.cod} — {d.desc}</option>)
+                          : cfg.dominio.map(v => <option key={v} value={v}>{v}</option>)
+                        }
+                      </select>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ marginTop: 10 }}>
+                  <label style={S.lbl}>Observação</label>
+                  <textarea style={{ ...S.inp, height: 44, resize: "vertical" }} value={obsEdit} onChange={e => setObsEdit(e.target.value)} placeholder="Justificativa..." />
+                </div>
+              </div>
+            )}
+
             <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-              <button style={S.btnS} onClick={() => setModalDetalhe(null)}>Fechar</button>
-              {canAprovar && ["solicitado","em_analise"].includes(modalDetalhe.status) && (
+              <button style={S.btnS} onClick={() => { setModalDetalhe(null); setEditando(false); setItensEdit({}); setObsEdit(""); }}>Fechar</button>
+              {canEditar(modalDetalhe) && !editando && (
+                <button style={{ ...S.btnS, borderColor: "#3B82F6", color: "#3B82F6" }}
+                  onClick={() => {
+                    const prefill = {};
+                    (modalDetalhe.itens||[]).forEach(i => { prefill[i.campo] = i.novo_valor; });
+                    setItensEdit(prefill);
+                    setObsEdit(modalDetalhe.observacao || "");
+                    setEditando(true);
+                  }}>
+                  ✏️ Editar
+                </button>
+              )}
+              {editando && (
+                <>
+                  <button style={S.btnS} onClick={() => { setEditando(false); setItensEdit({}); setObsEdit(""); }}>Cancelar edição</button>
+                  <button style={{ ...S.btnP, background: "#059669" }} onClick={salvarEdicao} disabled={salvando}>{salvando ? "Salvando..." : "💾 Salvar alterações"}</button>
+                </>
+              )}
+              {canAprovar && !editando && ["solicitado","em_analise"].includes(modalDetalhe.status) && (
                 <>
                   <button style={S.btnR} onClick={() => aprovar("reprovar")} disabled={salvando}>✗ Reprovar</button>
                   <button style={S.btnV} onClick={() => aprovar("aprovar")} disabled={salvando}>✓ Aprovar</button>
