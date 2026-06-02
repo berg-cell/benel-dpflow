@@ -6371,8 +6371,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
 
   const norm = s => (s || "").toLowerCase();
   const canAprovar = user.perfil === "dp" || user.perfil === "admin";
-  const canEditar  = (s) => s && s.status !== "finalizado" && s.status !== "reprovado" &&
-    (user.perfil === "dp" || user.perfil === "admin" || String(s.usuario_solicitante_id) === String(user.id));
+  const canEditar  = (s) => s && s.status !== "finalizado" && s.status !== "reprovado";
 
   const colabsAtivos = colaboradores.filter(c => c.cod_situacao !== "D");
   const fmtFilial = (c) => {
