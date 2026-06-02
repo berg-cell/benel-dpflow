@@ -4189,12 +4189,13 @@ function Autorizacoes({ user, colaboradores }) {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
-              {["Colaborador", "Valor / Parcelas", "Início", "Solicitante", "Status", "Ações"].map(h => (
+              {["Colaborador", "Valor / Parcelas", "Início", "Data", "Solicitante", "Status", "Ações"].map(h => (
                 <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
             <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
               <th style={{ padding:"5px 8px" }}><input value={fAColab} onChange={e=>setFAColab(e.target.value)} placeholder="🔍 Colaborador/Chapa" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding:"5px 8px" }} />
               <th style={{ padding:"5px 8px" }} />
               <th style={{ padding:"5px 8px" }} />
               <th style={{ padding:"5px 8px" }}><input value={fAGestor} onChange={e=>setFAGestor(e.target.value)} placeholder="🔍 Solicitante" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
@@ -4224,15 +4225,18 @@ function Autorizacoes({ user, colaboradores }) {
                 <tr key={s.id} style={{ borderTop:"1px solid #F3F4F6", background: i%2===0?"#fff":"#FAFAFA" }}>
                   <td style={{ padding:"4px 8px" }}>
                     <div style={{ fontWeight:600, fontSize:11, color:"#111827" }}>{nomeColab}</div>
-                    <div style={{ fontSize:11, color:"#6B7280" }}>Data: {new Date(s.criado_em).toLocaleDateString("pt-BR")}</div>
+                    <div style={{ fontSize:10, color:"#6B7280" }}>Chapa: {s.colaborador?.chapa || s.colaborador_cpf || "—"}</div>
                   </td>
                   <td style={{ padding:"4px 8px", fontSize:12, color:"#374151" }}>
                     R$ {parseFloat(s.valor_total).toFixed(2).replace(".",",")} · {s.num_parcelas}x de R$ {(parseFloat(s.valor_total)/parseInt(s.num_parcelas)).toFixed(2).replace(".",",")}
                   </td>
-                  <td style={{ padding:"4px 8px", fontSize:12, color:"#374151" }}>
+                  <td style={{ padding:"4px 8px", fontSize:11, color:"#374151" }}>
                     {MESES_AUTORIZACAO.find(m=>m.value===s.mes_inicio)?.label}/{s.ano_inicio}
                   </td>
-                  <td style={{ padding:"4px 8px", fontSize:12, color:"#374151" }}>{
+                  <td style={{ padding:"4px 8px", fontSize:11, color:"#6B7280" }}>
+                    {new Date(s.criado_em).toLocaleDateString("pt-BR")}
+                  </td>
+                  <td style={{ padding:"4px 8px", fontSize:11, color:"#374151" }}>{
                     (() => { const p = (s.gestor_nome||"").trim().split(/\s+/); return p.length >= 3 ? p[0]+" "+p[1]+" "+p[2] : p.join(" ") || "—"; })()
                   }</td>
                   <td style={{ padding:"4px 8px" }}>
