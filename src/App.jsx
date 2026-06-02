@@ -4610,12 +4610,22 @@ function Ocorrencias({ user, colaboradores }) {
                           reader.onload = async (ev) => {
                             try {
                               await api.addAnexoOcorrencia(oc.id, { nome_arquivo: file.name, tipo_arquivo: file.type, dados_base64: ev.target.result });
+                              setOcorrencias(list => list.map(o => o.id === oc.id ? { ...o, anexo_nome: file.name, anexo_dados: ev.target.result } : o));
                               alert("Anexo adicionado com sucesso!");
                             } catch(err) { alert(err.message); }
                           };
                           reader.readAsDataURL(file);
                         }} />
                     </label>
+                    {oc.anexo_nome && (
+                      <button onClick={() => {
+                        const dados = oc.anexo_dados || oc.anexo_base64;
+                        if (!dados) { alert("Recarregue a página para visualizar o anexo."); return; }
+                        const a = document.createElement("a");
+                        a.href = dados; a.download = oc.anexo_nome;
+                        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                      }} style={{ ...btnBase, border:"1px solid #3B82F6", background:"#EFF6FF", color:"#1D4ED8" }}>👁️ Ver</button>
+                    )}
                     {oc.status === "ATIVO" && (
                       <button onClick={() => cancelarOcorrencia(oc.id)} style={{ ...btnBase, border:"1px solid #EF4444", background:"#FEF2F2", color:"#DC2626" }}>🚫</button>
                     )}
