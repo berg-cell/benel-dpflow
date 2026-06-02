@@ -6516,15 +6516,18 @@ function AtualizacaoCadastral({ user, colaboradores }) {
 
   const colabsAtivos = colaboradores.filter(c => c.cod_situacao !== "D");
   const fmtFilial = (c) => {
-    const f = c.descricao_filial || c.desc_cc || "";
-    return f.replace(/^BENEL TRANSPORTES\s*[-–]\s*/i, "").trim();
+    // descricao_filial = "CARMOPOLIS-SE", desc_cc = "CARMO - 318 SE - ARTICULADOS"
+    // Sempre usar descricao_filial quando disponível
+    if (c.descricao_filial) return c.descricao_filial.replace(/^BENEL TRANSPORTES\s*[-–]\s*/i, "").trim();
+    // Fallback: desc_cc mas só até o primeiro traço (ex: "CARMO - 318..." → não usar)
+    return "";
   };
 
   const colabsFiltrados = colabsAtivos.filter(c =>
     (!fNome          || (c.chapa||"").toLowerCase().includes(fNome.toLowerCase())) &&
     (!fNomeCompleto  || norm(c.nome).includes(norm(fNomeCompleto))) &&
     (!fFuncao        || norm(c.funcao||"").includes(norm(fFuncao))) &&
-    (!fFilial        || norm(fmtFilial(c)).includes(norm(fFilial)) || norm(c.desc_cc||"").includes(norm(fFilial))) &&
+    (!fFilial        || norm(fmtFilial(c)).includes(norm(fFilial))) &&
     (!fPosEscala     || norm(c.posicao_escala||"").includes(norm(fPosEscala))) &&
     (!fMotLider      || (fMotLider   === "S" ? c.motorista_lider === "T" : c.motorista_lider !== "T")) &&
     (!fMunkeiro      || (fMunkeiro   === "S" ? c.munkeiro        === "T" : c.munkeiro        !== "T")) &&
