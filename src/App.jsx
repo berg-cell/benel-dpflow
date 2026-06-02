@@ -4676,7 +4676,7 @@ function Ocorrencias({ user, colaboradores }) {
                   <div style={{ display:"flex", gap:4, alignItems:"center", flexWrap:"nowrap" }}>
                     <button onClick={() => gerarPDF(oc)} style={{ ...btnBase, border:"1px solid #D1D5DB", background:"#fff", color:"#374151" }}>📄 PDF</button>
                     <label style={{ ...btnBase, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46", display:"inline-block" }}>
-                      📎 Anexar
+                      📎 {oc.anexo_nome ? "Substituir" : "Anexar"}
                       <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display:"none" }}
                         onChange={async (e) => {
                           const file = e.target.files[0]; if (!file) return;
