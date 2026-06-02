@@ -4121,7 +4121,7 @@ function Autorizacoes({ user, colaboradores }) {
     reader.onload = async (ev) => {
       try {
         await api.addAnexoAutorizacao(id, { nome_arquivo: file.name, dados_base64: ev.target.result });
-        setLista(l => l.map(s => s.id === id ? { ...s, anexo_nome: file.name, status: "anexado" } : s));
+        setLista(l => l.map(s => s.id === id ? { ...s, anexo_nome: file.name, anexo_dados: ev.target.result, status: "anexado" } : s));
       } catch(e) { alert("Erro ao anexar: " + e.message); }
     };
     reader.readAsDataURL(file);
@@ -4133,6 +4133,21 @@ function Autorizacoes({ user, colaboradores }) {
       await api.cancelarAutorizacao(id);
       setLista(l => l.map(s => s.id === id ? { ...s, status: "cancelado" } : s));
     } catch(e) { alert("Erro: " + e.message); }
+  };
+
+  const verAnexo = (s) => {
+    // Se tiver o base64 em memória (recém anexado ou retornado pela API)
+    const dados = s.anexo_dados || s.anexo_base64;
+    if (dados) {
+      const win = window.open();
+      if (s.anexo_nome?.toLowerCase().endsWith(".pdf") || dados.startsWith("data:application/pdf")) {
+        win.document.write(`<iframe src="${dados}" width="100%" height="100%" style="border:none;"></iframe>`);
+      } else {
+        win.document.write(`<img src="${dados}" style="max-width:100%;" />`);
+      }
+    } else {
+      alert("Anexo não disponível. Tente recarregar a página.");
+    }
   };
 
   const STATUS_CORES = {
@@ -4222,7 +4237,12 @@ function Autorizacoes({ user, colaboradores }) {
                         <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display:"none" }}
                           onChange={e => { const f = e.target.files[0]; if (f) anexar(s.id, f); }} />
                       </label>
-                      {s.anexo_nome && <span style={{ fontSize:11, color:"#065F46", alignSelf:"center" }}>✅</span>}
+                      {s.anexo_nome && (
+                        <button onClick={() => verAnexo(s)}
+                          style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #3B82F6", background:"#EFF6FF", color:"#1D4ED8", fontSize:12, cursor:"pointer", fontWeight:600 }}>
+                          👁️ Ver
+                        </button>
+                      )}
                       {["dp","admin"].includes(user.perfil) && (
                         <button onClick={() => cancelar(s.id)} style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #EF4444", background:"#FEF2F2", color:"#DC2626", fontSize:12, cursor:"pointer", fontWeight:600 }}>🚫</button>
                       )}
