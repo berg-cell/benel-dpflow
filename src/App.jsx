@@ -6382,7 +6382,12 @@ function AtualizacaoCadastral({ user, colaboradores }) {
       if (fDataFim) params.data_fim = fDataFim;
       if (fSolic)   params.solicitante = fSolic;
       const data = await api.listarAtualizacaoCadastral(params);
-      setSolicitacoes(Array.isArray(data) ? data : []);
+      let sols = Array.isArray(data) ? data : [];
+      // Gestor e Superior só veem as próprias solicitações
+      if (user.perfil === "gestor" || user.perfil === "superior") {
+        sols = sols.filter(s => s.usuario_solicitante_id === user.id);
+      }
+      setSolicitacoes(sols);
     } catch (e) { setMsg({ tipo: "erro", texto: e.message }); }
     finally { setLoadingSols(false); }
   };
@@ -6596,7 +6601,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
             <table style={{ width: "100%", borderCollapse: "collapse", lineHeight: "1.2", background: "#fff", borderRadius: 10, overflow: "hidden", border: "1px solid #E5E7EB" }}>
               <thead>
                 <tr style={{ background: "#F9FAFB", borderBottom: "2px solid #E5E7EB" }}>
-                  {["Matrícula","Nome","Função","Admissão","Solicitante","Data","Status","Ações"].map(h => (
+                  {["Filial","Matrícula","Nome","Função","Admissão","Solicitante","Data","Status","Ações"].map(h => (
                     <th key={h} style={S.th}>{h}</th>
                   ))}
                 </tr>
@@ -6606,6 +6611,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
                   const stCfg = AC_STATUS_CONFIG[s.status] || {};
                   return (
                     <tr key={s.id} onMouseEnter={e => e.currentTarget.style.background = "#F9FAFB"} onMouseLeave={e => e.currentTarget.style.background = ""}>
+                      <td style={{ ...S.td, fontSize: 10 }}>{(s.desc_cc||"").replace(/^BENEL TRANSPORTES\s*[-–]\s*/i,"").trim() || "—"}</td>
                       <td style={{ ...S.td, fontWeight: 700 }}>{s.chapa}</td>
                       <td style={S.td}>{s.colaborador_nome}</td>
                       <td style={{ ...S.td, color: "#6B7280" }}>{s.funcao}</td>
