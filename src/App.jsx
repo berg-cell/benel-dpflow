@@ -318,7 +318,9 @@ export function aplicarCSP() {
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob:",
-      "connect-src 'self' https://benel-dpflow-backend.vercel.app",
+      "connect-src 'self' https://benel-dpflow-backend.vercel.app https://api.telegram.org",
+      "frame-src 'self' blob:",
+      "object-src 'self' blob:",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
@@ -4371,7 +4373,16 @@ function Autorizacoes({ user, colaboradores }) {
             </div>
             <div style={{ flex:1, overflow:"hidden", padding:8 }}>
               {modalAnexo.isPdf ? (
-                <iframe src={modalAnexo.blobUrl} style={{ width:"100%", height:"100%", border:"none", borderRadius:8 }} />
+                <object data={modalAnexo.blobUrl} type="application/pdf" style={{ width:"100%", height:"100%", borderRadius:8 }}>
+                  <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:"100%", gap:12, color:"#6B7280" }}>
+                    <span style={{ fontSize:48 }}>📄</span>
+                    <p style={{ fontSize:13 }}>Seu browser bloqueou a visualização inline.</p>
+                    <button onClick={() => { const a = document.createElement("a"); a.href = modalAnexo.blobUrl; a.download = modalAnexo.nome; a.click(); }}
+                      style={{ padding:"8px 20px", borderRadius:8, border:"none", background:"#0F2447", color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer" }}>
+                      ⬇️ Baixar PDF
+                    </button>
+                  </div>
+                </object>
               ) : (
                 <div style={{ width:"100%", height:"100%", overflow:"auto", display:"flex", alignItems:"center", justifyContent:"center" }}>
                   <img src={modalAnexo.blobUrl} alt={modalAnexo.nome} style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain", borderRadius:8 }} />
@@ -4710,7 +4721,16 @@ function Ocorrencias({ user, colaboradores }) {
             </div>
             <div style={{ flex:1, overflow:"hidden", padding:8 }}>
               {modalAnexoOc.isPdf ? (
-                <iframe src={modalAnexoOc.blobUrl} style={{ width:"100%", height:"100%", border:"none", borderRadius:8 }} />
+                <object data={modalAnexoOc.blobUrl} type="application/pdf" style={{ width:"100%", height:"100%", borderRadius:8 }}>
+                  <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:"100%", gap:12, color:"#6B7280" }}>
+                    <span style={{ fontSize:48 }}>📄</span>
+                    <p style={{ fontSize:13 }}>Seu browser bloqueou a visualização inline.</p>
+                    <button onClick={() => { const a = document.createElement("a"); a.href = modalAnexoOc.blobUrl; a.download = modalAnexoOc.nome; a.click(); }}
+                      style={{ padding:"8px 20px", borderRadius:8, border:"none", background:"#0F2447", color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer" }}>
+                      ⬇️ Baixar PDF
+                    </button>
+                  </div>
+                </object>
               ) : (
                 <div style={{ width:"100%", height:"100%", overflow:"auto", display:"flex", alignItems:"center", justifyContent:"center" }}>
                   <img src={modalAnexoOc.blobUrl} alt={modalAnexoOc.nome} style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain", borderRadius:8 }} />
