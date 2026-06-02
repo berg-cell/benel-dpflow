@@ -4136,18 +4136,15 @@ function Autorizacoes({ user, colaboradores }) {
   };
 
   const verAnexo = (s) => {
-    // Se tiver o base64 em memória (recém anexado ou retornado pela API)
     const dados = s.anexo_dados || s.anexo_base64;
-    if (dados) {
-      const win = window.open();
-      if (s.anexo_nome?.toLowerCase().endsWith(".pdf") || dados.startsWith("data:application/pdf")) {
-        win.document.write(`<iframe src="${dados}" width="100%" height="100%" style="border:none;"></iframe>`);
-      } else {
-        win.document.write(`<img src="${dados}" style="max-width:100%;" />`);
-      }
-    } else {
-      alert("Anexo não disponível. Tente recarregar a página.");
-    }
+    if (!dados) { alert("Anexo não disponível. Tente recarregar a página."); return; }
+    // Cria link de download temporário
+    const a = document.createElement("a");
+    a.href = dados;
+    a.download = s.anexo_nome || "anexo";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   const STATUS_CORES = {
