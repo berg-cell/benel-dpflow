@@ -5355,31 +5355,22 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
         agrupado[key].total     += parseFloat(getCol(row, "TOTAL")           || "0");
       }
 
-      const registros = Object.values(agrupado);
-      let inseridos = 0;
-      const erros = [];
+      const registros = Object.values(agrupado).map(reg => ({
+        chapa:           reg.chapa,
+        nome:            reg.nome,
+        filial:          reg.filial,
+        liquido:         reg.liquido,
+        proventos:       reg.proventos,
+        descontos:       reg.descontos,
+        fgts_rescisorio: reg.fgts,
+        valor_total:     reg.total,
+        competencia_mes: reg.mescomp,
+        competencia_ano: reg.anocomp,
+      }));
 
-      for (const reg of registros) {
-        try {
-          await api.lancarRescisaoValor({
-            chapa:           reg.chapa,
-            nome:            reg.nome,
-            filial:          reg.filial,
-            liquido:         reg.liquido,
-            proventos:       reg.proventos,
-            descontos:       reg.descontos,
-            fgts_rescisorio: reg.fgts,
-            valor_total:     reg.total,
-            competencia_mes: reg.mescomp,
-            competencia_ano: reg.anocomp,
-          });
-          inseridos++;
-        } catch(e) {
-          erros.push(`Chapa ${reg.chapa}: ${e.message}`);
-        }
-      }
-
-      setImportResult({ inseridos, erros, total: registros.length });
+      // Envia tudo em uma única requisição (evita rate limit)
+      const result = await api.importarRescisaoLote(registros);
+      setImportResult({ inseridos: result.inseridos || 0, erros: result.erros || [], total: registros.length });
       carregarRescisao(rescisaoMes, rescisaoAno);
     } catch(e) {
       setImportResult({ erro: e.message });
