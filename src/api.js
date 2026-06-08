@@ -257,6 +257,8 @@ export const api = {
     request(`/rescisao-valores/desligamento/${id}`),
   importarRescisaoRM: () =>
     request("/rescisao-valores/importar", { method: "POST", body: JSON.stringify({}) }),
+  importarRescisaoLote: (registros) =>
+    request("/rescisao-valores/importar-lote", { method: "POST", body: JSON.stringify({ registros }) }),
   testarConexaoRM: () =>
     request("/rescisao-valores/testar-conexao"),
 };
