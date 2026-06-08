@@ -5612,13 +5612,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                        )}
                        {/* Ver detalhe */}
                        <button onClick={() => abrirDetalhe(sol.id)} style={{ ...btnBase, border:"1px solid #E5E7EB", background:"#fff", color:"#374151" }}>Ver</button>
-                       {/* Lançar valor rescisão */}
-                       {["admin","dp"].includes(user.perfil) && ["aprovado","finalizado"].includes(sol.status) && (
-                         <button onClick={() => {
-                           setModalRescisao(sol);
-                           setRescisaoForm({ valor_total:"", competencia_mes: new Date().getMonth()+1, competencia_ano: new Date().getFullYear(), observacao:"" });
-                         }} style={{ ...btnBase, border:"1px solid #F59E0B", background:"#FFFBEB", color:"#92400E" }}>💰 Valor</button>
-                       )}
+
                        {/* Cancelar */}
                        {["admin","dp"].includes(user.perfil) && !["cancelado","finalizado"].includes(sol.status) && (
                          <button onClick={async () => {
