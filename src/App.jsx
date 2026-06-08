@@ -908,11 +908,11 @@ const BENEFICIOS_SUBMENU = [
 
 const NAV_ITEMS = [
   { id: "cadastros",     label: "Cadastros",                            icon: "🗂",  perfis: ["dp","admin"], submenu: CADASTROS_SUBMENU },
-  { id: "atualizacao_cadastral", label: "Atualização de Dados Cadastrais", icon: "📝", perfis: ["gestor","dp","admin"] },
+  { id: "atualizacao_cadastral", label: "Atualização de Dados Cadastrais", icon: "📝", perfis: ["gestor","dp","admin","presidente"] },
   { id: "ocorrencias",      label: "Solicitações de Advertências/Suspensões", icon: "⚠️", perfis: ["gestor","dp","admin"] },
-  { id: "autorizacoes",     label: "Autorização de Desconto",                icon: "📋", perfis: ["gestor","dp","admin"] },
+  { id: "autorizacoes",     label: "Autorização de Desconto",                icon: "📋", perfis: ["gestor","dp","admin","presidente"] },
   { id: "solicitacoes",     label: "Solicitações de Pagamento",               icon: "≡",  perfis: ["gestor","superior","dp","admin"] },
-  { id: "desligamentos", label: "Solicitações de Desligamento",         icon: "🚪", perfis: ["gestor","superior","dp","admin"] },
+  { id: "desligamentos", label: "Solicitações de Desligamento",         icon: "🚪", perfis: ["gestor","superior","dp","admin","presidente"] },
   { id: "beneficios",    label: "Benefícios",                           icon: "🏥", perfis: ["dp","admin","gestor"], submenu: BENEFICIOS_SUBMENU },
   { id: "aprovacoes",    label: "Aprovações",                           icon: "✓",  perfis: ["superior","dp","admin"] },
   { id: "dashboard",     label: "Dashboard",                            icon: "◉",  perfis: ["gestor","superior","dp","admin"] },
@@ -2399,7 +2399,7 @@ function CadUsuarios({ usuarios, setUsuarios }) {
               <th style={{ padding: "3px 6px" }} />
               <th style={{ padding: "3px 6px" }}><input value={fNomeU}  onChange={e=>setFNomeU(e.target.value)}  placeholder="🔍 Nome"   style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
               <th style={{ padding: "3px 6px" }}><input value={fEmailU} onChange={e=>setFEmailU(e.target.value)} placeholder="🔍 E-mail" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
-              <th style={{ padding: "3px 6px" }}><select value={fPerfilU} onChange={e=>setFPerfilU(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="gestor">Gestor</option><option value="superior">Superior</option><option value="dp">DP</option><option value="admin">Admin</option></select></th>
+              <th style={{ padding: "3px 6px" }}><select value={fPerfilU} onChange={e=>setFPerfilU(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="gestor">Gestor</option><option value="superior">Superior</option><option value="dp">DP</option><option value="presidente">Presidente</option><option value="admin">Admin</option></select></th>
               <th style={{ padding: "3px 6px" }}><select value={fStatusU} onChange={e=>setFStatusU(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select></th>
               <th style={{ padding: "3px 6px" }}><button onClick={()=>{setFNomeU("");setFEmailU("");setFPerfilU("");setFStatusU("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
             </tr>
@@ -2451,6 +2451,7 @@ function CadUsuarios({ usuarios, setUsuarios }) {
                 <option value="gestor">Gestor</option>
                 <option value="superior">Superior</option>
                 <option value="dp">DP</option>
+                <option value="presidente">Presidente</option>
                 <option value="admin">Admin</option>
               </select>
             </div>
@@ -4177,7 +4178,7 @@ function Autorizacoes({ user, colaboradores }) {
     <div style={{ padding: 28 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
         <div style={{ fontSize: 11, color: "#6B7280" }}>{lista.filter(s=>s.status!=="cancelado").length} autorização(ões)</div>
-        {["gestor","dp","admin"].includes(user.perfil) && (
+        {["gestor","dp","admin","presidente"].includes(user.perfil) && (
           <button onClick={() => { setModalNovo(true); setErro(""); setForm(FORM_VAZIO); setColabSel(null); setBuscaColab(""); }}
             style={{ padding: "10px 20px", background: "#0F2447", color: "#fff", border: "none", borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: "pointer" }}>
             + Nova Autorização
@@ -4256,7 +4257,7 @@ function Autorizacoes({ user, colaboradores }) {
                           👁️ Ver
                         </button>
                       )}
-                      {["dp","admin"].includes(user.perfil) && (
+                      {["dp","admin","presidente"].includes(user.perfil) && (
                         <button onClick={() => cancelar(s.id)} style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #EF4444", background:"#FEF2F2", color:"#DC2626", fontSize:11, cursor:"pointer", fontWeight:600 }}>🚫</button>
                       )}
                     </div>
@@ -5052,11 +5053,11 @@ const STATUS_DESL = {
 };
 
 const ALCADA_DESL = {
-  pendente_superior:  ["superior", "dp", "admin"],
+  pendente_superior:  ["superior", "dp", "admin", "presidente"],
   // 2ª alçada — descomente quando quiser ativar:
   // pendente_dp:     ["dp", "admin"],
-  aprovado:           ["dp", "admin"],
-  ajuste_solicitado:  ["gestor", "dp", "admin"],
+  aprovado:           ["dp", "admin", "presidente"],
+  ajuste_solicitado:  ["gestor", "dp", "admin", "presidente"],
 };
 
 function Desligamentos({ user, colaboradores, api, recarregarDados }) {
@@ -5420,7 +5421,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
 
   const podeAgir = (sol) => {
     if (!ALCADA_DESL[sol.status]?.includes(user.perfil)) return false;
-    if (["dp", "admin"].includes(user.perfil)) return true;
+    if (["dp", "admin", "presidente"].includes(user.perfil)) return true;
     if (user.perfil === "superior") {
       return !sol.superior_id || sol.superior_id === user.id;
     }
@@ -5430,7 +5431,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
   return (
     <div style={{ padding: 28 }}>
       <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}>
-        {["gestor","dp","admin"].includes(user.perfil) && (
+        {["gestor","dp","admin","presidente"].includes(user.perfil) && (
           <button onClick={() => { setModalNovo(true); setErro(""); setForm(FORM_VAZIO); setColaboradorSel(null); setBuscaColab(""); setBloqueioColab(null); }}
             style={{ padding: "10px 20px", background: "#0F2447", color: "#fff", border: "none", borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: "pointer" }}>
             + Nova Solicitação
@@ -5441,7 +5442,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
       {erro && <div style={{ background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, padding: "3px 6px", marginBottom: 16, color: "#DC2626", fontSize: 13 }}>⚠️ {erro}</div>}
 
       {/* ── Cards de Rescisão ────────────────────────────────────────────── */}
-      {(["dp","admin"].includes(user.perfil)) && (() => {
+      {(["dp","admin","presidente"].includes(user.perfil)) && (() => {
         // Agrupar por filial
         const porFilial = {};
         rescisaoValores.forEach(v => {
@@ -5468,7 +5469,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                 style={{ padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:12 }}>
                 {[2024,2025,2026,2027].map(a=><option key={a} value={a}>{a}</option>)}
               </select>
-              {["dp","admin"].includes(user.perfil) && (
+              {["dp","admin","presidente"].includes(user.perfil) && (
                 <button onClick={() => { setModalImportCSV(true); setImportResult(null); }}
                   style={{ padding:"4px 12px", borderRadius:6, border:"none", background:"#0F2447", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>
                   ⬇️ Importar CSV
@@ -5614,7 +5615,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                        <button onClick={() => abrirDetalhe(sol.id)} style={{ ...btnBase, border:"1px solid #E5E7EB", background:"#fff", color:"#374151" }}>Ver</button>
 
                        {/* Cancelar */}
-                       {["admin","dp"].includes(user.perfil) && !["cancelado","finalizado"].includes(sol.status) && (
+                       {["admin","dp","presidente"].includes(user.perfil) && !["cancelado","finalizado"].includes(sol.status) && (
                          <button onClick={async () => {
                            if (!window.confirm(`Cancelar a solicitação de desligamento de ${sol.colaborador_nome}?\n\nEsta ação não pode ser desfeita.`)) return;
                            try { await api.cancelarDesligamento(sol.id); await carregar(); } catch(e) { setErro(e.message); }
@@ -6864,7 +6865,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
   const [obsEdit, setObsEdit]           = useState("");
 
   const norm = s => (s || "").toLowerCase();
-  const canAprovar = user.perfil === "dp" || user.perfil === "admin";
+  const canAprovar = user.perfil === "dp" || user.perfil === "admin" || user.perfil === "presidente";
   const canEditar  = (s) => s && s.status !== "finalizado" && s.status !== "reprovado";
 
   const colabsAtivos = colaboradores.filter(c => c.cod_situacao !== "D");
