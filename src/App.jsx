@@ -5445,14 +5445,10 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                          <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalAnexoPedido(r); } catch(e){ setErro(e.message); } }}
                            style={{ ...btnBase, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46" }}>📎 Anexo</button>
                        )}
-                       {/* Aprovar / Finalizar */}
-                       {podeAgir(sol) && sol.tipo !== "pedido_demissao" && sol.status !== "aprovado" && (
+                       {/* Aprovar */}
+                       {podeAgir(sol) && sol.tipo !== "pedido_demissao" && !["aprovado","finalizado"].includes(sol.status) && (
                          <button onClick={() => setModalAcao({ id: sol.id, status: sol.status, acao: "aprovar", observacao: "" })}
                            style={{ ...btnBase, border:"none", background:"#059669", color:"#fff" }}>✓ Aprovar</button>
-                       )}
-                       {podeAgir(sol) && sol.tipo !== "pedido_demissao" && sol.status === "aprovado" && (
-                         <button onClick={() => setModalAcao({ id: sol.id, status: sol.status, acao: "aprovar", observacao: "" })}
-                           style={{ ...btnBase, border:"none", background:"#0F2447", color:"#fff" }}>✓ Finalizar</button>
                        )}
                        {/* Ver detalhe */}
                        <button onClick={() => abrirDetalhe(sol.id)} style={{ ...btnBase, border:"1px solid #E5E7EB", background:"#fff", color:"#374151" }}>Ver</button>
