@@ -5077,6 +5077,9 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
   const [modalRescisao, setModalRescisao]         = useState(null); // { sol }
   const [rescisaoForm, setRescisaoForm]           = useState({ valor_total:"", competencia_mes:"", competencia_ano:"", observacao:"" });
   const [salvandoRescisao, setSalvandoRescisao]   = useState(false);
+  const [modalImportCSV, setModalImportCSV]       = useState(false);
+  const [importando, setImportando]               = useState(false);
+  const [importResult, setImportResult]           = useState(null);
 
   const FORM_VAZIO = {
     colaborador_id: "", tipo: "", data_desligamento: "",
@@ -5306,6 +5309,68 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     finally { setSalvando(false); }
   };
 
+  const importarCSVRescisao = async (file) => {
+    setImportando(true);
+    setImportResult(null);
+    try {
+      const text = await file.text();
+      const lines = text.split(/\r?\n/).filter(l => l.trim());
+      if (lines.length < 2) throw new Error("Arquivo vazio ou sem dados");
+
+      // Detectar separador (ponto e vírgula ou vírgula)
+      const sep = lines[0].includes(";") ? ";" : ",";
+      const headers = lines[0].split(sep).map(h => h.trim().replace(/^"|"$/g,"").toUpperCase());
+
+      const getCol = (row, name) => {
+        const idx = headers.indexOf(name);
+        if (idx === -1) return null;
+        return row[idx]?.trim().replace(/^"|"$/g,"") || null;
+      };
+
+      let inseridos = 0, atualizados = 0;
+      const erros = [];
+
+      for (let i = 1; i < lines.length; i++) {
+        const row = lines[i].split(sep);
+        const chapa    = getCol(row, "CHAPA");
+        const mescomp  = parseInt(getCol(row, "MESCOMP") || "0");
+        const anocomp  = parseInt(getCol(row, "ANOCOMP") || "0");
+        const liquido  = parseFloat(getCol(row, "LIQUIDO")  || "0");
+        const proventos= parseFloat(getCol(row, "PROVENTOS")|| "0");
+        const descontos= parseFloat(getCol(row, "DESCONTOS")|| "0");
+        const fgts     = parseFloat(getCol(row, "FGTS_RESCISORIO") || "0");
+        const total    = parseFloat(getCol(row, "TOTAL")    || "0");
+        const filial   = getCol(row, "DES_FILIAL") || getCol(row, "DESC_FILIAL_COMPLETA") || "Sem Filial";
+        const nome     = getCol(row, "NOME");
+
+        if (!chapa || !mescomp || !anocomp) {
+          erros.push(`Linha ${i+1}: CHAPA, MESCOMP ou ANOCOMP ausente`);
+          continue;
+        }
+
+        try {
+          await api.lancarRescisaoValor({
+            chapa, nome, filial,
+            liquido, proventos, descontos,
+            fgts_rescisorio: fgts,
+            valor_total: total,
+            competencia_mes: mescomp,
+            competencia_ano: anocomp,
+          });
+          inseridos++;
+        } catch(e) {
+          erros.push(`Chapa ${chapa}: ${e.message}`);
+        }
+      }
+
+      setImportResult({ inseridos, erros, total: lines.length - 1 });
+      carregarRescisao(rescisaoMes, rescisaoAno);
+    } catch(e) {
+      setImportResult({ erro: e.message });
+    }
+    setImportando(false);
+  };
+
   const carregarRescisao = async (mes, ano) => {
     try {
       const data = await api.listarRescisaoValores(mes, ano);
@@ -5397,15 +5462,9 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                 {[2024,2025,2026,2027].map(a=><option key={a} value={a}>{a}</option>)}
               </select>
               {["dp","admin"].includes(user.perfil) && (
-                <button onClick={async () => {
-                  if (!window.confirm("Importar rescisões do RM para o período 2026 em diante?\n\nIsso pode levar alguns segundos.")) return;
-                  try {
-                    const r = await api.importarRescisaoRM();
-                    alert(`✅ ${r.message || "Importação concluída"}\n\nInseridos: ${r.inseridos || 0}\nAtualizados: ${r.atualizados || 0}${r.erros?.length ? "\nErros: " + r.erros.length : ""}`);
-                    carregarRescisao(rescisaoMes, rescisaoAno);
-                  } catch(e) { alert("Erro: " + e.message); }
-                }} style={{ padding:"4px 12px", borderRadius:6, border:"none", background:"#0F2447", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>
-                  ⬇️ Importar do RM
+                <button onClick={() => { setModalImportCSV(true); setImportResult(null); }}
+                  style={{ padding:"4px 12px", borderRadius:6, border:"none", background:"#0F2447", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+                  ⬇️ Importar CSV
                 </button>
               )}
             </div>
@@ -5568,6 +5627,85 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
           </tbody>
         </table>
       </div>
+
+      {/* Modal Importar CSV Rescisão */}
+      {modalImportCSV && (
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.5)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center" }}>
+          <div style={{ background:"#fff", borderRadius:14, width:"100%", maxWidth:520, padding:28, boxShadow:"0 20px 60px rgba(0,0,0,.3)" }}>
+            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:20 }}>
+              <h3 style={{ margin:0, fontSize:16, fontWeight:700, color:"#0F2447" }}>⬇️ Importar Rescisões via CSV</h3>
+              <button onClick={() => setModalImportCSV(false)} style={{ background:"none", border:"none", fontSize:20, cursor:"pointer", color:"#6B7280" }}>×</button>
+            </div>
+
+            <div style={{ background:"#F0F9FF", border:"1px solid #BAE6FD", borderRadius:8, padding:"12px 14px", marginBottom:16, fontSize:12, color:"#0369A1" }}>
+              <strong>Como exportar do RM:</strong><br/>
+              1. Execute a Consulta SQL no RM Labore<br/>
+              2. Clique em <strong>Exportar → Excel ou CSV</strong><br/>
+              3. Salve o arquivo e importe aqui abaixo
+              <div style={{ marginTop:8, color:"#6B7280" }}>
+                Colunas obrigatórias: <code>CHAPA, MESCOMP, ANOCOMP, LIQUIDO, PROVENTOS, DESCONTOS, FGTS_RESCISORIO, TOTAL, DES_FILIAL</code>
+              </div>
+            </div>
+
+            {!importResult && !importando && (
+              <label style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", border:"2px dashed #D1D5DB", borderRadius:10, padding:"28px 20px", cursor:"pointer", gap:8, color:"#6B7280" }}>
+                <span style={{ fontSize:32 }}>📂</span>
+                <span style={{ fontSize:13, fontWeight:600 }}>Clique para selecionar o arquivo CSV</span>
+                <span style={{ fontSize:11 }}>Separador ponto e vírgula (;) ou vírgula (,)</span>
+                <input type="file" accept=".csv,.txt" style={{ display:"none" }}
+                  onChange={async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    await importarCSVRescisao(file);
+                  }} />
+              </label>
+            )}
+
+            {importando && (
+              <div style={{ textAlign:"center", padding:"28px 0", color:"#6B7280" }}>
+                <div style={{ fontSize:28, marginBottom:8 }}>⏳</div>
+                <div style={{ fontSize:13 }}>Importando... aguarde</div>
+              </div>
+            )}
+
+            {importResult && (
+              <div style={{ borderRadius:8, overflow:"hidden" }}>
+                {importResult.erro ? (
+                  <div style={{ background:"#FEF2F2", border:"1px solid #FCA5A5", borderRadius:8, padding:"12px 14px", color:"#DC2626", fontSize:13 }}>
+                    ❌ {importResult.erro}
+                  </div>
+                ) : (
+                  <>
+                    <div style={{ background:"#F0FDF4", border:"1px solid #BBF7D0", borderRadius:8, padding:"12px 14px", marginBottom:8 }}>
+                      <div style={{ fontSize:13, fontWeight:700, color:"#065F46", marginBottom:4 }}>✅ Importação concluída</div>
+                      <div style={{ fontSize:12, color:"#374151" }}>Total no arquivo: <strong>{importResult.total}</strong></div>
+                      <div style={{ fontSize:12, color:"#374151" }}>Importados com sucesso: <strong>{importResult.inseridos}</strong></div>
+                      {importResult.erros?.length > 0 && (
+                        <div style={{ fontSize:12, color:"#DC2626", marginTop:4 }}>Erros: <strong>{importResult.erros.length}</strong></div>
+                      )}
+                    </div>
+                    {importResult.erros?.length > 0 && (
+                      <div style={{ background:"#FEF2F2", borderRadius:8, padding:"10px 14px", maxHeight:120, overflowY:"auto" }}>
+                        {importResult.erros.map((e,i) => <div key={i} style={{ fontSize:11, color:"#DC2626" }}>• {e}</div>)}
+                      </div>
+                    )}
+                  </>
+                )}
+                <div style={{ display:"flex", gap:8, justifyContent:"flex-end", marginTop:12 }}>
+                  <button onClick={() => setImportResult(null)}
+                    style={{ padding:"7px 16px", borderRadius:8, border:"1px solid #D1D5DB", background:"#fff", fontSize:12, cursor:"pointer" }}>
+                    Importar outro
+                  </button>
+                  <button onClick={() => setModalImportCSV(false)}
+                    style={{ padding:"7px 16px", borderRadius:8, border:"none", background:"#0F2447", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+                    Fechar
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Modal Lançar Valor Rescisão */}
       {modalRescisao && (
