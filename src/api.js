@@ -245,4 +245,14 @@ export const api = {
     request(`/atualizacao-cadastral/${id}/cancelar`, { method: "PUT", body: JSON.stringify({}) }),
 
   getToken: () => _accessToken,
+
+  // ── Rescisão Valores ───────────────────────────────────────────────────────
+  listarRescisaoValores: (mes, ano) =>
+    request(`/rescisao-valores?mes=${mes}&ano=${ano}`),
+  lancarRescisaoValor: (data) =>
+    request("/rescisao-valores", { method: "POST", body: JSON.stringify(data) }),
+  excluirRescisaoValor: (id) =>
+    request(`/rescisao-valores/${id}`, { method: "DELETE" }),
+  buscarRescisaoPorDesligamento: (id) =>
+    request(`/rescisao-valores/desligamento/${id}`),
 };
