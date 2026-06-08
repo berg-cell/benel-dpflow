@@ -5487,14 +5487,14 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                   <div key={filial} style={{ background:"#fff", borderRadius:10, border:"1px solid #E5E7EB", padding:"14px 18px", minWidth:180, boxShadow:"0 1px 4px rgba(0,0,0,.06)" }}>
                     <div style={{ fontSize:10, fontWeight:700, color:"#6B7280", textTransform:"uppercase", marginBottom:4 }}>{filial}</div>
                     <div style={{ fontSize:20, fontWeight:800, color:"#0F2447" }}>{fmtBRL(dados.total)}</div>
-                    <div style={{ fontSize:11, color:"#6B7280", marginTop:2 }}>{dados.qtd} rescisão{dados.qtd>1?"ões":""}</div>
+                    <div style={{ fontSize:11, color:"#6B7280", marginTop:2 }}>{dados.qtd>1 ? `${dados.qtd} rescisões` : "1 rescisão"}</div>
                   </div>
                 ))}
                 {/* Card total */}
                 <div style={{ background:"#0F2447", borderRadius:10, border:"1px solid #0F2447", padding:"14px 18px", minWidth:180, boxShadow:"0 1px 4px rgba(0,0,0,.1)" }}>
                   <div style={{ fontSize:10, fontWeight:700, color:"#93C5FD", textTransform:"uppercase", marginBottom:4 }}>TOTAL GERAL</div>
                   <div style={{ fontSize:20, fontWeight:800, color:"#fff" }}>{fmtBRL(totalGeral)}</div>
-                  <div style={{ fontSize:11, color:"#93C5FD", marginTop:2 }}>{qtdGeral} rescisão{qtdGeral>1?"ões":""}</div>
+                  <div style={{ fontSize:11, color:"#93C5FD", marginTop:2 }}>{qtdGeral>1 ? `${qtdGeral} rescisões` : "1 rescisão"}</div>
                 </div>
               </div>
             )}
