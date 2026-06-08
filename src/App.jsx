@@ -5396,6 +5396,18 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                 style={{ padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:12 }}>
                 {[2024,2025,2026,2027].map(a=><option key={a} value={a}>{a}</option>)}
               </select>
+              {["dp","admin"].includes(user.perfil) && (
+                <button onClick={async () => {
+                  if (!window.confirm("Importar rescisões do RM para o período 2026 em diante?\n\nIsso pode levar alguns segundos.")) return;
+                  try {
+                    const r = await api.importarRescisaoRM();
+                    alert(`✅ ${r.message || "Importação concluída"}\n\nInseridos: ${r.inseridos || 0}\nAtualizados: ${r.atualizados || 0}${r.erros?.length ? "\nErros: " + r.erros.length : ""}`);
+                    carregarRescisao(rescisaoMes, rescisaoAno);
+                  } catch(e) { alert("Erro: " + e.message); }
+                }} style={{ padding:"4px 12px", borderRadius:6, border:"none", background:"#0F2447", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+                  ⬇️ Importar do RM
+                </button>
+              )}
             </div>
 
             {/* Cards por filial */}
