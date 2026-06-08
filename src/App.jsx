@@ -5070,6 +5070,13 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
   const [modalPDF,       setModalPDF]       = useState(null);
   const [modalAnexoPedido, setModalAnexoPedido] = useState(null);
   const [modalAnexoDesl, setModalAnexoDesl] = useState(null);
+  // Rescisão valores
+  const [rescisaoValores, setRescisaoValores]     = useState([]);
+  const [rescisaoMes, setRescisaoMes]             = useState(new Date().getMonth() + 1);
+  const [rescisaoAno, setRescisaoAno]             = useState(new Date().getFullYear());
+  const [modalRescisao, setModalRescisao]         = useState(null); // { sol }
+  const [rescisaoForm, setRescisaoForm]           = useState({ valor_total:"", competencia_mes:"", competencia_ano:"", observacao:"" });
+  const [salvandoRescisao, setSalvandoRescisao]   = useState(false);
 
   const FORM_VAZIO = {
     colaborador_id: "", tipo: "", data_desligamento: "",
@@ -5091,7 +5098,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     finally { setCarregando(false); }
   };
 
-  useEffect(() => { carregar(); }, []);
+  useEffect(() => { carregar(); carregarRescisao(new Date().getMonth()+1, new Date().getFullYear()); }, []);
 
   const normalizar = (s) =>
     (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
@@ -5299,6 +5306,25 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     finally { setSalvando(false); }
   };
 
+  const carregarRescisao = async (mes, ano) => {
+    try {
+      const data = await api.listarRescisaoValores(mes, ano);
+      setRescisaoValores(Array.isArray(data) ? data : []);
+    } catch (e) { console.error(e); }
+  };
+
+  const salvarRescisao = async () => {
+    if (!rescisaoForm.valor_total || !rescisaoForm.competencia_mes || !rescisaoForm.competencia_ano)
+      return alert("Preencha valor, mês e ano");
+    setSalvandoRescisao(true);
+    try {
+      await api.lancarRescisaoValor({ ...rescisaoForm, desligamento_id: modalRescisao.id });
+      setModalRescisao(null);
+      carregarRescisao(rescisaoMes, rescisaoAno);
+    } catch(e) { alert(e.message); }
+    finally { setSalvandoRescisao(false); }
+  };
+
   const abrirDetalhe = async (id) => {
     try {
       const r = await api.buscarDesligamento(id);
@@ -5341,6 +5367,62 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
       </div>
 
       {erro && <div style={{ background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, padding: "3px 6px", marginBottom: 16, color: "#DC2626", fontSize: 13 }}>⚠️ {erro}</div>}
+
+      {/* ── Cards de Rescisão ────────────────────────────────────────────── */}
+      {(["dp","admin"].includes(user.perfil)) && (() => {
+        // Agrupar por filial
+        const porFilial = {};
+        rescisaoValores.forEach(v => {
+          const f = v.filial || "Sem Filial";
+          if (!porFilial[f]) porFilial[f] = { total: 0, qtd: 0 };
+          porFilial[f].total += parseFloat(v.valor_total);
+          porFilial[f].qtd   += 1;
+        });
+        const totalGeral = rescisaoValores.reduce((s,v) => s + parseFloat(v.valor_total), 0);
+        const qtdGeral   = rescisaoValores.length;
+        const fmtBRL = (v) => v.toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
+        const MESES_LABEL = ["","Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+
+        return (
+          <div style={{ marginBottom: 20 }}>
+            {/* Filtro período */}
+            <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:12 }}>
+              <span style={{ fontSize:12, fontWeight:700, color:"#0F2447" }}>💰 Rescisões —</span>
+              <select value={rescisaoMes} onChange={e => { const m=parseInt(e.target.value); setRescisaoMes(m); carregarRescisao(m, rescisaoAno); }}
+                style={{ padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:12 }}>
+                {Array.from({length:12},(_,i)=><option key={i+1} value={i+1}>{MESES_LABEL[i+1]}</option>)}
+              </select>
+              <select value={rescisaoAno} onChange={e => { const a=parseInt(e.target.value); setRescisaoAno(a); carregarRescisao(rescisaoMes, a); }}
+                style={{ padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:12 }}>
+                {[2024,2025,2026,2027].map(a=><option key={a} value={a}>{a}</option>)}
+              </select>
+            </div>
+
+            {/* Cards por filial */}
+            {Object.keys(porFilial).length === 0 ? (
+              <div style={{ background:"#F9FAFB", borderRadius:10, padding:"14px 18px", fontSize:12, color:"#9CA3AF", border:"1px dashed #D1D5DB" }}>
+                Nenhum valor lançado em {MESES_LABEL[rescisaoMes]}/{rescisaoAno}
+              </div>
+            ) : (
+              <div style={{ display:"flex", gap:12, flexWrap:"wrap", alignItems:"stretch" }}>
+                {Object.entries(porFilial).sort(([a],[b])=>a.localeCompare(b)).map(([filial, dados]) => (
+                  <div key={filial} style={{ background:"#fff", borderRadius:10, border:"1px solid #E5E7EB", padding:"14px 18px", minWidth:180, boxShadow:"0 1px 4px rgba(0,0,0,.06)" }}>
+                    <div style={{ fontSize:10, fontWeight:700, color:"#6B7280", textTransform:"uppercase", marginBottom:4 }}>{filial}</div>
+                    <div style={{ fontSize:20, fontWeight:800, color:"#0F2447" }}>{fmtBRL(dados.total)}</div>
+                    <div style={{ fontSize:11, color:"#6B7280", marginTop:2 }}>{dados.qtd} rescisão{dados.qtd>1?"ões":""}</div>
+                  </div>
+                ))}
+                {/* Card total */}
+                <div style={{ background:"#0F2447", borderRadius:10, border:"1px solid #0F2447", padding:"14px 18px", minWidth:180, boxShadow:"0 1px 4px rgba(0,0,0,.1)" }}>
+                  <div style={{ fontSize:10, fontWeight:700, color:"#93C5FD", textTransform:"uppercase", marginBottom:4 }}>TOTAL GERAL</div>
+                  <div style={{ fontSize:20, fontWeight:800, color:"#fff" }}>{fmtBRL(totalGeral)}</div>
+                  <div style={{ fontSize:11, color:"#93C5FD", marginTop:2 }}>{qtdGeral} rescisão{qtdGeral>1?"ões":""}</div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #E5E7EB", overflow: "hidden" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -5452,6 +5534,13 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                        )}
                        {/* Ver detalhe */}
                        <button onClick={() => abrirDetalhe(sol.id)} style={{ ...btnBase, border:"1px solid #E5E7EB", background:"#fff", color:"#374151" }}>Ver</button>
+                       {/* Lançar valor rescisão */}
+                       {["admin","dp"].includes(user.perfil) && ["aprovado","finalizado"].includes(sol.status) && (
+                         <button onClick={() => {
+                           setModalRescisao(sol);
+                           setRescisaoForm({ valor_total:"", competencia_mes: new Date().getMonth()+1, competencia_ano: new Date().getFullYear(), observacao:"" });
+                         }} style={{ ...btnBase, border:"1px solid #F59E0B", background:"#FFFBEB", color:"#92400E" }}>💰 Valor</button>
+                       )}
                        {/* Cancelar */}
                        {["admin","dp"].includes(user.perfil) && !["cancelado","finalizado"].includes(sol.status) && (
                          <button onClick={async () => {
@@ -5467,6 +5556,62 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
           </tbody>
         </table>
       </div>
+
+      {/* Modal Lançar Valor Rescisão */}
+      {modalRescisao && (
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.5)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center" }}>
+          <div style={{ background:"#fff", borderRadius:14, width:"100%", maxWidth:480, padding:28, boxShadow:"0 20px 60px rgba(0,0,0,.3)" }}>
+            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:20 }}>
+              <h3 style={{ margin:0, fontSize:16, fontWeight:700, color:"#0F2447" }}>💰 Lançar Valor de Rescisão</h3>
+              <button onClick={() => setModalRescisao(null)} style={{ background:"none", border:"none", fontSize:20, cursor:"pointer", color:"#6B7280" }}>×</button>
+            </div>
+            <div style={{ background:"#F9FAFB", borderRadius:8, padding:"10px 14px", marginBottom:16, fontSize:12 }}>
+              <strong>{modalRescisao.colaborador_nome}</strong>
+              <span style={{ color:"#6B7280", marginLeft:8 }}>Chapa: {modalRescisao.chapa}</span>
+              <div style={{ color:"#6B7280", marginTop:2 }}>{modalRescisao.tipo}</div>
+            </div>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:12 }}>
+              <div>
+                <label style={{ fontSize:11, fontWeight:600, color:"#374151", display:"block", marginBottom:4 }}>Mês *</label>
+                <select value={rescisaoForm.competencia_mes} onChange={e => setRescisaoForm(f=>({...f, competencia_mes: parseInt(e.target.value)}))}
+                  style={{ width:"100%", padding:"7px 10px", borderRadius:8, border:"1px solid #D1D5DB", fontSize:13 }}>
+                  {["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"].map((m,i) =>
+                    <option key={i+1} value={i+1}>{m}</option>
+                  )}
+                </select>
+              </div>
+              <div>
+                <label style={{ fontSize:11, fontWeight:600, color:"#374151", display:"block", marginBottom:4 }}>Ano *</label>
+                <select value={rescisaoForm.competencia_ano} onChange={e => setRescisaoForm(f=>({...f, competencia_ano: parseInt(e.target.value)}))}
+                  style={{ width:"100%", padding:"7px 10px", borderRadius:8, border:"1px solid #D1D5DB", fontSize:13 }}>
+                  {[2024,2025,2026,2027].map(a => <option key={a} value={a}>{a}</option>)}
+                </select>
+              </div>
+            </div>
+            <div style={{ marginBottom:12 }}>
+              <label style={{ fontSize:11, fontWeight:600, color:"#374151", display:"block", marginBottom:4 }}>Valor Total da Rescisão (R$) *</label>
+              <input type="number" step="0.01" min="0" placeholder="0,00"
+                value={rescisaoForm.valor_total}
+                onChange={e => setRescisaoForm(f=>({...f, valor_total: e.target.value}))}
+                style={{ width:"100%", padding:"7px 10px", borderRadius:8, border:"1px solid #D1D5DB", fontSize:13, boxSizing:"border-box" }} />
+            </div>
+            <div style={{ marginBottom:20 }}>
+              <label style={{ fontSize:11, fontWeight:600, color:"#374151", display:"block", marginBottom:4 }}>Observação</label>
+              <textarea value={rescisaoForm.observacao} onChange={e => setRescisaoForm(f=>({...f, observacao: e.target.value}))}
+                placeholder="Opcional..." rows={2}
+                style={{ width:"100%", padding:"7px 10px", borderRadius:8, border:"1px solid #D1D5DB", fontSize:13, resize:"vertical", boxSizing:"border-box" }} />
+            </div>
+            <div style={{ display:"flex", gap:10, justifyContent:"flex-end" }}>
+              <button onClick={() => setModalRescisao(null)}
+                style={{ padding:"8px 18px", borderRadius:8, border:"1px solid #D1D5DB", background:"#fff", color:"#374151", fontSize:13, cursor:"pointer" }}>Cancelar</button>
+              <button onClick={salvarRescisao} disabled={salvandoRescisao}
+                style={{ padding:"8px 18px", borderRadius:8, border:"none", background:"#0F2447", color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer" }}>
+                {salvandoRescisao ? "Salvando..." : "💾 Salvar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal Visualizar Anexo Desligamento */}
       {modalAnexoDesl && (
