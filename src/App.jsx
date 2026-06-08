@@ -5556,8 +5556,8 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                   </td>
                    <td style={{ padding:"4px 8px" }}>
                      <div style={{ display:"flex", gap:4, flexWrap:"nowrap", alignItems:"center" }}>
-                       {/* PDF */}
-                       {sol.tipo !== "pedido_demissao" && (
+                       {/* PDF — só após aprovação */}
+                       {sol.tipo !== "pedido_demissao" && ["aprovado","finalizado"].includes(sol.status) && (
                          <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalPDF(r); } catch(e){ setErro(e.message); } }}
                            style={{ ...btnBase, border:"1px solid #D1D5DB", background:"#fff", color:"#374151" }}>📄 PDF</button>
                        )}
