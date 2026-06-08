@@ -5313,11 +5313,13 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     setImportando(true);
     setImportResult(null);
     try {
-      const text = await file.text();
+      // Ler com encoding correto (suporta acentos)
+      const buffer = await file.arrayBuffer();
+      const decoder = new TextDecoder("windows-1252");
+      const text = decoder.decode(buffer);
       const lines = text.split(/\r?\n/).filter(l => l.trim());
       if (lines.length < 2) throw new Error("Arquivo vazio ou sem dados");
 
-      // Detectar separador (ponto e vírgula ou vírgula)
       const sep = lines[0].includes(";") ? ";" : ",";
       const headers = lines[0].split(sep).map(h => h.trim().replace(/^"|"$/g,"").toUpperCase());
 
@@ -5327,43 +5329,57 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
         return row[idx]?.trim().replace(/^"|"$/g,"") || null;
       };
 
-      let inseridos = 0, atualizados = 0;
-      const erros = [];
-
+      // Agrupar por CHAPA+MESCOMP+ANOCOMP — somar múltiplos períodos (NROPERIODO 8 e 10000)
+      const agrupado = {};
       for (let i = 1; i < lines.length; i++) {
         const row = lines[i].split(sep);
         const chapa    = getCol(row, "CHAPA");
         const mescomp  = parseInt(getCol(row, "MESCOMP") || "0");
         const anocomp  = parseInt(getCol(row, "ANOCOMP") || "0");
-        const liquido  = parseFloat(getCol(row, "LIQUIDO")  || "0");
-        const proventos= parseFloat(getCol(row, "PROVENTOS")|| "0");
-        const descontos= parseFloat(getCol(row, "DESCONTOS")|| "0");
-        const fgts     = parseFloat(getCol(row, "FGTS_RESCISORIO") || "0");
-        const total    = parseFloat(getCol(row, "TOTAL")    || "0");
-        const filial   = getCol(row, "DES_FILIAL") || getCol(row, "DESC_FILIAL_COMPLETA") || "Sem Filial";
-        const nome     = getCol(row, "NOME");
+        if (!chapa || !mescomp || !anocomp) continue;
 
-        if (!chapa || !mescomp || !anocomp) {
-          erros.push(`Linha ${i+1}: CHAPA, MESCOMP ou ANOCOMP ausente`);
-          continue;
+        const key = `${chapa}_${mescomp}_${anocomp}`;
+        if (!agrupado[key]) {
+          agrupado[key] = {
+            chapa,
+            nome:     getCol(row, "NOME"),
+            filial:   getCol(row, "DES_FILIAL") || "Sem Filial",
+            mescomp, anocomp,
+            liquido: 0, proventos: 0, descontos: 0, fgts: 0, total: 0,
+          };
         }
+        agrupado[key].liquido   += parseFloat(getCol(row, "LIQUIDO")         || "0");
+        agrupado[key].proventos += parseFloat(getCol(row, "PROVENTOS")       || "0");
+        agrupado[key].descontos += parseFloat(getCol(row, "DESCONTOS")       || "0");
+        agrupado[key].fgts      += parseFloat(getCol(row, "FGTS_RESCISORIO") || "0");
+        agrupado[key].total     += parseFloat(getCol(row, "TOTAL")           || "0");
+      }
 
+      const registros = Object.values(agrupado);
+      let inseridos = 0;
+      const erros = [];
+
+      for (const reg of registros) {
         try {
           await api.lancarRescisaoValor({
-            chapa, nome, filial,
-            liquido, proventos, descontos,
-            fgts_rescisorio: fgts,
-            valor_total: total,
-            competencia_mes: mescomp,
-            competencia_ano: anocomp,
+            chapa:           reg.chapa,
+            nome:            reg.nome,
+            filial:          reg.filial,
+            liquido:         reg.liquido,
+            proventos:       reg.proventos,
+            descontos:       reg.descontos,
+            fgts_rescisorio: reg.fgts,
+            valor_total:     reg.total,
+            competencia_mes: reg.mescomp,
+            competencia_ano: reg.anocomp,
           });
           inseridos++;
         } catch(e) {
-          erros.push(`Chapa ${chapa}: ${e.message}`);
+          erros.push(`Chapa ${reg.chapa}: ${e.message}`);
         }
       }
 
-      setImportResult({ inseridos, erros, total: lines.length - 1 });
+      setImportResult({ inseridos, erros, total: registros.length });
       carregarRescisao(rescisaoMes, rescisaoAno);
     } catch(e) {
       setImportResult({ erro: e.message });
