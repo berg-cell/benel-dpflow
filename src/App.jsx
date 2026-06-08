@@ -5069,6 +5069,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
   const [erro,           setErro]           = useState("");
   const [modalPDF,       setModalPDF]       = useState(null);
   const [modalAnexoPedido, setModalAnexoPedido] = useState(null);
+  const [modalAnexoDesl, setModalAnexoDesl] = useState(null);
 
   const FORM_VAZIO = {
     colaborador_id: "", tipo: "", data_desligamento: "",
@@ -5393,58 +5394,114 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                   <td style={{ padding:"4px 8px" }}>
                     <span style={{ background: st.color+"22", color: st.color, borderRadius:6, padding:"3px 8px", fontSize:11, fontWeight:600 }}>{st.label}</span>
                   </td>
-                  <td style={{ padding:"4px 8px" }}>
-                    <div style={{ display:"flex", gap:4, flexWrap:"nowrap", alignItems:"center" }}>
-                      <button onClick={() => abrirDetalhe(sol.id)} style={{ ...btnBase, border:"1px solid #E5E7EB", background:"#fff", color:"#374151" }}>Ver</button>
-
-                      {sol.tipo !== "pedido_demissao" && (
-                        <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalPDF(r); } catch(e){ setErro(e.message); } }}
-                          style={{ ...btnBase, border:"1px solid #D1D5DB", background:"#fff", color:"#374151" }}>📄 Doc</button>
-                      )}
-                      {sol.tipo === "pedido_demissao" && (
-                        <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalAnexoPedido(r); } catch(e){ setErro(e.message); } }}
-                          style={{ ...btnBase, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46" }}>📎 Anexo</button>
-                      )}
-                      {podeAgir(sol) && sol.tipo !== "pedido_demissao" && (
-                        <button onClick={() => setModalAcao({ id: sol.id, status: sol.status, acao: "aprovar", observacao: "" })}
-                          style={{ ...btnBase, border:"none", background:"#0F2447", color:"#fff" }}>Analisar</button>
-                      )}
-                      {sol.status === "rascunho" && sol.gestor_id === user.id && (
-                        <button onClick={async () => { try { await api.enviarDesligamento(sol.id); await carregar(); } catch(e){setErro(e.message);} }}
-                          style={{ ...btnBase, border:"none", background:"#10B981", color:"#fff" }}>Enviar</button>
-                      )}
-                      {["aprovado","finalizado"].includes(sol.status) && sol.tipo !== "pedido_demissao" && (
-                        <label style={{ ...btnBase, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46", display:"inline-block" }}>
-                          📎 Anexar
-                          <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display:"none" }}
-                            onChange={async (e) => {
-                              const file = e.target.files[0]; if (!file) return;
-                              if (file.size > 5*1024*1024) { setErro("Arquivo muito grande (max 5MB)"); return; }
-                              const reader = new FileReader();
-                              reader.onload = async (ev) => {
-                                try {
-                                  await api.post("/desligamentos/"+sol.id+"/anexos", { nome_arquivo: file.name, tipo_arquivo: file.type, dados_base64: ev.target.result });
-                                  alert("Anexo adicionado com sucesso!"); setErro("");
-                                } catch(err) { setErro(err.message); }
-                              };
-                              reader.readAsDataURL(file);
-                            }} />
-                        </label>
-                      )}
-                      {["admin","dp"].includes(user.perfil) && !["cancelado","finalizado"].includes(sol.status) && (
-                        <button onClick={async () => {
-                          if (!window.confirm(`Cancelar a solicitação de desligamento de ${sol.colaborador_nome}?\n\nEsta ação não pode ser desfeita.`)) return;
-                          try { await api.cancelarDesligamento(sol.id); await carregar(); } catch(e) { setErro(e.message); }
-                        }} style={{ ...btnBase, border:"1px solid #EF4444", background:"#FEF2F2", color:"#DC2626" }}>🚫</button>
-                      )}
-                    </div>
-                  </td>
+                   <td style={{ padding:"4px 8px" }}>
+                     <div style={{ display:"flex", gap:4, flexWrap:"nowrap", alignItems:"center" }}>
+                       {/* PDF */}
+                       {sol.tipo !== "pedido_demissao" && (
+                         <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalPDF(r); } catch(e){ setErro(e.message); } }}
+                           style={{ ...btnBase, border:"1px solid #D1D5DB", background:"#fff", color:"#374151" }}>📄 PDF</button>
+                       )}
+                       {/* Enviar rascunho */}
+                       {sol.status === "rascunho" && sol.gestor_id === user.id && (
+                         <button onClick={async () => { try { await api.enviarDesligamento(sol.id); await carregar(); } catch(e){setErro(e.message);} }}
+                           style={{ ...btnBase, border:"none", background:"#10B981", color:"#fff" }}>▶ Enviar</button>
+                       )}
+                       {/* Anexar / Substituir */}
+                       {["aprovado","finalizado"].includes(sol.status) && sol.tipo !== "pedido_demissao" && (
+                         <label style={{ ...btnBase, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46", display:"inline-block" }}>
+                           📎 {sol.anexo_nome ? "Substituir" : "Anexar"}
+                           <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display:"none" }}
+                             onChange={async (e) => {
+                               const file = e.target.files[0]; if (!file) return;
+                               if (file.size > 5*1024*1024) { setErro("Arquivo muito grande (max 5MB)"); return; }
+                               const reader = new FileReader();
+                               reader.onload = async (ev) => {
+                                 try {
+                                   await api.addAnexoDesligamento(sol.id, { nome_arquivo: file.name, tipo_arquivo: file.type, dados_base64: ev.target.result });
+                                   setLista(l => l.map(s => s.id === sol.id ? { ...s, anexo_nome: file.name, anexo_dados: ev.target.result } : s));
+                                   alert("Anexo adicionado com sucesso!"); setErro("");
+                                 } catch(err) { setErro(err.message); }
+                               };
+                               reader.readAsDataURL(file);
+                             }} />
+                         </label>
+                       )}
+                       {/* Ver anexo */}
+                       {sol.anexo_nome && (
+                         <button onClick={() => {
+                           const dados = sol.anexo_dados;
+                           if (!dados) { alert("Recarregue a página para visualizar."); return; }
+                           const [header, b64] = dados.split(",");
+                           const mime = header.match(/:(.*?);/)?.[1] || "application/octet-stream";
+                           const bytes = atob(b64); const arr = new Uint8Array(bytes.length);
+                           for (let i2 = 0; i2 < bytes.length; i2++) arr[i2] = bytes.charCodeAt(i2);
+                           const blob = new Blob([arr], { type: mime });
+                           const blobUrl = URL.createObjectURL(blob);
+                           setModalAnexoDesl({ nome: sol.anexo_nome, blobUrl, isPdf: mime === "application/pdf" || sol.anexo_nome.toLowerCase().endsWith(".pdf") });
+                         }} style={{ ...btnBase, border:"1px solid #3B82F6", background:"#EFF6FF", color:"#1D4ED8" }}>👁️ Ver</button>
+                       )}
+                       {/* Pedido de demissão — anexo */}
+                       {sol.tipo === "pedido_demissao" && (
+                         <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalAnexoPedido(r); } catch(e){ setErro(e.message); } }}
+                           style={{ ...btnBase, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46" }}>📎 Anexo</button>
+                       )}
+                       {/* Aprovar */}
+                       {podeAgir(sol) && sol.tipo !== "pedido_demissao" && (
+                         <button onClick={() => setModalAcao({ id: sol.id, status: sol.status, acao: "aprovar", observacao: "" })}
+                           style={{ ...btnBase, border:"none", background:"#059669", color:"#fff" }}>✓ Aprovar</button>
+                       )}
+                       {/* Ver detalhe */}
+                       <button onClick={() => abrirDetalhe(sol.id)} style={{ ...btnBase, border:"1px solid #E5E7EB", background:"#fff", color:"#374151" }}>Ver</button>
+                       {/* Cancelar */}
+                       {["admin","dp"].includes(user.perfil) && !["cancelado","finalizado"].includes(sol.status) && (
+                         <button onClick={async () => {
+                           if (!window.confirm(`Cancelar a solicitação de desligamento de ${sol.colaborador_nome}?\n\nEsta ação não pode ser desfeita.`)) return;
+                           try { await api.cancelarDesligamento(sol.id); await carregar(); } catch(e) { setErro(e.message); }
+                         }} style={{ ...btnBase, border:"1px solid #EF4444", background:"#FEF2F2", color:"#DC2626" }}>🚫</button>
+                       )}
+                     </div>
+                   </td>
                 </tr>
               );
             })}
           </tbody>
         </table>
       </div>
+
+      {/* Modal Visualizar Anexo Desligamento */}
+      {modalAnexoDesl && (
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.7)", zIndex:2000, display:"flex", alignItems:"center", justifyContent:"center" }}>
+          <div style={{ background:"#fff", borderRadius:14, width:"90vw", maxWidth:900, height:"90vh", display:"flex", flexDirection:"column", boxShadow:"0 20px 60px rgba(0,0,0,.4)" }}>
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 20px", borderBottom:"1px solid #E5E7EB" }}>
+              <span style={{ fontWeight:700, fontSize:14, color:"#0F2447" }}>📎 {modalAnexoDesl.nome}</span>
+              <div style={{ display:"flex", gap:8 }}>
+                <button onClick={() => { const win = window.open(modalAnexoDesl.blobUrl,"_blank"); setTimeout(()=>win?.print(),800); }}
+                  style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #3B82F6", background:"#EFF6FF", color:"#1D4ED8", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+                  🖨️ Imprimir / Salvar
+                </button>
+                <button onClick={() => { URL.revokeObjectURL(modalAnexoDesl.blobUrl); setModalAnexoDesl(null); }}
+                  style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #D1D5DB", background:"#F3F4F6", color:"#374151", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+                  ✕ Fechar
+                </button>
+              </div>
+            </div>
+            <div style={{ flex:1, overflow:"hidden", padding:8 }}>
+              {modalAnexoDesl.isPdf ? (
+                <object data={modalAnexoDesl.blobUrl} type="application/pdf" style={{ width:"100%", height:"100%", borderRadius:8 }}>
+                  <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:"100%", gap:12 }}>
+                    <button onClick={() => { const a = document.createElement("a"); a.href = modalAnexoDesl.blobUrl; a.download = modalAnexoDesl.nome; a.click(); }}
+                      style={{ padding:"8px 20px", borderRadius:8, border:"none", background:"#0F2447", color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer" }}>⬇️ Baixar PDF</button>
+                  </div>
+                </object>
+              ) : (
+                <div style={{ width:"100%", height:"100%", overflow:"auto", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                  <img src={modalAnexoDesl.blobUrl} alt={modalAnexoDesl.nome} style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain", borderRadius:8 }} />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal Novo */}
       {modalNovo && (
