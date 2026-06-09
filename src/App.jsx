@@ -8010,6 +8010,7 @@ function App() {
           {page === "autorizacoes"      && <Autorizacoes user={user} colaboradores={colaboradores} />}
           {page === "atualizacao_cadastral" && <AtualizacaoCadastral user={user} colaboradores={colaboradores} />}
           {page === "plano_saude" && <PlanoSaude user={user} colaboradores={colaboradores} />}
+          {page === "disciplinar"   && <Disciplinar user={user} colaboradores={colaboradores} api={api} />}
         </div>
       </div>
     </div>
