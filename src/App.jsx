@@ -1,4 +1,4 @@
-import { useState, useContext, createContext, useEffect, useCallback, useRef } from "react"; 
+import { useState, useContext, createContext, useEffect, useCallback, useRef } from "react";
 import { api, setTokens, clearTokens, onSessionExpired } from "./api";
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -3796,9 +3796,9 @@ function Aprovacoes({ blocos, setBlocos, user, recarregarDados }) {
   const [modalAcao, setModalAcao] = useState(null);
 
   const getFilaParaUsuario = () => {
-    if (user.perfil === "superior") return blocos.filter(b => b.status === "pendente_superior");
-    if (user.perfil === "dp") return blocos.filter(b => b.status === "pendente_dp");
-    if (user.perfil === "admin") return blocos.filter(b => b.status.startsWith("pendente"));
+    if (user?.perfil === "superior") return blocos.filter(b => b.status === "pendente_superior");
+    if (user?.perfil === "dp") return blocos.filter(b => b.status === "pendente_dp");
+    if (user?.perfil === "admin") return blocos.filter(b => b.status.startsWith("pendente"));
     return [];
     return [];
   };
@@ -4580,7 +4580,7 @@ function Ocorrencias({ user, colaboradores }) {
           <p style={{ margin: "4px 0 0", fontSize: 11, color: "#6B7280" }}>Registro de ocorrências disciplinares</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
-          {(user.perfil === "dp" || user.perfil === "admin") && (
+          {(user?.perfil === "dp" || user?.perfil === "admin") && (
             <Button variant="secondary" onClick={exportarCSV} disabled={exportando || pendentesExportacao === 0}>
               {exportando ? "Exportando..." : `↓ Exportar RM (${pendentesExportacao})`}
             </Button>
@@ -6870,7 +6870,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
   const [obsEdit, setObsEdit]           = useState("");
 
   const norm = s => (s || "").toLowerCase();
-  const canAprovar = user.perfil === "dp" || user.perfil === "admin" || user.perfil === "presidente";
+  const canAprovar = user?.perfil === "dp" || user?.perfil === "admin" || user?.perfil === "presidente";
   const canEditar  = (s) => s && s.status !== "finalizado" && s.status !== "reprovado";
 
   const colabsAtivos = colaboradores.filter(c => c.cod_situacao !== "D");
@@ -6906,7 +6906,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
       const data = await api.listarAtualizacaoCadastral(params);
       let sols = Array.isArray(data) ? data : [];
       // Gestor e Superior só veem as próprias solicitações
-      if (user.perfil === "gestor" || user.perfil === "superior") {
+      if (user?.perfil === "gestor" || user?.perfil === "superior") {
         sols = sols.filter(s => s.usuario_solicitante_id === user.id);
       }
       setSolicitacoes(sols);
