@@ -7858,22 +7858,7 @@ function Disciplinar({ user, colaboradores, api }) {
   );
 }
 
-class ErrorBoundary extends React.Component {
-  constructor(props) { super(props); this.state = { error: null }; }
-  static getDerivedStateFromError(error) { return { error }; }
-  componentDidCatch(error, info) { console.error("APP ERROR:", error, info); }
-  render() {
-    if (this.state.error) {
-      return <div style={{padding:40,color:"red",fontFamily:"monospace"}}>
-        <h2>Erro na aplicação:</h2>
-        <pre>{this.state.error?.message}</pre>
-        <pre>{this.state.error?.stack}</pre>
-        <button onClick={()=>window.location.reload()}>Recarregar</button>
-      </div>;
-    }
-    return this.props.children;
-  }
-}
+
 
 function App() {
   const [user, setUser] = useState(null);
