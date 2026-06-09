@@ -7347,7 +7347,7 @@ export default
 // MEDIDAS DISCIPLINARES — Novo fluxo com Jurídico + Cartilha
 // ─────────────────────────────────────────────────────────────────────────────
 function Disciplinar({ user, colaboradores, api }) {
-  if (!user) return null;
+  const [catFiltro, setCatFiltro] = useState("");
   const [lista, setLista]               = useState([]);
   const [cartilha, setCartilha]         = useState([]);
   const [loading, setLoading]           = useState(true);
@@ -7359,6 +7359,7 @@ function Disciplinar({ user, colaboradores, api }) {
   const [salvando, setSalvando]         = useState(false);
   const [fStatus, setFStatus]           = useState("");
   const [fColab, setFColab]             = useState("");
+  if (!user) return null;
 
   // Form novo
   const [form, setForm] = useState({
@@ -7454,7 +7455,6 @@ function Disciplinar({ user, colaboradores, api }) {
   };
 
   const categorias = [...new Set(cartilha.map(c => c.categoria))];
-  const [catFiltro, setCatFiltro] = useState("");
   const cartilhaFiltrada = cartilha.filter(c =>
     (!catFiltro || c.categoria === catFiltro)
   );
