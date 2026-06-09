@@ -507,6 +507,7 @@ const PERFIL_CONFIG = {
   superior:   { label: "Superior",   color: "#8B5CF6" },
   dp:         { label: "DP",         color: "#10B981" },
   presidente: { label: "Presidente", color: "#DC2626" },
+  juridico:   { label: "Jurídico",   color: "#7C3AED" },
   admin:      { label: "Admin",      color: "#F59E0B" },
 };
 
@@ -911,6 +912,7 @@ const NAV_ITEMS = [
   { id: "cadastros",     label: "Cadastros",                            icon: "🗂",  perfis: ["dp","admin"], submenu: CADASTROS_SUBMENU },
   { id: "atualizacao_cadastral", label: "Atualização de Dados Cadastrais", icon: "📝", perfis: ["gestor","dp","admin","presidente"] },
   { id: "ocorrencias",      label: "Solicitações de Advertências/Suspensões", icon: "⚠️", perfis: ["gestor","dp","admin"] },
+  { id: "disciplinar",      label: "Medidas Disciplinares",                   icon: "⚖️", perfis: ["gestor","dp","admin","presidente","juridico"] },
   { id: "autorizacoes",     label: "Autorização de Desconto",                icon: "📋", perfis: ["gestor","dp","admin","presidente"] },
   { id: "solicitacoes",     label: "Solicitações de Pagamento",               icon: "≡",  perfis: ["gestor","superior","dp","admin"] },
   { id: "desligamentos", label: "Solicitações de Desligamento",         icon: "🚪", perfis: ["gestor","superior","dp","admin","presidente"] },
@@ -2400,7 +2402,7 @@ function CadUsuarios({ usuarios, setUsuarios }) {
               <th style={{ padding: "3px 6px" }} />
               <th style={{ padding: "3px 6px" }}><input value={fNomeU}  onChange={e=>setFNomeU(e.target.value)}  placeholder="🔍 Nome"   style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
               <th style={{ padding: "3px 6px" }}><input value={fEmailU} onChange={e=>setFEmailU(e.target.value)} placeholder="🔍 E-mail" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
-              <th style={{ padding: "3px 6px" }}><select value={fPerfilU} onChange={e=>setFPerfilU(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="gestor">Gestor</option><option value="superior">Superior</option><option value="dp">DP</option><option value="presidente">Presidente</option><option value="admin">Admin</option></select></th>
+              <th style={{ padding: "3px 6px" }}><select value={fPerfilU} onChange={e=>setFPerfilU(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="gestor">Gestor</option><option value="superior">Superior</option><option value="dp">DP</option><option value="presidente">Presidente</option><option value="juridico">Jurídico</option><option value="admin">Admin</option></select></th>
               <th style={{ padding: "3px 6px" }}><select value={fStatusU} onChange={e=>setFStatusU(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select></th>
               <th style={{ padding: "3px 6px" }}><button onClick={()=>{setFNomeU("");setFEmailU("");setFPerfilU("");setFStatusU("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
             </tr>
@@ -2453,6 +2455,7 @@ function CadUsuarios({ usuarios, setUsuarios }) {
                 <option value="superior">Superior</option>
                 <option value="dp">DP</option>
                 <option value="presidente">Presidente</option>
+                <option value="juridico">Jurídico</option>
                 <option value="admin">Admin</option>
               </select>
             </div>
@@ -7338,7 +7341,525 @@ function AtualizacaoCadastral({ user, colaboradores }) {
 }
 
 
-export default function App() {
+export default 
+// ─────────────────────────────────────────────────────────────────────────────
+// MEDIDAS DISCIPLINARES — Novo fluxo com Jurídico + Cartilha
+// ─────────────────────────────────────────────────────────────────────────────
+function Disciplinar({ user, colaboradores, api }) {
+  const [lista, setLista]               = useState([]);
+  const [cartilha, setCartilha]         = useState([]);
+  const [loading, setLoading]           = useState(true);
+  const [msg, setMsg]                   = useState(null);
+  const [aba, setAba]                   = useState("solicitacoes"); // solicitacoes | cartilha
+  const [modalNovo, setModalNovo]       = useState(false);
+  const [modalDetalhe, setModalDetalhe] = useState(null);
+  const [modalAnalise, setModalAnalise] = useState(null);
+  const [salvando, setSalvando]         = useState(false);
+  const [fStatus, setFStatus]           = useState("");
+  const [fColab, setFColab]             = useState("");
+
+  // Form novo
+  const [form, setForm] = useState({
+    colaborador_id:"", descricao_ocorrido:"",
+    cartilha_id:"", sem_enquadramento:false,
+  });
+  const [sugestao, setSugestao] = useState(null);
+  const [buscandoSugestao, setBuscandoSugestao] = useState(false);
+
+  // Form análise jurídico
+  const [analise, setAnalise] = useState({
+    acao:"aprovar", observacao:"", nivel_final:"",
+    penalidade_final:"", dias_final:0, texto_juridico:"",
+  });
+
+  const norm = (s) => (s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+
+  useEffect(() => {
+    carregarTudo();
+  }, []);
+
+  const carregarTudo = async () => {
+    setLoading(true);
+    try {
+      const [sols, cart] = await Promise.all([
+        api.listarDisciplinar(),
+        api.listarCartilha(),
+      ]);
+      setLista(Array.isArray(sols) ? sols : []);
+      setCartilha(Array.isArray(cart) ? cart : []);
+    } catch(e) { setMsg({ tipo:"erro", texto: e.message }); }
+    setLoading(false);
+  };
+
+  const buscarSugestao = async (colaborador_id, cartilha_id) => {
+    if (!colaborador_id || !cartilha_id) { setSugestao(null); return; }
+    setBuscandoSugestao(true);
+    try {
+      const s = await api.sugerirPenalidade(colaborador_id, cartilha_id);
+      setSugestao(s);
+      setForm(f => ({
+        ...f,
+        nivel_sugerido: s.nivel_sugerido,
+        penalidade_sugerida: s.penalidade_sugerida,
+        dias_sugeridos: s.dias_sugeridos,
+        historico_resumo: s.historico_resumo,
+      }));
+    } catch(_) {}
+    setBuscandoSugestao(false);
+  };
+
+  const criarSolicitacao = async () => {
+    if (!form.colaborador_id) return setMsg({ tipo:"erro", texto:"Selecione o colaborador" });
+    if (!form.descricao_ocorrido.trim()) return setMsg({ tipo:"erro", texto:"Descreva o ocorrido" });
+    if (!form.sem_enquadramento && !form.cartilha_id) return setMsg({ tipo:"erro", texto:"Selecione um enquadramento ou marque 'Não encontrei'" });
+    setSalvando(true);
+    try {
+      await api.criarDisciplinar(form);
+      setMsg({ tipo:"ok", texto:"Solicitação enviada ao Jurídico!" });
+      setModalNovo(false);
+      setForm({ colaborador_id:"", descricao_ocorrido:"", cartilha_id:"", sem_enquadramento:false });
+      setSugestao(null);
+      carregarTudo();
+    } catch(e) { setMsg({ tipo:"erro", texto: e.message }); }
+    setSalvando(false);
+  };
+
+  const enviarAnalise = async () => {
+    if (!analise.acao) return;
+    setSalvando(true);
+    try {
+      await api.analisarDisciplinar(modalAnalise.id, analise);
+      setMsg({ tipo:"ok", texto:`Solicitação ${analise.acao === "reprovar" ? "reprovada" : "aprovada"} com sucesso!` });
+      setModalAnalise(null);
+      carregarTudo();
+    } catch(e) { setMsg({ tipo:"erro", texto: e.message }); }
+    setSalvando(false);
+  };
+
+  const STATUS_COR = {
+    pendente_juridico: { bg:"#FEF3C7", color:"#92400E", label:"Pend. Jurídico" },
+    aprovado:          { bg:"#D1FAE5", color:"#065F46", label:"Aprovado" },
+    reprovado:         { bg:"#FEE2E2", color:"#991B1B", label:"Reprovado" },
+    finalizado:        { bg:"#DBEAFE", color:"#1E40AF", label:"Finalizado" },
+    cancelado:         { bg:"#F3F4F6", color:"#6B7280", label:"Cancelado" },
+  };
+
+  const NIVEL_COR = {
+    LEVE:        { bg:"#FEF3C7", color:"#92400E" },
+    MEDIA:       { bg:"#FED7AA", color:"#9A3412" },
+    GRAVE:       { bg:"#FEE2E2", color:"#991B1B" },
+    GRAVISSIMA:  { bg:"#EDE9FE", color:"#5B21B6" },
+  };
+
+  const categorias = [...new Set(cartilha.map(c => c.categoria))];
+  const [catFiltro, setCatFiltro] = useState("");
+  const cartilhaFiltrada = cartilha.filter(c =>
+    (!catFiltro || c.categoria === catFiltro)
+  );
+
+  const listafiltrada = lista
+    .filter(s => !fStatus || s.status === fStatus)
+    .filter(s => !fColab || norm(s.nome_colaborador).includes(norm(fColab)) || (s.chapa||"").includes(fColab));
+
+  const S = {
+    th: { padding:"5px 8px", fontSize:11, fontWeight:700, color:"#6B7280", textAlign:"left", borderBottom:"1px solid #E5E7EB", background:"#F9FAFB" },
+    td: { padding:"4px 8px", fontSize:11, color:"#374151", borderBottom:"1px solid #F3F4F6" },
+    inp: { width:"100%", padding:"7px 10px", borderRadius:8, border:"1px solid #D1D5DB", fontSize:13, fontFamily:"inherit", boxSizing:"border-box" },
+    lbl: { fontSize:11, fontWeight:600, color:"#374151", display:"block", marginBottom:4 },
+    btnP: { padding:"8px 18px", borderRadius:8, border:"none", background:"#0F2447", color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer" },
+    btnS: { padding:"8px 18px", borderRadius:8, border:"1px solid #D1D5DB", background:"#fff", color:"#374151", fontSize:13, cursor:"pointer" },
+    btnV: { padding:"6px 14px", borderRadius:8, border:"none", background:"#059669", color:"#fff", fontSize:11, fontWeight:700, cursor:"pointer" },
+    btnR: { padding:"6px 14px", borderRadius:8, border:"none", background:"#DC2626", color:"#fff", fontSize:11, fontWeight:700, cursor:"pointer" },
+  };
+
+  return (
+    <div style={{ padding:28 }}>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:20 }}>
+        <div>
+          <h2 style={{ margin:0, fontSize:20, fontWeight:800, color:"#0F2447" }}>⚖️ Medidas Disciplinares</h2>
+          <p style={{ margin:"4px 0 0", fontSize:12, color:"#6B7280" }}>Fluxo com análise do Jurídico — baseado na Cartilha Educativa</p>
+        </div>
+        {["gestor","dp","admin","presidente","juridico"].includes(user.perfil) && (
+          <button onClick={() => { setModalNovo(true); setMsg(null); setSugestao(null); }}
+            style={{ ...S.btnP, padding:"10px 20px" }}>+ Nova Solicitação</button>
+        )}
+      </div>
+
+      {msg && (
+        <div style={{ background: msg.tipo==="ok" ? "#F0FDF4" : "#FEF2F2",
+          border: `1px solid ${msg.tipo==="ok" ? "#BBF7D0" : "#FCA5A5"}`,
+          borderRadius:8, padding:"10px 14px", marginBottom:16, fontSize:12,
+          color: msg.tipo==="ok" ? "#065F46" : "#DC2626",
+          display:"flex", justifyContent:"space-between" }}>
+          <span>{msg.tipo==="ok" ? "✅" : "❌"} {msg.texto}</span>
+          <button onClick={() => setMsg(null)} style={{ background:"none", border:"none", cursor:"pointer", color:"#9CA3AF" }}>✕</button>
+        </div>
+      )}
+
+      {/* Abas */}
+      <div style={{ display:"flex", gap:0, borderBottom:"2px solid #E5E7EB", marginBottom:16 }}>
+        {[
+          { id:"solicitacoes", label:`📋 Solicitações (${lista.filter(s=>s.status==="pendente_juridico").length} pendentes)` },
+          { id:"cartilha",     label:"📖 Cartilha Educativa" },
+        ].map(t => (
+          <button key={t.id} onClick={() => setAba(t.id)}
+            style={{ padding:"10px 18px", border:"none", background:"none", cursor:"pointer",
+              fontSize:13, fontWeight: aba===t.id ? 700 : 400,
+              color: aba===t.id ? "#0F2447" : "#6B7280",
+              borderBottom: aba===t.id ? "2px solid #0F2447" : "2px solid transparent",
+              marginBottom:-2 }}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* ABA SOLICITAÇÕES */}
+      {aba === "solicitacoes" && (
+        <>
+          <div style={{ display:"flex", gap:10, marginBottom:12, flexWrap:"wrap" }}>
+            <input placeholder="🔍 Colaborador/Chapa" value={fColab} onChange={e=>setFColab(e.target.value)}
+              style={{ ...S.inp, width:220, fontSize:12 }} />
+            <select value={fStatus} onChange={e=>setFStatus(e.target.value)}
+              style={{ padding:"7px 10px", borderRadius:8, border:"1px solid #D1D5DB", fontSize:12 }}>
+              <option value="">Todos os status</option>
+              <option value="pendente_juridico">Pend. Jurídico</option>
+              <option value="aprovado">Aprovado</option>
+              <option value="reprovado">Reprovado</option>
+              <option value="finalizado">Finalizado</option>
+              <option value="cancelado">Cancelado</option>
+            </select>
+            <button onClick={() => { setFColab(""); setFStatus(""); }}
+              style={{ ...S.btnS, fontSize:12 }}>× Limpar</button>
+            <span style={{ fontSize:11, color:"#6B7280", alignSelf:"center" }}>{listafiltrada.length} registro(s)</span>
+          </div>
+
+          <div style={{ background:"#fff", borderRadius:12, border:"1px solid #E5E7EB", overflow:"hidden" }}>
+            <table style={{ width:"100%", borderCollapse:"collapse" }}>
+              <thead>
+                <tr>
+                  {["Colaborador","Enquadramento","Sugestão","Status","Data","Ações"].map(h => (
+                    <th key={h} style={S.th}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr><td colSpan={6} style={{ ...S.td, textAlign:"center", padding:20, color:"#9CA3AF" }}>Carregando...</td></tr>
+                ) : listafiltrada.length === 0 ? (
+                  <tr><td colSpan={6} style={{ ...S.td, textAlign:"center", padding:20, color:"#9CA3AF" }}>Nenhuma solicitação encontrada</td></tr>
+                ) : listafiltrada.map(s => {
+                  const st = STATUS_COR[s.status] || STATUS_COR.pendente_juridico;
+                  const nv = NIVEL_COR[s.nivel_sugerido] || NIVEL_COR.LEVE;
+                  return (
+                    <tr key={s.id} style={{ background:"#fff" }}>
+                      <td style={S.td}>
+                        <div style={{ fontWeight:700, fontSize:11 }}>{s.nome_colaborador}</div>
+                        <div style={{ fontSize:10, color:"#6B7280" }}>Chapa: {s.chapa}</div>
+                        <div style={{ fontSize:10, color:"#6B7280" }}>{s.descricao_filial}</div>
+                      </td>
+                      <td style={S.td}>
+                        {s.sem_enquadramento ? (
+                          <span style={{ fontSize:10, color:"#F59E0B", fontWeight:600 }}>⚠️ Sem enquadramento</span>
+                        ) : (
+                          <>
+                            <div style={{ fontSize:10, fontWeight:600 }}>{s.cartilha_categoria}</div>
+                            <div style={{ fontSize:10, color:"#6B7280" }}>{(s.cartilha_descricao||"").substring(0,60)}...</div>
+                          </>
+                        )}
+                      </td>
+                      <td style={S.td}>
+                        {s.nivel_final ? (
+                          <span style={{ ...nv, padding:"2px 8px", borderRadius:20, fontSize:10, fontWeight:700,
+                            background: NIVEL_COR[s.nivel_final]?.bg, color: NIVEL_COR[s.nivel_final]?.color }}>
+                            {s.nivel_final}
+                          </span>
+                        ) : s.nivel_sugerido ? (
+                          <span style={{ ...nv, padding:"2px 8px", borderRadius:20, fontSize:10, fontWeight:600,
+                            background: nv.bg, color: nv.color }}>
+                            {s.nivel_sugerido} (sugestão)
+                          </span>
+                        ) : <span style={{ color:"#9CA3AF", fontSize:10 }}>—</span>}
+                      </td>
+                      <td style={S.td}>
+                        <span style={{ padding:"2px 8px", borderRadius:20, fontSize:10, fontWeight:700,
+                          background: st.bg, color: st.color }}>{st.label}</span>
+                      </td>
+                      <td style={{ ...S.td, whiteSpace:"nowrap" }}>
+                        {new Date(s.criado_em).toLocaleDateString("pt-BR")}
+                      </td>
+                      <td style={S.td}>
+                        <div style={{ display:"flex", gap:4 }}>
+                          <button onClick={() => setModalDetalhe(s)}
+                            style={{ ...S.btnS, padding:"4px 10px", fontSize:11 }}>Ver</button>
+                          {["juridico","dp","admin"].includes(user.perfil) && s.status === "pendente_juridico" && (
+                            <button onClick={() => {
+                              setModalAnalise(s);
+                              setAnalise({ acao:"aprovar", observacao:"",
+                                nivel_final: s.nivel_sugerido||"LEVE",
+                                penalidade_final: s.penalidade_sugerida||"Advertência Escrita",
+                                dias_final: s.dias_sugeridos||0, texto_juridico:"" });
+                            }} style={{ ...S.btnV, padding:"4px 10px" }}>⚖️ Analisar</button>
+                          )}
+                          {["dp","admin"].includes(user.perfil) && !["cancelado","finalizado"].includes(s.status) && (
+                            <button onClick={async () => {
+                              if (!window.confirm("Cancelar esta solicitação?")) return;
+                              try { await api.cancelarDisciplinar(s.id); carregarTudo(); } catch(e) { setMsg({ tipo:"erro", texto:e.message }); }
+                            }} style={{ ...S.btnR, padding:"4px 8px" }}>🚫</button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+
+      {/* ABA CARTILHA */}
+      {aba === "cartilha" && (
+        <>
+          <div style={{ display:"flex", gap:10, marginBottom:12, flexWrap:"wrap" }}>
+            <select value={catFiltro} onChange={e => setCatFiltro(e.target.value)}
+              style={{ padding:"7px 10px", borderRadius:8, border:"1px solid #D1D5DB", fontSize:12 }}>
+              <option value="">Todas as categorias</option>
+              {categorias.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+            <span style={{ fontSize:11, color:"#6B7280", alignSelf:"center" }}>{cartilhaFiltrada.length} enquadramento(s)</span>
+          </div>
+
+          <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+            {categorias.filter(c => !catFiltro || c === catFiltro).map(cat => {
+              const itens = cartilhaFiltrada.filter(c => c.categoria === cat);
+              if (!itens.length) return null;
+              return (
+                <div key={cat} style={{ background:"#fff", borderRadius:10, border:"1px solid #E5E7EB", overflow:"hidden" }}>
+                  <div style={{ background:"#F0F9FF", padding:"8px 14px", fontWeight:700, fontSize:12, color:"#0369A1", borderBottom:"1px solid #E5E7EB" }}>
+                    📂 {cat} — {itens.length} enquadramentos
+                  </div>
+                  <table style={{ width:"100%", borderCollapse:"collapse" }}>
+                    <thead>
+                      <tr>
+                        {["Descrição","LEVE","MÉDIA","GRAVE","GRAVÍSSIMA"].map(h => (
+                          <th key={h} style={{ ...S.th, background:"#F9FAFB" }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {itens.map(item => (
+                        <tr key={item.id}>
+                          <td style={{ ...S.td, maxWidth:400 }}>{item.descricao}</td>
+                          {["tem_leve","tem_media","tem_grave","tem_gravissima"].map((campo, i) => {
+                            const cores = [NIVEL_COR.LEVE, NIVEL_COR.MEDIA, NIVEL_COR.GRAVE, NIVEL_COR.GRAVISSIMA];
+                            return (
+                              <td key={campo} style={{ ...S.td, textAlign:"center" }}>
+                                {item[campo] ? (
+                                  <span style={{ ...cores[i], padding:"2px 6px", borderRadius:4, fontSize:10, fontWeight:700 }}>✓</span>
+                                ) : <span style={{ color:"#E5E7EB" }}>—</span>}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      {/* MODAL NOVA SOLICITAÇÃO */}
+      {modalNovo && (
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.5)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center" }}>
+          <div style={{ background:"#fff", borderRadius:14, width:"100%", maxWidth:600, maxHeight:"90vh", overflowY:"auto", padding:28, boxShadow:"0 20px 60px rgba(0,0,0,.3)" }}>
+            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:20 }}>
+              <h3 style={{ margin:0, fontSize:16, fontWeight:700, color:"#0F2447" }}>⚖️ Nova Solicitação Disciplinar</h3>
+              <button onClick={() => setModalNovo(false)} style={{ background:"none", border:"none", fontSize:20, cursor:"pointer" }}>×</button>
+            </div>
+
+            <div style={{ marginBottom:14 }}>
+              <label style={S.lbl}>Colaborador *</label>
+              <select value={form.colaborador_id} style={S.inp}
+                onChange={e => {
+                  setForm(f => ({...f, colaborador_id: e.target.value}));
+                  if (e.target.value && form.cartilha_id) buscarSugestao(e.target.value, form.cartilha_id);
+                }}>
+                <option value="">Selecione...</option>
+                {colaboradores.filter(c=>c.cod_situacao!=="D").map(c => (
+                  <option key={c.id} value={c.id}>{c.nome} — {c.chapa}</option>
+                ))}
+              </select>
+            </div>
+
+            <div style={{ marginBottom:14 }}>
+              <label style={S.lbl}>Descrição do ocorrido *</label>
+              <textarea value={form.descricao_ocorrido} rows={3}
+                onChange={e => setForm(f=>({...f, descricao_ocorrido:e.target.value}))}
+                style={{ ...S.inp, resize:"vertical" }} placeholder="Descreva detalhadamente o que ocorreu..." />
+            </div>
+
+            <div style={{ marginBottom:14 }}>
+              <label style={S.lbl}>Enquadramento na Cartilha</label>
+              <select value={form.cartilha_id} style={S.inp} disabled={form.sem_enquadramento}
+                onChange={e => {
+                  setForm(f => ({...f, cartilha_id: e.target.value}));
+                  if (e.target.value && form.colaborador_id) buscarSugestao(form.colaborador_id, e.target.value);
+                }}>
+                <option value="">Selecione o enquadramento...</option>
+                {categorias.map(cat => (
+                  <optgroup key={cat} label={cat}>
+                    {cartilha.filter(c=>c.categoria===cat && c.ativo).map(c => (
+                      <option key={c.id} value={c.id}>{c.descricao.substring(0,80)}</option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+              <label style={{ display:"flex", alignItems:"center", gap:6, marginTop:8, fontSize:12, color:"#F59E0B", cursor:"pointer", fontWeight:600 }}>
+                <input type="checkbox" checked={form.sem_enquadramento}
+                  onChange={e => setForm(f=>({...f, sem_enquadramento:e.target.checked, cartilha_id:""}))} />
+                ⚠️ Não encontrei um enquadramento na cartilha
+              </label>
+            </div>
+
+            {/* Sugestão automática */}
+            {sugestao && !form.sem_enquadramento && (
+              <div style={{ background:"#F0FDF4", border:"1px solid #BBF7D0", borderRadius:8, padding:"12px 14px", marginBottom:14 }}>
+                <div style={{ fontSize:12, fontWeight:700, color:"#065F46", marginBottom:6 }}>🤖 Sugestão automática do sistema</div>
+                <div style={{ fontSize:11, color:"#374151" }}>
+                  <strong>Histórico:</strong> {sugestao.historico_resumo}<br/>
+                  <strong>Nível sugerido:</strong>{" "}
+                  <span style={{ ...NIVEL_COR[sugestao.nivel_sugerido], padding:"1px 8px", borderRadius:4, fontSize:11, fontWeight:700 }}>
+                    {sugestao.nivel_sugerido}
+                  </span>{" "}
+                  — {sugestao.penalidade_sugerida}
+                  {sugestao.dias_sugeridos > 0 && ` (${sugestao.dias_sugeridos} dias)`}
+                </div>
+              </div>
+            )}
+            {buscandoSugestao && <div style={{ fontSize:11, color:"#6B7280", marginBottom:12 }}>⏳ Consultando histórico...</div>}
+
+            <div style={{ display:"flex", gap:10, justifyContent:"flex-end", marginTop:20 }}>
+              <button onClick={() => setModalNovo(false)} style={S.btnS}>Cancelar</button>
+              <button onClick={criarSolicitacao} disabled={salvando} style={S.btnP}>
+                {salvando ? "Enviando..." : "📨 Enviar ao Jurídico"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DETALHE */}
+      {modalDetalhe && (
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.5)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center" }}>
+          <div style={{ background:"#fff", borderRadius:14, width:"100%", maxWidth:580, maxHeight:"90vh", overflowY:"auto", padding:28, boxShadow:"0 20px 60px rgba(0,0,0,.3)" }}>
+            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:16 }}>
+              <h3 style={{ margin:0, fontSize:15, fontWeight:700, color:"#0F2447" }}>⚖️ Detalhes da Solicitação #{modalDetalhe.id}</h3>
+              <button onClick={() => setModalDetalhe(null)} style={{ background:"none", border:"none", fontSize:20, cursor:"pointer" }}>×</button>
+            </div>
+            {[
+              ["Colaborador", `${modalDetalhe.nome_colaborador} (${modalDetalhe.chapa})`],
+              ["Gestor solicitante", modalDetalhe.gestor_nome],
+              ["Data", new Date(modalDetalhe.criado_em).toLocaleString("pt-BR")],
+              ["Status", STATUS_COR[modalDetalhe.status]?.label || modalDetalhe.status],
+              ["Ocorrido", modalDetalhe.descricao_ocorrido],
+              ["Enquadramento", modalDetalhe.sem_enquadramento ? "Sem enquadramento" : modalDetalhe.cartilha_descricao],
+              ["Sugestão do sistema", modalDetalhe.nivel_sugerido ? `${modalDetalhe.nivel_sugerido} — ${modalDetalhe.penalidade_sugerida}` : "—"],
+              ["Histórico", modalDetalhe.historico_resumo || "Primeira ocorrência"],
+              modalDetalhe.nivel_final && ["Decisão do Jurídico", `${modalDetalhe.nivel_final} — ${modalDetalhe.penalidade_final}`],
+              modalDetalhe.juridico_nome && ["Analisado por", `${modalDetalhe.juridico_nome} em ${new Date(modalDetalhe.data_analise_juridico).toLocaleString("pt-BR")}`],
+              modalDetalhe.texto_juridico && ["Texto jurídico", modalDetalhe.texto_juridico],
+              modalDetalhe.juridico_observacao && ["Observação jurídica", modalDetalhe.juridico_observacao],
+            ].filter(Boolean).map(([label, valor]) => (
+              <div key={label} style={{ marginBottom:10 }}>
+                <div style={{ fontSize:10, fontWeight:700, color:"#6B7280", textTransform:"uppercase" }}>{label}</div>
+                <div style={{ fontSize:13, color:"#0F2447" }}>{valor}</div>
+              </div>
+            ))}
+            <div style={{ display:"flex", justifyContent:"flex-end", marginTop:16 }}>
+              <button onClick={() => setModalDetalhe(null)} style={S.btnS}>Fechar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL ANÁLISE JURÍDICO */}
+      {modalAnalise && (
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.5)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center" }}>
+          <div style={{ background:"#fff", borderRadius:14, width:"100%", maxWidth:580, maxHeight:"90vh", overflowY:"auto", padding:28, boxShadow:"0 20px 60px rgba(0,0,0,.3)" }}>
+            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:16 }}>
+              <h3 style={{ margin:0, fontSize:15, fontWeight:700, color:"#7C3AED" }}>⚖️ Análise Jurídica — #{modalAnalise.id}</h3>
+              <button onClick={() => setModalAnalise(null)} style={{ background:"none", border:"none", fontSize:20, cursor:"pointer" }}>×</button>
+            </div>
+
+            <div style={{ background:"#F5F3FF", borderRadius:8, padding:"10px 14px", marginBottom:16, fontSize:12 }}>
+              <strong>{modalAnalise.nome_colaborador}</strong> — {modalAnalise.chapa}<br/>
+              <span style={{ color:"#6B7280" }}>{modalAnalise.descricao_ocorrido?.substring(0,150)}</span><br/>
+              {modalAnalise.nivel_sugerido && (
+                <span style={{ marginTop:4, display:"block" }}>
+                  Sugestão: <strong>{modalAnalise.nivel_sugerido}</strong> — {modalAnalise.penalidade_sugerida}
+                  {" | "}{modalAnalise.historico_resumo || "Primeira ocorrência"}
+                </span>
+              )}
+            </div>
+
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:12 }}>
+              <div>
+                <label style={S.lbl}>Ação *</label>
+                <select value={analise.acao} onChange={e=>setAnalise(a=>({...a,acao:e.target.value}))} style={S.inp}>
+                  <option value="aprovar">✅ Aprovar</option>
+                  <option value="alterar">✏️ Aprovar com alterações</option>
+                  <option value="reprovar">❌ Reprovar</option>
+                </select>
+              </div>
+              <div>
+                <label style={S.lbl}>Nível final</label>
+                <select value={analise.nivel_final} onChange={e=>setAnalise(a=>({...a,nivel_final:e.target.value}))} style={S.inp} disabled={analise.acao==="reprovar"}>
+                  <option value="LEVE">LEVE — Advertência</option>
+                  <option value="MEDIA">MÉDIA — Suspensão 2 dias</option>
+                  <option value="GRAVE">GRAVE — Suspensão 4 dias</option>
+                  <option value="GRAVISSIMA">GRAVÍSSIMA — Demissão</option>
+                </select>
+              </div>
+            </div>
+
+            <div style={{ marginBottom:12 }}>
+              <label style={S.lbl}>Penalidade final</label>
+              <input value={analise.penalidade_final} onChange={e=>setAnalise(a=>({...a,penalidade_final:e.target.value}))}
+                style={S.inp} placeholder="Ex: Suspensão de 2 dias" disabled={analise.acao==="reprovar"} />
+            </div>
+
+            <div style={{ marginBottom:12 }}>
+              <label style={S.lbl}>Texto jurídico (aparecerá no documento)</label>
+              <textarea value={analise.texto_juridico} rows={3}
+                onChange={e=>setAnalise(a=>({...a,texto_juridico:e.target.value}))}
+                style={{ ...S.inp, resize:"vertical" }} placeholder="Fundamentação jurídica..." />
+            </div>
+
+            <div style={{ marginBottom:16 }}>
+              <label style={S.lbl}>Observação</label>
+              <textarea value={analise.observacao} rows={2}
+                onChange={e=>setAnalise(a=>({...a,observacao:e.target.value}))}
+                style={{ ...S.inp, resize:"vertical" }} placeholder="Observações adicionais..." />
+            </div>
+
+            <div style={{ display:"flex", gap:10, justifyContent:"flex-end" }}>
+              <button onClick={() => setModalAnalise(null)} style={S.btnS}>Cancelar</button>
+              <button onClick={enviarAnalise} disabled={salvando}
+                style={{ ...S.btnP, background: analise.acao==="reprovar" ? "#DC2626" : "#7C3AED" }}>
+                {salvando ? "Salvando..." : analise.acao==="reprovar" ? "❌ Reprovar" : "✅ Confirmar Análise"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function App() {
   const [user, setUser] = useState(null);
   const [page, setPage] = useState("dashboard");
 
