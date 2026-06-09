@@ -2,7 +2,7 @@ import { useState, useContext, createContext, useEffect, useCallback, useRef } f
 import { api, setTokens, clearTokens, onSessionExpired } from "./api";
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// SECURITY MODULE — DP Flow | Benel BACKUP
+// SECURITY MODULE — DP Flow | Benel 
 // ═══════════════════════════════════════════════════════════════════════════════
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -789,6 +789,7 @@ function Login({ onLogin }) {
       resetarRateLimit(emailLimpo);
       const u = {
         ...data.usuario,
+        perfil: data.usuario.perfil || data.usuario.role || data.usuario.tipo || data.usuario.nivel || "gestor",
         avatar: data.usuario.nome.split(" ").map(p => p[0]).slice(0, 2).join("").toUpperCase(),
         senha: "",
       };
