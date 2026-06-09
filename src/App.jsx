@@ -183,7 +183,7 @@ export function criarSessao(user) {
   const agora = Date.now();
   const sessao = {
     userId: user.id,
-    perfil: user.perfil || "gestor",
+    perfil: user.perfil,
     email: user.email,
     nome: user.nome,
     avatar: user.avatar,
@@ -789,7 +789,6 @@ function Login({ onLogin }) {
       resetarRateLimit(emailLimpo);
       const u = {
         ...data.usuario,
-        perfil: data.usuario.perfil || data.usuario.role || data.usuario.tipo || data.usuario.nivel || "gestor",
         avatar: data.usuario.nome.split(" ").map(p => p[0]).slice(0, 2).join("").toUpperCase(),
         senha: "",
       };
