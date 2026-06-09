@@ -7359,8 +7359,6 @@ function Disciplinar({ user, colaboradores, api }) {
   const [salvando, setSalvando]         = useState(false);
   const [fStatus, setFStatus]           = useState("");
   const [fColab, setFColab]             = useState("");
-  if (!user) return null;
-
   // Form novo
   const [form, setForm] = useState({
     colaborador_id:"", descricao_ocorrido:"",
@@ -7368,7 +7366,6 @@ function Disciplinar({ user, colaboradores, api }) {
   });
   const [sugestao, setSugestao] = useState(null);
   const [buscandoSugestao, setBuscandoSugestao] = useState(false);
-
   // Form análise jurídico
   const [analise, setAnalise] = useState({
     acao:"aprovar", observacao:"", nivel_final:"",
