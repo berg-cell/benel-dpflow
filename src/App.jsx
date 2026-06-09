@@ -7858,6 +7858,23 @@ function Disciplinar({ user, colaboradores, api }) {
   );
 }
 
+class ErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { error: null }; }
+  static getDerivedStateFromError(error) { return { error }; }
+  componentDidCatch(error, info) { console.error("APP ERROR:", error, info); }
+  render() {
+    if (this.state.error) {
+      return <div style={{padding:40,color:"red",fontFamily:"monospace"}}>
+        <h2>Erro na aplicação:</h2>
+        <pre>{this.state.error?.message}</pre>
+        <pre>{this.state.error?.stack}</pre>
+        <button onClick={()=>window.location.reload()}>Recarregar</button>
+      </div>;
+    }
+    return this.props.children;
+  }
+}
+
 function App() {
   const [user, setUser] = useState(null);
   const [page, setPage] = useState("dashboard");
@@ -7964,6 +7981,7 @@ function App() {
     atualizacao_cadastral: { title: "Atualização de Dados Cadastrais", subtitle: "Solicitação de alteração cadastral" },
     ocorrencias:      { title: "Solicitações de Advertências/Suspensões",   subtitle: "Registro de ocorrências disciplinares" },
     autorizacoes:     { title: "Autorização de Desconto",                   subtitle: "Autorização para desconto na folha de pagamento" },
+    disciplinar:      { title: "Medidas Disciplinares",                          subtitle: "Fluxo com análise do Jurídico — Cartilha Educativa" },
   };
 
   if (!user) return <Login onLogin={(u, s) => { setUser(u); setSessao(s); setPage("solicitacoes"); }} />;
@@ -8009,7 +8027,7 @@ function App() {
           {page === "autorizacoes"      && <Autorizacoes user={user} colaboradores={colaboradores} />}
           {page === "atualizacao_cadastral" && <AtualizacaoCadastral user={user} colaboradores={colaboradores} />}
           {page === "plano_saude" && <PlanoSaude user={user} colaboradores={colaboradores} />}
-          {page === "disciplinar"   && <Disciplinar user={user} colaboradores={colaboradores} api={api} />}
+          {page === "disciplinar" && user && <Disciplinar user={user} colaboradores={colaboradores} api={api} />}
         </div>
       </div>
     </div>
