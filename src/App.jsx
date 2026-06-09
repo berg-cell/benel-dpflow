@@ -1033,7 +1033,6 @@ function Dashboard({ solicitacoes, blocos, user }) {
 }
 
 function Sidebar({ active, onNav, user }) {
-  if (!user) return null;
   const [abertos, setAbertos] = useState(() => {
     const init = {};
     if (active && active.startsWith("cad_")) init["cadastros"] = true;
@@ -1043,7 +1042,8 @@ function Sidebar({ active, onNav, user }) {
 
   const toggleMenu = (id) => setAbertos(o => ({ ...o, [id]: !o[id] }));
 
-  const items = NAV_ITEMS.filter(i => user && i.perfis.includes(user.perfil));
+  if (!user) return null;
+  const items = NAV_ITEMS.filter(i => i.perfis.includes(user.perfil));
 
   const btnStyle = (isActive) => ({
     display: "flex", alignItems: "center", gap: 10,
