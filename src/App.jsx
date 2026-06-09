@@ -503,10 +503,11 @@ const STATUS_CONFIG = {
 };
 
 const PERFIL_CONFIG = {
-  gestor:    { label: "Gestor",    color: "#3B82F6" },
-  superior:  { label: "Superior",  color: "#8B5CF6" },
-  dp:        { label: "DP",        color: "#10B981" },
-  admin:     { label: "Admin",     color: "#F59E0B" },
+  gestor:     { label: "Gestor",     color: "#3B82F6" },
+  superior:   { label: "Superior",   color: "#8B5CF6" },
+  dp:         { label: "DP",         color: "#10B981" },
+  presidente: { label: "Presidente", color: "#DC2626" },
+  admin:      { label: "Admin",      color: "#F59E0B" },
 };
 
 // ─── LAYOUT OFICIAL RM LABORE ─────────────────────────────────────────────────
