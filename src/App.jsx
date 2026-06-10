@@ -5465,34 +5465,60 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
         <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.55)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1100 }}>
           <div style={{ background:"#fff", borderRadius:16, width:"100%", maxWidth:700, maxHeight:"90vh", overflowY:"auto", padding:28 }}>
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
-              <h3 style={{ margin:0, fontSize:16, fontWeight:700 }}>📎 Pedido de Demissão — {modalAnexoPedido.colaborador_nome}</h3>
+              <h3 style={{ margin:0, fontSize:16, fontWeight:700 }}>📎 Anexos — {modalAnexoPedido.colaborador_nome}</h3>
               <button onClick={() => setModalAnexoPedido(null)} style={{ background:"none", border:"none", fontSize:22, cursor:"pointer" }}>×</button>
             </div>
-            {(modalAnexoPedido.pedido_anexo_dados || modalAnexoPedido.pedido_anexo_base64) ? (
-              <div style={{ textAlign:"center" }}>
-                <div style={{ fontSize:12, color:"#6B7280", marginBottom:12 }}>📄 {modalAnexoPedido.pedido_anexo_nome}</div>
+
+            {/* Pedido de Demissão assinado */}
+            {(modalAnexoPedido.pedido_anexo_dados || modalAnexoPedido.pedido_anexo_base64) && (
+              <div style={{ marginBottom:20, padding:"14px 16px", background:"#F0FDF4", borderRadius:10, border:"1px solid #BBF7D0" }}>
+                <div style={{ fontSize:12, fontWeight:700, color:"#065F46", marginBottom:10 }}>📄 Pedido de Demissão Assinado</div>
+                <div style={{ fontSize:12, color:"#374151", marginBottom:10 }}>{modalAnexoPedido.pedido_anexo_nome}</div>
                 {(modalAnexoPedido.pedido_anexo_dados || modalAnexoPedido.pedido_anexo_base64).startsWith("data:image") ? (
                   <img src={modalAnexoPedido.pedido_anexo_dados || modalAnexoPedido.pedido_anexo_base64}
-                    alt="Pedido de Demissão"
-                    style={{ maxWidth:"100%", border:"1px solid #E5E7EB", borderRadius:8 }} />
+                    alt="Pedido de Demissão" style={{ maxWidth:"100%", border:"1px solid #E5E7EB", borderRadius:8 }} />
                 ) : (
-                  <div style={{ padding:"30px 0" }}>
-                    <div style={{ fontSize:48, marginBottom:12 }}>📄</div>
-                    <div style={{ fontSize:14, color:"#374151", marginBottom:16, fontWeight:600 }}>{modalAnexoPedido.pedido_anexo_nome}</div>
-                    <a href={modalAnexoPedido.pedido_anexo_dados || modalAnexoPedido.pedido_anexo_base64}
-                      download={modalAnexoPedido.pedido_anexo_nome}
-                      style={{ padding:"10px 24px", background:"#0F2447", color:"#fff", borderRadius:8, fontSize:14, fontWeight:600, textDecoration:"none" }}>
-                      ⬇ Baixar PDF
-                    </a>
-                  </div>
+                  <a href={modalAnexoPedido.pedido_anexo_dados || modalAnexoPedido.pedido_anexo_base64}
+                    download={modalAnexoPedido.pedido_anexo_nome}
+                    style={{ padding:"8px 18px", background:"#0F2447", color:"#fff", borderRadius:8, fontSize:13, fontWeight:600, textDecoration:"none", display:"inline-block" }}>
+                    ⬇ Baixar PDF
+                  </a>
                 )}
               </div>
-            ) : (
+            )}
+
+            {/* Anexos gerais da solicitação */}
+            {modalAnexoPedido.anexos && modalAnexoPedido.anexos.length > 0 ? (
+              <div>
+                <div style={{ fontSize:12, fontWeight:700, color:"#374151", marginBottom:10 }}>📁 Documentos Anexados</div>
+                {modalAnexoPedido.anexos.map((anx) => (
+                  <div key={anx.id} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"10px 14px", border:"1px solid #E5E7EB", borderRadius:8, marginBottom:8, background:"#FAFAFA" }}>
+                    <div>
+                      <div style={{ fontSize:13, fontWeight:600, color:"#111827" }}>📄 {anx.nome_arquivo}</div>
+                      <div style={{ fontSize:11, color:"#6B7280" }}>{new Date(anx.criado_em).toLocaleDateString("pt-BR")}</div>
+                    </div>
+                    <button onClick={async () => {
+                      try {
+                        const r = await api.getAnexoDesligamento(modalAnexoPedido.id, anx.id);
+                        if (!r?.dados_base64) { alert("Arquivo não encontrado."); return; }
+                        const a = document.createElement("a");
+                        a.href = r.dados_base64;
+                        a.download = anx.nome_arquivo;
+                        a.click();
+                      } catch(e) { alert("Erro ao baixar: " + e.message); }
+                    }} style={{ padding:"6px 14px", background:"#0F2447", color:"#fff", border:"none", borderRadius:8, fontSize:12, fontWeight:600, cursor:"pointer" }}>
+                      ⬇ Baixar
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : !modalAnexoPedido.pedido_anexo_dados && !modalAnexoPedido.pedido_anexo_base64 && (
               <div style={{ textAlign:"center", padding:"40px 0", color:"#9CA3AF" }}>
                 <div style={{ fontSize:40, marginBottom:10 }}>📎</div>
                 <div>Nenhum documento anexado nesta solicitação</div>
               </div>
             )}
+
             <div style={{ display:"flex", justifyContent:"flex-end", paddingTop:16, borderTop:"1px solid #F3F4F6", marginTop:20 }}>
               <button onClick={() => setModalAnexoPedido(null)}
                 style={{ padding:"9px 20px", borderRadius:8, border:"1px solid #E5E7EB", background:"#fff", fontSize:14, cursor:"pointer" }}>
