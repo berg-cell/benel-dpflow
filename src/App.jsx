@@ -318,9 +318,7 @@ export function aplicarCSP() {
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob:",
-      "connect-src 'self' https://benel-dpflow-backend.vercel.app https://api.telegram.org",
-      "frame-src 'self' blob:",
-      "object-src 'self' blob:",
+      "connect-src 'self' https://benel-dpflow-backend.vercel.app",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
@@ -507,7 +505,6 @@ const PERFIL_CONFIG = {
   superior:   { label: "Superior",   color: "#8B5CF6" },
   dp:         { label: "DP",         color: "#10B981" },
   presidente: { label: "Presidente", color: "#DC2626" },
-  juridico:   { label: "Jurídico",   color: "#7C3AED" },
   admin:      { label: "Admin",      color: "#F59E0B" },
 };
 
@@ -615,9 +612,9 @@ function Button({ children, onClick, variant = "primary", size = "md", disabled 
     ghost: { background: "transparent", color: "#1B3A6B", border: "1px solid #1B3A6B" },
   };
   const sizes = {
-    sm: { padding: "3px 8px", fontSize: 11 },
-    md: { padding: "6px 14px", fontSize: 11 },
-    lg: { padding: "8px 18px", fontSize: 13 },
+    sm: { padding: "5px 12px", fontSize: 12 },
+    md: { padding: "8px 18px", fontSize: 13 },
+    lg: { padding: "11px 24px", fontSize: 14 },
   };
   return (
     <button
@@ -639,7 +636,7 @@ function Input({ label, value, onChange, type = "text", placeholder = "", requir
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
       {label && (
-        <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", letterSpacing: 0.3 }}>
+        <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: 0.3 }}>
           {label}{required && <span style={{ color: "#EF4444" }}> *</span>}
         </label>
       )}
@@ -647,8 +644,8 @@ function Input({ label, value, onChange, type = "text", placeholder = "", requir
         type={type} value={value} onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
         style={{
-          border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px",
-          fontSize: 11, color: "#111827", outline: "none", fontFamily: "inherit",
+          border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 12px",
+          fontSize: 13, color: "#111827", outline: "none", fontFamily: "inherit",
           background: "#FAFAFA", ...style
         }}
       />
@@ -660,15 +657,15 @@ function Select({ label, value, onChange, options, required = false }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
       {label && (
-        <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", letterSpacing: 0.3 }}>
+        <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: 0.3 }}>
           {label}{required && <span style={{ color: "#EF4444" }}> *</span>}
         </label>
       )}
       <select
         value={value} onChange={e => onChange(e.target.value)}
         style={{
-          border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px",
-          fontSize: 11, color: "#111827", outline: "none", fontFamily: "inherit",
+          border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 12px",
+          fontSize: 13, color: "#111827", outline: "none", fontFamily: "inherit",
           background: "#FAFAFA", cursor: "pointer"
         }}
       >
@@ -789,7 +786,6 @@ function Login({ onLogin }) {
       resetarRateLimit(emailLimpo);
       const u = {
         ...data.usuario,
-        perfil: data.usuario.perfil || data.usuario.role || data.usuario.tipo || data.usuario.nivel || "gestor",
         avatar: data.usuario.nome.split(" ").map(p => p[0]).slice(0, 2).join("").toUpperCase(),
         senha: "",
       };
@@ -849,7 +845,7 @@ function Login({ onLogin }) {
           padding: "32px", boxShadow: "0 24px 80px rgba(0,0,0,0.35)"
         }}>
           <h2 style={{ margin: "0 0 6px", fontSize: 18, fontWeight: 700, color: "#0F2447" }}>Entrar</h2>
-          <p style={{ margin: "0 0 24px", fontSize: 11, color: "#6B7280" }}>
+          <p style={{ margin: "0 0 24px", fontSize: 12, color: "#6B7280" }}>
             Acesse com suas credenciais corporativas
           </p>
 
@@ -860,7 +856,7 @@ function Login({ onLogin }) {
             {aviso && (
               <div style={{
                 background: "#FFFBEB", border: "1px solid #FCD34D",
-                borderRadius: 8, padding: "3px 6px", fontSize: 12, color: "#92400E"
+                borderRadius: 8, padding: "8px 12px", fontSize: 12, color: "#92400E"
               }}>
                 ⚠️ {aviso}
               </div>
@@ -868,7 +864,7 @@ function Login({ onLogin }) {
             {erro && (
               <div style={{
                 background: "#FEF2F2", border: "1px solid #FCA5A5",
-                borderRadius: 8, padding: "3px 6px", fontSize: 12, color: "#DC2626"
+                borderRadius: 8, padding: "8px 12px", fontSize: 12, color: "#DC2626"
               }}>
                 🔒 {erro}
               </div>
@@ -881,7 +877,7 @@ function Login({ onLogin }) {
 
           {/* Suporte */}
           <div style={{
-            marginTop: 20, padding: "3px 6px", background: "#F8FAFC",
+            marginTop: 20, padding: "10px 14px", background: "#F8FAFC",
             borderRadius: 8, border: "1px solid #E2E8F0", textAlign: "center"
           }}>
             <p style={{ margin: 0, fontSize: 11, color: "#94A3B8" }}>
@@ -913,7 +909,6 @@ const NAV_ITEMS = [
   { id: "cadastros",     label: "Cadastros",                            icon: "🗂",  perfis: ["dp","admin"], submenu: CADASTROS_SUBMENU },
   { id: "atualizacao_cadastral", label: "Atualização de Dados Cadastrais", icon: "📝", perfis: ["gestor","dp","admin","presidente"] },
   { id: "ocorrencias",      label: "Solicitações de Advertências/Suspensões", icon: "⚠️", perfis: ["gestor","dp","admin"] },
-  { id: "disciplinar",      label: "Medidas Disciplinares",                   icon: "⚖️", perfis: ["gestor","dp","admin","presidente","juridico"] },
   { id: "autorizacoes",     label: "Autorização de Desconto",                icon: "📋", perfis: ["gestor","dp","admin","presidente"] },
   { id: "solicitacoes",     label: "Solicitações de Pagamento",               icon: "≡",  perfis: ["gestor","superior","dp","admin"] },
   { id: "desligamentos", label: "Solicitações de Desligamento",         icon: "🚪", perfis: ["gestor","superior","dp","admin","presidente"] },
@@ -940,7 +935,7 @@ function Topbar({ title, subtitle, user, onLogout }) {
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <button onClick={onLogout} style={{
           background: "none", border: "1px solid #E5E7EB", borderRadius: 8,
-          padding: "5px 12px", fontSize: 11, color: "#6B7280", cursor: "pointer", fontFamily: "inherit"
+          padding: "5px 12px", fontSize: 12, color: "#6B7280", cursor: "pointer", fontFamily: "inherit"
         }}>Sair</button>
       </div>
     </div>
@@ -973,7 +968,7 @@ function Dashboard({ solicitacoes, blocos, user }) {
           <div key={s.label} style={{ background: "#fff", borderRadius: 12, border: "1px solid #E5E7EB", padding: "18px 20px" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
               <span style={{ fontSize: 11, fontWeight: 600, color: "#6B7280", textTransform: "uppercase", letterSpacing: 0.5 }}>{s.label}</span>
-              <div style={{ width: 30, height: 30, borderRadius: 8, background: s.bg, display: "flex", alignItems: "center", justifyContent: "center", color: s.color, fontSize: 11, fontWeight: 700 }}>{s.icon}</div>
+              <div style={{ width: 30, height: 30, borderRadius: 8, background: s.bg, display: "flex", alignItems: "center", justifyContent: "center", color: s.color, fontSize: 14, fontWeight: 700 }}>{s.icon}</div>
             </div>
             <div style={{ fontSize: 28, fontWeight: 700, color: "#111827" }}>{s.value}</div>
           </div>
@@ -983,21 +978,21 @@ function Dashboard({ solicitacoes, blocos, user }) {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
         {/* Valor total aprovado */}
         <Card>
-          <h3 style={{ margin: "0 0 16px", fontSize: 11, fontWeight: 700, color: "#111827" }}>💰 Valor Total Aprovado</h3>
+          <h3 style={{ margin: "0 0 16px", fontSize: 14, fontWeight: 700, color: "#111827" }}>💰 Valor Total Aprovado</h3>
           <div style={{ fontSize: 32, fontWeight: 700, color: "#10B981" }}>
             R$ {valorTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
           </div>
-          <p style={{ margin: "6px 0 0", fontSize: 11, color: "#6B7280" }}>{aprovados} bloco(s) aprovado(s) no período</p>
+          <p style={{ margin: "6px 0 0", fontSize: 12, color: "#6B7280" }}>{aprovados} bloco(s) aprovado(s) no período</p>
         </Card>
 
         {/* Últimos blocos */}
         <Card>
-          <h3 style={{ margin: "0 0 14px", fontSize: 11, fontWeight: 700, color: "#111827" }}>🕐 Últimos Blocos</h3>
+          <h3 style={{ margin: "0 0 14px", fontSize: 14, fontWeight: 700, color: "#111827" }}>🕐 Últimos Blocos</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {blocos.slice(-4).reverse().map(b => (
               <div key={b.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "7px 0", borderBottom: "1px solid #F3F4F6" }}>
                 <div>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: "#111827" }}>{b.descricao}</div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "#111827" }}>{b.descricao}</div>
                   <div style={{ fontSize: 11, color: "#6B7280" }}>{b.linhas.length} lançamento(s) · {b.competencia}</div>
                 </div>
                 <Badge status={b.status} />
@@ -1009,7 +1004,7 @@ function Dashboard({ solicitacoes, blocos, user }) {
 
       {/* Distribuição por status */}
       <Card>
-        <h3 style={{ margin: "0 0 16px", fontSize: 11, fontWeight: 700, color: "#111827" }}>📊 Distribuição por Status</h3>
+        <h3 style={{ margin: "0 0 16px", fontSize: 14, fontWeight: 700, color: "#111827" }}>📊 Distribuição por Status</h3>
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
           {Object.entries(STATUS_CONFIG).map(([key, cfg]) => {
             const count = blocos.filter(b => b.status === key).length;
@@ -1043,12 +1038,11 @@ function Sidebar({ active, onNav, user }) {
 
   const toggleMenu = (id) => setAbertos(o => ({ ...o, [id]: !o[id] }));
 
-  if (!user) return null;
   const items = NAV_ITEMS.filter(i => i.perfis.includes(user.perfil));
 
   const btnStyle = (isActive) => ({
     display: "flex", alignItems: "center", gap: 10,
-    padding: "3px 6px", borderRadius: 8, border: "none",
+    padding: "9px 12px", borderRadius: 8, border: "none",
     background: isActive ? "rgba(59,130,246,0.2)" : "transparent",
     color: isActive ? "#93C5FD" : "rgba(255,255,255,0.55)",
     cursor: "pointer", textAlign: "left", fontFamily: "inherit",
@@ -1067,7 +1061,7 @@ function Sidebar({ active, onNav, user }) {
       <div style={{ padding: "16px 16px 14px", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
         <div style={{
           background: "rgba(255,255,255,0.95)", borderRadius: 10,
-          padding: "3px 6px", display: "flex", alignItems: "center", justifyContent: "center"
+          padding: "8px 12px", display: "flex", alignItems: "center", justifyContent: "center"
         }}>
           <img src={LOGO_BENEL} alt="Benel" style={{ height: 38, display: "block", maxWidth: "100%" }} />
         </div>
@@ -1128,7 +1122,7 @@ function Sidebar({ active, onNav, user }) {
                           transition: "all 0.15s", width: "100%"
                         }}
                       >
-                        <span style={{ fontSize: 11 }}>{sub.icon}</span>
+                        <span style={{ fontSize: 12 }}>{sub.icon}</span>
                         {sub.label}
                       </button>
                     ))}
@@ -1153,10 +1147,10 @@ function Sidebar({ active, onNav, user }) {
             width: 34, height: 34, borderRadius: 10,
             background: PERFIL_CONFIG[user.perfil]?.color,
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 11, fontWeight: 700, color: "#fff", flexShrink: 0
+            fontSize: 12, fontWeight: 700, color: "#fff", flexShrink: 0
           }}>{user.avatar}</div>
           <div style={{ overflow: "hidden" }}>
-            <div style={{ color: "#fff", fontSize: 11, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.nome}</div>
+            <div style={{ color: "#fff", fontSize: 12, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.nome}</div>
             <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: 0.5, color: PERFIL_CONFIG[user.perfil]?.color, textTransform: "uppercase" }}>
               {PERFIL_CONFIG[user.perfil]?.label}
             </div>
@@ -1374,12 +1368,12 @@ function ImportacaoModal({ open, onClose, titulo, colunas, exemplo, onImportar }
           textAlign: "center", background: arquivo ? "#F0FDF4" : "#FAFAFA"
         }}>
           <div style={{ fontSize: 28, marginBottom: 8 }}>{arquivo ? "✅" : "📂"}</div>
-          <div style={{ fontSize: 11, fontWeight: 600, color: arquivo ? "#065F46" : "#374151", marginBottom: 8 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: arquivo ? "#065F46" : "#374151", marginBottom: 8 }}>
             {arquivo ? arquivo : "Selecione o arquivo CSV"}
           </div>
           <label style={{
             padding: "7px 16px", background: "#1B3A6B", color: "#fff",
-            borderRadius: 8, fontSize: 11, fontWeight: 600, cursor: "pointer"
+            borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: "pointer"
           }}>
             {arquivo ? "Trocar arquivo" : "Selecionar CSV"}
             <input type="file" accept=".csv,.txt" onChange={onArquivo} style={{ display: "none" }} />
@@ -1388,7 +1382,7 @@ function ImportacaoModal({ open, onClose, titulo, colunas, exemplo, onImportar }
 
         {/* Ou colar texto */}
         <div>
-          <div style={{ fontSize: 11, fontWeight: 600, color: "#374151", marginBottom: 6 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: "#374151", marginBottom: 6 }}>
             Ou cole o conteúdo CSV diretamente:
           </div>
           <textarea
@@ -1397,7 +1391,7 @@ function ImportacaoModal({ open, onClose, titulo, colunas, exemplo, onImportar }
             rows={5}
             style={{
               width: "100%", border: "1px solid #D1D5DB", borderRadius: 8,
-              padding: "3px 6px", fontSize: 11, fontFamily: "monospace",
+              padding: "10px 12px", fontSize: 12, fontFamily: "monospace",
               resize: "vertical", boxSizing: "border-box", background: "#FAFAFA"
             }}
           />
@@ -1407,17 +1401,17 @@ function ImportacaoModal({ open, onClose, titulo, colunas, exemplo, onImportar }
         {resultado && (
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             <div style={{ display: "flex", gap: 10 }}>
-              <div style={{ flex: 1, background: "#D1FAE5", border: "1px solid #6EE7B7", borderRadius: 8, padding: "3px 6px", textAlign: "center" }}>
+              <div style={{ flex: 1, background: "#D1FAE5", border: "1px solid #6EE7B7", borderRadius: 8, padding: "10px 14px", textAlign: "center" }}>
                 <div style={{ fontSize: 22, fontWeight: 800, color: "#065F46" }}>{resultado.validos.length}</div>
                 <div style={{ fontSize: 11, color: "#065F46", fontWeight: 600 }}>Registros válidos</div>
               </div>
-              <div style={{ flex: 1, background: resultado.erros.length > 0 ? "#FEE2E2" : "#F3F4F6", border: "1px solid " + (resultado.erros.length > 0 ? "#FCA5A5" : "#E5E7EB"), borderRadius: 8, padding: "3px 6px", textAlign: "center" }}>
+              <div style={{ flex: 1, background: resultado.erros.length > 0 ? "#FEE2E2" : "#F3F4F6", border: "1px solid " + (resultado.erros.length > 0 ? "#FCA5A5" : "#E5E7EB"), borderRadius: 8, padding: "10px 14px", textAlign: "center" }}>
                 <div style={{ fontSize: 22, fontWeight: 800, color: resultado.erros.length > 0 ? "#991B1B" : "#6B7280" }}>{resultado.erros.length}</div>
                 <div style={{ fontSize: 11, color: resultado.erros.length > 0 ? "#991B1B" : "#6B7280", fontWeight: 600 }}>Erros</div>
               </div>
             </div>
             {resultado.erros.length > 0 && (
-              <div style={{ background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, padding: "3px 6px", maxHeight: 120, overflowY: "auto" }}>
+              <div style={{ background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, padding: "10px 14px", maxHeight: 120, overflowY: "auto" }}>
                 {resultado.erros.map((e, i) => (
                   <div key={i} style={{ fontSize: 11, color: "#DC2626", marginBottom: 3 }}>
                     Linha {e.linha}: {e.msg}
@@ -1587,7 +1581,7 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
     <div style={{ padding: 28 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
-<p style={{ margin: 0, fontSize: 11, color: "#6B7280" }}>{colaboradores.length} colaborador(es) cadastrado(s)</p>
+<p style={{ margin: 0, fontSize: 12, color: "#6B7280" }}>{colaboradores.length} colaborador(es) cadastrado(s)</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <Button variant="secondary" onClick={() => setModalImport(true)}>⬆ Importar CSV</Button>
@@ -1601,20 +1595,20 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
               {["Matrícula", "Nome", "Função", "Seção", "CPF", "Admissão", "C. Custo", "Situação", "Ações"].map(h => (
-                <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+                <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
             <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
               {(() => {
-                const inp = { style: { width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" } };
-                const sel = { style: { width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" } };
+                const inp = { style: { width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" } };
+                const sel = { style: { width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" } };
                 return (<>
                   <th style={{ padding:"5px 8px" }}><input value={fMatricula} onChange={e=>setFMatricula(e.target.value)} placeholder="🔍 Matrícula" {...inp} /></th>
                   <th style={{ padding:"5px 8px" }}><input value={fNome}      onChange={e=>setFNome(e.target.value)}      placeholder="🔍 Nome"      {...inp} /></th>
                   <th style={{ padding:"5px 8px" }}><input value={fFuncao}    onChange={e=>setFuncao(e.target.value)}     placeholder="🔍 Função"    {...inp} /></th>
                   <th style={{ padding:"5px 8px" }}><input value={fSecao}     onChange={e=>setFSecao(e.target.value)}     placeholder="🔍 Seção"     {...inp} /></th>
                   <th style={{ padding:"5px 8px" }}><input value={fCpf}       onChange={e=>setFCpf(e.target.value)}       placeholder="🔍 CPF"       {...inp} /></th>
-                  <th style={{ padding:"5px 8px" }}><input type="date" value={fAdmissao} onChange={e=>setFAdmissao(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+                  <th style={{ padding:"5px 8px" }}><input type="date" value={fAdmissao} onChange={e=>setFAdmissao(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
                   <th style={{ padding:"5px 8px" }}><input value={fCC}        onChange={e=>setFCC(e.target.value)}        placeholder="🔍 C. Custo"  {...inp} /></th>
                   <th style={{ padding:"5px 8px" }}>
                     <select value={fSituacao} onChange={e=>setFSituacao(e.target.value)} {...sel}>
@@ -1634,21 +1628,21 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
               <tr><td colSpan={6} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Nenhum colaborador encontrado</td></tr>
             ) : lista.map((c, i) => (
               <tr key={c.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
-                <td style={{ padding: "3px 7px" }}>
-                  <span style={{ fontFamily: "monospace", fontSize: 11, fontWeight: 700, background: "#F3F4F6", padding: "1px 6px", borderRadius: 4 }}>{c.chapa}</span>
+                <td style={{ padding: "11px 16px" }}>
+                  <span style={{ fontFamily: "monospace", fontSize: 12, fontWeight: 700, background: "#F3F4F6", padding: "2px 8px", borderRadius: 4 }}>{c.chapa}</span>
                 </td>
-                <td style={{ padding: "3px 7px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{c.nome}</td>
-                <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151" }}>{c.desc_funcao || c.funcao || "—"}</td>
-                <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151" }}>{c.desc_cc || "—"}</td>
-                <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151", fontFamily: "monospace" }}>{c.cpf || "—"}</td>
-                <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151" }}>{c.data_admissao ? new Date(c.data_admissao.split("T")[0]).toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "—"}</td>
-                <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151" }}>{c.centro_custo ? (c.centro_custo + " — " + c.desc_cc) : "—"}</td>
-                <td style={{ padding: "3px 7px" }}>
-                  <span style={{ padding: "1px 7px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: c.situacao === "Ativo" ? "#D1FAE5" : "#FEE2E2", color: c.situacao === "Ativo" ? "#065F46" : "#991B1B" }}>
+                <td style={{ padding: "11px 16px", fontSize: 13, fontWeight: 600, color: "#111827" }}>{c.nome}</td>
+                <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{c.desc_funcao || c.funcao || "—"}</td>
+                <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{c.desc_cc || "—"}</td>
+                <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151", fontFamily: "monospace" }}>{c.cpf || "—"}</td>
+                <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{c.data_admissao ? new Date(c.data_admissao.split("T")[0]).toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "—"}</td>
+                <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{c.centro_custo ? (c.centro_custo + " — " + c.desc_cc) : "—"}</td>
+                <td style={{ padding: "11px 16px" }}>
+                  <span style={{ padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: c.situacao === "Ativo" ? "#D1FAE5" : "#FEE2E2", color: c.situacao === "Ativo" ? "#065F46" : "#991B1B" }}>
                     {c.situacao}
                   </span>
                 </td>
-                <td style={{ padding: "3px 7px", display: "flex", gap: 6 }}>
+                <td style={{ padding: "11px 16px", display: "flex", gap: 6 }}>
                   <Button variant="ghost" size="sm" onClick={() => abrirEditar(c)}>✏ Editar</Button>
                   <Button variant={c.situacao === "Ativo" ? "secondary" : "success"} size="sm" onClick={() => inativar(c.id)}>
                     {c.situacao === "Ativo" ? "Inativar" : "Ativar"}
@@ -1669,9 +1663,9 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <Input label="Matrícula (Chapa) *" value={form.chapa} onChange={v => setForm(p => ({ ...p, chapa: v }))} placeholder="0001" required />
             <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-              <label style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>Situação</label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Situação</label>
               <select value={form.situacao} onChange={e => setForm(p => ({ ...p, situacao: e.target.value }))}
-                style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
+                style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 12px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
                 <option value="Ativo">Ativo</option>
                 <option value="Inativo">Inativo</option>
               </select>
@@ -1770,9 +1764,9 @@ function CadEventos({ eventos, setEventos }) {
 
   const sel = (label, val, onChange, opts) => (
     <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-      <label style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>{label}</label>
+      <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>{label}</label>
       <select value={val} onChange={e => onChange(e.target.value)}
-        style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
+        style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 12px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
         {opts.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
     </div>
@@ -1782,7 +1776,7 @@ function CadEventos({ eventos, setEventos }) {
     <div style={{ padding: 28 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
-          <p style={{ margin: 0, fontSize: 11, color: "#6B7280" }}>{eventos.length} evento(s) cadastrado(s)</p>
+          <p style={{ margin: 0, fontSize: 12, color: "#6B7280" }}>{eventos.length} evento(s) cadastrado(s)</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <Button variant="secondary" onClick={() => setModalImport(true)}>⬆ Importar CSV</Button>
@@ -1795,29 +1789,29 @@ function CadEventos({ eventos, setEventos }) {
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
               {["Código", "Descrição", "Tipo", "Forma de Lançamento", "Ações"].map(h => (
-                <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+                <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
             <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
-              <th style={{ padding: "3px 6px" }}><input value={fCodigo} onChange={e=>setFCodigo(e.target.value)} placeholder="🔍 Código" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
-              <th style={{ padding: "3px 6px" }}><input value={fDesc}   onChange={e=>setFDesc(e.target.value)}   placeholder="🔍 Descrição" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
-              <th style={{ padding: "3px 6px" }}><select value={fTipo}  onChange={e=>setFTipo(e.target.value)}   style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="provento">Provento</option><option value="desconto">Desconto</option></select></th>
-              <th style={{ padding: "3px 6px" }}><select value={fForma} onChange={e=>setFForma(e.target.value)}  style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="valor">Valor</option><option value="hora">Hora</option><option value="referencia">Referência</option></select></th>
-              <th style={{ padding: "3px 6px" }}><button onClick={()=>{setFCodigo("");setFDesc("");setFTipo("");setFForma("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
+              <th style={{ padding: "5px 8px" }}><input value={fCodigo} onChange={e=>setFCodigo(e.target.value)} placeholder="🔍 Código" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding: "5px 8px" }}><input value={fDesc}   onChange={e=>setFDesc(e.target.value)}   placeholder="🔍 Descrição" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding: "5px 8px" }}><select value={fTipo}  onChange={e=>setFTipo(e.target.value)}   style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="provento">Provento</option><option value="desconto">Desconto</option></select></th>
+              <th style={{ padding: "5px 8px" }}><select value={fForma} onChange={e=>setFForma(e.target.value)}  style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="valor">Valor</option><option value="hora">Hora</option><option value="referencia">Referência</option></select></th>
+              <th style={{ padding: "5px 8px" }}><button onClick={()=>{setFCodigo("");setFDesc("");setFTipo("");setFForma("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
             </tr>
           </thead>
           <tbody>
             {eventosFiltrados.map((e, i) => (
               <tr key={e.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
-                <td style={{ padding: "3px 7px" }}>
-                  <span style={{ fontFamily: "monospace", fontSize: 11, fontWeight: 700, color: "#1B3A6B" }}>{e.codigo}</span>
+                <td style={{ padding: "11px 16px" }}>
+                  <span style={{ fontFamily: "monospace", fontSize: 13, fontWeight: 700, color: "#1B3A6B" }}>{e.codigo}</span>
                 </td>
-                <td style={{ padding: "3px 7px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{e.descricao}</td>
-                <td style={{ padding: "3px 7px" }}>
-                  <span style={{ padding: "1px 7px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: e.tipo === "provento" ? "#D1FAE5" : "#FEE2E2", color: e.tipo === "provento" ? "#065F46" : "#991B1B" }}>{e.tipo}</span>
+                <td style={{ padding: "11px 16px", fontSize: 13, fontWeight: 600, color: "#111827" }}>{e.descricao}</td>
+                <td style={{ padding: "11px 16px" }}>
+                  <span style={{ padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: e.tipo === "provento" ? "#D1FAE5" : "#FEE2E2", color: e.tipo === "provento" ? "#065F46" : "#991B1B" }}>{e.tipo}</span>
                 </td>
-                <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151", textTransform: "capitalize" }}>{e.forma}</td>
-                <td style={{ padding: "3px 7px", display: "flex", gap: 6 }}>
+                <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151", textTransform: "capitalize" }}>{e.forma}</td>
+                <td style={{ padding: "11px 16px", display: "flex", gap: 6 }}>
                   <Button variant="ghost" size="sm" onClick={() => abrirEditar(e)}>✏ Editar</Button>
                   <Button variant="danger" size="sm" onClick={() => excluir(e.id)}>🗑</Button>
                 </td>
@@ -1945,7 +1939,7 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
     <div style={{ padding: 28 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
-          <p style={{ margin: 0, fontSize: 11, color: "#6B7280" }}>Define quem aprova as solicitações de cada gestor</p>
+          <p style={{ margin: 0, fontSize: 12, color: "#6B7280" }}>Define quem aprova as solicitações de cada gestor</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <Button variant="secondary" onClick={() => setModalImport(true)}>⬆ Importar CSV</Button>
@@ -1958,36 +1952,36 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
               {["1ª Alçada", "2ª Alçada", "Centro de Custo", "Status", "Ações"].map(h => (
-                <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+                <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
             <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
-              <th style={{ padding: "3px 6px" }}>
+              <th style={{ padding: "6px 10px" }}>
                 <input value={filtroGestor} onChange={e => setFiltroGestor(e.target.value)}
                   placeholder="🔍 Buscar 1ª alçada..."
-                  style={{ width: "100%", padding: "3px 6px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 11, fontFamily: "inherit", boxSizing: "border-box" }} />
+                  style={{ width: "100%", padding: "5px 8px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 11, fontFamily: "inherit", boxSizing: "border-box" }} />
               </th>
-              <th style={{ padding: "3px 6px" }}>
+              <th style={{ padding: "6px 10px" }}>
                 <input value={filtroSuperior} onChange={e => setFiltroSuperior(e.target.value)}
                   placeholder="🔍 Buscar 2ª alçada..."
-                  style={{ width: "100%", padding: "3px 6px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 11, fontFamily: "inherit", boxSizing: "border-box" }} />
+                  style={{ width: "100%", padding: "5px 8px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 11, fontFamily: "inherit", boxSizing: "border-box" }} />
               </th>
-              <th style={{ padding: "3px 6px" }}>
+              <th style={{ padding: "6px 10px" }}>
                 <input value={filtroCC} onChange={e => setFiltroCC(e.target.value)}
                   placeholder="🔍 Buscar CC..."
-                  style={{ width: "100%", padding: "3px 6px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 11, fontFamily: "inherit", boxSizing: "border-box" }} />
+                  style={{ width: "100%", padding: "5px 8px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 11, fontFamily: "inherit", boxSizing: "border-box" }} />
               </th>
-              <th style={{ padding: "3px 6px" }}>
+              <th style={{ padding: "6px 10px" }}>
                 <select value={filtroAtivo} onChange={e => setFiltroAtivo(e.target.value)}
-                  style={{ width: "100%", padding: "3px 6px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 11, fontFamily: "inherit" }}>
+                  style={{ width: "100%", padding: "5px 8px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 11, fontFamily: "inherit" }}>
                   <option value="">Todos</option>
                   <option value="ativo">Ativo</option>
                   <option value="inativo">Inativo</option>
                 </select>
               </th>
-              <th style={{ padding: "3px 6px" }}>
+              <th style={{ padding: "6px 10px" }}>
                 <button onClick={() => { setFiltroGestor(""); setFiltroSuperior(""); setFiltroCC(""); setFiltroAtivo(""); }}
-                  style={{ fontSize: 10, padding: "3px 6px", borderRadius: 6, border: "1px solid #D1D5DB", background: "#fff", cursor: "pointer", color: "#6B7280" }}>
+                  style={{ fontSize: 10, padding: "4px 8px", borderRadius: 6, border: "1px solid #D1D5DB", background: "#fff", cursor: "pointer", color: "#6B7280" }}>
                   ✕ Limpar
                 </button>
               </th>
@@ -1998,29 +1992,29 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
               <tr><td colSpan={5} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Nenhuma regra encontrada</td></tr>
             ) : hierarquiaFiltrada.map((h, i) => (
               <tr key={h.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
-                <td style={{ padding: "3px 7px" }}>
+                <td style={{ padding: "11px 16px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <div style={{ width: 28, height: 28, borderRadius: 8, background: "#3B82F6", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#fff" }}>
                       {h.gestor_nome?.charAt(0)}
                     </div>
-                    <span style={{ fontSize: 11, fontWeight: 600, color: "#111827" }}>{h.gestor_nome}</span>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>{h.gestor_nome}</span>
                   </div>
                 </td>
-                <td style={{ padding: "3px 7px" }}>
+                <td style={{ padding: "11px 16px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <div style={{ width: 28, height: 28, borderRadius: 8, background: "#8B5CF6", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#fff" }}>
                       {h.superior_nome?.charAt(0)}
                     </div>
-                    <span style={{ fontSize: 11, fontWeight: 600, color: "#111827" }}>{h.superior_nome}</span>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>{h.superior_nome}</span>
                   </div>
                 </td>
-                <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151" }}>{h.centro_custo ? (h.centro_custo + " — " + h.desc_cc) : "Todos"}</td>
-                <td style={{ padding: "3px 7px" }}>
-                  <span style={{ padding: "1px 7px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: h.ativo ? "#D1FAE5" : "#FEE2E2", color: h.ativo ? "#065F46" : "#991B1B" }}>
+                <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{h.centro_custo ? (h.centro_custo + " — " + h.desc_cc) : "Todos"}</td>
+                <td style={{ padding: "11px 16px" }}>
+                  <span style={{ padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: h.ativo ? "#D1FAE5" : "#FEE2E2", color: h.ativo ? "#065F46" : "#991B1B" }}>
                     {h.ativo ? "Ativo" : "Inativo"}
                   </span>
                 </td>
-                <td style={{ padding: "3px 7px", display: "flex", gap: 6 }}>
+                <td style={{ padding: "11px 16px", display: "flex", gap: 6 }}>
                   <Button variant="ghost" size="sm" onClick={() => abrirEditar(h)}>✏ Editar</Button>
                   <Button variant={h.ativo ? "secondary" : "success"} size="sm" onClick={() => toggleAtivo(h.id)}>
                     {h.ativo ? "Inativar" : "Ativar"}
@@ -2039,24 +2033,24 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
         title={modalForm === "novo" ? "Nova Regra de Hierarquia" : "Editar Hierarquia"} width={480}>
         <div style={{ display: "flex", flexDirection: "column", gap: 13 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-            <label style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>1ª Alçada *</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>1ª Alçada *</label>
             <select value={form.gestor_id} onChange={e => setForm(p => ({ ...p, gestor_id: e.target.value }))}
-              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
+              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 12px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
               <option value="">Selecione...</option>
               {gestores.map(u => <option key={u.id} value={u.id}>{u.nome}</option>)}
             </select>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-            <label style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>2ª Alçada *</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>2ª Alçada *</label>
             <select value={form.superior_id} onChange={e => setForm(p => ({ ...p, superior_id: e.target.value }))}
-              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
+              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 12px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
               <option value="">Selecione...</option>
               {superiores.map(u => <option key={u.id} value={u.id}>{u.nome}</option>)}
             </select>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 12 }}>
             <div>
-              <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Cód. Centro de Custo</label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Cód. Centro de Custo</label>
               <select value={form.centro_custo || ""} onChange={e => {
                 const cod = e.target.value;
                 const cc = centrosCusto.find(c => c.codccusto === cod);
@@ -2069,7 +2063,7 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
               </select>
             </div>
             <div>
-              <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Descrição CC</label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Descrição CC</label>
               <input value={form.desc_cc || ""} readOnly
                 style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid #D1D5DB", fontSize: 13, background: "#F9FAFB", color: "#6B7280", boxSizing: "border-box" }}
                 placeholder="Preenchido automaticamente" />
@@ -2160,7 +2154,7 @@ function CadAlcadas({ alcadas, setAlcadas, eventos }) {
     <div style={{ padding: 28 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
-          <p style={{ margin: 0, fontSize: 11, color: "#6B7280" }}>Define quantas aprovações cada tipo de evento exige</p>
+          <p style={{ margin: 0, fontSize: 12, color: "#6B7280" }}>Define quantas aprovações cada tipo de evento exige</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <Button variant="secondary" onClick={() => setModalImport(true)}>⬆ Importar CSV</Button>
@@ -2173,15 +2167,15 @@ function CadAlcadas({ alcadas, setAlcadas, eventos }) {
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
               {["Evento", "Nº de Alçadas", "Exige Anexo", "Status", "Ações"].map(h => (
-                <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+                <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
             <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
-              <th style={{ padding: "3px 6px" }}><input value={fEvento} onChange={e=>setFEvento(e.target.value)} placeholder="🔍 Evento" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
-              <th style={{ padding: "3px 6px" }} />
-              <th style={{ padding: "3px 6px" }}><select value={fAnexo} onChange={e=>setFAnexo(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="sim">Obrigatório</option><option value="nao">Não exige</option></select></th>
-              <th style={{ padding: "3px 6px" }}><select value={fStatus} onChange={e=>setFStatus(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select></th>
-              <th style={{ padding: "3px 6px" }}><button onClick={()=>{setFEvento("");setFAnexo("");setFStatus("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
+              <th style={{ padding: "5px 8px" }}><input value={fEvento} onChange={e=>setFEvento(e.target.value)} placeholder="🔍 Evento" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding: "5px 8px" }} />
+              <th style={{ padding: "5px 8px" }}><select value={fAnexo} onChange={e=>setFAnexo(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="sim">Obrigatório</option><option value="nao">Não exige</option></select></th>
+              <th style={{ padding: "5px 8px" }}><select value={fStatus} onChange={e=>setFStatus(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select></th>
+              <th style={{ padding: "5px 8px" }}><button onClick={()=>{setFEvento("");setFAnexo("");setFStatus("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
             </tr>
           </thead>
           <tbody>
@@ -2189,30 +2183,30 @@ function CadAlcadas({ alcadas, setAlcadas, eventos }) {
               <tr><td colSpan={5} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Nenhuma regra encontrada</td></tr>
             ) : alcadasFiltradas.map((a, i) => (
               <tr key={a.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
-                <td style={{ padding: "3px 7px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{a.evento_nome}</td>
-                <td style={{ padding: "3px 7px" }}>
+                <td style={{ padding: "11px 16px", fontSize: 13, fontWeight: 600, color: "#111827" }}>{a.evento_nome}</td>
+                <td style={{ padding: "11px 16px" }}>
                   <div style={{ display: "flex", gap: 4 }}>
                     {[...Array(a.num_alcadas)].map((_, idx) => (
                       <span key={idx} style={{ width: 24, height: 24, borderRadius: 6, background: idx === 0 ? "#3B82F6" : "#8B5CF6", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#fff" }}>
                         {idx + 1}
                       </span>
                     ))}
-                    <span style={{ fontSize: 11, color: "#6B7280", marginLeft: 4, alignSelf: "center" }}>
+                    <span style={{ fontSize: 12, color: "#6B7280", marginLeft: 4, alignSelf: "center" }}>
                       {a.num_alcadas === 1 ? "Apenas gestor" : "Gestor + Superior"}
                     </span>
                   </div>
                 </td>
-                <td style={{ padding: "3px 7px" }}>
-                  <span style={{ padding: "1px 7px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: a.exige_anexo ? "#FEF3C7" : "#F3F4F6", color: a.exige_anexo ? "#92400E" : "#6B7280" }}>
+                <td style={{ padding: "11px 16px" }}>
+                  <span style={{ padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: a.exige_anexo ? "#FEF3C7" : "#F3F4F6", color: a.exige_anexo ? "#92400E" : "#6B7280" }}>
                     {a.exige_anexo ? "📎 Obrigatório" : "Não exige"}
                   </span>
                 </td>
-                <td style={{ padding: "3px 7px" }}>
-                  <span style={{ padding: "1px 7px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: a.ativo ? "#D1FAE5" : "#FEE2E2", color: a.ativo ? "#065F46" : "#991B1B" }}>
+                <td style={{ padding: "11px 16px" }}>
+                  <span style={{ padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: a.ativo ? "#D1FAE5" : "#FEE2E2", color: a.ativo ? "#065F46" : "#991B1B" }}>
                     {a.ativo ? "Ativo" : "Inativo"}
                   </span>
                 </td>
-                <td style={{ padding: "3px 7px", display: "flex", gap: 6 }}>
+                <td style={{ padding: "11px 16px", display: "flex", gap: 6 }}>
                   <Button variant="ghost" size="sm" onClick={() => abrirEditar(a)}>✏ Editar</Button>
                   <Button variant={a.ativo ? "secondary" : "success"} size="sm" onClick={() => toggleAtivo(a.id)}>
                     {a.ativo ? "Inativar" : "Ativar"}
@@ -2231,26 +2225,26 @@ function CadAlcadas({ alcadas, setAlcadas, eventos }) {
         title={modalForm === "novo" ? "Nova Regra de Alçada" : "Editar Alçada"} width={460}>
         <div style={{ display: "flex", flexDirection: "column", gap: 13 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-            <label style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>Evento *</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Evento *</label>
             <select value={form.evento_id} onChange={e => setForm(p => ({ ...p, evento_id: e.target.value }))}
-              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
+              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 12px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
               <option value="">Selecione...</option>
               {eventos.map(e => <option key={e.id} value={e.id}>{e.codigo} — {e.descricao}</option>)}
             </select>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-            <label style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>Número de Alçadas *</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Número de Alçadas *</label>
             <select value={form.num_alcadas} onChange={e => setForm(p => ({ ...p, num_alcadas: e.target.value }))}
-              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
+              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 12px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
               <option value={1}>1 alçada — Apenas Gestor</option>
               <option value={2}>2 alçadas — Gestor + Superior</option>
             </select>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "3px 6px", background: "#FFFBEB", borderRadius: 8, border: "1px solid #FCD34D" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: "#FFFBEB", borderRadius: 8, border: "1px solid #FCD34D" }}>
             <input type="checkbox" id="exige_anexo" checked={!!form.exige_anexo}
               onChange={e => setForm(p => ({ ...p, exige_anexo: e.target.checked }))}
               style={{ width: 16, height: 16, cursor: "pointer" }} />
-            <label htmlFor="exige_anexo" style={{ fontSize: 11, fontWeight: 600, color: "#92400E", cursor: "pointer" }}>
+            <label htmlFor="exige_anexo" style={{ fontSize: 13, fontWeight: 600, color: "#92400E", cursor: "pointer" }}>
               📎 Exige anexo obrigatório
             </label>
           </div>
@@ -2384,7 +2378,7 @@ function CadUsuarios({ usuarios, setUsuarios }) {
     <div style={{ padding: 28 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
-          <p style={{ margin: 0, fontSize: 11, color: "#6B7280" }}>{usuarios.length} usuário(s) cadastrado(s)</p>
+          <p style={{ margin: 0, fontSize: 12, color: "#6B7280" }}>{usuarios.length} usuário(s) cadastrado(s)</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <Button variant="secondary" onClick={() => setModalImport(true)}>⬆ Importar CSV</Button>
@@ -2397,37 +2391,37 @@ function CadUsuarios({ usuarios, setUsuarios }) {
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
               {["Avatar", "Nome", "E-mail", "Perfil", "Status", "Ações"].map(h => (
-                <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+                <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
             <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
-              <th style={{ padding: "3px 6px" }} />
-              <th style={{ padding: "3px 6px" }}><input value={fNomeU}  onChange={e=>setFNomeU(e.target.value)}  placeholder="🔍 Nome"   style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
-              <th style={{ padding: "3px 6px" }}><input value={fEmailU} onChange={e=>setFEmailU(e.target.value)} placeholder="🔍 E-mail" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
-              <th style={{ padding: "3px 6px" }}><select value={fPerfilU} onChange={e=>setFPerfilU(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="gestor">Gestor</option><option value="superior">Superior</option><option value="dp">DP</option><option value="presidente">Presidente</option><option value="juridico">Jurídico</option><option value="admin">Admin</option></select></th>
-              <th style={{ padding: "3px 6px" }}><select value={fStatusU} onChange={e=>setFStatusU(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select></th>
-              <th style={{ padding: "3px 6px" }}><button onClick={()=>{setFNomeU("");setFEmailU("");setFPerfilU("");setFStatusU("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
+              <th style={{ padding: "5px 8px" }} />
+              <th style={{ padding: "5px 8px" }}><input value={fNomeU}  onChange={e=>setFNomeU(e.target.value)}  placeholder="🔍 Nome"   style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding: "5px 8px" }}><input value={fEmailU} onChange={e=>setFEmailU(e.target.value)} placeholder="🔍 E-mail" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding: "5px 8px" }}><select value={fPerfilU} onChange={e=>setFPerfilU(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="gestor">Gestor</option><option value="superior">Superior</option><option value="dp">DP</option><option value="presidente">Presidente</option><option value="admin">Admin</option></select></th>
+              <th style={{ padding: "5px 8px" }}><select value={fStatusU} onChange={e=>setFStatusU(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select></th>
+              <th style={{ padding: "5px 8px" }}><button onClick={()=>{setFNomeU("");setFEmailU("");setFPerfilU("");setFStatusU("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
             </tr>
           </thead>
           <tbody>
             {usuariosFiltrados.map((u, i) => (
               <tr key={u.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
-                <td style={{ padding: "3px 7px" }}>
+                <td style={{ padding: "11px 16px" }}>
                   <div style={{ width: 32, height: 32, borderRadius: 8, background: PERFIL_CONFIG[u.perfil]?.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#fff" }}>{u.avatar}</div>
                 </td>
-                <td style={{ padding: "3px 7px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{u.nome}</td>
-                <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151" }}>{u.email}</td>
-                <td style={{ padding: "3px 7px" }}>
-                  <span style={{ padding: "1px 7px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: PERFIL_CONFIG[u.perfil]?.color + "22", color: PERFIL_CONFIG[u.perfil]?.color }}>
+                <td style={{ padding: "11px 16px", fontSize: 13, fontWeight: 600, color: "#111827" }}>{u.nome}</td>
+                <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{u.email}</td>
+                <td style={{ padding: "11px 16px" }}>
+                  <span style={{ padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: PERFIL_CONFIG[u.perfil]?.color + "22", color: PERFIL_CONFIG[u.perfil]?.color }}>
                     {PERFIL_CONFIG[u.perfil]?.label}
                   </span>
                 </td>
-                <td style={{ padding: "3px 7px" }}>
-                  <span style={{ padding: "1px 7px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: u.ativo !== false ? "#D1FAE5" : "#FEE2E2", color: u.ativo !== false ? "#065F46" : "#991B1B" }}>
+                <td style={{ padding: "11px 16px" }}>
+                  <span style={{ padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: u.ativo !== false ? "#D1FAE5" : "#FEE2E2", color: u.ativo !== false ? "#065F46" : "#991B1B" }}>
                     {u.ativo !== false ? "Ativo" : "Inativo"}
                   </span>
                 </td>
-                <td style={{ padding: "3px 7px", display: "flex", gap: 6 }}>
+                <td style={{ padding: "11px 16px", display: "flex", gap: 6 }}>
                   <Button variant="ghost" size="sm" onClick={() => abrirEditar(u)}>✏ Editar</Button>
                   <Button variant="warning" size="sm" onClick={() => abrirReset(u)}>🔑 Senha</Button>
                   <Button variant={u.ativo !== false ? "secondary" : "success"} size="sm" onClick={() => toggleAtivo(u.id)}>
@@ -2450,14 +2444,13 @@ function CadUsuarios({ usuarios, setUsuarios }) {
           <Input label="E-mail *" value={form.email} onChange={v => setForm(p => ({ ...p, email: v }))} type="email" placeholder="email@empresa.com" required />
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-              <label style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>Perfil</label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Perfil</label>
               <select value={form.perfil} onChange={e => setForm(p => ({ ...p, perfil: e.target.value }))}
-                style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
+                style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 12px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
                 <option value="gestor">Gestor</option>
                 <option value="superior">Superior</option>
                 <option value="dp">DP</option>
                 <option value="presidente">Presidente</option>
-                <option value="juridico">Jurídico</option>
                 <option value="admin">Admin</option>
               </select>
             </div>
@@ -2481,14 +2474,14 @@ function CadUsuarios({ usuarios, setUsuarios }) {
         title="🔑 Redefinir Senha" width={420}>
         {modalReset && (
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <div style={{ background: "#FFF7ED", border: "1px solid #FCD34D", borderRadius: 8, padding: "3px 6px" }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: "#92400E" }}>Usuário</div>
+            <div style={{ background: "#FFF7ED", border: "1px solid #FCD34D", borderRadius: 8, padding: "10px 14px" }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#92400E" }}>Usuário</div>
               <div style={{ fontSize: 14, fontWeight: 600, color: "#111827" }}>{modalReset.nome}</div>
-              <div style={{ fontSize: 11, color: "#6B7280" }}>{modalReset.email}</div>
+              <div style={{ fontSize: 12, color: "#6B7280" }}>{modalReset.email}</div>
             </div>
             {msgReset && (
               <div style={{
-                padding: "3px 6px", borderRadius: 8, fontSize: 12,
+                padding: "8px 12px", borderRadius: 8, fontSize: 12,
                 background: msgReset.tipo === "ok" ? "#D1FAE5" : "#FEE2E2",
                 color: msgReset.tipo === "ok" ? "#065F46" : "#991B1B",
                 border: `1px solid ${msgReset.tipo === "ok" ? "#6EE7B7" : "#FCA5A5"}`
@@ -2642,7 +2635,7 @@ function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user, 
             <div style={{ padding: "14px 20px", background: "#F8FAFC", borderBottom: "1px solid #E5E7EB", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <div>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: "#111827" }}>{bloco.descricao}</span>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: "#111827" }}>{bloco.descricao}</span>
                   <Badge status={bloco.status} />
                   {bloco.evento && (
                     <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 6, background: "#EFF6FF", color: "#1D4ED8" }}>
@@ -2683,14 +2676,14 @@ function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user, 
               <tbody>
                 {bloco.linhas.map((l, i) => (
                   <tr key={i} style={{ borderTop: "1px solid #F3F4F6" }}>
-                    <td style={{ padding: "3px 7px" }}>
-                      <span style={{ fontFamily: "monospace", fontSize: 11, fontWeight: 700, background: "#F3F4F6", padding: "1px 6px", borderRadius: 4 }}>{l.colaborador?.chapa}</span>
+                    <td style={{ padding: "9px 16px" }}>
+                      <span style={{ fontFamily: "monospace", fontSize: 12, fontWeight: 700, background: "#F3F4F6", padding: "2px 8px", borderRadius: 4 }}>{l.colaborador?.chapa}</span>
                     </td>
-                    <td style={{ padding: "3px 7px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{l.colaborador?.nome}</td>
-                    <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151" }}>{l.data}</td>
-                    <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151" }}>{l.hora || "—"}</td>
-                    <td style={{ padding: "3px 7px", fontSize: 11, fontWeight: 700, color: "#059669" }}>R$ {parseFloat(l.valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td>
-                    <td style={{ padding: "3px 7px", fontSize: 11, color: "#6B7280", fontStyle: "italic" }}>{l.observacao || "—"}</td>
+                    <td style={{ padding: "9px 16px", fontSize: 12, fontWeight: 600, color: "#111827" }}>{l.colaborador?.nome}</td>
+                    <td style={{ padding: "9px 16px", fontSize: 12, color: "#374151" }}>{l.data}</td>
+                    <td style={{ padding: "9px 16px", fontSize: 12, color: "#374151" }}>{l.hora || "—"}</td>
+                    <td style={{ padding: "9px 16px", fontSize: 12, fontWeight: 700, color: "#059669" }}>R$ {parseFloat(l.valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td>
+                    <td style={{ padding: "9px 16px", fontSize: 11, color: "#6B7280", fontStyle: "italic" }}>{l.observacao || "—"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -2897,7 +2890,7 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
 
             {/* Competência — select de meses */}
             <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-              <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", letterSpacing: 0.3 }}>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: 0.3 }}>
                 Competência <span style={{ color: "#EF4444" }}>*</span>
               </label>
               <select
@@ -2920,7 +2913,7 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
                   }));
                 }}
                 style={{
-                  border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px",
+                  border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 12px",
                   fontSize: 13, fontFamily: "inherit", background: "#fff", cursor: "pointer",
                   color: bloco.competencia ? "#111827" : "#9CA3AF"
                 }}
@@ -2932,14 +2925,14 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
 
             {/* Evento único do bloco */}
             <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-              <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", letterSpacing: 0.3 }}>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", letterSpacing: 0.3 }}>
                 Evento do Bloco <span style={{ color: "#EF4444" }}>*</span>
               </label>
               <select
                 value={bloco.evento_id || ""}
                 onChange={e => setBloco(b => ({ ...b, evento_id: e.target.value }))}
                 style={{
-                  border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px",
+                  border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 12px",
                   fontSize: 13, fontFamily: "inherit", background: "#fff", cursor: "pointer",
                   color: bloco.evento_id ? "#111827" : "#9CA3AF"
                 }}
@@ -2956,7 +2949,7 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
           {eventoSelecionado && (
             <div style={{
               marginTop: 10, display: "flex", alignItems: "center", gap: 10,
-              padding: "3px 6px", background: "#EFF6FF", borderRadius: 8, border: "1px solid #BFDBFE"
+              padding: "8px 12px", background: "#EFF6FF", borderRadius: 8, border: "1px solid #BFDBFE"
             }}>
               <span style={{ fontSize: 11, color: "#1D4ED8" }}>
                 ⚡ Todos os lançamentos deste bloco serão do evento
@@ -2982,14 +2975,14 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
         }}>
           <span style={{ fontSize: 20 }}>📎</span>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: "#92400E" }}>Anexo do Bloco</div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "#92400E" }}>Anexo do Bloco</div>
             {bloco.anexo_nome ? (
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
                 <span style={{ fontSize: 12, color: "#065F46", fontWeight: 600 }}>✓ {bloco.anexo_nome}</span>
                 <span style={{ fontSize: 11, color: "#6B7280" }}>({bloco.anexo_tamanho})</span>
                 <button
                   onClick={() => setBloco(b => ({ ...b, anexo_nome: null, anexo_tamanho: null }))}
-                  style={{ background: "none", border: "none", color: "#EF4444", cursor: "pointer", fontSize: 11 }}
+                  style={{ background: "none", border: "none", color: "#EF4444", cursor: "pointer", fontSize: 12 }}
                 >✕ Remover</button>
               </div>
             ) : (
@@ -3000,7 +2993,7 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
           </div>
           <label style={{
             padding: "7px 14px", background: "#F59E0B", color: "#fff", borderRadius: 8,
-            fontSize: 11, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap"
+            fontSize: 12, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap"
           }}>
             {bloco.anexo_nome ? "Trocar arquivo" : "Selecionar arquivo"}
             <input type="file" accept=".pdf,.jpg,.jpeg,.png,.xlsx,.xls" onChange={onAnexo}
@@ -3015,14 +3008,14 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
             border: "2px dashed #D1D5DB", borderRadius: 10
           }}>
             <div style={{ fontSize: 28, marginBottom: 8 }}>⚡</div>
-            <p style={{ margin: 0, fontSize: 11, color: "#6B7280" }}>
+            <p style={{ margin: 0, fontSize: 13, color: "#6B7280" }}>
               Selecione o <b>Evento do Bloco</b> acima para liberar os lançamentos
             </p>
           </div>
         ) : (
           <div style={{ overflowX: "auto" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-              <span style={{ fontSize: 11, fontWeight: 700, color: "#374151" }}>
+              <span style={{ fontSize: 12, fontWeight: 700, color: "#374151" }}>
                 Lançamentos — <span style={{ color: "#1D4ED8" }}>{eventoSelecionado?.descricao}</span>
                 <span style={{ marginLeft: 6, fontSize: 11, color: "#6B7280" }}>({bloco.linhas.length} linha{bloco.linhas.length !== 1 ? "s" : ""})</span>
               </span>
@@ -3085,7 +3078,7 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
                       {bloco.linhas.length > 1 && (
                         <button onClick={() => removeLinha(idx)} style={{
                           background: "#FEE2E2", border: "none", borderRadius: 6,
-                          padding: "3px 6px", color: "#EF4444", cursor: "pointer", fontSize: 11, fontWeight: 700
+                          padding: "5px 8px", color: "#EF4444", cursor: "pointer", fontSize: 12, fontWeight: 700
                         }}>✕</button>
                       )}
                     </td>
@@ -3094,10 +3087,10 @@ function ModalNovoBloco({ open, onClose, bloco, setBloco, onSalvar, colaboradore
               </tbody>
               <tfoot>
                 <tr style={{ background: "#F0FDF4", borderTop: "2px solid #10B981" }}>
-                  <td colSpan={3} style={{ padding: "3px 6px", fontSize: 11, fontWeight: 700, color: "#065F46" }}>
+                  <td colSpan={3} style={{ padding: "10px 10px", fontSize: 12, fontWeight: 700, color: "#065F46" }}>
                     TOTAL — {bloco.linhas.filter(l => l.valor && l.colaborador_id).length} lançamento(s) preenchidos
                   </td>
-                  <td colSpan={3} style={{ padding: "3px 6px", fontSize: 15, fontWeight: 800, color: "#065F46" }}>
+                  <td colSpan={3} style={{ padding: "10px 10px", fontSize: 15, fontWeight: 800, color: "#065F46" }}>
                     R$ {totalBloco.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                   </td>
                 </tr>
@@ -3131,7 +3124,7 @@ function DetalhesBloco({ bloco }) {
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
         <Badge status={bloco.status} />
-        <span style={{ fontSize: 11, color: "#6B7280" }}>Competência: <b>{bloco.competencia}</b> · {bloco.linhas.length} lançamento(s)</span>
+        <span style={{ fontSize: 12, color: "#6B7280" }}>Competência: <b>{bloco.competencia}</b> · {bloco.linhas.length} lançamento(s)</span>
         <span style={{ marginLeft: "auto", fontSize: 15, fontWeight: 700, color: "#10B981" }}>
           R$ {total.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
         </span>
@@ -3140,34 +3133,34 @@ function DetalhesBloco({ bloco }) {
         <thead>
           <tr style={{ background: "#F9FAFB" }}>
             {["Colaborador", "Evento", "Data", "Hora", "Valor", "Observação"].map(h => (
-              <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+              <th key={h} style={{ padding: "8px 12px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {bloco.linhas.map((l, i) => (
             <tr key={i} style={{ borderTop: "1px solid #F3F4F6" }}>
-              <td style={{ padding: "3px 6px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{l.colaborador?.nome}</td>
-              <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{l.evento?.descricao}</td>
-              <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{l.data}</td>
-              <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{l.hora || "—"}</td>
-              <td style={{ padding: "3px 6px", fontSize: 11, fontWeight: 700, color: "#10B981" }}>R$ {parseFloat(l.valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td>
-              <td style={{ padding: "3px 6px", fontSize: 11, color: "#6B7280", fontStyle: "italic" }}>{l.observacao || "—"}</td>
+              <td style={{ padding: "9px 12px", fontSize: 12, fontWeight: 600, color: "#111827" }}>{l.colaborador?.nome}</td>
+              <td style={{ padding: "9px 12px", fontSize: 12, color: "#374151" }}>{l.evento?.descricao}</td>
+              <td style={{ padding: "9px 12px", fontSize: 12, color: "#374151" }}>{l.data}</td>
+              <td style={{ padding: "9px 12px", fontSize: 12, color: "#374151" }}>{l.hora || "—"}</td>
+              <td style={{ padding: "9px 12px", fontSize: 12, fontWeight: 700, color: "#10B981" }}>R$ {parseFloat(l.valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td>
+              <td style={{ padding: "9px 12px", fontSize: 11, color: "#6B7280", fontStyle: "italic" }}>{l.observacao || "—"}</td>
             </tr>
           ))}
         </tbody>
       </table>
       <div>
-        <h4 style={{ margin: "0 0 10px", fontSize: 11, fontWeight: 700, color: "#374151" }}>Histórico do Bloco</h4>
+        <h4 style={{ margin: "0 0 10px", fontSize: 13, fontWeight: 700, color: "#374151" }}>Histórico do Bloco</h4>
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           {bloco.historico.map((h, i) => (
             <div key={i} style={{
               display: "flex", alignItems: "center", gap: 12,
-              padding: "3px 6px", background: "#F9FAFB", borderRadius: 8,
+              padding: "8px 14px", background: "#F9FAFB", borderRadius: 8,
               borderLeft: `3px solid ${ACAO_COLOR[h.acao] || "#6B7280"}`
             }}>
               <div style={{ flex: 1 }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: "#111827" }}>{h.usuario}</span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: "#111827" }}>{h.usuario}</span>
                 <span style={{ fontSize: 11, color: "#6B7280" }}> · {h.acao.replace(/_/g, " ")} · {h.data}</span>
                 {h.obs && <div style={{ fontSize: 11, color: "#F97316", marginTop: 2 }}>"{h.obs}"</div>}
               </div>
@@ -3223,7 +3216,7 @@ function RelatorioBloco({ bloco }) {
             { label: "Valor total", value: `R$ ${total.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` },
             { label: "Etapas no histórico", value: bloco.historico.length },
           ].map(c => (
-            <div key={c.label} style={{ background: "rgba(255,255,255,0.07)", borderRadius: 8, padding: "3px 6px" }}>
+            <div key={c.label} style={{ background: "rgba(255,255,255,0.07)", borderRadius: 8, padding: "10px 14px" }}>
               <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", textTransform: "uppercase", letterSpacing: 0.5 }}>{c.label}</div>
               <div style={{ fontSize: 18, fontWeight: 800, marginTop: 2 }}>{c.value}</div>
             </div>
@@ -3233,29 +3226,29 @@ function RelatorioBloco({ bloco }) {
 
       {/* Lançamentos */}
       <div>
-        <h4 style={{ margin: "0 0 10px", fontSize: 11, fontWeight: 700, color: "#111827", textTransform: "uppercase", letterSpacing: 0.5 }}>
+        <h4 style={{ margin: "0 0 10px", fontSize: 13, fontWeight: 700, color: "#111827", textTransform: "uppercase", letterSpacing: 0.5 }}>
           Lançamentos
         </h4>
         <table style={{ width: "100%", borderCollapse: "collapse", border: "1px solid #E5E7EB", borderRadius: 8, overflow: "hidden" }}>
           <thead>
             <tr style={{ background: "#1B3A6B" }}>
               {["#", "Colaborador", "Chapa", "C.Custo", "Evento", "Cód.", "Data", "Hora", "Valor"].map(h => (
-                <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.75)", textTransform: "uppercase" }}>{h}</th>
+                <th key={h} style={{ padding: "9px 12px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.75)", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {bloco.linhas.map((l, i) => (
               <tr key={i} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#F8FAFC" }}>
-                <td style={{ padding: "3px 6px", fontSize: 11, color: "#9CA3AF" }}>{i + 1}</td>
-                <td style={{ padding: "3px 6px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{l.colaborador?.nome}</td>
-                <td style={{ padding: "3px 6px", fontSize: 11, fontFamily: "monospace", color: "#374151" }}>{l.colaborador?.chapa}</td>
-                <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{l.colaborador?.centro_custo} — {l.colaborador?.desc_cc}</td>
-                <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{l.evento?.descricao}</td>
-                <td style={{ padding: "3px 6px", fontSize: 11, fontFamily: "monospace", color: "#374151" }}>{l.evento?.codigo}</td>
-                <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{l.data}</td>
-                <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{l.hora || "—"}</td>
-                <td style={{ padding: "3px 6px", fontSize: 11, fontWeight: 800, color: "#059669" }}>
+                <td style={{ padding: "9px 12px", fontSize: 11, color: "#9CA3AF" }}>{i + 1}</td>
+                <td style={{ padding: "9px 12px", fontSize: 12, fontWeight: 600, color: "#111827" }}>{l.colaborador?.nome}</td>
+                <td style={{ padding: "9px 12px", fontSize: 11, fontFamily: "monospace", color: "#374151" }}>{l.colaborador?.chapa}</td>
+                <td style={{ padding: "9px 12px", fontSize: 11, color: "#374151" }}>{l.colaborador?.centro_custo} — {l.colaborador?.desc_cc}</td>
+                <td style={{ padding: "9px 12px", fontSize: 12, color: "#374151" }}>{l.evento?.descricao}</td>
+                <td style={{ padding: "9px 12px", fontSize: 11, fontFamily: "monospace", color: "#374151" }}>{l.evento?.codigo}</td>
+                <td style={{ padding: "9px 12px", fontSize: 12, color: "#374151" }}>{l.data}</td>
+                <td style={{ padding: "9px 12px", fontSize: 12, color: "#374151" }}>{l.hora || "—"}</td>
+                <td style={{ padding: "9px 12px", fontSize: 12, fontWeight: 800, color: "#059669" }}>
                   R$ {parseFloat(l.valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                 </td>
               </tr>
@@ -3263,8 +3256,8 @@ function RelatorioBloco({ bloco }) {
           </tbody>
           <tfoot>
             <tr style={{ background: "#F0FDF4", borderTop: "2px solid #10B981" }}>
-              <td colSpan={8} style={{ padding: "3px 6px", fontSize: 11, fontWeight: 700, color: "#065F46" }}>TOTAL</td>
-              <td style={{ padding: "3px 6px", fontSize: 11, fontWeight: 800, color: "#065F46" }}>
+              <td colSpan={8} style={{ padding: "10px 12px", fontSize: 12, fontWeight: 700, color: "#065F46" }}>TOTAL</td>
+              <td style={{ padding: "10px 12px", fontSize: 14, fontWeight: 800, color: "#065F46" }}>
                 R$ {total.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
               </td>
             </tr>
@@ -3274,7 +3267,7 @@ function RelatorioBloco({ bloco }) {
 
       {/* Trilha de aprovação */}
       <div>
-        <h4 style={{ margin: "0 0 12px", fontSize: 11, fontWeight: 700, color: "#111827", textTransform: "uppercase", letterSpacing: 0.5 }}>
+        <h4 style={{ margin: "0 0 12px", fontSize: 13, fontWeight: 700, color: "#111827", textTransform: "uppercase", letterSpacing: 0.5 }}>
           Trilha Completa de Aprovação
         </h4>
         <div style={{ position: "relative", paddingLeft: 28 }}>
@@ -3288,7 +3281,7 @@ function RelatorioBloco({ bloco }) {
                 border: "3px solid #fff",
                 boxShadow: `0 0 0 2px ${ACAO_COLOR[h.acao] || "#6B7280"}33`
               }} />
-              <div style={{ background: "#F9FAFB", borderRadius: 10, padding: "3px 6px", border: "1px solid #E5E7EB" }}>
+              <div style={{ background: "#F9FAFB", borderRadius: 10, padding: "10px 14px", border: "1px solid #E5E7EB" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <div>
                     <span style={{
@@ -3296,7 +3289,7 @@ function RelatorioBloco({ bloco }) {
                       background: (ACAO_COLOR[h.acao] || "#6B7280") + "18",
                       color: ACAO_COLOR[h.acao] || "#6B7280"
                     }}>{ACAO_LABEL[h.acao] || h.acao}</span>
-                    <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 600, color: "#111827" }}>{h.usuario}</span>
+                    <span style={{ marginLeft: 8, fontSize: 12, fontWeight: 600, color: "#111827" }}>{h.usuario}</span>
                   </div>
                   <span style={{ fontSize: 11, color: "#9CA3AF" }}>{h.data}</span>
                 </div>
@@ -3394,29 +3387,29 @@ function Exportacao({ solicitacoes, blocos }) {
       {showLayout && (
         <Card style={{ marginBottom: 20, padding: 0, overflow: "hidden" }}>
           <div style={{ padding: "12px 16px", background: "#0F2447", display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: 11, fontWeight: 700, color: "#fff" }}>Layout de Importação do Movimento (RM Labore)</span>
-            <span style={{ fontSize: 11, color: "#93C5FD", background: "rgba(255,255,255,0.1)", padding: "1px 6px", borderRadius: 4 }}>81 caracteres por linha</span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>Layout de Importação do Movimento (RM Labore)</span>
+            <span style={{ fontSize: 11, color: "#93C5FD", background: "rgba(255,255,255,0.1)", padding: "2px 8px", borderRadius: 4 }}>81 caracteres por linha</span>
           </div>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ background: "#F1F5F9" }}>
                 {["Coluna", "Tamanho", "Tipo", "Descrição"].map(h => (
-                  <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#475569", textTransform: "uppercase", letterSpacing: 0.4 }}>{h}</th>
+                  <th key={h} style={{ padding: "8px 14px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#475569", textTransform: "uppercase", letterSpacing: 0.4 }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {LAYOUT_RM.map((row, i) => (
                 <tr key={i} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#F8FAFC" }}>
-                  <td style={{ padding: "3px 6px", fontFamily: "monospace", fontSize: 11, fontWeight: 700, color: "#1B3A6B" }}>{row.col}</td>
-                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{row.tam}</td>
-                  <td style={{ padding: "3px 6px" }}>
+                  <td style={{ padding: "9px 14px", fontFamily: "monospace", fontSize: 12, fontWeight: 700, color: "#1B3A6B" }}>{row.col}</td>
+                  <td style={{ padding: "9px 14px", fontSize: 12, color: "#374151" }}>{row.tam}</td>
+                  <td style={{ padding: "9px 14px" }}>
                     <span style={{ padding: "2px 8px", borderRadius: 6, fontSize: 11, fontWeight: 600,
                       background: row.tipo === "Real" ? "#EFF6FF" : row.tipo === "String" ? "#F0FDF4" : "#FEF3C7",
                       color: row.tipo === "Real" ? "#1D4ED8" : row.tipo === "String" ? "#065F46" : "#92400E"
                     }}>{row.tipo}</span>
                   </td>
-                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{row.desc}</td>
+                  <td style={{ padding: "9px 14px", fontSize: 12, color: "#374151" }}>{row.desc}</td>
                 </tr>
               ))}
             </tbody>
@@ -3441,13 +3434,13 @@ function Exportacao({ solicitacoes, blocos }) {
       {/* Tabela de registros */}
       <Card style={{ marginBottom: 16, padding: 0, overflow: "hidden" }}>
         <div style={{ padding: "12px 16px", borderBottom: "1px solid #F3F4F6" }}>
-          <h3 style={{ margin: 0, fontSize: 11, fontWeight: 700, color: "#111827" }}>Registros para exportar</h3>
+          <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: "#111827" }}>Registros para exportar</h3>
         </div>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
               {["Bloco", "Chapa", "Colaborador", "Evento (Cód.)", "Data", "Hora", "Referência", "Valor", "Valor Original"].map(h => (
-                <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+                <th key={h} style={{ padding: "8px 12px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
           </thead>
@@ -3459,21 +3452,21 @@ function Exportacao({ solicitacoes, blocos }) {
             ) : blocosAprov.flatMap(bloco =>
               bloco.linhas.map((l, i) => (
                 <tr key={bloco.id + "-" + i} style={{ borderTop: "1px solid #F3F4F6" }}>
-                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#6B7280" }}>{bloco.descricao}</td>
-                  <td style={{ padding: "3px 6px" }}>
+                  <td style={{ padding: "8px 12px", fontSize: 11, color: "#6B7280" }}>{bloco.descricao}</td>
+                  <td style={{ padding: "8px 12px" }}>
                     <span style={{ fontFamily: "monospace", fontSize: 11, fontWeight: 700, background: "#F3F4F6", padding: "1px 6px", borderRadius: 4 }}>{l.colaborador?.chapa}</span>
                   </td>
-                  <td style={{ padding: "3px 6px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{l.colaborador?.nome}</td>
-                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>
+                  <td style={{ padding: "8px 12px", fontSize: 12, fontWeight: 600, color: "#111827" }}>{l.colaborador?.nome}</td>
+                  <td style={{ padding: "8px 12px", fontSize: 11, color: "#374151" }}>
                     {l.evento?.descricao} <span style={{ color: "#9CA3AF" }}>({l.evento?.codigo})</span>
                   </td>
-                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{l.data}</td>
-                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{l.hora || "—"}</td>
-                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{l.referencia || "0.00"}</td>
-                  <td style={{ padding: "3px 6px", fontSize: 11, fontWeight: 700, color: "#059669" }}>
+                  <td style={{ padding: "8px 12px", fontSize: 11, color: "#374151" }}>{l.data}</td>
+                  <td style={{ padding: "8px 12px", fontSize: 11, color: "#374151" }}>{l.hora || "—"}</td>
+                  <td style={{ padding: "8px 12px", fontSize: 11, color: "#374151" }}>{l.referencia || "0.00"}</td>
+                  <td style={{ padding: "8px 12px", fontSize: 12, fontWeight: 700, color: "#059669" }}>
                     R$ {parseFloat(l.valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                   </td>
-                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>
+                  <td style={{ padding: "8px 12px", fontSize: 11, color: "#374151" }}>
                     R$ {parseFloat(l.valor_original || l.valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                   </td>
                 </tr>
@@ -3487,7 +3480,7 @@ function Exportacao({ solicitacoes, blocos }) {
       <Card style={{ marginBottom: 20 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
           <div>
-            <h3 style={{ margin: 0, fontSize: 11, fontWeight: 700, color: "#111827" }}>Prévia do arquivo TXT</h3>
+            <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: "#111827" }}>Prévia do arquivo TXT</h3>
             <p style={{ margin: "2px 0 0", fontSize: 11, color: "#6B7280" }}>Layout posicional — 81 caracteres por linha</p>
           </div>
           <Button variant="secondary" size="sm" onClick={() => setPreview(!preview)}>
@@ -3610,14 +3603,14 @@ function Auditoria({ solicitacoes, blocos, sessao }) {
       {aba === "seguranca" && (
         <Card style={{ padding: 0, overflow: "hidden" }}>
           <div style={{ padding: "12px 16px", background: "#0F2447", display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: 11, fontWeight: 700, color: "#fff" }}>🔒 Log de Segurança — Eventos do Sistema</span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>🔒 Log de Segurança — Eventos do Sistema</span>
             <span style={{ fontSize: 11, color: "#93C5FD" }}>{logsSeguranca.length} registro(s)</span>
           </div>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ background: "#F9FAFB" }}>
                 {["Data/Hora", "Ação", "Usuário", "Perfil", "Detalhes"].map(h => (
-                  <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+                  <th key={h} style={{ padding: "9px 14px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -3626,17 +3619,17 @@ function Auditoria({ solicitacoes, blocos, sessao }) {
                 <tr><td colSpan={5} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Nenhum evento registrado nesta sessão</td></tr>
               ) : logsSeguranca.map((l, i) => (
                 <tr key={i} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
-                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#6B7280", fontFamily: "monospace" }}>{l.dataHora}</td>
-                  <td style={{ padding: "3px 6px" }}>
+                  <td style={{ padding: "9px 14px", fontSize: 11, color: "#6B7280", fontFamily: "monospace" }}>{l.dataHora}</td>
+                  <td style={{ padding: "9px 14px" }}>
                     <span style={{
                       padding: "2px 8px", borderRadius: 6, fontSize: 10, fontWeight: 700,
                       background: (ACAO_COLOR[l.acao] || "#6B7280") + "18",
                       color: ACAO_COLOR[l.acao] || "#6B7280"
                     }}>{l.acao}</span>
                   </td>
-                  <td style={{ padding: "3px 6px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{l.usuario}</td>
-                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151", textTransform: "capitalize" }}>{l.perfil || "—"}</td>
-                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#6B7280" }}>
+                  <td style={{ padding: "9px 14px", fontSize: 12, fontWeight: 600, color: "#111827" }}>{l.usuario}</td>
+                  <td style={{ padding: "9px 14px", fontSize: 11, color: "#374151", textTransform: "capitalize" }}>{l.perfil || "—"}</td>
+                  <td style={{ padding: "9px 14px", fontSize: 11, color: "#6B7280" }}>
                     {Object.keys(l.detalhes || {}).length > 0
                       ? Object.entries(l.detalhes).map(([k, v]) => (
                         <span key={k} style={{ marginRight: 8 }}>
@@ -3659,7 +3652,7 @@ function Auditoria({ solicitacoes, blocos, sessao }) {
             <thead>
               <tr style={{ background: "#F9FAFB" }}>
                 {["Bloco", "Ação", "Usuário", "Data/Hora", "Observação"].map(h => (
-                  <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+                  <th key={h} style={{ padding: "9px 14px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -3668,17 +3661,17 @@ function Auditoria({ solicitacoes, blocos, sessao }) {
                 <tr><td colSpan={5} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Nenhum evento de bloco registrado</td></tr>
               ) : logsBlocos.map((l, i) => (
                 <tr key={i} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
-                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{l.bloco}</td>
-                  <td style={{ padding: "3px 6px" }}>
+                  <td style={{ padding: "9px 14px", fontSize: 12, color: "#374151" }}>{l.bloco}</td>
+                  <td style={{ padding: "9px 14px" }}>
                     <span style={{
                       padding: "2px 8px", borderRadius: 6, fontSize: 10, fontWeight: 700,
                       background: (ACAO_COLOR[l.acao] || "#6B7280") + "18",
                       color: ACAO_COLOR[l.acao] || "#6B7280"
                     }}>{l.acao.replace(/_/g, " ")}</span>
                   </td>
-                  <td style={{ padding: "3px 6px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{l.usuario}</td>
-                  <td style={{ padding: "3px 6px", fontSize: 11, color: "#6B7280" }}>{l.data}</td>
-                  <td style={{ padding: "3px 6px", fontSize: 11, color: l.obs ? "#F97316" : "#9CA3AF", fontStyle: l.obs ? "italic" : "normal" }}>{l.obs || "—"}</td>
+                  <td style={{ padding: "9px 14px", fontSize: 12, fontWeight: 600, color: "#111827" }}>{l.usuario}</td>
+                  <td style={{ padding: "9px 14px", fontSize: 11, color: "#6B7280" }}>{l.data}</td>
+                  <td style={{ padding: "9px 14px", fontSize: 11, color: l.obs ? "#F97316" : "#9CA3AF", fontStyle: l.obs ? "italic" : "normal" }}>{l.obs || "—"}</td>
                 </tr>
               ))}
             </tbody>
@@ -3698,7 +3691,7 @@ function Usuarios() {
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
               {["Avatar", "Nome", "E-mail", "Perfil", "Status", "Ações"].map(h => (
-                <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+                <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
           </thead>
@@ -3710,20 +3703,20 @@ function Usuarios() {
                     width: 32, height: 32, borderRadius: 8,
                     background: PERFIL_CONFIG[u.perfil]?.color,
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: 11, fontWeight: 700, color: "#fff"
+                    fontSize: 12, fontWeight: 700, color: "#fff"
                   }}>{u.avatar}</div>
                 </td>
-                <td style={{ padding: "12px 16px", fontSize: 11, fontWeight: 600, color: "#111827" }}>{u.nome}</td>
-                <td style={{ padding: "12px 16px", fontSize: 11, color: "#374151" }}>{u.email}</td>
+                <td style={{ padding: "12px 16px", fontSize: 13, fontWeight: 600, color: "#111827" }}>{u.nome}</td>
+                <td style={{ padding: "12px 16px", fontSize: 12, color: "#374151" }}>{u.email}</td>
                 <td style={{ padding: "12px 16px" }}>
                   <span style={{
-                    padding: "1px 7px", borderRadius: 10, fontSize: 11, fontWeight: 600,
+                    padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600,
                     background: PERFIL_CONFIG[u.perfil]?.color + "22",
                     color: PERFIL_CONFIG[u.perfil]?.color
                   }}>{PERFIL_CONFIG[u.perfil]?.label}</span>
                 </td>
                 <td style={{ padding: "12px 16px" }}>
-                  <span style={{ padding: "1px 7px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: "#D1FAE5", color: "#065F46" }}>Ativo</span>
+                  <span style={{ padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: "#D1FAE5", color: "#065F46" }}>Ativo</span>
                 </td>
                 <td style={{ padding: "12px 16px" }}>
                   <Button variant="ghost" size="sm">Editar</Button>
@@ -3797,9 +3790,9 @@ function Aprovacoes({ blocos, setBlocos, user, recarregarDados }) {
   const [modalAcao, setModalAcao] = useState(null);
 
   const getFilaParaUsuario = () => {
-    if (user?.perfil === "superior") return blocos.filter(b => b.status === "pendente_superior");
-    if (user?.perfil === "dp") return blocos.filter(b => b.status === "pendente_dp");
-    if (user?.perfil === "admin") return blocos.filter(b => b.status.startsWith("pendente"));
+    if (user.perfil === "superior") return blocos.filter(b => b.status === "pendente_superior");
+    if (user.perfil === "dp") return blocos.filter(b => b.status === "pendente_dp");
+    if (user.perfil === "admin") return blocos.filter(b => b.status.startsWith("pendente"));
     return [];
     return [];
   };
@@ -3859,7 +3852,7 @@ function Aprovacoes({ blocos, setBlocos, user, recarregarDados }) {
             <div style={{ padding: "14px 20px", background: "#F8FAFC", borderBottom: "1px solid #E5E7EB", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <div>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: "#111827" }}>{bloco.descricao}</span>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: "#111827" }}>{bloco.descricao}</span>
                   <Badge status={bloco.status} />
                 </div>
                 <div style={{ fontSize: 11, color: "#6B7280" }}>
@@ -3887,15 +3880,15 @@ function Aprovacoes({ blocos, setBlocos, user, recarregarDados }) {
               <tbody>
                 {bloco.linhas.map((l, i) => (
                   <tr key={i} style={{ borderTop: "1px solid #F3F4F6" }}>
-                    <td style={{ padding: "3px 7px" }}>
-                      <div style={{ fontSize: 11, fontWeight: 600, color: "#111827" }}>{l.colaborador?.nome}</div>
+                    <td style={{ padding: "9px 16px" }}>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: "#111827" }}>{l.colaborador?.nome}</div>
                       <div style={{ fontSize: 10, color: "#6B7280" }}>Chapa: {l.colaborador?.chapa}</div>
                     </td>
-                    <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151" }}>{l.evento?.descricao}</td>
-                    <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151" }}>{l.data}</td>
-                    <td style={{ padding: "3px 7px", fontSize: 11, color: "#374151" }}>{l.hora || "—"}</td>
-                    <td style={{ padding: "3px 7px", fontSize: 11, fontWeight: 700, color: "#059669" }}>R$ {parseFloat(l.valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td>
-                    <td style={{ padding: "3px 7px", fontSize: 11, color: "#6B7280", fontStyle: "italic" }}>{l.observacao || "—"}</td>
+                    <td style={{ padding: "9px 16px", fontSize: 12, color: "#374151" }}>{l.evento?.descricao}</td>
+                    <td style={{ padding: "9px 16px", fontSize: 12, color: "#374151" }}>{l.data}</td>
+                    <td style={{ padding: "9px 16px", fontSize: 12, color: "#374151" }}>{l.hora || "—"}</td>
+                    <td style={{ padding: "9px 16px", fontSize: 12, fontWeight: 700, color: "#059669" }}>R$ {parseFloat(l.valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td>
+                    <td style={{ padding: "9px 16px", fontSize: 11, color: "#6B7280", fontStyle: "italic" }}>{l.observacao || "—"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -3910,7 +3903,7 @@ function Aprovacoes({ blocos, setBlocos, user, recarregarDados }) {
       }>
         {modalAcao && (
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <p style={{ margin: 0, fontSize: 11, color: "#374151" }}>
+            <p style={{ margin: 0, fontSize: 13, color: "#374151" }}>
               {modalAcao.acao === "aprovar"
                 ? ("Confirma a aprovação do bloco " + modalAcao.bloco.descricao + " com " + modalAcao.bloco.linhas.length + " lançamento(s)?")
                 : "Informe o motivo:"}
@@ -4130,7 +4123,7 @@ function Autorizacoes({ user, colaboradores }) {
     reader.onload = async (ev) => {
       try {
         await api.addAnexoAutorizacao(id, { nome_arquivo: file.name, dados_base64: ev.target.result });
-        setLista(l => l.map(s => s.id === id ? { ...s, anexo_nome: file.name, anexo_dados: ev.target.result, status: "anexado" } : s));
+        setLista(l => l.map(s => s.id === id ? { ...s, anexo_nome: file.name, status: "anexado" } : s));
       } catch(e) { alert("Erro ao anexar: " + e.message); }
     };
     reader.readAsDataURL(file);
@@ -4142,26 +4135,6 @@ function Autorizacoes({ user, colaboradores }) {
       await api.cancelarAutorizacao(id);
       setLista(l => l.map(s => s.id === id ? { ...s, status: "cancelado" } : s));
     } catch(e) { alert("Erro: " + e.message); }
-  };
-
-  const [modalAnexo, setModalAnexo] = useState(null); // { nome, blobUrl, isPdf }
-
-  const abrirAnexo = (nome, dados) => {
-    if (!dados) { alert("Anexo não disponível. Tente recarregar a página."); return; }
-    // Converte base64 para Blob URL (contorna bloqueio CSP do iframe)
-    const [header, b64] = dados.split(",");
-    const mime = header.match(/:(.*?);/)?.[1] || "application/octet-stream";
-    const bytes = atob(b64);
-    const arr = new Uint8Array(bytes.length);
-    for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
-    const blob = new Blob([arr], { type: mime });
-    const blobUrl = URL.createObjectURL(blob);
-    const isPdf = mime === "application/pdf" || nome.toLowerCase().endsWith(".pdf");
-    setModalAnexo({ nome, blobUrl, isPdf });
-  };
-
-  const verAnexo = (s) => {
-    abrirAnexo(s.anexo_nome || "anexo", s.anexo_dados || s.anexo_base64);
   };
 
   const STATUS_CORES = {
@@ -4183,8 +4156,8 @@ function Autorizacoes({ user, colaboradores }) {
   return (
     <div style={{ padding: 28 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-        <div style={{ fontSize: 11, color: "#6B7280" }}>{lista.filter(s=>s.status!=="cancelado").length} autorização(ões)</div>
-        {["gestor","dp","admin","presidente"].includes(user.perfil) && (
+        <div style={{ fontSize: 13, color: "#6B7280" }}>{lista.filter(s=>s.status!=="cancelado").length} autorização(ões)</div>
+        {["gestor","dp","admin"].includes(user.perfil) && (
           <button onClick={() => { setModalNovo(true); setErro(""); setForm(FORM_VAZIO); setColabSel(null); setBuscaColab(""); }}
             style={{ padding: "10px 20px", background: "#0F2447", color: "#fff", border: "none", borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: "pointer" }}>
             + Nova Autorização
@@ -4196,18 +4169,17 @@ function Autorizacoes({ user, colaboradores }) {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
-              {["Colaborador", "Valor / Parcelas", "Início", "Data", "Solicitante", "Status", "Ações"].map(h => (
-                <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+              {["Colaborador", "Valor / Parcelas", "Início", "Solicitante", "Status", "Ações"].map(h => (
+                <th key={h} style={{ padding: "10px 14px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
             <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
-              <th style={{ padding:"5px 8px" }}><input value={fAColab} onChange={e=>setFAColab(e.target.value)} placeholder="🔍 Colaborador/Chapa" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding:"5px 8px" }}><input value={fAColab} onChange={e=>setFAColab(e.target.value)} placeholder="🔍 Colaborador/Chapa" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
               <th style={{ padding:"5px 8px" }} />
               <th style={{ padding:"5px 8px" }} />
-              <th style={{ padding:"5px 8px" }} />
-              <th style={{ padding:"5px 8px" }}><input value={fAGestor} onChange={e=>setFAGestor(e.target.value)} placeholder="🔍 Solicitante" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding:"5px 8px" }}><input value={fAGestor} onChange={e=>setFAGestor(e.target.value)} placeholder="🔍 Solicitante" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
               <th style={{ padding:"5px 8px" }}>
-                <select value={fAStatus} onChange={e=>setFAStatus(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}>
+                <select value={fAStatus} onChange={e=>setFAStatus(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}>
                   <option value="">Todos</option>
                   <option value="pendente">Pendente</option>
                   <option value="anexado">Anexado</option>
@@ -4230,41 +4202,31 @@ function Autorizacoes({ user, colaboradores }) {
               const colabData = s.colaborador || { nome: s.colaborador_nome, cpf: s.colaborador_cpf };
               return (
                 <tr key={s.id} style={{ borderTop:"1px solid #F3F4F6", background: i%2===0?"#fff":"#FAFAFA" }}>
-                  <td style={{ padding:"4px 8px" }}>
-                    <div style={{ fontWeight:600, fontSize:11, color:"#111827" }}>{nomeColab}</div>
-                    <div style={{ fontSize:10, color:"#6B7280" }}>Chapa: {s.colaborador?.chapa || s.colaborador_cpf || "—"}</div>
+                  <td style={{ padding:"10px 14px" }}>
+                    <div style={{ fontWeight:600, fontSize:13, color:"#111827" }}>{nomeColab}</div>
+                    <div style={{ fontSize:11, color:"#6B7280" }}>Data: {new Date(s.criado_em).toLocaleDateString("pt-BR")}</div>
                   </td>
-                  <td style={{ padding:"4px 8px", fontSize:12, color:"#374151" }}>
+                  <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>
                     R$ {parseFloat(s.valor_total).toFixed(2).replace(".",",")} · {s.num_parcelas}x de R$ {(parseFloat(s.valor_total)/parseInt(s.num_parcelas)).toFixed(2).replace(".",",")}
                   </td>
-                  <td style={{ padding:"4px 8px", fontSize:11, color:"#374151" }}>
+                  <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>
                     {MESES_AUTORIZACAO.find(m=>m.value===s.mes_inicio)?.label}/{s.ano_inicio}
                   </td>
-                  <td style={{ padding:"4px 8px", fontSize:11, color:"#6B7280" }}>
-                    {new Date(s.criado_em).toLocaleDateString("pt-BR")}
+                  <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>{s.gestor_nome}</td>
+                  <td style={{ padding:"10px 14px" }}>
+                    <span style={{ padding:"3px 10px", borderRadius:20, fontSize:11, fontWeight:600, background:st.bg, color:st.color }}>{st.label}</span>
                   </td>
-                  <td style={{ padding:"4px 8px", fontSize:11, color:"#374151" }}>{
-                    (() => { const p = (s.gestor_nome||"").trim().split(/\s+/); return p.length >= 3 ? p[0]+" "+p[1]+" "+p[2] : p.join(" ") || "—"; })()
-                  }</td>
-                  <td style={{ padding:"4px 8px" }}>
-                    <span style={{ padding:"2px 8px", borderRadius:20, fontSize:10, fontWeight:600, background:st.bg, color:st.color }}>{st.label}</span>
-                  </td>
-                  <td style={{ padding:"4px 8px" }}>
+                  <td style={{ padding:"10px 14px" }}>
                     <div style={{ display:"flex", gap:6 }}>
-                      <button onClick={() => setModalDoc({ ...docData, colaborador: colabData })} style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #D1D5DB", background:"#fff", fontSize:11, cursor:"pointer", fontWeight:600 }}>📄 PDF</button>
-                      <label style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46", fontSize:11, cursor:"pointer", fontWeight:600 }}>
+                      <button onClick={() => setModalDoc({ ...docData, colaborador: colabData })} style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #D1D5DB", background:"#fff", fontSize:12, cursor:"pointer", fontWeight:600 }}>📄 Doc</button>
+                      <label style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46", fontSize:12, cursor:"pointer", fontWeight:600 }}>
                         📎 {s.anexo_nome ? "Substituir" : "Anexar"}
                         <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display:"none" }}
                           onChange={e => { const f = e.target.files[0]; if (f) anexar(s.id, f); }} />
                       </label>
-                      {s.anexo_nome && (
-                        <button onClick={() => verAnexo(s)}
-                          style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #3B82F6", background:"#EFF6FF", color:"#1D4ED8", fontSize:11, cursor:"pointer", fontWeight:600 }}>
-                          👁️ Ver
-                        </button>
-                      )}
-                      {["dp","admin","presidente"].includes(user.perfil) && (
-                        <button onClick={() => cancelar(s.id)} style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #EF4444", background:"#FEF2F2", color:"#DC2626", fontSize:11, cursor:"pointer", fontWeight:600 }}>🚫</button>
+                      {s.anexo_nome && <span style={{ fontSize:11, color:"#065F46", alignSelf:"center" }}>✅</span>}
+                      {["dp","admin"].includes(user.perfil) && (
+                        <button onClick={() => cancelar(s.id)} style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #EF4444", background:"#FEF2F2", color:"#DC2626", fontSize:12, cursor:"pointer", fontWeight:600 }}>🚫</button>
                       )}
                     </div>
                   </td>
@@ -4280,14 +4242,14 @@ function Autorizacoes({ user, colaboradores }) {
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {/* Colaborador */}
           <div style={{ position: "relative" }}>
-            <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Colaborador *</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Colaborador *</label>
             <input value={buscaColab} onChange={e => onBusca(e.target.value)} placeholder="Buscar por nome ou matrícula..."
-              style={{ width: "100%", padding: "3px 6px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }} />
+              style={{ width: "100%", padding: "9px 12px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }} />
             {sugestoes.length > 0 && (
               <div style={{ position: "absolute", top: "100%", left: 0, right: 0, background: "#fff", border: "1px solid #E5E7EB", borderRadius: 8, boxShadow: "0 4px 12px rgba(0,0,0,0.1)", zIndex: 100, maxHeight: 200, overflowY: "auto" }}>
                 {sugestoes.map(c => (
                   <div key={c.id} onMouseDown={() => selecionarColab(c)}
-                    style={{ padding: "3px 6px", cursor: "pointer", fontSize: 13, borderBottom: "1px solid #F3F4F6" }}
+                    style={{ padding: "8px 14px", cursor: "pointer", fontSize: 13, borderBottom: "1px solid #F3F4F6" }}
                     onMouseEnter={e => e.currentTarget.style.background="#F9FAFB"}
                     onMouseLeave={e => e.currentTarget.style.background="#fff"}>
                     <b>{c.chapa}</b> — {c.nome} · {c.desc_funcao || c.funcao}
@@ -4296,7 +4258,7 @@ function Autorizacoes({ user, colaboradores }) {
               </div>
             )}
             {colaboradorSel && (
-              <div style={{ marginTop: 6, padding: "3px 6px", background: "#F0FDF4", borderRadius: 8, fontSize: 12, color: "#166534", border: "1px solid #BBF7D0" }}>
+              <div style={{ marginTop: 6, padding: "8px 12px", background: "#F0FDF4", borderRadius: 8, fontSize: 12, color: "#166534", border: "1px solid #BBF7D0" }}>
                 ✅ <b>{colaboradorSel.nome}</b> · {colaboradorSel.descricao_filial || colaboradorSel.desc_cc || "—"} · Matrícula: {colaboradorSel.chapa} · Função: {colaboradorSel.desc_funcao || colaboradorSel.funcao || "—"} · CC: {colaboradorSel.centro_custo} — {colaboradorSel.desc_cc} · CPF: {colaboradorSel.cpf || "—"}
               </div>
             )}
@@ -4305,38 +4267,38 @@ function Autorizacoes({ user, colaboradores }) {
           {/* Valor e Parcelas */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
             <div>
-              <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Valor Total (R$) *</label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Valor Total (R$) *</label>
               <input type="number" step="0.01" min="0" value={form.valor_total}
                 onChange={e => setForm(f => ({ ...f, valor_total: e.target.value }))}
                 placeholder="0.00"
-                style={{ width: "100%", padding: "3px 6px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }} />
+                style={{ width: "100%", padding: "9px 12px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }} />
             </div>
             <div>
-              <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Nº de Parcelas *</label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Nº de Parcelas *</label>
               <input type="number" min="1" max="24" value={form.num_parcelas}
                 onChange={e => setForm(f => ({ ...f, num_parcelas: e.target.value }))}
-                style={{ width: "100%", padding: "3px 6px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }} />
+                style={{ width: "100%", padding: "9px 12px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }} />
             </div>
             <div>
-              <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Valor da Parcela</label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Valor da Parcela</label>
               <input readOnly value={"R$ " + valorParc().replace(".",",")}
-                style={{ width: "100%", padding: "3px 6px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, background: "#F9FAFB", color: "#6B7280", boxSizing: "border-box" }} />
+                style={{ width: "100%", padding: "9px 12px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, background: "#F9FAFB", color: "#6B7280", boxSizing: "border-box" }} />
             </div>
           </div>
 
           {/* Início do desconto */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <div>
-              <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Mês de Início do Desconto *</label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Mês de Início do Desconto *</label>
               <select value={form.mes_inicio} onChange={e => setForm(f => ({ ...f, mes_inicio: e.target.value }))}
-                style={{ width: "100%", padding: "3px 6px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }}>
+                style={{ width: "100%", padding: "9px 12px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }}>
                 {MESES_AUTORIZACAO.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
               </select>
             </div>
             <div>
-              <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Ano de Início do Desconto *</label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Ano de Início do Desconto *</label>
               <select value={form.ano_inicio} onChange={e => setForm(f => ({ ...f, ano_inicio: e.target.value }))}
-                style={{ width: "100%", padding: "3px 6px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }}>
+                style={{ width: "100%", padding: "9px 12px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }}>
                 {[0,1,2].map(i => <option key={i} value={anoAtual+i}>{anoAtual+i}</option>)}
               </select>
             </div>
@@ -4344,20 +4306,20 @@ function Autorizacoes({ user, colaboradores }) {
 
           {/* Data do ocorrido */}
           <div>
-            <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Data do Ocorrido *</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Data do Ocorrido *</label>
             <input type="date" value={form.data_ocorrido} onChange={e => setForm(f => ({ ...f, data_ocorrido: e.target.value }))}
-              style={{ padding: "3px 6px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13 }} />
+              style={{ padding: "9px 12px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13 }} />
           </div>
 
           {/* Descrição do prejuízo */}
           <div>
-            <label style={{ fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Descrição do Prejuízo *</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151", display: "block", marginBottom: 4 }}>Descrição do Prejuízo *</label>
             <textarea value={form.descricao_prejuizo} onChange={e => setForm(f => ({ ...f, descricao_prejuizo: e.target.value }))}
               rows={3} placeholder="Descreva o motivo do desconto..."
-              style={{ width: "100%", padding: "3px 6px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, resize: "vertical", boxSizing: "border-box", fontFamily: "inherit" }} />
+              style={{ width: "100%", padding: "9px 12px", border: "1px solid #D1D5DB", borderRadius: 8, fontSize: 13, resize: "vertical", boxSizing: "border-box", fontFamily: "inherit" }} />
           </div>
 
-          {erro && <div style={{ padding: "3px 6px", background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, fontSize: 11, color: "#DC2626" }}>⚠️ {erro}</div>}
+          {erro && <div style={{ padding: "10px 14px", background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, fontSize: 13, color: "#DC2626" }}>⚠️ {erro}</div>}
 
           <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, paddingTop: 8, borderTop: "1px solid #F3F4F6" }}>
             <Button variant="secondary" onClick={() => setModalNovo(false)}>Cancelar</Button>
@@ -4366,72 +4328,27 @@ function Autorizacoes({ user, colaboradores }) {
         </div>
       </Modal>
 
-      {/* Modal Visualizar Anexo */}
-      {modalAnexo && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.7)", zIndex:2000, display:"flex", alignItems:"center", justifyContent:"center" }}>
-          <div style={{ background:"#fff", borderRadius:14, width:"90vw", maxWidth:900, height:"90vh", display:"flex", flexDirection:"column", boxShadow:"0 20px 60px rgba(0,0,0,.4)" }}>
-            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 20px", borderBottom:"1px solid #E5E7EB" }}>
-              <span style={{ fontWeight:700, fontSize:14, color:"#0F2447" }}>📎 {modalAnexo.nome}</span>
-              <div style={{ display:"flex", gap:8 }}>
-                <button onClick={() => {
-                  const win = window.open(modalAnexo.blobUrl, "_blank");
-                  setTimeout(() => win?.print(), 800);
-                }} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #3B82F6", background:"#EFF6FF", color:"#1D4ED8", fontSize:12, fontWeight:700, cursor:"pointer" }}>
-                  🖨️ Imprimir / Salvar
-                </button>
-                <button onClick={() => { URL.revokeObjectURL(modalAnexo.blobUrl); setModalAnexo(null); }} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #D1D5DB", background:"#F3F4F6", color:"#374151", fontSize:12, fontWeight:700, cursor:"pointer" }}>
-                  ✕ Fechar
-                </button>
-              </div>
-            </div>
-            <div style={{ flex:1, overflow:"hidden", padding:8 }}>
-              {modalAnexo.isPdf ? (
-                <object data={modalAnexo.blobUrl} type="application/pdf" style={{ width:"100%", height:"100%", borderRadius:8 }}>
-                  <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:"100%", gap:12, color:"#6B7280" }}>
-                    <span style={{ fontSize:48 }}>📄</span>
-                    <p style={{ fontSize:13 }}>Seu browser bloqueou a visualização inline.</p>
-                    <button onClick={() => { const a = document.createElement("a"); a.href = modalAnexo.blobUrl; a.download = modalAnexo.nome; a.click(); }}
-                      style={{ padding:"8px 20px", borderRadius:8, border:"none", background:"#0F2447", color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer" }}>
-                      ⬇️ Baixar PDF
-                    </button>
-                  </div>
-                </object>
-              ) : (
-                <div style={{ width:"100%", height:"100%", overflow:"auto", display:"flex", alignItems:"center", justifyContent:"center" }}>
-                  <img src={modalAnexo.blobUrl} alt={modalAnexo.nome} style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain", borderRadius:8 }} />
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal Visualizar Documento PDF */}
+      {/* Modal Visualizar Documento */}
       {modalDoc && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.7)", zIndex:2000, display:"flex", alignItems:"center", justifyContent:"center" }}>
-          <div style={{ background:"#fff", borderRadius:14, width:"90vw", maxWidth:900, height:"90vh", display:"flex", flexDirection:"column", boxShadow:"0 20px 60px rgba(0,0,0,.4)" }}>
-            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 20px", borderBottom:"1px solid #E5E7EB" }}>
-              <span style={{ fontWeight:700, fontSize:14, color:"#0F2447" }}>📄 Autorização de Desconto</span>
-              <div style={{ display:"flex", gap:8 }}>
-                <button onClick={() => {
-                  const html = gerarHTMLAutorizacao(modalDoc, modalDoc.colaborador, LOGO_BENEL);
-                  const janela = window.open("","_blank");
-                  janela.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Autorização de Desconto</title><style>body{margin:0;padding:0;}@media print{@page{margin:1.5cm;size:A4;}}</style></head><body>${html}</body></html>`);
-                  janela.document.close();
-                  setTimeout(() => janela.print(), 500);
-                }} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #3B82F6", background:"#EFF6FF", color:"#1D4ED8", fontSize:12, fontWeight:700, cursor:"pointer" }}>
-                  🖨️ Imprimir / Salvar
-                </button>
-                <button onClick={() => setModalDoc(null)} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #D1D5DB", background:"#F3F4F6", color:"#374151", fontSize:12, fontWeight:700, cursor:"pointer" }}>
-                  ✕ Fechar
-                </button>
-              </div>
-            </div>
-            <div style={{ flex:1, overflow:"auto", padding:16 }}
-              dangerouslySetInnerHTML={{ __html: gerarHTMLAutorizacao(modalDoc, modalDoc.colaborador, LOGO_BENEL) }}
-            />
+        <Modal open={!!modalDoc} onClose={() => setModalDoc(null)} title="Autorização de Desconto" width={760}>
+          <div style={{ maxHeight: "65vh", overflowY: "auto", border: "1px solid #E5E7EB", borderRadius: 8 }}
+            dangerouslySetInnerHTML={{ __html: gerarHTMLAutorizacao(modalDoc, modalDoc.colaborador, LOGO_BENEL) }}
+          />
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, paddingTop: 16, borderTop: "1px solid #F3F4F6", marginTop: 16 }}>
+            <Button variant="secondary" onClick={() => setModalDoc(null)}>Fechar</Button>
+            <Button onClick={() => {
+              const html = gerarHTMLAutorizacao(modalDoc, modalDoc.colaborador, LOGO_BENEL);
+              const janela = window.open("", "_blank");
+              janela.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8">
+                <title>Autorização de Desconto</title>
+                <style>body{margin:0;padding:0;}@media print{@page{margin:1.5cm;size:A4;}}</style>
+              </head><body>${html}</body></html>`);
+              janela.document.close();
+              janela.focus();
+              setTimeout(() => { janela.print(); }, 500);
+            }}>⬇ Baixar PDF</Button>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );
@@ -4452,20 +4369,6 @@ function Ocorrencias({ user, colaboradores }) {
   const [salvando, setSalvando] = useState(false);
   const [exportando, setExportando] = useState(false);
   const [msg, setMsg] = useState(null);
-  const [modalAnexoOc, setModalAnexoOc] = useState(null); // { nome, blobUrl, isPdf }
-
-  const abrirAnexoOc = (nome, dados) => {
-    if (!dados) { alert("Anexo não disponível. Tente recarregar a página."); return; }
-    const [header, b64] = dados.split(",");
-    const mime = header.match(/:(.*?);/)?.[1] || "application/octet-stream";
-    const bytes = atob(b64);
-    const arr = new Uint8Array(bytes.length);
-    for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
-    const blob = new Blob([arr], { type: mime });
-    const blobUrl = URL.createObjectURL(blob);
-    const isPdf = mime === "application/pdf" || nome.toLowerCase().endsWith(".pdf");
-    setModalAnexoOc({ nome, blobUrl, isPdf });
-  };
 
   // Filtros inline da tabela
   const [fColab,  setFColab]  = useState("");
@@ -4578,10 +4481,10 @@ function Ocorrencias({ user, colaboradores }) {
       {/* Cabeçalho */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
-          <p style={{ margin: "4px 0 0", fontSize: 11, color: "#6B7280" }}>Registro de ocorrências disciplinares</p>
+          <p style={{ margin: "4px 0 0", fontSize: 12, color: "#6B7280" }}>Registro de ocorrências disciplinares</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
-          {(user?.perfil === "dp" || user?.perfil === "admin") && (
+          {(user.perfil === "dp" || user.perfil === "admin") && (
             <Button variant="secondary" onClick={exportarCSV} disabled={exportando || pendentesExportacao === 0}>
               {exportando ? "Exportando..." : `↓ Exportar RM (${pendentesExportacao})`}
             </Button>
@@ -4593,7 +4496,7 @@ function Ocorrencias({ user, colaboradores }) {
       {/* Mensagem */}
       {msg && (
         <div style={{
-          marginBottom: 16, padding: "3px 6px", borderRadius: 8, fontSize: 13,
+          marginBottom: 16, padding: "10px 16px", borderRadius: 8, fontSize: 13,
           background: msg.tipo === "ok" ? "#D1FAE5" : "#FEE2E2",
           color: msg.tipo === "ok" ? "#065F46" : "#991B1B",
           border: `1px solid ${msg.tipo === "ok" ? "#6EE7B7" : "#FCA5A5"}`
@@ -4627,18 +4530,18 @@ function Ocorrencias({ user, colaboradores }) {
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
               {["Colaborador", "Tipo", "Data", "Período/Dias", "Gestor", "Status", "Ações"].map(h => (
-                <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+                <th key={h} style={{ padding: "10px 14px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
             <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
-              <th style={{ padding:"5px 8px" }}><input value={fColab} onChange={e=>setFColab(e.target.value)} placeholder="🔍 Colaborador/Chapa" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
-              <th style={{ padding:"5px 8px" }}><select value={fTipo} onChange={e=>setFTipo(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ADVERTENCIA">Advertência</option><option value="SUSPENSAO">Suspensão</option></select></th>
+              <th style={{ padding:"5px 8px" }}><input value={fColab} onChange={e=>setFColab(e.target.value)} placeholder="🔍 Colaborador/Chapa" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding:"5px 8px" }}><select value={fTipo} onChange={e=>setFTipo(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ADVERTENCIA">Advertência</option><option value="SUSPENSAO">Suspensão</option></select></th>
               <th style={{ padding:"5px 8px" }}>
-                <input type="date" value={fData} onChange={e=>setFData(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} />
+                <input type="date" value={fData} onChange={e=>setFData(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} />
               </th>
               <th style={{ padding:"5px 8px" }} />
-              <th style={{ padding:"5px 8px" }}><input value={fGestor} onChange={e=>setFGestor(e.target.value)} placeholder="🔍 Gestor" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
-              <th style={{ padding:"5px 8px" }}><select value={fStatus} onChange={e=>setFStatus(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ATIVO">Ativo</option><option value="EXPORTADO">Exportado</option><option value="CANCELADO">Cancelado</option></select></th>
+              <th style={{ padding:"5px 8px" }}><input value={fGestor} onChange={e=>setFGestor(e.target.value)} placeholder="🔍 Gestor" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding:"5px 8px" }}><select value={fStatus} onChange={e=>setFStatus(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ATIVO">Ativo</option><option value="EXPORTADO">Exportado</option><option value="CANCELADO">Cancelado</option></select></th>
               <th style={{ padding:"5px 8px" }}><button onClick={()=>{setFColab("");setFTipo("");setFGestor("");setFStatus("");setFData("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
             </tr>
           </thead>
@@ -4651,11 +4554,11 @@ function Ocorrencias({ user, colaboradores }) {
               const btnBase = { padding:"5px 10px", borderRadius:6, fontSize:11, fontWeight:600, cursor:"pointer", whiteSpace:"nowrap", fontFamily:"inherit" };
               return (
               <tr key={oc.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
-                <td style={{ padding: "3px 6px" }}>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: "#111827" }}>{oc.nome_colaborador}</div>
+                <td style={{ padding: "10px 14px" }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "#111827" }}>{oc.nome_colaborador}</div>
                   <div style={{ fontSize: 10, color: "#6B7280" }}>Chapa: {oc.chapa}</div>
                 </td>
-                <td style={{ padding: "3px 6px" }}>
+                <td style={{ padding: "10px 14px" }}>
                   <span style={{
                     padding: "3px 8px", borderRadius: 6, fontSize: 11, fontWeight: 600,
                     background: oc.tipo === "ADVERTENCIA" ? "#FEF3C7" : "#FEE2E2",
@@ -4665,25 +4568,25 @@ function Ocorrencias({ user, colaboradores }) {
                     {oc.tipo === "ADVERTENCIA" ? "⚠️ Advertência" : "🚫 Suspensão"}
                   </span>
                 </td>
-                <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{formatarData(oc.data_ocorrencia)}</td>
-                <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>
+                <td style={{ padding: "10px 14px", fontSize: 12, color: "#374151" }}>{formatarData(oc.data_ocorrencia)}</td>
+                <td style={{ padding: "10px 14px", fontSize: 12, color: "#374151" }}>
                   {oc.tipo === "SUSPENSAO"
                     ? <span>{formatarData(oc.data_inicio)} → {formatarData(oc.data_fim)}<br/><b>{oc.dias_suspensao} dia(s)</b></span>
                     : "—"}
                 </td>
-                <td style={{ padding: "3px 6px", fontSize: 11, color: "#374151" }}>{(p => p.length >= 3 ? p[0]+" "+p[1]+" "+p[2] : p.join(" "))((oc.gestor_nome||"").trim().split(" "))}</td>
-                <td style={{ padding: "3px 6px" }}>
+                <td style={{ padding: "10px 14px", fontSize: 12, color: "#374151" }}>{oc.gestor_nome}</td>
+                <td style={{ padding: "10px 14px" }}>
                   <span style={{
                     padding: "3px 8px", borderRadius: 6, fontSize: 11, fontWeight: 600,
                     background: oc.status === "ATIVO" ? "#D1FAE5" : oc.status === "EXPORTADO" ? "#DBEAFE" : "#FEE2E2",
                     color: oc.status === "ATIVO" ? "#065F46" : oc.status === "EXPORTADO" ? "#1D4ED8" : "#991B1B"
                   }}>{oc.status}</span>
                 </td>
-                <td style={{ padding: "3px 6px" }}>
+                <td style={{ padding: "10px 14px" }}>
                   <div style={{ display:"flex", gap:4, alignItems:"center", flexWrap:"nowrap" }}>
                     <button onClick={() => gerarPDF(oc)} style={{ ...btnBase, border:"1px solid #D1D5DB", background:"#fff", color:"#374151" }}>📄 PDF</button>
                     <label style={{ ...btnBase, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46", display:"inline-block" }}>
-                      📎 {oc.anexo_nome ? "Substituir" : "Anexar"}
+                      📎 Anexar
                       <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display:"none" }}
                         onChange={async (e) => {
                           const file = e.target.files[0]; if (!file) return;
@@ -4692,17 +4595,12 @@ function Ocorrencias({ user, colaboradores }) {
                           reader.onload = async (ev) => {
                             try {
                               await api.addAnexoOcorrencia(oc.id, { nome_arquivo: file.name, tipo_arquivo: file.type, dados_base64: ev.target.result });
-                              setLista(list => list.map(o => o.id === oc.id ? { ...o, anexo_nome: file.name, anexo_dados: ev.target.result } : o));
                               alert("Anexo adicionado com sucesso!");
                             } catch(err) { alert(err.message); }
                           };
                           reader.readAsDataURL(file);
                         }} />
                     </label>
-                    {oc.anexo_nome && (
-                      <button onClick={() => abrirAnexoOc(oc.anexo_nome, oc.anexo_dados || oc.anexo_base64)}
-                        style={{ ...btnBase, border:"1px solid #3B82F6", background:"#EFF6FF", color:"#1D4ED8" }}>👁️ Ver</button>
-                    )}
                     {oc.status === "ATIVO" && (
                       <button onClick={() => cancelarOcorrencia(oc.id)} style={{ ...btnBase, border:"1px solid #EF4444", background:"#FEF2F2", color:"#DC2626" }}>🚫</button>
                     )}
@@ -4715,55 +4613,11 @@ function Ocorrencias({ user, colaboradores }) {
         </table>
       </Card>
 
-      {/* Modal Visualizar Anexo Ocorrência */}
-      {modalAnexoOc && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.7)", zIndex:2000, display:"flex", alignItems:"center", justifyContent:"center" }}>
-          <div style={{ background:"#fff", borderRadius:14, width:"90vw", maxWidth:900, height:"90vh", display:"flex", flexDirection:"column", boxShadow:"0 20px 60px rgba(0,0,0,.4)" }}>
-            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 20px", borderBottom:"1px solid #E5E7EB" }}>
-              <span style={{ fontWeight:700, fontSize:14, color:"#0F2447" }}>📎 {modalAnexoOc.nome}</span>
-              <div style={{ display:"flex", gap:8 }}>
-                <button onClick={() => {
-                  const win = window.open("","_blank");
-                  // usa blobUrl direto
-                  const win2 = window.open(modalAnexoOc.blobUrl, "_blank");
-                  setTimeout(() => win2?.print(), 800);
-                  return;
-                  void 0;
-                }} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #3B82F6", background:"#EFF6FF", color:"#1D4ED8", fontSize:12, fontWeight:700, cursor:"pointer" }}>
-                  🖨️ Imprimir / Salvar
-                </button>
-                <button onClick={() => { URL.revokeObjectURL(modalAnexoOc.blobUrl); setModalAnexoOc(null); }} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #D1D5DB", background:"#F3F4F6", color:"#374151", fontSize:12, fontWeight:700, cursor:"pointer" }}>
-                  ✕ Fechar
-                </button>
-              </div>
-            </div>
-            <div style={{ flex:1, overflow:"hidden", padding:8 }}>
-              {modalAnexoOc.isPdf ? (
-                <object data={modalAnexoOc.blobUrl} type="application/pdf" style={{ width:"100%", height:"100%", borderRadius:8 }}>
-                  <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:"100%", gap:12, color:"#6B7280" }}>
-                    <span style={{ fontSize:48 }}>📄</span>
-                    <p style={{ fontSize:13 }}>Seu browser bloqueou a visualização inline.</p>
-                    <button onClick={() => { const a = document.createElement("a"); a.href = modalAnexoOc.blobUrl; a.download = modalAnexoOc.nome; a.click(); }}
-                      style={{ padding:"8px 20px", borderRadius:8, border:"none", background:"#0F2447", color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer" }}>
-                      ⬇️ Baixar PDF
-                    </button>
-                  </div>
-                </object>
-              ) : (
-                <div style={{ width:"100%", height:"100%", overflow:"auto", display:"flex", alignItems:"center", justifyContent:"center" }}>
-                  <img src={modalAnexoOc.blobUrl} alt={modalAnexoOc.nome} style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain", borderRadius:8 }} />
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Modal Nova Ocorrência */}
       <Modal open={modalForm} onClose={() => setModalForm(false)} title="Registrar Ocorrência Disciplinar" width={600}>
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {msg && modalForm && (
-            <div style={{ padding: "3px 6px", borderRadius: 8, fontSize: 12, background: "#FEE2E2", color: "#991B1B" }}>❌ {msg.texto}</div>
+            <div style={{ padding: "8px 12px", borderRadius: 8, fontSize: 12, background: "#FEE2E2", color: "#991B1B" }}>❌ {msg.texto}</div>
           )}
 
           {/* Tipo */}
@@ -4783,10 +4637,10 @@ function Ocorrencias({ user, colaboradores }) {
 
           {/* Colaborador */}
           <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-            <label style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>Colaborador *</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Colaborador *</label>
             <ColabSelect colaboradores={colaboradores} onSelect={selecionarColaborador} selecionado={form.nome_colaborador} />
             {colabSel && (
-              <div style={{ marginTop: 4, padding: "3px 6px", background: "#F0FDF4", borderRadius: 8, fontSize: 12, color: "#166534", border: "1px solid #BBF7D0" }}>
+              <div style={{ marginTop: 4, padding: "8px 12px", background: "#F0FDF4", borderRadius: 8, fontSize: 12, color: "#166534", border: "1px solid #BBF7D0" }}>
                 ✅ <b>{colabSel.nome}</b> · {colabSel.descricao_filial || colabSel.desc_cc || "—"} · Matrícula: {colabSel.chapa} · Função: {colabSel.desc_funcao || colabSel.funcao || "—"} · CC: {colabSel.centro_custo} — {colabSel.desc_cc}
               </div>
             )}
@@ -4801,10 +4655,10 @@ function Ocorrencias({ user, colaboradores }) {
 
           {/* Motivo */}
           <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-            <label style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>Motivo *</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Motivo *</label>
             <textarea value={form.motivo} onChange={e => setForm(f => ({ ...f, motivo: e.target.value }))}
               placeholder="Descreva detalhadamente o motivo da ocorrência..." rows={4}
-              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px", fontSize: 13, fontFamily: "inherit", resize: "vertical" }} />
+              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 12px", fontSize: 13, fontFamily: "inherit", resize: "vertical" }} />
           </div>
 
           {/* Campos por tipo */}
@@ -4818,8 +4672,8 @@ function Ocorrencias({ user, colaboradores }) {
               <Input label="Quantidade de Dias *" value={form.dias_suspensao}
                 onChange={v => setForm(f => ({ ...f, dias_suspensao: v }))} type="number" placeholder="Ex: 3" required />
               <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-                <label style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>Data de Fim</label>
-                <div style={{ padding: "3px 6px", border: "1px solid #E5E7EB", borderRadius: 8, fontSize: 13, background: "#F9FAFB", color: "#374151" }}>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Data de Fim</label>
+                <div style={{ padding: "8px 12px", border: "1px solid #E5E7EB", borderRadius: 8, fontSize: 13, background: "#F9FAFB", color: "#374151" }}>
                   {calcularDataFim() ? new Date(calcularDataFim()).toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "—"}
                 </div>
               </div>
@@ -4872,12 +4726,12 @@ function ColabSelect({ colaboradores, onSelect, selecionado }) {
     <div style={{ position: "relative" }}>
       <input value={busca} onChange={e => onBusca(e.target.value)}
         placeholder="Digite nome ou matrícula..."
-        style={{ width: "100%", border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px", fontSize: 13, fontFamily: "inherit", boxSizing: "border-box" }} />
+        style={{ width: "100%", border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 12px", fontSize: 13, fontFamily: "inherit", boxSizing: "border-box" }} />
       {sugestoes.length > 0 && (
         <div style={{ position: "absolute", top: "100%", left: 0, right: 0, zIndex: 100, background: "#fff", border: "1px solid #D1D5DB", borderRadius: 8, boxShadow: "0 4px 16px rgba(0,0,0,0.12)", maxHeight: 200, overflowY: "auto" }}>
           {sugestoes.map(c => (
             <div key={c.id} onMouseDown={() => { onSelect(c); setBusca(c.nome); setSugestoes([]); }}
-              style={{ padding: "3px 6px", fontSize: 13, cursor: "pointer", borderBottom: "1px solid #F3F4F6", display: "flex", gap: 10 }}>
+              style={{ padding: "9px 14px", fontSize: 13, cursor: "pointer", borderBottom: "1px solid #F3F4F6", display: "flex", gap: 10 }}>
               <span style={{ fontFamily: "monospace", fontSize: 11, color: "#6B7280", minWidth: 50 }}>{c.chapa}</span>
               <span style={{ fontWeight: 600, color: "#111827" }}>{c.nome}</span>
               <span style={{ fontSize: 11, color: "#9CA3AF", marginLeft: "auto" }}>{c.funcao}</span>
@@ -4936,7 +4790,7 @@ function PDFOcorrencia({ oc }) {
 
   return (
     <div>
-      <div id="pdf-ocorrencia-benel" style={{ fontFamily: "Arial, sans-serif", fontSize: 11, color: "#000", lineHeight: 1.5, background: "#fff" }}>
+      <div id="pdf-ocorrencia-benel" style={{ fontFamily: "Arial, sans-serif", fontSize: 13, color: "#000", lineHeight: 1.5, background: "#fff" }}>
 
         {/* Cabeçalho: Logo + Título */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
@@ -4947,7 +4801,7 @@ function PDFOcorrencia({ oc }) {
         </div>
 
         {/* Ficha do colaborador */}
-        <div style={{ border: "1.5px solid #000", padding: "3px 6px", marginBottom: 20, display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 20px" }}>
+        <div style={{ border: "1.5px solid #000", padding: "10px 14px", marginBottom: 20, display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 20px" }}>
           <div style={{ fontWeight: 700 }}>Sr. (a) {oc.nome_colaborador}</div>
           <div style={{ fontWeight: 700 }}>{oc.chapa}{oc.secao ? `    SEÇÃO : ${oc.secao}` : ""}</div>
           <div>C.P.F : {oc.cpf || "___.___.___-__"}</div>
@@ -4958,7 +4812,7 @@ function PDFOcorrencia({ oc }) {
         {isAdv ? (
           <div style={{ marginBottom: 16, fontWeight: 600 }}>Advertido Escrito:</div>
         ) : (
-          <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 16 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 16 }}>
             Suspensão de: {oc.dias_suspensao} DIA(S)
           </div>
         )}
@@ -5000,13 +4854,13 @@ function PDFOcorrencia({ oc }) {
           <div style={{ borderTop: "1px solid #000", width: 320, margin: "0 auto 6px", paddingTop: 6, fontWeight: 700 }}>
             {oc.nome_colaborador}
           </div>
-          <div style={{ fontSize: 11 }}>Assinatura do Empregado</div>
+          <div style={{ fontSize: 12 }}>Assinatura do Empregado</div>
         </div>
 
         {/* Anexo no PDF */}
         {oc.anexo_base64 && (
           <div style={{ marginTop: 20, textAlign: "center" }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: "#374151", marginBottom: 8 }}>📎 ANEXO: {oc.anexo_nome}</div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "#374151", marginBottom: 8 }}>📎 ANEXO: {oc.anexo_nome}</div>
             <img src={oc.anexo_base64} alt="Anexo" style={{ maxWidth: "100%", maxHeight: 300, border: "1px solid #E5E7EB", borderRadius: 4 }} />
           </div>
         )}
@@ -5024,7 +4878,7 @@ function PDFOcorrencia({ oc }) {
         {/* Anexo no PDF */}
         {oc.anexo_base64 && (
           <div style={{ marginTop: 24, borderTop: "1px solid #E5E7EB", paddingTop: 16 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: "#374151", marginBottom: 8 }}>📎 ANEXO: {oc.anexo_nome}</div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "#374151", marginBottom: 8 }}>📎 ANEXO: {oc.anexo_nome}</div>
             <img src={oc.anexo_base64} alt="Anexo" style={{ maxWidth: "100%", maxHeight: 400, border: "1px solid #E5E7EB", borderRadius: 4 }} />
           </div>
         )}
@@ -5076,17 +4930,6 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
   const [erro,           setErro]           = useState("");
   const [modalPDF,       setModalPDF]       = useState(null);
   const [modalAnexoPedido, setModalAnexoPedido] = useState(null);
-  const [modalAnexoDesl, setModalAnexoDesl] = useState(null);
-  // Rescisão valores
-  const [rescisaoValores, setRescisaoValores]     = useState([]);
-  const [rescisaoMes, setRescisaoMes]             = useState(new Date().getMonth() + 1);
-  const [rescisaoAno, setRescisaoAno]             = useState(new Date().getFullYear());
-  const [modalRescisao, setModalRescisao]         = useState(null); // { sol }
-  const [rescisaoForm, setRescisaoForm]           = useState({ valor_total:"", competencia_mes:"", competencia_ano:"", observacao:"" });
-  const [salvandoRescisao, setSalvandoRescisao]   = useState(false);
-  const [modalImportCSV, setModalImportCSV]       = useState(false);
-  const [importando, setImportando]               = useState(false);
-  const [importResult, setImportResult]           = useState(null);
 
   const FORM_VAZIO = {
     colaborador_id: "", tipo: "", data_desligamento: "",
@@ -5108,7 +4951,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     finally { setCarregando(false); }
   };
 
-  useEffect(() => { carregar(); carregarRescisao(new Date().getMonth()+1, new Date().getFullYear()); }, []);
+  useEffect(() => { carregar(); }, []);
 
   const normalizar = (s) =>
     (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
@@ -5316,94 +5159,6 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
     finally { setSalvando(false); }
   };
 
-  const importarCSVRescisao = async (file) => {
-    setImportando(true);
-    setImportResult(null);
-    try {
-      // Ler com encoding correto (suporta acentos)
-      const buffer = await file.arrayBuffer();
-      const decoder = new TextDecoder("windows-1252");
-      const text = decoder.decode(buffer);
-      const lines = text.split(/\r?\n/).filter(l => l.trim());
-      if (lines.length < 2) throw new Error("Arquivo vazio ou sem dados");
-
-      const sep = lines[0].includes(";") ? ";" : ",";
-      const headers = lines[0].split(sep).map(h => h.trim().replace(/^"|"$/g,"").toUpperCase());
-
-      const getCol = (row, name) => {
-        const idx = headers.indexOf(name);
-        if (idx === -1) return null;
-        return row[idx]?.trim().replace(/^"|"$/g,"") || null;
-      };
-
-      // Agrupar por CHAPA+MESCOMP+ANOCOMP — somar múltiplos períodos (NROPERIODO 8 e 10000)
-      const agrupado = {};
-      for (let i = 1; i < lines.length; i++) {
-        const row = lines[i].split(sep);
-        const chapa    = getCol(row, "CHAPA");
-        const mescomp  = parseInt(getCol(row, "MESCOMP") || "0");
-        const anocomp  = parseInt(getCol(row, "ANOCOMP") || "0");
-        if (!chapa || !mescomp || !anocomp) continue;
-
-        const key = `${chapa}_${mescomp}_${anocomp}`;
-        if (!agrupado[key]) {
-          agrupado[key] = {
-            chapa,
-            nome:     getCol(row, "NOME"),
-            filial:   getCol(row, "DES_FILIAL") || "Sem Filial",
-            mescomp, anocomp,
-            liquido: 0, proventos: 0, descontos: 0, fgts: 0, total: 0,
-          };
-        }
-        agrupado[key].liquido   += parseFloat(getCol(row, "LIQUIDO")         || "0");
-        agrupado[key].proventos += parseFloat(getCol(row, "PROVENTOS")       || "0");
-        agrupado[key].descontos += parseFloat(getCol(row, "DESCONTOS")       || "0");
-        agrupado[key].fgts      += parseFloat(getCol(row, "FGTS_RESCISORIO") || "0");
-        agrupado[key].total     += parseFloat(getCol(row, "TOTAL")           || "0");
-      }
-
-      const registros = Object.values(agrupado).map(reg => ({
-        chapa:           reg.chapa,
-        nome:            reg.nome,
-        filial:          reg.filial,
-        liquido:         reg.liquido,
-        proventos:       reg.proventos,
-        descontos:       reg.descontos,
-        fgts_rescisorio: reg.fgts,
-        valor_total:     reg.total,
-        competencia_mes: reg.mescomp,
-        competencia_ano: reg.anocomp,
-      }));
-
-      // Envia tudo em uma única requisição (evita rate limit)
-      const result = await api.importarRescisaoLote(registros);
-      setImportResult({ inseridos: result.inseridos || 0, erros: result.erros || [], total: registros.length });
-      carregarRescisao(rescisaoMes, rescisaoAno);
-    } catch(e) {
-      setImportResult({ erro: e.message });
-    }
-    setImportando(false);
-  };
-
-  const carregarRescisao = async (mes, ano) => {
-    try {
-      const data = await api.listarRescisaoValores(mes, ano);
-      setRescisaoValores(Array.isArray(data) ? data : []);
-    } catch (e) { console.error(e); }
-  };
-
-  const salvarRescisao = async () => {
-    if (!rescisaoForm.valor_total || !rescisaoForm.competencia_mes || !rescisaoForm.competencia_ano)
-      return alert("Preencha valor, mês e ano");
-    setSalvandoRescisao(true);
-    try {
-      await api.lancarRescisaoValor({ ...rescisaoForm, desligamento_id: modalRescisao.id });
-      setModalRescisao(null);
-      carregarRescisao(rescisaoMes, rescisaoAno);
-    } catch(e) { alert(e.message); }
-    finally { setSalvandoRescisao(false); }
-  };
-
   const abrirDetalhe = async (id) => {
     try {
       const r = await api.buscarDesligamento(id);
@@ -5437,7 +5192,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
   return (
     <div style={{ padding: 28 }}>
       <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}>
-        {["gestor","dp","admin","presidente"].includes(user.perfil) && (
+        {["gestor","dp","admin"].includes(user.perfil) && (
           <button onClick={() => { setModalNovo(true); setErro(""); setForm(FORM_VAZIO); setColaboradorSel(null); setBuscaColab(""); setBloqueioColab(null); }}
             style={{ padding: "10px 20px", background: "#0F2447", color: "#fff", border: "none", borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: "pointer" }}>
             + Nova Solicitação
@@ -5445,92 +5200,30 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
         )}
       </div>
 
-      {erro && <div style={{ background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, padding: "3px 6px", marginBottom: 16, color: "#DC2626", fontSize: 13 }}>⚠️ {erro}</div>}
-
-      {/* ── Cards de Rescisão ────────────────────────────────────────────── */}
-      {(["dp","admin","presidente"].includes(user.perfil)) && (() => {
-        // Agrupar por filial
-        const porFilial = {};
-        rescisaoValores.forEach(v => {
-          const f = v.filial || "Sem Filial";
-          if (!porFilial[f]) porFilial[f] = { total: 0, qtd: 0 };
-          porFilial[f].total += parseFloat(v.valor_total);
-          porFilial[f].qtd   += 1;
-        });
-        const totalGeral = rescisaoValores.reduce((s,v) => s + parseFloat(v.valor_total), 0);
-        const qtdGeral   = rescisaoValores.length;
-        const fmtBRL = (v) => v.toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
-        const MESES_LABEL = ["","Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
-
-        return (
-          <div style={{ marginBottom: 20 }}>
-            {/* Filtro período */}
-            <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:12 }}>
-              <span style={{ fontSize:12, fontWeight:700, color:"#0F2447" }}>💰 Rescisões —</span>
-              <select value={rescisaoMes} onChange={e => { const m=parseInt(e.target.value); setRescisaoMes(m); carregarRescisao(m, rescisaoAno); }}
-                style={{ padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:12 }}>
-                {Array.from({length:12},(_,i)=><option key={i+1} value={i+1}>{MESES_LABEL[i+1]}</option>)}
-              </select>
-              <select value={rescisaoAno} onChange={e => { const a=parseInt(e.target.value); setRescisaoAno(a); carregarRescisao(rescisaoMes, a); }}
-                style={{ padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:12 }}>
-                {[2024,2025,2026,2027].map(a=><option key={a} value={a}>{a}</option>)}
-              </select>
-              {["dp","admin","presidente"].includes(user.perfil) && (
-                <button onClick={() => { setModalImportCSV(true); setImportResult(null); }}
-                  style={{ padding:"4px 12px", borderRadius:6, border:"none", background:"#0F2447", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>
-                  ⬇️ Importar CSV
-                </button>
-              )}
-            </div>
-
-            {/* Cards por filial */}
-            {Object.keys(porFilial).length === 0 ? (
-              <div style={{ background:"#F9FAFB", borderRadius:10, padding:"14px 18px", fontSize:12, color:"#9CA3AF", border:"1px dashed #D1D5DB" }}>
-                Nenhum valor lançado em {MESES_LABEL[rescisaoMes]}/{rescisaoAno}
-              </div>
-            ) : (
-              <div style={{ display:"flex", gap:12, flexWrap:"wrap", alignItems:"stretch" }}>
-                {Object.entries(porFilial).sort(([a],[b])=>a.localeCompare(b)).map(([filial, dados]) => (
-                  <div key={filial} style={{ background:"#fff", borderRadius:10, border:"1px solid #E5E7EB", padding:"14px 18px", minWidth:180, boxShadow:"0 1px 4px rgba(0,0,0,.06)" }}>
-                    <div style={{ fontSize:10, fontWeight:700, color:"#6B7280", textTransform:"uppercase", marginBottom:4 }}>{filial}</div>
-                    <div style={{ fontSize:20, fontWeight:800, color:"#0F2447" }}>{fmtBRL(dados.total)}</div>
-                    <div style={{ fontSize:11, color:"#6B7280", marginTop:2 }}>{dados.qtd>1 ? `${dados.qtd} rescisões` : "1 rescisão"}</div>
-                  </div>
-                ))}
-                {/* Card total */}
-                <div style={{ background:"#0F2447", borderRadius:10, border:"1px solid #0F2447", padding:"14px 18px", minWidth:180, boxShadow:"0 1px 4px rgba(0,0,0,.1)" }}>
-                  <div style={{ fontSize:10, fontWeight:700, color:"#93C5FD", textTransform:"uppercase", marginBottom:4 }}>TOTAL GERAL</div>
-                  <div style={{ fontSize:20, fontWeight:800, color:"#fff" }}>{fmtBRL(totalGeral)}</div>
-                  <div style={{ fontSize:11, color:"#93C5FD", marginTop:2 }}>{qtdGeral>1 ? `${qtdGeral} rescisões` : "1 rescisão"}</div>
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      })()}
+      {erro && <div style={{ background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, padding: "10px 16px", marginBottom: 16, color: "#DC2626", fontSize: 13 }}>⚠️ {erro}</div>}
 
       <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #E5E7EB", overflow: "hidden" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
               {["Colaborador", "Tipo", "Desligamento", "Solicitante", "Status", "Ações"].map(h => (
-                <th key={h} style={{ padding: "3px 6px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
+                <th key={h} style={{ padding: "10px 14px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
             <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
-              <th style={{ padding:"5px 8px" }}><input value={fColab} onChange={e=>setFColab(e.target.value)} placeholder="🔍 Colaborador/Chapa" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding:"5px 8px" }}><input value={fColab} onChange={e=>setFColab(e.target.value)} placeholder="🔍 Colaborador/Chapa" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
               <th style={{ padding:"5px 8px" }}>
-                <select value={fTipo} onChange={e=>setFTipo(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}>
+                <select value={fTipo} onChange={e=>setFTipo(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}>
                   <option value="">Todos</option>
                   {TIPOS_DESL.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
               </th>
               <th style={{ padding:"5px 8px" }}>
-                <input type="date" value={fDataD} onChange={e=>setFDataD(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} />
+                <input type="date" value={fDataD} onChange={e=>setFDataD(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} />
               </th>
-              <th style={{ padding:"5px 8px" }}><input value={fGestor2} onChange={e=>setFGestor2(e.target.value)} placeholder="🔍 Solicitante" style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding:"5px 8px" }}><input value={fGestor2} onChange={e=>setFGestor2(e.target.value)} placeholder="🔍 Solicitante" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
               <th style={{ padding:"5px 8px" }}>
-                <select value={fStatus2} onChange={e=>setFStatus2(e.target.value)} style={{ width:"100%", padding:"3px 6px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}>
+                <select value={fStatus2} onChange={e=>setFStatus2(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}>
                   <option value="">Todos</option>
                   {Object.entries(STATUS_DESL).map(([v,d]) => <option key={v} value={v}>{d.label}</option>)}
                 </select>
@@ -5551,260 +5244,68 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
               const btnBase = { padding:"5px 10px", borderRadius:6, fontSize:11, fontWeight:600, cursor:"pointer", whiteSpace:"nowrap", fontFamily:"inherit" };
               return (
                 <tr key={sol.id} style={{ borderTop:"1px solid #F3F4F6", background: i%2===0?"#fff":"#FAFAFA" }}>
-                  <td style={{ padding:"4px 8px" }}>
-                    <div style={{ fontWeight:600, fontSize:11, color:"#111827" }}>{sol.colaborador_nome}</div>
+                  <td style={{ padding:"10px 14px" }}>
+                    <div style={{ fontWeight:600, fontSize:13, color:"#111827" }}>{sol.colaborador_nome}</div>
                     <div style={{ fontSize:11, color:"#6B7280" }}>Chapa: {sol.chapa}</div>
                   </td>
-                  <td style={{ padding:"4px 8px", fontSize:12, color:"#374151" }}>{tipo?.label || sol.tipo}</td>
-                  <td style={{ padding:"4px 8px", fontSize:12, color:"#374151" }}>{sol.data_desligamento ? new Date(sol.data_desligamento).toLocaleDateString("pt-BR", { timeZone:"UTC" }) : "—"}</td>
-                  <td style={{ padding:"4px 8px", fontSize:12, color:"#374151" }}>{sol.gestor_nome}</td>
-                  <td style={{ padding:"4px 8px" }}>
+                  <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>{tipo?.label || sol.tipo}</td>
+                  <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>{sol.data_desligamento ? new Date(sol.data_desligamento).toLocaleDateString("pt-BR", { timeZone:"UTC" }) : "—"}</td>
+                  <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>{sol.gestor_nome}</td>
+                  <td style={{ padding:"10px 14px" }}>
                     <span style={{ background: st.color+"22", color: st.color, borderRadius:6, padding:"3px 8px", fontSize:11, fontWeight:600 }}>{st.label}</span>
                   </td>
-                   <td style={{ padding:"4px 8px" }}>
-                     <div style={{ display:"flex", gap:4, flexWrap:"nowrap", alignItems:"center" }}>
-                       {/* PDF — só após aprovação */}
-                       {sol.tipo !== "pedido_demissao" && ["aprovado","finalizado"].includes(sol.status) && (
-                         <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalPDF(r); } catch(e){ setErro(e.message); } }}
-                           style={{ ...btnBase, border:"1px solid #D1D5DB", background:"#fff", color:"#374151" }}>📄 PDF</button>
-                       )}
-                       {/* Enviar rascunho */}
-                       {sol.status === "rascunho" && sol.gestor_id === user.id && (
-                         <button onClick={async () => { try { await api.enviarDesligamento(sol.id); await carregar(); } catch(e){setErro(e.message);} }}
-                           style={{ ...btnBase, border:"none", background:"#10B981", color:"#fff" }}>▶ Enviar</button>
-                       )}
-                       {/* Anexar / Substituir */}
-                       {["aprovado","finalizado"].includes(sol.status) && sol.tipo !== "pedido_demissao" && (
-                         <label style={{ ...btnBase, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46", display:"inline-block" }}>
-                           📎 {sol.anexo_nome ? "Substituir" : "Anexar"}
-                           <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display:"none" }}
-                             onChange={async (e) => {
-                               const file = e.target.files[0]; if (!file) return;
-                               if (file.size > 5*1024*1024) { setErro("Arquivo muito grande (max 5MB)"); return; }
-                               const reader = new FileReader();
-                               reader.onload = async (ev) => {
-                                 try {
-                                   await api.addAnexoDesligamento(sol.id, { nome_arquivo: file.name, tipo_arquivo: file.type, dados_base64: ev.target.result });
-                                   setLista(l => l.map(s => s.id === sol.id ? { ...s, anexo_nome: file.name, anexo_dados: ev.target.result } : s));
-                                   alert("Anexo adicionado com sucesso!"); setErro("");
-                                 } catch(err) { setErro(err.message); }
-                               };
-                               reader.readAsDataURL(file);
-                             }} />
-                         </label>
-                       )}
-                       {/* Ver anexo */}
-                       {sol.anexo_nome && (
-                         <button onClick={() => {
-                           const dados = sol.anexo_dados;
-                           if (!dados) { alert("Recarregue a página para visualizar."); return; }
-                           const [header, b64] = dados.split(",");
-                           const mime = header.match(/:(.*?);/)?.[1] || "application/octet-stream";
-                           const bytes = atob(b64); const arr = new Uint8Array(bytes.length);
-                           for (let i2 = 0; i2 < bytes.length; i2++) arr[i2] = bytes.charCodeAt(i2);
-                           const blob = new Blob([arr], { type: mime });
-                           const blobUrl = URL.createObjectURL(blob);
-                           setModalAnexoDesl({ nome: sol.anexo_nome, blobUrl, isPdf: mime === "application/pdf" || sol.anexo_nome.toLowerCase().endsWith(".pdf") });
-                         }} style={{ ...btnBase, border:"1px solid #3B82F6", background:"#EFF6FF", color:"#1D4ED8" }}>👁️ Ver</button>
-                       )}
-                       {/* Pedido de demissão — anexo */}
-                       {sol.tipo === "pedido_demissao" && (
-                         <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalAnexoPedido(r); } catch(e){ setErro(e.message); } }}
-                           style={{ ...btnBase, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46" }}>📎 Anexo</button>
-                       )}
-                       {/* Aprovar */}
-                       {podeAgir(sol) && sol.tipo !== "pedido_demissao" && !["aprovado","finalizado"].includes(sol.status) && (
-                         <button onClick={() => setModalAcao({ id: sol.id, status: sol.status, acao: "aprovar", observacao: "" })}
-                           style={{ ...btnBase, border:"none", background:"#059669", color:"#fff" }}>✓ Aprovar</button>
-                       )}
-                       {/* Ver detalhe */}
-                       <button onClick={() => abrirDetalhe(sol.id)} style={{ ...btnBase, border:"1px solid #E5E7EB", background:"#fff", color:"#374151" }}>Ver</button>
+                  <td style={{ padding:"10px 14px" }}>
+                    <div style={{ display:"flex", gap:4, flexWrap:"nowrap", alignItems:"center" }}>
+                      <button onClick={() => abrirDetalhe(sol.id)} style={{ ...btnBase, border:"1px solid #E5E7EB", background:"#fff", color:"#374151" }}>Ver</button>
 
-                       {/* Cancelar */}
-                       {["admin","dp","presidente"].includes(user.perfil) && !["cancelado","finalizado"].includes(sol.status) && (
-                         <button onClick={async () => {
-                           if (!window.confirm(`Cancelar a solicitação de desligamento de ${sol.colaborador_nome}?\n\nEsta ação não pode ser desfeita.`)) return;
-                           try { await api.cancelarDesligamento(sol.id); await carregar(); } catch(e) { setErro(e.message); }
-                         }} style={{ ...btnBase, border:"1px solid #EF4444", background:"#FEF2F2", color:"#DC2626" }}>🚫</button>
-                       )}
-                     </div>
-                   </td>
+                      {sol.tipo !== "pedido_demissao" && (
+                        <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalPDF(r); } catch(e){ setErro(e.message); } }}
+                          style={{ ...btnBase, border:"1px solid #D1D5DB", background:"#fff", color:"#374151" }}>📄 Doc</button>
+                      )}
+                      {sol.tipo === "pedido_demissao" && (
+                        <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalAnexoPedido(r); } catch(e){ setErro(e.message); } }}
+                          style={{ ...btnBase, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46" }}>📎 Anexo</button>
+                      )}
+                      {podeAgir(sol) && sol.tipo !== "pedido_demissao" && (
+                        <button onClick={() => setModalAcao({ id: sol.id, status: sol.status, acao: "aprovar", observacao: "" })}
+                          style={{ ...btnBase, border:"none", background:"#0F2447", color:"#fff" }}>Analisar</button>
+                      )}
+                      {sol.status === "rascunho" && sol.gestor_id === user.id && (
+                        <button onClick={async () => { try { await api.enviarDesligamento(sol.id); await carregar(); } catch(e){setErro(e.message);} }}
+                          style={{ ...btnBase, border:"none", background:"#10B981", color:"#fff" }}>Enviar</button>
+                      )}
+                      {["aprovado","finalizado"].includes(sol.status) && sol.tipo !== "pedido_demissao" && (
+                        <label style={{ ...btnBase, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46", display:"inline-block" }}>
+                          📎 Anexar
+                          <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display:"none" }}
+                            onChange={async (e) => {
+                              const file = e.target.files[0]; if (!file) return;
+                              if (file.size > 5*1024*1024) { setErro("Arquivo muito grande (max 5MB)"); return; }
+                              const reader = new FileReader();
+                              reader.onload = async (ev) => {
+                                try {
+                                  await api.post("/desligamentos/"+sol.id+"/anexos", { nome_arquivo: file.name, tipo_arquivo: file.type, dados_base64: ev.target.result });
+                                  alert("Anexo adicionado com sucesso!"); setErro("");
+                                } catch(err) { setErro(err.message); }
+                              };
+                              reader.readAsDataURL(file);
+                            }} />
+                        </label>
+                      )}
+                      {["admin","dp"].includes(user.perfil) && !["cancelado","finalizado"].includes(sol.status) && (
+                        <button onClick={async () => {
+                          if (!window.confirm(`Cancelar a solicitação de desligamento de ${sol.colaborador_nome}?\n\nEsta ação não pode ser desfeita.`)) return;
+                          try { await api.cancelarDesligamento(sol.id); await carregar(); } catch(e) { setErro(e.message); }
+                        }} style={{ ...btnBase, border:"1px solid #EF4444", background:"#FEF2F2", color:"#DC2626" }}>🚫</button>
+                      )}
+                    </div>
+                  </td>
                 </tr>
               );
             })}
           </tbody>
         </table>
       </div>
-
-      {/* Modal Importar CSV Rescisão */}
-      {modalImportCSV && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.5)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center" }}>
-          <div style={{ background:"#fff", borderRadius:14, width:"100%", maxWidth:520, padding:28, boxShadow:"0 20px 60px rgba(0,0,0,.3)" }}>
-            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:20 }}>
-              <h3 style={{ margin:0, fontSize:16, fontWeight:700, color:"#0F2447" }}>⬇️ Importar Rescisões via CSV</h3>
-              <button onClick={() => setModalImportCSV(false)} style={{ background:"none", border:"none", fontSize:20, cursor:"pointer", color:"#6B7280" }}>×</button>
-            </div>
-
-            <div style={{ background:"#F0F9FF", border:"1px solid #BAE6FD", borderRadius:8, padding:"12px 14px", marginBottom:16, fontSize:12, color:"#0369A1" }}>
-              <strong>Como exportar do RM:</strong><br/>
-              1. Execute a Consulta SQL no RM Labore<br/>
-              2. Clique em <strong>Exportar → Excel ou CSV</strong><br/>
-              3. Salve o arquivo e importe aqui abaixo
-              <div style={{ marginTop:8, color:"#6B7280" }}>
-                Colunas obrigatórias: <code>CHAPA, MESCOMP, ANOCOMP, LIQUIDO, PROVENTOS, DESCONTOS, FGTS_RESCISORIO, TOTAL, DES_FILIAL</code>
-              </div>
-            </div>
-
-            {!importResult && !importando && (
-              <label style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", border:"2px dashed #D1D5DB", borderRadius:10, padding:"28px 20px", cursor:"pointer", gap:8, color:"#6B7280" }}>
-                <span style={{ fontSize:32 }}>📂</span>
-                <span style={{ fontSize:13, fontWeight:600 }}>Clique para selecionar o arquivo CSV</span>
-                <span style={{ fontSize:11 }}>Separador ponto e vírgula (;) ou vírgula (,)</span>
-                <input type="file" accept=".csv,.txt" style={{ display:"none" }}
-                  onChange={async (e) => {
-                    const file = e.target.files[0];
-                    if (!file) return;
-                    await importarCSVRescisao(file);
-                  }} />
-              </label>
-            )}
-
-            {importando && (
-              <div style={{ textAlign:"center", padding:"28px 0", color:"#6B7280" }}>
-                <div style={{ fontSize:28, marginBottom:8 }}>⏳</div>
-                <div style={{ fontSize:13 }}>Importando... aguarde</div>
-              </div>
-            )}
-
-            {importResult && (
-              <div style={{ borderRadius:8, overflow:"hidden" }}>
-                {importResult.erro ? (
-                  <div style={{ background:"#FEF2F2", border:"1px solid #FCA5A5", borderRadius:8, padding:"12px 14px", color:"#DC2626", fontSize:13 }}>
-                    ❌ {importResult.erro}
-                  </div>
-                ) : (
-                  <>
-                    <div style={{ background:"#F0FDF4", border:"1px solid #BBF7D0", borderRadius:8, padding:"12px 14px", marginBottom:8 }}>
-                      <div style={{ fontSize:13, fontWeight:700, color:"#065F46", marginBottom:4 }}>✅ Importação concluída</div>
-                      <div style={{ fontSize:12, color:"#374151" }}>Total no arquivo: <strong>{importResult.total}</strong></div>
-                      <div style={{ fontSize:12, color:"#374151" }}>Importados com sucesso: <strong>{importResult.inseridos}</strong></div>
-                      {importResult.erros?.length > 0 && (
-                        <div style={{ fontSize:12, color:"#DC2626", marginTop:4 }}>Erros: <strong>{importResult.erros.length}</strong></div>
-                      )}
-                    </div>
-                    {importResult.erros?.length > 0 && (
-                      <div style={{ background:"#FEF2F2", borderRadius:8, padding:"10px 14px", maxHeight:120, overflowY:"auto" }}>
-                        {importResult.erros.map((e,i) => <div key={i} style={{ fontSize:11, color:"#DC2626" }}>• {e}</div>)}
-                      </div>
-                    )}
-                  </>
-                )}
-                <div style={{ display:"flex", gap:8, justifyContent:"flex-end", marginTop:12 }}>
-                  <button onClick={() => setImportResult(null)}
-                    style={{ padding:"7px 16px", borderRadius:8, border:"1px solid #D1D5DB", background:"#fff", fontSize:12, cursor:"pointer" }}>
-                    Importar outro
-                  </button>
-                  <button onClick={() => setModalImportCSV(false)}
-                    style={{ padding:"7px 16px", borderRadius:8, border:"none", background:"#0F2447", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>
-                    Fechar
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Modal Lançar Valor Rescisão */}
-      {modalRescisao && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.5)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center" }}>
-          <div style={{ background:"#fff", borderRadius:14, width:"100%", maxWidth:480, padding:28, boxShadow:"0 20px 60px rgba(0,0,0,.3)" }}>
-            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:20 }}>
-              <h3 style={{ margin:0, fontSize:16, fontWeight:700, color:"#0F2447" }}>💰 Lançar Valor de Rescisão</h3>
-              <button onClick={() => setModalRescisao(null)} style={{ background:"none", border:"none", fontSize:20, cursor:"pointer", color:"#6B7280" }}>×</button>
-            </div>
-            <div style={{ background:"#F9FAFB", borderRadius:8, padding:"10px 14px", marginBottom:16, fontSize:12 }}>
-              <strong>{modalRescisao.colaborador_nome}</strong>
-              <span style={{ color:"#6B7280", marginLeft:8 }}>Chapa: {modalRescisao.chapa}</span>
-              <div style={{ color:"#6B7280", marginTop:2 }}>{modalRescisao.tipo}</div>
-            </div>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:12 }}>
-              <div>
-                <label style={{ fontSize:11, fontWeight:600, color:"#374151", display:"block", marginBottom:4 }}>Mês *</label>
-                <select value={rescisaoForm.competencia_mes} onChange={e => setRescisaoForm(f=>({...f, competencia_mes: parseInt(e.target.value)}))}
-                  style={{ width:"100%", padding:"7px 10px", borderRadius:8, border:"1px solid #D1D5DB", fontSize:13 }}>
-                  {["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"].map((m,i) =>
-                    <option key={i+1} value={i+1}>{m}</option>
-                  )}
-                </select>
-              </div>
-              <div>
-                <label style={{ fontSize:11, fontWeight:600, color:"#374151", display:"block", marginBottom:4 }}>Ano *</label>
-                <select value={rescisaoForm.competencia_ano} onChange={e => setRescisaoForm(f=>({...f, competencia_ano: parseInt(e.target.value)}))}
-                  style={{ width:"100%", padding:"7px 10px", borderRadius:8, border:"1px solid #D1D5DB", fontSize:13 }}>
-                  {[2024,2025,2026,2027].map(a => <option key={a} value={a}>{a}</option>)}
-                </select>
-              </div>
-            </div>
-            <div style={{ marginBottom:12 }}>
-              <label style={{ fontSize:11, fontWeight:600, color:"#374151", display:"block", marginBottom:4 }}>Valor Total da Rescisão (R$) *</label>
-              <input type="number" step="0.01" min="0" placeholder="0,00"
-                value={rescisaoForm.valor_total}
-                onChange={e => setRescisaoForm(f=>({...f, valor_total: e.target.value}))}
-                style={{ width:"100%", padding:"7px 10px", borderRadius:8, border:"1px solid #D1D5DB", fontSize:13, boxSizing:"border-box" }} />
-            </div>
-            <div style={{ marginBottom:20 }}>
-              <label style={{ fontSize:11, fontWeight:600, color:"#374151", display:"block", marginBottom:4 }}>Observação</label>
-              <textarea value={rescisaoForm.observacao} onChange={e => setRescisaoForm(f=>({...f, observacao: e.target.value}))}
-                placeholder="Opcional..." rows={2}
-                style={{ width:"100%", padding:"7px 10px", borderRadius:8, border:"1px solid #D1D5DB", fontSize:13, resize:"vertical", boxSizing:"border-box" }} />
-            </div>
-            <div style={{ display:"flex", gap:10, justifyContent:"flex-end" }}>
-              <button onClick={() => setModalRescisao(null)}
-                style={{ padding:"8px 18px", borderRadius:8, border:"1px solid #D1D5DB", background:"#fff", color:"#374151", fontSize:13, cursor:"pointer" }}>Cancelar</button>
-              <button onClick={salvarRescisao} disabled={salvandoRescisao}
-                style={{ padding:"8px 18px", borderRadius:8, border:"none", background:"#0F2447", color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer" }}>
-                {salvandoRescisao ? "Salvando..." : "💾 Salvar"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal Visualizar Anexo Desligamento */}
-      {modalAnexoDesl && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.7)", zIndex:2000, display:"flex", alignItems:"center", justifyContent:"center" }}>
-          <div style={{ background:"#fff", borderRadius:14, width:"90vw", maxWidth:900, height:"90vh", display:"flex", flexDirection:"column", boxShadow:"0 20px 60px rgba(0,0,0,.4)" }}>
-            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 20px", borderBottom:"1px solid #E5E7EB" }}>
-              <span style={{ fontWeight:700, fontSize:14, color:"#0F2447" }}>📎 {modalAnexoDesl.nome}</span>
-              <div style={{ display:"flex", gap:8 }}>
-                <button onClick={() => { const win = window.open(modalAnexoDesl.blobUrl,"_blank"); setTimeout(()=>win?.print(),800); }}
-                  style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #3B82F6", background:"#EFF6FF", color:"#1D4ED8", fontSize:12, fontWeight:700, cursor:"pointer" }}>
-                  🖨️ Imprimir / Salvar
-                </button>
-                <button onClick={() => { URL.revokeObjectURL(modalAnexoDesl.blobUrl); setModalAnexoDesl(null); }}
-                  style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #D1D5DB", background:"#F3F4F6", color:"#374151", fontSize:12, fontWeight:700, cursor:"pointer" }}>
-                  ✕ Fechar
-                </button>
-              </div>
-            </div>
-            <div style={{ flex:1, overflow:"hidden", padding:8 }}>
-              {modalAnexoDesl.isPdf ? (
-                <object data={modalAnexoDesl.blobUrl} type="application/pdf" style={{ width:"100%", height:"100%", borderRadius:8 }}>
-                  <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:"100%", gap:12 }}>
-                    <button onClick={() => { const a = document.createElement("a"); a.href = modalAnexoDesl.blobUrl; a.download = modalAnexoDesl.nome; a.click(); }}
-                      style={{ padding:"8px 20px", borderRadius:8, border:"none", background:"#0F2447", color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer" }}>⬇️ Baixar PDF</button>
-                  </div>
-                </object>
-              ) : (
-                <div style={{ width:"100%", height:"100%", overflow:"auto", display:"flex", alignItems:"center", justifyContent:"center" }}>
-                  <img src={modalAnexoDesl.blobUrl} alt={modalAnexoDesl.nome} style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain", borderRadius:8 }} />
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Modal Novo */}
       {modalNovo && (
@@ -5816,7 +5317,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
             </div>
 
             {erro && (
-              <div style={{ background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, padding: "3px 6px", marginBottom: 16, color: "#DC2626", fontSize: 11 }}>
+              <div style={{ background: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: 8, padding: "10px 14px", marginBottom: 16, color: "#DC2626", fontSize: 12 }}>
                 {erro.split("\n").map((linha, i) => (
                   <div key={i} style={{ marginBottom: linha === "" ? 6 : 2 }}>{linha ? `${i === 0 ? "⚠️ " : ""}${linha}` : ""}</div>
                 ))}
@@ -5825,16 +5326,16 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
 
             {/* Colaborador */}
             <div style={{ marginBottom: 16 }}>
-              <label style={{ display: "block", fontSize: 11, fontWeight: 600, marginBottom: 6 }}>Colaborador *</label>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Colaborador *</label>
               <div style={{ position: "relative" }}>
                 <input value={buscaColab} onChange={e => onBuscaColab(e.target.value)}
                   placeholder="Buscar por nome ou matrícula..."
-                  style={{ width: "100%", padding: "3px 6px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, boxSizing: "border-box" }} />
+                  style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, boxSizing: "border-box" }} />
                 {sugestoesColab.length > 0 && (
                   <div style={{ position: "absolute", top: "100%", left: 0, right: 0, background: "#fff", border: "1px solid #E5E7EB", borderRadius: 8, zIndex: 10, maxHeight: 200, overflowY: "auto", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}>
                     {sugestoesColab.map(c => (
                       <div key={c.id} onClick={() => selecionarColab(c)}
-                        style={{ padding: "3px 6px", cursor: "pointer", fontSize: 13, borderBottom: "1px solid #F3F4F6" }}
+                        style={{ padding: "10px 14px", cursor: "pointer", fontSize: 13, borderBottom: "1px solid #F3F4F6" }}
                         onMouseEnter={e => e.target.style.background="#F8FAFC"}
                         onMouseLeave={e => e.target.style.background="#fff"}>
                         <b>{c.chapa}</b> — {c.nome} <span style={{ color: "#94A3B8" }}>{c.funcao}</span>
@@ -5844,12 +5345,12 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                 )}
               </div>
               {validandoColab && (
-                <div style={{ marginTop: 8, padding: "3px 6px", background: "#EFF6FF", borderRadius: 8, fontSize: 12, color: "#1D4ED8" }}>
+                <div style={{ marginTop: 8, padding: "8px 14px", background: "#EFF6FF", borderRadius: 8, fontSize: 12, color: "#1D4ED8" }}>
                   🔄 Verificando aptidão do colaborador...
                 </div>
               )}
               {!validandoColab && colaboradorSel && !bloqueioColab && (
-                <div style={{ marginTop: 8, padding: "3px 6px", background: "#F0FDF4", borderRadius: 8, fontSize: 12, color: "#166534" }}>
+                <div style={{ marginTop: 8, padding: "10px 14px", background: "#F0FDF4", borderRadius: 8, fontSize: 12, color: "#166534" }}>
                   ✅ <b>{colaboradorSel.nome}</b> · {colaboradorSel.descricao_filial || colaboradorSel.desc_cc || "—"} · Matrícula: {colaboradorSel.chapa} · Função: {colaboradorSel.desc_funcao || colaboradorSel.funcao || "—"} · CC: {colaboradorSel.centro_custo} — {colaboradorSel.desc_cc}
                   {colaboradorSel.tipo_contrato === "determinado" && <span style={{ marginLeft: 8, background: "#FEF3C7", color: "#92400E", padding: "1px 6px", borderRadius: 4 }}>Contrato até {colaboradorSel.data_fim_contrato ? new Date(colaboradorSel.data_fim_contrato).toLocaleDateString("pt-BR") : "—"}</span>}
                 </div>
@@ -5864,7 +5365,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
 
             {/* Tipo */}
             <div style={{ marginBottom: 16 }}>
-              <label style={{ display: "block", fontSize: 11, fontWeight: 600, marginBottom: 6 }}>Tipo de Desligamento *</label>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Tipo de Desligamento *</label>
               <select value={form.tipo} onChange={e => {
                 const novoTipo = e.target.value;
                 if (novoTipo === "termino_contrato" && colaboradorSel?.data_admissao) {
@@ -5873,7 +5374,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                   setForm(f => ({ ...f, tipo: novoTipo }));
                 }
               }}
-                style={{ width: "100%", padding: "3px 6px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13 }}>
+                style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13 }}>
                 <option value="">Selecione...</option>
                 {TIPOS_DESL.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>
@@ -5882,20 +5383,20 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
             {/* Datas */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
               <div>
-                <label style={{ display: "block", fontSize: 11, fontWeight: 600, marginBottom: 6 }}>Data de Desligamento *</label>
+                <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Data de Desligamento *</label>
                 <input type="date" value={form.data_desligamento}
                   onChange={e => setForm(f => ({ ...f, data_desligamento: e.target.value }))}
                   readOnly={form.tipo === "termino_contrato"}
-                  style={{ width: "100%", padding: "3px 6px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, boxSizing: "border-box",
+                  style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, boxSizing: "border-box",
                     background: form.tipo === "termino_contrato" ? "#F3F4F6" : "#fff",
                     cursor: form.tipo === "termino_contrato" ? "not-allowed" : "auto" }} />
               </div>
               {form.tipo === "aviso_trabalhado" && (
                 <div>
-                  <label style={{ display: "block", fontSize: 11, fontWeight: 600, marginBottom: 6 }}>Data de Aviso</label>
+                  <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Data de Aviso</label>
                   <input type="date" value={form.data_aviso || calcularDataAviso(form.data_desligamento)}
                     onChange={e => setForm(f => ({ ...f, data_aviso: e.target.value }))}
-                    style={{ width: "100%", padding: "3px 6px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, boxSizing: "border-box" }} />
+                    style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, boxSizing: "border-box" }} />
                 </div>
               )}
             </div>
@@ -5913,26 +5414,26 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
 
             {/* Justificativa */}
             <div style={{ marginBottom: 16 }}>
-              <label style={{ display: "block", fontSize: 11, fontWeight: 600, marginBottom: 6 }}>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
                 Justificativa {form.tipo === "antecipacao_contrato" ? "*" : "(opcional)"}
               </label>
               <textarea value={form.justificativa} onChange={e => setForm(f => ({ ...f, justificativa: e.target.value }))}
                 rows={3} placeholder="Descreva o motivo do desligamento..."
-                style={{ width: "100%", padding: "3px 6px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, resize: "vertical", boxSizing: "border-box" }} />
+                style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, resize: "vertical", boxSizing: "border-box" }} />
             </div>
 
             {/* Observações */}
             <div style={{ marginBottom: form.tipo === "pedido_demissao" ? 12 : 20 }}>
-              <label style={{ display: "block", fontSize: 11, fontWeight: 600, marginBottom: 6 }}>Observações</label>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Observações</label>
               <textarea value={form.observacoes} onChange={e => setForm(f => ({ ...f, observacoes: e.target.value }))}
                 rows={2} placeholder="Observações adicionais..."
-                style={{ width: "100%", padding: "3px 6px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, resize: "vertical", boxSizing: "border-box" }} />
+                style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, resize: "vertical", boxSizing: "border-box" }} />
             </div>
 
             {/* Anexo do Pedido de Demissão — só para pedido_demissao */}
             {form.tipo === "pedido_demissao" && (
               <div style={{ marginBottom: 20 }}>
-                <label style={{ display: "block", fontSize: 11, fontWeight: 600, marginBottom: 6 }}>
+                <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
                   📎 Pedido de Demissão Assinado *
                 </label>
                 <div style={{
@@ -5943,19 +5444,19 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                   <div>
                     {form.pedido_anexo_nome ? (
                       <div>
-                        <div style={{ fontSize: 11, fontWeight: 600, color: "#065F46" }}>✅ {form.pedido_anexo_nome}</div>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: "#065F46" }}>✅ {form.pedido_anexo_nome}</div>
                         <div style={{ fontSize: 11, color: "#6B7280", marginTop: 2 }}>Documento anexado com sucesso</div>
                       </div>
                     ) : (
                       <div>
-                        <div style={{ fontSize: 11, color: "#374151", fontWeight: 600 }}>Nenhum arquivo selecionado</div>
+                        <div style={{ fontSize: 13, color: "#374151", fontWeight: 600 }}>Nenhum arquivo selecionado</div>
                         <div style={{ fontSize: 11, color: "#9CA3AF", marginTop: 2 }}>PDF, JPG ou PNG — máx. 5MB</div>
                       </div>
                     )}
                   </div>
                   <div style={{ display: "flex", gap: 8 }}>
                     <label style={{
-                      padding: "7px 14px", borderRadius: 8, fontSize: 11, fontWeight: 600,
+                      padding: "7px 14px", borderRadius: 8, fontSize: 12, fontWeight: 600,
                       background: "#0F2447", color: "#fff", cursor: "pointer", whiteSpace: "nowrap"
                     }}>
                       {form.pedido_anexo_nome ? "Trocar arquivo" : "Selecionar arquivo"}
@@ -6027,26 +5528,26 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                 ["Solicitante",  modalDetalhe.gestor_nome],
                 ["Centro Custo", `${modalDetalhe.centro_custo || "—"} — ${modalDetalhe.desc_cc || "—"}`],
               ].map(([l, v]) => (
-                <div key={l} style={{ background: "#F8FAFC", borderRadius: 8, padding: "3px 6px" }}>
+                <div key={l} style={{ background: "#F8FAFC", borderRadius: 8, padding: "10px 14px" }}>
                   <div style={{ fontSize: 11, color: "#94A3B8", fontWeight: 600, marginBottom: 2 }}>{l}</div>
-                  <div style={{ fontSize: 11, fontWeight: 600 }}>{v || "—"}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600 }}>{v || "—"}</div>
                 </div>
               ))}
             </div>
 
             {modalDetalhe.justificativa && (
               <div style={{ marginBottom: 16 }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: "#94A3B8", marginBottom: 4 }}>JUSTIFICATIVA</div>
-                <div style={{ background: "#F8FAFC", borderRadius: 8, padding: "3px 6px", fontSize: 13 }}>{modalDetalhe.justificativa}</div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: "#94A3B8", marginBottom: 4 }}>JUSTIFICATIVA</div>
+                <div style={{ background: "#F8FAFC", borderRadius: 8, padding: "10px 14px", fontSize: 13 }}>{modalDetalhe.justificativa}</div>
               </div>
             )}
 
             {/* Histórico */}
             {modalDetalhe.logs?.length > 0 && (
               <div style={{ marginBottom: 16 }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: "#94A3B8", marginBottom: 8 }}>HISTÓRICO</div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: "#94A3B8", marginBottom: 8 }}>HISTÓRICO</div>
                 {modalDetalhe.logs.map((l, i) => (
-                  <div key={i} style={{ display: "flex", gap: 10, marginBottom: 8, fontSize: 11 }}>
+                  <div key={i} style={{ display: "flex", gap: 10, marginBottom: 8, fontSize: 12 }}>
                     <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#0F2447", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700, flexShrink: 0 }}>
                       {l.usuario_nome?.slice(0,2).toUpperCase()}
                     </div>
@@ -6081,7 +5582,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                     borderColor: modalAcao.acao === a ? "#0F2447" : "#E5E7EB",
                     background: modalAcao.acao === a ? "#0F2447" : "#fff",
                     color: modalAcao.acao === a ? "#fff" : "#374151",
-                    fontSize: 11, fontWeight: 600, cursor: "pointer" }}>
+                    fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
                   {a === "aprovar" ? "✅ Aprovar" : a === "reprovar" ? "❌ Reprovar" : "🔄 Ajuste"}
                 </button>
               ))}
@@ -6089,7 +5590,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
             <textarea value={modalAcao.observacao}
               onChange={e => setModalAcao(m => ({ ...m, observacao: e.target.value }))}
               rows={3} placeholder="Observação (opcional para aprovação)..."
-              style={{ width: "100%", padding: "3px 6px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, resize: "none", boxSizing: "border-box", marginBottom: 16 }} />
+              style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1px solid #E5E7EB", fontSize: 13, resize: "none", boxSizing: "border-box", marginBottom: 16 }} />
             <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
               <button onClick={() => setModalAcao(null)} disabled={salvando}
                 style={{ padding: "9px 20px", borderRadius: 8, border: "1px solid #E5E7EB", background: "#fff", fontSize: 14, cursor: "pointer" }}>
@@ -6176,7 +5677,7 @@ function ModalPDFDesligamento({ sol, onClose }) {
   };
 
   const Ficha = () => (
-    <div style={{ border: "1.5px solid #000", padding: "3px 6px", marginBottom: 20,
+    <div style={{ border: "1.5px solid #000", padding: "10px 14px", marginBottom: 20,
       display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 20px" }}>
       <div style={{ fontWeight: 700 }}>Sr. (a) &nbsp;{sol.colaborador_nome}</div>
       <div style={{ fontWeight: 700 }}>{sol.chapa}{sol.desc_cc ? `    SEÇÃO : ${sol.desc_cc}` : ""}</div>
@@ -6198,7 +5699,7 @@ function ModalPDFDesligamento({ sol, onClose }) {
       <div style={{ textAlign: "center", marginTop: 20 }}>
         <div style={{ height: 56 }} />
         <div style={{ borderTop: "1px solid #000", width: 320, margin: "0 auto 4px", paddingTop: 6, fontWeight: 700 }}>{sol.colaborador_nome}</div>
-        <div style={{ fontSize: 11 }}>Assinatura do Empregado</div>
+        <div style={{ fontSize: 12 }}>Assinatura do Empregado</div>
       </div>
     </>
   );
@@ -6212,7 +5713,7 @@ function ModalPDFDesligamento({ sol, onClose }) {
       <div style={{ textAlign: "center", marginTop: 20 }}>
         <div style={{ height: 56 }} />
         <div style={{ borderTop: "1px solid #000", width: 320, margin: "0 auto 4px", paddingTop: 6, fontWeight: 700 }}>{sol.colaborador_nome}</div>
-        <div style={{ fontSize: 11 }}>Assinatura do Empregado</div>
+        <div style={{ fontSize: 12 }}>Assinatura do Empregado</div>
       </div>
     </>
   );
@@ -6224,7 +5725,7 @@ function ModalPDFDesligamento({ sol, onClose }) {
           <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Documento de Desligamento</h3>
           <button onClick={onClose} style={{ background: "none", border: "none", fontSize: 22, cursor: "pointer" }}>×</button>
         </div>
-        <div id="pdf-desligamento-benel" style={{ fontFamily: "Arial,sans-serif", fontSize: 11, color: "#000", lineHeight: 1.6 }}>
+        <div id="pdf-desligamento-benel" style={{ fontFamily: "Arial,sans-serif", fontSize: 13, color: "#000", lineHeight: 1.6 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
             <img src={LOGO_BENEL} alt="Benel" style={{ height: 52 }} />
             <div style={{ fontSize: 16, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, textAlign: "right", maxWidth: "55%" }}>{titulo}</div>
@@ -6258,17 +5759,17 @@ function ModalPDFDesligamento({ sol, onClose }) {
           </>)}
           {sol.tipo === "pedido_demissao" && (<>
             <div style={{ background: "#F0FDF4", border: "1px solid #6EE7B7", borderRadius: 10, padding: "16px 20px", marginBottom: 20 }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: "#065F46", marginBottom: 8 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#065F46", marginBottom: 8 }}>
                 📎 Pedido de Demissão — Documento Original do Colaborador
               </div>
-              <p style={{ fontSize: 11, color: "#374151", margin: 0 }}>
+              <p style={{ fontSize: 12, color: "#374151", margin: 0 }}>
                 Este tipo de desligamento é formalizado pelo próprio colaborador a próprio punho.
                 O documento original deve ser anexado abaixo.
               </p>
             </div>
             {sol.pedido_anexo_dados || sol.pedido_anexo_base64 ? (
               <div style={{ textAlign: "center", marginBottom: 20 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#374151", marginBottom: 8 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#374151", marginBottom: 8 }}>
                   📄 {sol.pedido_anexo_nome}
                 </div>
                 {sol.pedido_anexo_dados || sol.pedido_anexo_base64.startsWith("data:image") ? (
@@ -6276,7 +5777,7 @@ function ModalPDFDesligamento({ sol, onClose }) {
                     style={{ maxWidth: "100%", maxHeight: 500, border: "1px solid #E5E7EB", borderRadius: 8 }} />
                 ) : (
                   <a href={sol.pedido_anexo_dados || sol.pedido_anexo_base64} download={sol.pedido_anexo_nome}
-                    style={{ padding: "10px 20px", background: "#0F2447", color: "#fff", borderRadius: 8, fontSize: 11, fontWeight: 600, textDecoration: "none" }}>
+                    style={{ padding: "10px 20px", background: "#0F2447", color: "#fff", borderRadius: 8, fontSize: 13, fontWeight: 600, textDecoration: "none" }}>
                     ⬇ Baixar PDF anexado
                   </a>
                 )}
@@ -6469,21 +5970,6 @@ function PlanoSaude({ user, colaboradores }) {
   };
 
   // ── Estilos compactos seguindo padrão do sistema ──────────────────────────
-  const salvarEdicao = async () => {
-    const itensList = Object.entries(itensEdit).filter(([,v]) => v).map(([campo, novo_valor]) => ({ campo, novo_valor }));
-    if (itensList.length === 0) { setMsg({ tipo: "erro", texto: "Selecione ao menos um campo para alterar." }); return; }
-    setSalvando(true);
-    try {
-      // Cancela a atual e cria nova
-      await api.cancelarAtualizacaoCadastral(modalDetalhe.id);
-      await api.criarAtualizacaoCadastral({ colaborador_id: modalDetalhe.colaborador_id, itens: itensList, observacao: obsEdit });
-      setMsg({ tipo: "ok", texto: "Solicitação atualizada com sucesso!" });
-      setModalDetalhe(null); setEditando(false); setItensEdit({}); setObsEdit("");
-      carregarSols();
-    } catch (e) { setMsg({ tipo: "erro", texto: e.message }); }
-    finally { setSalvando(false); }
-  };
-
   const S = {
     page:   { padding:"16px 20px", maxWidth:960, margin:"0 auto" },
     header: { display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 },
@@ -6559,7 +6045,7 @@ function PlanoSaude({ user, colaboradores }) {
   );
 
   const InfoColab = ({ c }) => c ? (
-    <div style={{ background:"#FFFBEB", border:"1px solid #FDE68A", borderRadius:8, padding:"4px 8px", marginBottom:14 }}>
+    <div style={{ background:"#FFFBEB", border:"1px solid #FDE68A", borderRadius:8, padding:"10px 14px", marginBottom:14 }}>
       {["7"].includes(String(c.cod_filial)) && (
         <div style={{ background:"#FEE2E2", border:"1px solid #FECACA", borderRadius:6, padding:"8px 12px", marginBottom:10, fontSize:12, fontWeight:700, color:"#991B1B" }}>
           ⚠️ Filial 7 — São Mateus: o plano Hapvida não atende esta localidade. Solicitação não permitida.
@@ -6845,12 +6331,6 @@ function AtualizacaoCadastral({ user, colaboradores }) {
   const [fNomeCompleto, setFNomeCompleto] = useState("");
   const [fFuncao, setFuncao]          = useState("");
   const [fFilial, setFFilial]         = useState("");
-  const [fPosEscala, setFPosEscala]   = useState("");
-  const [fMotLider, setFMotLider]     = useState("");
-  const [fMunkeiro, setFMunkeiro]     = useState("");
-  const [fPrancheiro, setFPrancheiro] = useState("");
-  const [fMacacao, setFMacacao]       = useState("");
-  const [fBota, setFBota]             = useState("");
 
   // Filtros solicitações
   const [fStatus, setFStatus]   = useState("todos");
@@ -6866,34 +6346,21 @@ function AtualizacaoCadastral({ user, colaboradores }) {
   // Modal detalhe
   const [modalDetalhe, setModalDetalhe] = useState(null);
   const [obsAprov, setObsAprov]         = useState("");
-  const [editando, setEditando]         = useState(false);
-  const [itensEdit, setItensEdit]       = useState({});
-  const [obsEdit, setObsEdit]           = useState("");
 
   const norm = s => (s || "").toLowerCase();
   const canAprovar = user?.perfil === "dp" || user?.perfil === "admin" || user?.perfil === "presidente";
-  const canEditar  = (s) => s && s.status !== "finalizado" && s.status !== "reprovado";
 
   const colabsAtivos = colaboradores.filter(c => c.cod_situacao !== "D");
   const fmtFilial = (c) => {
-    // descricao_filial = "CARMOPOLIS-SE", desc_cc = "CARMO - 318 SE - ARTICULADOS"
-    // Sempre usar descricao_filial quando disponível
-    if (c.descricao_filial) return c.descricao_filial.replace(/^BENEL TRANSPORTES\s*[-–]\s*/i, "").trim();
-    // Fallback: desc_cc mas só até o primeiro traço (ex: "CARMO - 318..." → não usar)
-    return "";
+    const f = c.descricao_filial || c.desc_cc || "";
+    return f.replace(/^BENEL TRANSPORTES\s*[-–]\s*/i, "").trim();
   };
 
   const colabsFiltrados = colabsAtivos.filter(c =>
     (!fNome          || (c.chapa||"").toLowerCase().includes(fNome.toLowerCase())) &&
     (!fNomeCompleto  || norm(c.nome).includes(norm(fNomeCompleto))) &&
     (!fFuncao        || norm(c.funcao||"").includes(norm(fFuncao))) &&
-    (!fFilial        || norm(fmtFilial(c)).includes(norm(fFilial))) &&
-    (!fPosEscala     || norm(c.posicao_escala||"").includes(norm(fPosEscala))) &&
-    (!fMotLider      || (fMotLider   === "S" ? c.motorista_lider === "T" : c.motorista_lider !== "T")) &&
-    (!fMunkeiro      || (fMunkeiro   === "S" ? c.munkeiro        === "T" : c.munkeiro        !== "T")) &&
-    (!fPrancheiro    || (fPrancheiro === "S" ? c.prancheiro      === "T" : c.prancheiro      !== "T")) &&
-    (!fMacacao       || norm(c.tamanho_macacao||"").includes(norm(fMacacao))) &&
-    (!fBota          || norm(String(c.tamanho_bota||"")).includes(norm(fBota)))
+    (!fFilial        || norm(fmtFilial(c)).includes(norm(fFilial)) || norm(c.desc_cc||"").includes(norm(fFilial)))
   );
 
   const carregarSols = async () => {
@@ -6905,12 +6372,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
       if (fDataFim) params.data_fim = fDataFim;
       if (fSolic)   params.solicitante = fSolic;
       const data = await api.listarAtualizacaoCadastral(params);
-      let sols = Array.isArray(data) ? data : [];
-      // Gestor e Superior só veem as próprias solicitações
-      if (user?.perfil === "gestor" || user?.perfil === "superior") {
-        sols = sols.filter(s => s.usuario_solicitante_id === user.id);
-      }
-      setSolicitacoes(sols);
+      setSolicitacoes(Array.isArray(data) ? data : []);
     } catch (e) { setMsg({ tipo: "erro", texto: e.message }); }
     finally { setLoadingSols(false); }
   };
@@ -6941,37 +6403,22 @@ function AtualizacaoCadastral({ user, colaboradores }) {
     finally { setSalvando(false); }
   };
 
-  const salvarEdicao = async () => {
-    const itensList = Object.entries(itensEdit).filter(([,v]) => v).map(([campo, novo_valor]) => ({ campo, novo_valor }));
-    if (itensList.length === 0) { setMsg({ tipo: "erro", texto: "Selecione ao menos um campo para alterar." }); return; }
-    setSalvando(true);
-    try {
-      // Cancela a atual e cria nova
-      await api.cancelarAtualizacaoCadastral(modalDetalhe.id);
-      await api.criarAtualizacaoCadastral({ colaborador_id: modalDetalhe.colaborador_id, itens: itensList, observacao: obsEdit });
-      setMsg({ tipo: "ok", texto: "Solicitação atualizada com sucesso!" });
-      setModalDetalhe(null); setEditando(false); setItensEdit({}); setObsEdit("");
-      carregarSols();
-    } catch (e) { setMsg({ tipo: "erro", texto: e.message }); }
-    finally { setSalvando(false); }
-  };
-
   const S = {
-    inp:  { width: "100%", padding: "3px 6px", border: "1px solid #D1D5DB", borderRadius: 6, fontSize: 12, boxSizing: "border-box" },
+    inp:  { width: "100%", padding: "6px 10px", border: "1px solid #D1D5DB", borderRadius: 6, fontSize: 12, boxSizing: "border-box" },
     lbl:  { fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 3 },
-    btnP: { background: "#0F2447", color: "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontSize: 11, fontWeight: 700, cursor: "pointer" },
-    btnS: { background: "#F3F4F6", color: "#374151", border: "1px solid #D1D5DB", borderRadius: 8, padding: "3px 6px", fontSize: 11, fontWeight: 600, cursor: "pointer" },
-    btnV: { background: "#059669", color: "#fff", border: "none", borderRadius: 8, padding: "3px 6px", fontSize: 11, fontWeight: 700, cursor: "pointer" },
-    btnR: { background: "#DC2626", color: "#fff", border: "none", borderRadius: 8, padding: "3px 6px", fontSize: 11, fontWeight: 700, cursor: "pointer" },
+    btnP: { background: "#0F2447", color: "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontSize: 12, fontWeight: 700, cursor: "pointer" },
+    btnS: { background: "#F3F4F6", color: "#374151", border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer" },
+    btnV: { background: "#059669", color: "#fff", border: "none", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" },
+    btnR: { background: "#DC2626", color: "#fff", border: "none", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" },
     modal:{ position: "fixed", inset: 0, background: "rgba(0,0,0,.5)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center" },
     mbox: { background: "#fff", borderRadius: 14, padding: "24px 28px", width: "100%", maxWidth: 700, maxHeight: "90vh", overflowY: "auto", boxShadow: "0 20px 60px rgba(0,0,0,.25)" },
-    th:   { padding: "3px 6px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: 0.5, whiteSpace: "nowrap" },
-    td:   { padding: "3px 6px", fontSize: 11, borderBottom: "1px solid #F3F4F6" },
+    th:   { padding: "10px 10px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: 0.5, whiteSpace: "nowrap" },
+    td:   { padding: "9px 10px", fontSize: 11, borderBottom: "1px solid #F3F4F6" },
   };
 
   const SimNaoTag = ({ val }) => {
     if (!val) return <span style={{ color: "#9CA3AF" }}>—</span>;
-    return <span style={{ padding: "1px 6px", borderRadius: 8, fontSize: 10, fontWeight: 700, background: val === "T" ? "#D1FAE5" : "#FEE2E2", color: val === "T" ? "#065F46" : "#991B1B" }}>{val === "T" ? "Sim" : "Não"}</span>;
+    return <span style={{ padding: "2px 8px", borderRadius: 8, fontSize: 10, fontWeight: 700, background: val === "T" ? "#D1FAE5" : "#FEE2E2", color: val === "T" ? "#065F46" : "#991B1B" }}>{val === "T" ? "Sim" : "Não"}</span>;
   };
 
   return (
@@ -6986,7 +6433,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
 
       {/* Msg */}
       {msg && (
-        <div style={{ padding: "3px 6px", borderRadius: 7, marginBottom: 12, background: msg.tipo === "ok" ? "#D1FAE5" : "#FEE2E2", color: msg.tipo === "ok" ? "#065F46" : "#991B1B", fontSize: 11, fontWeight: 600, display: "flex", justifyContent: "space-between" }}>
+        <div style={{ padding: "8px 14px", borderRadius: 7, marginBottom: 12, background: msg.tipo === "ok" ? "#D1FAE5" : "#FEE2E2", color: msg.tipo === "ok" ? "#065F46" : "#991B1B", fontSize: 12, fontWeight: 600, display: "flex", justifyContent: "space-between" }}>
           {msg.texto}
           <button onClick={() => setMsg(null)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 14 }}>×</button>
         </div>
@@ -6996,7 +6443,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
       <div style={{ display: "flex", gap: 4, marginBottom: 16, borderBottom: "2px solid #E5E7EB" }}>
         {[["colaboradores","👥 Colaboradores"], ["solicitacoes","📋 Solicitações"]].map(([id, label]) => (
           <button key={id} onClick={() => setAba(id)} style={{
-            padding: "8px 18px", fontSize: 11, fontWeight: 600, border: "none", cursor: "pointer",
+            padding: "8px 18px", fontSize: 12, fontWeight: 600, border: "none", cursor: "pointer",
             background: "none", borderBottom: aba === id ? "2px solid #0F2447" : "2px solid transparent",
             color: aba === id ? "#0F2447" : "#6B7280", marginBottom: -2
           }}>{label}</button>
@@ -7007,7 +6454,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
       {aba === "colaboradores" && (
         <>
           <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", lineHeight: "1.2", background: "#fff", borderRadius: 10, overflow: "hidden", border: "1px solid #E5E7EB", fontSize: 11 }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff", borderRadius: 10, overflow: "hidden", border: "1px solid #E5E7EB", fontSize: 12 }}>
               <thead>
                 <tr style={{ background: "#F9FAFB", borderBottom: "1px solid #E5E7EB" }}>
                   <th style={S.th}>Filial</th>
@@ -7023,57 +6470,18 @@ function AtualizacaoCadastral({ user, colaboradores }) {
                   <th style={S.th}>Ação</th>
                 </tr>
                 <tr style={{ background: "#F9FAFB", borderBottom: "2px solid #E5E7EB" }}>
-                  <td style={{ padding: "3px 5px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Filial" value={fFilial} onChange={e => setFFilial(e.target.value)} /></td>
-                  <td style={{ padding: "3px 5px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Matrícula" value={fNome} onChange={e => setFNome(e.target.value)} /></td>
-                  <td style={{ padding: "3px 5px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Nome" value={fNomeCompleto} onChange={e => setFNomeCompleto(e.target.value)} /></td>
-                  <td style={{ padding: "3px 5px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Função" value={fFuncao} onChange={e => setFuncao(e.target.value)} /></td>
-                  <td style={{ padding: "3px 5px" }}>
-                    <select style={{ ...S.inp, fontSize: 11 }} value={fPosEscala} onChange={e => setFPosEscala(e.target.value)}>
-                      <option value="">Todas</option>
-                      <option value="FA">FA</option>
-                      <option value="FE">FE</option>
-                      <option value="FO">FO</option>
-                      <option value="NA">NA</option>
-                      <option value="TI">TI</option>
-                    </select>
-                  </td>
-                  <td style={{ padding: "3px 5px" }}>
-                    <select style={{ ...S.inp, fontSize: 11 }} value={fMotLider} onChange={e => setFMotLider(e.target.value)}>
-                      <option value="">Todos</option>
-                      <option value="S">Sim</option>
-                      <option value="N">Não</option>
-                    </select>
-                  </td>
-                  <td style={{ padding: "3px 5px" }}>
-                    <select style={{ ...S.inp, fontSize: 11 }} value={fMunkeiro} onChange={e => setFMunkeiro(e.target.value)}>
-                      <option value="">Todos</option>
-                      <option value="S">Sim</option>
-                      <option value="N">Não</option>
-                    </select>
-                  </td>
-                  <td style={{ padding: "3px 5px" }}>
-                    <select style={{ ...S.inp, fontSize: 11 }} value={fPrancheiro} onChange={e => setFPrancheiro(e.target.value)}>
-                      <option value="">Todos</option>
-                      <option value="S">Sim</option>
-                      <option value="N">Não</option>
-                    </select>
-                  </td>
-                  <td style={{ padding: "3px 5px" }}>
-                    <select style={{ ...S.inp, fontSize: 11 }} value={fMacacao} onChange={e => setFMacacao(e.target.value)}>
-                      <option value="">Todos</option>
-                      {["PP","P","M","G","GG","EG","EEG"].map(v => <option key={v} value={v}>{v}</option>)}
-                    </select>
-                  </td>
-                  <td style={{ padding: "3px 5px" }}>
-                    <input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Bota" value={fBota} onChange={e => setFBota(e.target.value)} />
-                  </td>
-                  <td style={{ padding: "3px 5px", whiteSpace: "nowrap" }}>
-                    <button onClick={() => { setFNome(""); setFNomeCompleto(""); setFuncao(""); setFFilial(""); setFPosEscala(""); setFMotLider(""); setFMunkeiro(""); setFPrancheiro(""); setFMacacao(""); setFBota(""); }}
-                      style={{ padding: "3px 7px", border: "1px solid #D1D5DB", borderRadius: 6, background: "#fff", color: "#374151", fontSize: 11, cursor: "pointer" }}>
+                  <td style={{ padding: "4px 6px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Filial" value={fFilial} onChange={e => setFFilial(e.target.value)} /></td>
+                  <td style={{ padding: "4px 6px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Matrícula" value={fNome} onChange={e => setFNome(e.target.value)} /></td>
+                  <td style={{ padding: "4px 6px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Nome" value={fNomeCompleto} onChange={e => setFNomeCompleto(e.target.value)} /></td>
+                  <td style={{ padding: "4px 6px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Função" value={fFuncao} onChange={e => setFuncao(e.target.value)} /></td>
+                  <td colSpan={6} style={{ padding: "4px 6px" }}>
+                    <button onClick={() => { setFNome(""); setFNomeCompleto(""); setFuncao(""); setFFilial(""); }}
+                      style={{ padding: "5px 12px", border: "1px solid #D1D5DB", borderRadius: 6, background: "#fff", color: "#374151", fontSize: 11, cursor: "pointer" }}>
                       × Limpar
                     </button>
-                    <span style={{ marginLeft: 8, fontSize: 11, color: "#6B7280" }}>{colabsFiltrados.length}</span>
+                    <span style={{ marginLeft: 10, fontSize: 11, color: "#6B7280" }}>{colabsFiltrados.length} colaborador(es)</span>
                   </td>
+                  <td></td>
                 </tr>
               </thead>
               <tbody>
@@ -7136,10 +6544,10 @@ function AtualizacaoCadastral({ user, colaboradores }) {
           ) : solicitacoes.length === 0 ? (
             <div style={{ textAlign: "center", padding: 60, color: "#9CA3AF" }}>Nenhuma solicitação encontrada.</div>
           ) : (
-            <table style={{ width: "100%", borderCollapse: "collapse", lineHeight: "1.2", background: "#fff", borderRadius: 10, overflow: "hidden", border: "1px solid #E5E7EB" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff", borderRadius: 10, overflow: "hidden", border: "1px solid #E5E7EB" }}>
               <thead>
                 <tr style={{ background: "#F9FAFB", borderBottom: "2px solid #E5E7EB" }}>
-                  {["Filial","Matrícula","Nome","Função","Admissão","Solicitante","Data","Status","Ações"].map(h => (
+                  {["Matrícula","Nome","Função","Admissão","Solicitante","Data","Status","Ações"].map(h => (
                     <th key={h} style={S.th}>{h}</th>
                   ))}
                 </tr>
@@ -7149,7 +6557,6 @@ function AtualizacaoCadastral({ user, colaboradores }) {
                   const stCfg = AC_STATUS_CONFIG[s.status] || {};
                   return (
                     <tr key={s.id} onMouseEnter={e => e.currentTarget.style.background = "#F9FAFB"} onMouseLeave={e => e.currentTarget.style.background = ""}>
-                      <td style={{ ...S.td, fontSize: 10 }}>{(s.descricao_filial || s.desc_cc || "").replace(/^BENEL TRANSPORTES\s*[-–]\s*/i,"").trim() || "—"}</td>
                       <td style={{ ...S.td, fontWeight: 700 }}>{s.chapa}</td>
                       <td style={S.td}>{s.colaborador_nome}</td>
                       <td style={{ ...S.td, color: "#6B7280" }}>{s.funcao}</td>
@@ -7157,7 +6564,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
                       <td style={S.td}>{s.usuario_solicitante_nome}</td>
                       <td style={{ ...S.td, color: "#6B7280" }}>{new Date(s.criado_em).toLocaleDateString("pt-BR")}</td>
                       <td style={S.td}>
-                        <span style={{ padding: "1px 6px", borderRadius: 8, fontSize: 10, fontWeight: 700, background: stCfg.bg, color: stCfg.color }}>
+                        <span style={{ padding: "2px 8px", borderRadius: 8, fontSize: 10, fontWeight: 700, background: stCfg.bg, color: stCfg.color }}>
                           {stCfg.label || s.status}
                         </span>
                       </td>
@@ -7180,7 +6587,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
         <div style={S.modal}>
           <div style={S.mbox}>
             <h3 style={{ margin: "0 0 6px", fontSize: 15, fontWeight: 800, color: "#0F2447" }}>Solicitar Alteração Cadastral</h3>
-            <div style={{ padding: "3px 6px", background: "#EFF6FF", borderRadius: 8, marginBottom: 16, fontSize: 12, color: "#1E40AF" }}>
+            <div style={{ padding: "8px 12px", background: "#EFF6FF", borderRadius: 8, marginBottom: 16, fontSize: 12, color: "#1E40AF" }}>
               <strong>{fmtFilial(modalNova)}</strong> | {modalNova.chapa} | {modalNova.nome} | {modalNova.funcao} | {modalNova.data_admissao ? new Date(modalNova.data_admissao).toLocaleDateString("pt-BR") : "—"}
             </div>
 
@@ -7228,7 +6635,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
             <h3 style={{ margin: "0 0 4px", fontSize: 15, fontWeight: 800, color: "#0F2447" }}>Solicitação #{modalDetalhe.id}</h3>
             <p style={{ margin: "0 0 14px", fontSize: 11, color: "#6B7280" }}>{modalDetalhe.chapa} | {modalDetalhe.colaborador_nome}</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 14, fontSize: 11 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 14, fontSize: 12 }}>
               <div style={{ background: "#F9FAFB", borderRadius: 6, padding: "8px 10px" }}>
                 <div style={{ fontSize: 10, color: "#6B7280", marginBottom: 2 }}>SOLICITANTE</div>
                 <strong>{modalDetalhe.usuario_solicitante_nome}</strong>
@@ -7239,7 +6646,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
               </div>
               <div style={{ background: "#F9FAFB", borderRadius: 6, padding: "8px 10px" }}>
                 <div style={{ fontSize: 10, color: "#6B7280", marginBottom: 2 }}>STATUS</div>
-                <span style={{ padding: "1px 6px", borderRadius: 8, fontSize: 10, fontWeight: 700, background: AC_STATUS_CONFIG[modalDetalhe.status]?.bg, color: AC_STATUS_CONFIG[modalDetalhe.status]?.color }}>
+                <span style={{ padding: "2px 8px", borderRadius: 8, fontSize: 10, fontWeight: 700, background: AC_STATUS_CONFIG[modalDetalhe.status]?.bg, color: AC_STATUS_CONFIG[modalDetalhe.status]?.color }}>
                   {AC_STATUS_CONFIG[modalDetalhe.status]?.label}
                 </span>
               </div>
@@ -7247,20 +6654,20 @@ function AtualizacaoCadastral({ user, colaboradores }) {
 
             <div style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 8, padding: "12px 14px", marginBottom: 14 }}>
               <p style={{ margin: "0 0 8px", fontSize: 11, fontWeight: 700, color: "#374151" }}>ALTERAÇÕES</p>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
                 <thead>
                   <tr style={{ borderBottom: "1px solid #E5E7EB" }}>
-                    <th style={{ padding: "3px 6px", textAlign: "left", fontSize: 10, color: "#6B7280" }}>Campo</th>
-                    <th style={{ padding: "3px 6px", textAlign: "left", fontSize: 10, color: "#6B7280" }}>Antes</th>
-                    <th style={{ padding: "3px 6px", textAlign: "left", fontSize: 10, color: "#6B7280" }}>Depois</th>
+                    <th style={{ padding: "4px 8px", textAlign: "left", fontSize: 10, color: "#6B7280" }}>Campo</th>
+                    <th style={{ padding: "4px 8px", textAlign: "left", fontSize: 10, color: "#6B7280" }}>Antes</th>
+                    <th style={{ padding: "4px 8px", textAlign: "left", fontSize: 10, color: "#6B7280" }}>Depois</th>
                   </tr>
                 </thead>
                 <tbody>
                   {(modalDetalhe.itens || []).map((item, i) => (
                     <tr key={i} style={{ borderBottom: "1px solid #F3F4F6" }}>
-                      <td style={{ padding: "3px 6px", fontWeight: 600 }}>{CAMPOS_CONFIG[item.campo]?.label || item.campo}</td>
-                      <td style={{ padding: "3px 6px", color: "#991B1B" }}>{labelValor(item.campo, item.valor_anterior)}</td>
-                      <td style={{ padding: "3px 6px", color: "#065F46", fontWeight: 700 }}>{labelValor(item.campo, item.novo_valor)}</td>
+                      <td style={{ padding: "5px 8px", fontWeight: 600 }}>{CAMPOS_CONFIG[item.campo]?.label || item.campo}</td>
+                      <td style={{ padding: "5px 8px", color: "#991B1B" }}>{labelValor(item.campo, item.valor_anterior)}</td>
+                      <td style={{ padding: "5px 8px", color: "#065F46", fontWeight: 700 }}>{labelValor(item.campo, item.novo_valor)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -7268,7 +6675,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
             </div>
 
             {modalDetalhe.observacao && (
-              <div style={{ background: "#FFFBEB", border: "1px solid #FDE68A", borderRadius: 6, padding: "3px 6px", marginBottom: 14, fontSize: 11 }}>
+              <div style={{ background: "#FFFBEB", border: "1px solid #FDE68A", borderRadius: 6, padding: "8px 12px", marginBottom: 14, fontSize: 12 }}>
                 <strong>Obs:</strong> {modalDetalhe.observacao}
               </div>
             )}
@@ -7280,55 +6687,9 @@ function AtualizacaoCadastral({ user, colaboradores }) {
               </div>
             )}
 
-            {/* EDIÇÃO INLINE */}
-            {editando && (
-              <div style={{ background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: 8, padding: "14px", marginBottom: 14 }}>
-                <p style={{ margin: "0 0 10px", fontSize: 11, fontWeight: 700, color: "#065F46" }}>✏️ EDITAR SOLICITAÇÃO</p>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                  {Object.entries(CAMPOS_CONFIG).map(([campo, cfg]) => (
-                    <div key={campo}>
-                      <label style={S.lbl}>{cfg.label}</label>
-                      <div style={{ fontSize: 10, color: "#6B7280", marginBottom: 3 }}>
-                        Atual: <strong>{(modalDetalhe.itens||[]).find(i=>i.campo===campo) ? labelValor(campo,(modalDetalhe.itens||[]).find(i=>i.campo===campo).novo_valor) : "—"}</strong>
-                      </div>
-                      <select style={S.inp} value={itensEdit[campo]||""} onChange={e => setItensEdit(p => ({ ...p, [campo]: e.target.value || undefined }))}>
-                        <option value="">— sem alteração —</option>
-                        {cfg.tipo === "select_obj"
-                          ? cfg.dominio.map(d => <option key={d.cod} value={d.cod}>{d.cod} — {d.desc}</option>)
-                          : cfg.dominio.map(v => <option key={v} value={v}>{v}</option>)
-                        }
-                      </select>
-                    </div>
-                  ))}
-                </div>
-                <div style={{ marginTop: 10 }}>
-                  <label style={S.lbl}>Observação</label>
-                  <textarea style={{ ...S.inp, height: 44, resize: "vertical" }} value={obsEdit} onChange={e => setObsEdit(e.target.value)} placeholder="Justificativa..." />
-                </div>
-              </div>
-            )}
-
             <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-              <button style={S.btnS} onClick={() => { setModalDetalhe(null); setEditando(false); setItensEdit({}); setObsEdit(""); }}>Fechar</button>
-              {canEditar(modalDetalhe) && !editando && (
-                <button style={{ ...S.btnS, borderColor: "#3B82F6", color: "#3B82F6" }}
-                  onClick={() => {
-                    const prefill = {};
-                    (modalDetalhe.itens||[]).forEach(i => { prefill[i.campo] = i.novo_valor; });
-                    setItensEdit(prefill);
-                    setObsEdit(modalDetalhe.observacao || "");
-                    setEditando(true);
-                  }}>
-                  ✏️ Editar
-                </button>
-              )}
-              {editando && (
-                <>
-                  <button style={S.btnS} onClick={() => { setEditando(false); setItensEdit({}); setObsEdit(""); }}>Cancelar edição</button>
-                  <button style={{ ...S.btnP, background: "#059669" }} onClick={salvarEdicao} disabled={salvando}>{salvando ? "Salvando..." : "💾 Salvar alterações"}</button>
-                </>
-              )}
-              {canAprovar && !editando && ["solicitado","em_analise"].includes(modalDetalhe.status) && (
+              <button style={S.btnS} onClick={() => setModalDetalhe(null)}>Fechar</button>
+              {canAprovar && ["solicitado","em_analise"].includes(modalDetalhe.status) && (
                 <>
                   <button style={S.btnR} onClick={() => aprovar("reprovar")} disabled={salvando}>✗ Reprovar</button>
                   <button style={S.btnV} onClick={() => aprovar("aprovar")} disabled={salvando}>✓ Aprovar</button>
@@ -7343,525 +6704,7 @@ function AtualizacaoCadastral({ user, colaboradores }) {
 }
 
 
-export default 
-// ─────────────────────────────────────────────────────────────────────────────
-// MEDIDAS DISCIPLINARES — Novo fluxo com Jurídico + Cartilha
-// ─────────────────────────────────────────────────────────────────────────────
-function Disciplinar({ user, colaboradores, api }) {
-  const [catFiltro, setCatFiltro] = useState("");
-  const [lista, setLista]               = useState([]);
-  const [cartilha, setCartilha]         = useState([]);
-  const [loading, setLoading]           = useState(true);
-  const [msg, setMsg]                   = useState(null);
-  const [aba, setAba]                   = useState("solicitacoes"); // solicitacoes | cartilha
-  const [modalNovo, setModalNovo]       = useState(false);
-  const [modalDetalhe, setModalDetalhe] = useState(null);
-  const [modalAnalise, setModalAnalise] = useState(null);
-  const [salvando, setSalvando]         = useState(false);
-  const [fStatus, setFStatus]           = useState("");
-  const [fColab, setFColab]             = useState("");
-  // Form novo
-  const [form, setForm] = useState({
-    colaborador_id:"", descricao_ocorrido:"",
-    cartilha_id:"", sem_enquadramento:false,
-  });
-  const [sugestao, setSugestao] = useState(null);
-  const [buscandoSugestao, setBuscandoSugestao] = useState(false);
-  // Form análise jurídico
-  const [analise, setAnalise] = useState({
-    acao:"aprovar", observacao:"", nivel_final:"",
-    penalidade_final:"", dias_final:0, texto_juridico:"",
-  });
-
-  const norm = (s) => (s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
-
-  useEffect(() => {
-    carregarTudo();
-  }, []);
-
-  const carregarTudo = async () => {
-    setLoading(true);
-    try {
-      const [sols, cart] = await Promise.all([
-        api.listarDisciplinar(),
-        api.listarCartilha(),
-      ]);
-      setLista(Array.isArray(sols) ? sols : []);
-      setCartilha(Array.isArray(cart) ? cart : []);
-    } catch(e) { setMsg({ tipo:"erro", texto: e.message }); }
-    setLoading(false);
-  };
-
-  const buscarSugestao = async (colaborador_id, cartilha_id) => {
-    if (!colaborador_id || !cartilha_id) { setSugestao(null); return; }
-    setBuscandoSugestao(true);
-    try {
-      const s = await api.sugerirPenalidade(colaborador_id, cartilha_id);
-      setSugestao(s);
-      setForm(f => ({
-        ...f,
-        nivel_sugerido: s.nivel_sugerido,
-        penalidade_sugerida: s.penalidade_sugerida,
-        dias_sugeridos: s.dias_sugeridos,
-        historico_resumo: s.historico_resumo,
-      }));
-    } catch(_) {}
-    setBuscandoSugestao(false);
-  };
-
-  const criarSolicitacao = async () => {
-    if (!form.colaborador_id) return setMsg({ tipo:"erro", texto:"Selecione o colaborador" });
-    if (!form.descricao_ocorrido.trim()) return setMsg({ tipo:"erro", texto:"Descreva o ocorrido" });
-    if (!form.sem_enquadramento && !form.cartilha_id) return setMsg({ tipo:"erro", texto:"Selecione um enquadramento ou marque 'Não encontrei'" });
-    setSalvando(true);
-    try {
-      await api.criarDisciplinar(form);
-      setMsg({ tipo:"ok", texto:"Solicitação enviada ao Jurídico!" });
-      setModalNovo(false);
-      setForm({ colaborador_id:"", descricao_ocorrido:"", cartilha_id:"", sem_enquadramento:false });
-      setSugestao(null);
-      carregarTudo();
-    } catch(e) { setMsg({ tipo:"erro", texto: e.message }); }
-    setSalvando(false);
-  };
-
-  const enviarAnalise = async () => {
-    if (!analise.acao) return;
-    setSalvando(true);
-    try {
-      await api.analisarDisciplinar(modalAnalise.id, analise);
-      setMsg({ tipo:"ok", texto:`Solicitação ${analise.acao === "reprovar" ? "reprovada" : "aprovada"} com sucesso!` });
-      setModalAnalise(null);
-      carregarTudo();
-    } catch(e) { setMsg({ tipo:"erro", texto: e.message }); }
-    setSalvando(false);
-  };
-
-  const STATUS_COR = {
-    pendente_juridico: { bg:"#FEF3C7", color:"#92400E", label:"Pend. Jurídico" },
-    aprovado:          { bg:"#D1FAE5", color:"#065F46", label:"Aprovado" },
-    reprovado:         { bg:"#FEE2E2", color:"#991B1B", label:"Reprovado" },
-    finalizado:        { bg:"#DBEAFE", color:"#1E40AF", label:"Finalizado" },
-    cancelado:         { bg:"#F3F4F6", color:"#6B7280", label:"Cancelado" },
-  };
-
-  const NIVEL_COR = {
-    LEVE:        { bg:"#FEF3C7", color:"#92400E" },
-    MEDIA:       { bg:"#FED7AA", color:"#9A3412" },
-    GRAVE:       { bg:"#FEE2E2", color:"#991B1B" },
-    GRAVISSIMA:  { bg:"#EDE9FE", color:"#5B21B6" },
-  };
-
-  const categorias = [...new Set(cartilha.map(c => c.categoria))];
-  const cartilhaFiltrada = cartilha.filter(c =>
-    (!catFiltro || c.categoria === catFiltro)
-  );
-
-  const listafiltrada = lista
-    .filter(s => !fStatus || s.status === fStatus)
-    .filter(s => !fColab || norm(s.nome_colaborador).includes(norm(fColab)) || (s.chapa||"").includes(fColab));
-
-  const S = {
-    th: { padding:"5px 8px", fontSize:11, fontWeight:700, color:"#6B7280", textAlign:"left", borderBottom:"1px solid #E5E7EB", background:"#F9FAFB" },
-    td: { padding:"4px 8px", fontSize:11, color:"#374151", borderBottom:"1px solid #F3F4F6" },
-    inp: { width:"100%", padding:"7px 10px", borderRadius:8, border:"1px solid #D1D5DB", fontSize:13, fontFamily:"inherit", boxSizing:"border-box" },
-    lbl: { fontSize:11, fontWeight:600, color:"#374151", display:"block", marginBottom:4 },
-    btnP: { padding:"8px 18px", borderRadius:8, border:"none", background:"#0F2447", color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer" },
-    btnS: { padding:"8px 18px", borderRadius:8, border:"1px solid #D1D5DB", background:"#fff", color:"#374151", fontSize:13, cursor:"pointer" },
-    btnV: { padding:"6px 14px", borderRadius:8, border:"none", background:"#059669", color:"#fff", fontSize:11, fontWeight:700, cursor:"pointer" },
-    btnR: { padding:"6px 14px", borderRadius:8, border:"none", background:"#DC2626", color:"#fff", fontSize:11, fontWeight:700, cursor:"pointer" },
-  };
-
-  return (
-    <div style={{ padding:28 }}>
-      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:20 }}>
-        <div>
-          <h2 style={{ margin:0, fontSize:20, fontWeight:800, color:"#0F2447" }}>⚖️ Medidas Disciplinares</h2>
-          <p style={{ margin:"4px 0 0", fontSize:12, color:"#6B7280" }}>Fluxo com análise do Jurídico — baseado na Cartilha Educativa</p>
-        </div>
-        {["gestor","dp","admin","presidente","juridico"].includes(user.perfil) && (
-          <button onClick={() => { setModalNovo(true); setMsg(null); setSugestao(null); }}
-            style={{ ...S.btnP, padding:"10px 20px" }}>+ Nova Solicitação</button>
-        )}
-      </div>
-
-      {msg && (
-        <div style={{ background: msg.tipo==="ok" ? "#F0FDF4" : "#FEF2F2",
-          border: `1px solid ${msg.tipo==="ok" ? "#BBF7D0" : "#FCA5A5"}`,
-          borderRadius:8, padding:"10px 14px", marginBottom:16, fontSize:12,
-          color: msg.tipo==="ok" ? "#065F46" : "#DC2626",
-          display:"flex", justifyContent:"space-between" }}>
-          <span>{msg.tipo==="ok" ? "✅" : "❌"} {msg.texto}</span>
-          <button onClick={() => setMsg(null)} style={{ background:"none", border:"none", cursor:"pointer", color:"#9CA3AF" }}>✕</button>
-        </div>
-      )}
-
-      {/* Abas */}
-      <div style={{ display:"flex", gap:0, borderBottom:"2px solid #E5E7EB", marginBottom:16 }}>
-        {[
-          { id:"solicitacoes", label:`📋 Solicitações (${lista.filter(s=>s.status==="pendente_juridico").length} pendentes)` },
-          { id:"cartilha",     label:"📖 Cartilha Educativa" },
-        ].map(t => (
-          <button key={t.id} onClick={() => setAba(t.id)}
-            style={{ padding:"10px 18px", border:"none", background:"none", cursor:"pointer",
-              fontSize:13, fontWeight: aba===t.id ? 700 : 400,
-              color: aba===t.id ? "#0F2447" : "#6B7280",
-              borderBottom: aba===t.id ? "2px solid #0F2447" : "2px solid transparent",
-              marginBottom:-2 }}>
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      {/* ABA SOLICITAÇÕES */}
-      {aba === "solicitacoes" && (
-        <>
-          <div style={{ display:"flex", gap:10, marginBottom:12, flexWrap:"wrap" }}>
-            <input placeholder="🔍 Colaborador/Chapa" value={fColab} onChange={e=>setFColab(e.target.value)}
-              style={{ ...S.inp, width:220, fontSize:12 }} />
-            <select value={fStatus} onChange={e=>setFStatus(e.target.value)}
-              style={{ padding:"7px 10px", borderRadius:8, border:"1px solid #D1D5DB", fontSize:12 }}>
-              <option value="">Todos os status</option>
-              <option value="pendente_juridico">Pend. Jurídico</option>
-              <option value="aprovado">Aprovado</option>
-              <option value="reprovado">Reprovado</option>
-              <option value="finalizado">Finalizado</option>
-              <option value="cancelado">Cancelado</option>
-            </select>
-            <button onClick={() => { setFColab(""); setFStatus(""); }}
-              style={{ ...S.btnS, fontSize:12 }}>× Limpar</button>
-            <span style={{ fontSize:11, color:"#6B7280", alignSelf:"center" }}>{listafiltrada.length} registro(s)</span>
-          </div>
-
-          <div style={{ background:"#fff", borderRadius:12, border:"1px solid #E5E7EB", overflow:"hidden" }}>
-            <table style={{ width:"100%", borderCollapse:"collapse" }}>
-              <thead>
-                <tr>
-                  {["Colaborador","Enquadramento","Sugestão","Status","Data","Ações"].map(h => (
-                    <th key={h} style={S.th}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <tr><td colSpan={6} style={{ ...S.td, textAlign:"center", padding:20, color:"#9CA3AF" }}>Carregando...</td></tr>
-                ) : listafiltrada.length === 0 ? (
-                  <tr><td colSpan={6} style={{ ...S.td, textAlign:"center", padding:20, color:"#9CA3AF" }}>Nenhuma solicitação encontrada</td></tr>
-                ) : listafiltrada.map(s => {
-                  const st = STATUS_COR[s.status] || STATUS_COR.pendente_juridico;
-                  const nv = NIVEL_COR[s.nivel_sugerido] || NIVEL_COR.LEVE;
-                  return (
-                    <tr key={s.id} style={{ background:"#fff" }}>
-                      <td style={S.td}>
-                        <div style={{ fontWeight:700, fontSize:11 }}>{s.nome_colaborador}</div>
-                        <div style={{ fontSize:10, color:"#6B7280" }}>Chapa: {s.chapa}</div>
-                        <div style={{ fontSize:10, color:"#6B7280" }}>{s.descricao_filial}</div>
-                      </td>
-                      <td style={S.td}>
-                        {s.sem_enquadramento ? (
-                          <span style={{ fontSize:10, color:"#F59E0B", fontWeight:600 }}>⚠️ Sem enquadramento</span>
-                        ) : (
-                          <>
-                            <div style={{ fontSize:10, fontWeight:600 }}>{s.cartilha_categoria}</div>
-                            <div style={{ fontSize:10, color:"#6B7280" }}>{(s.cartilha_descricao||"").substring(0,60)}...</div>
-                          </>
-                        )}
-                      </td>
-                      <td style={S.td}>
-                        {s.nivel_final ? (
-                          <span style={{ ...nv, padding:"2px 8px", borderRadius:20, fontSize:10, fontWeight:700,
-                            background: NIVEL_COR[s.nivel_final]?.bg, color: NIVEL_COR[s.nivel_final]?.color }}>
-                            {s.nivel_final}
-                          </span>
-                        ) : s.nivel_sugerido ? (
-                          <span style={{ ...nv, padding:"2px 8px", borderRadius:20, fontSize:10, fontWeight:600,
-                            background: nv.bg, color: nv.color }}>
-                            {s.nivel_sugerido} (sugestão)
-                          </span>
-                        ) : <span style={{ color:"#9CA3AF", fontSize:10 }}>—</span>}
-                      </td>
-                      <td style={S.td}>
-                        <span style={{ padding:"2px 8px", borderRadius:20, fontSize:10, fontWeight:700,
-                          background: st.bg, color: st.color }}>{st.label}</span>
-                      </td>
-                      <td style={{ ...S.td, whiteSpace:"nowrap" }}>
-                        {new Date(s.criado_em).toLocaleDateString("pt-BR")}
-                      </td>
-                      <td style={S.td}>
-                        <div style={{ display:"flex", gap:4 }}>
-                          <button onClick={() => setModalDetalhe(s)}
-                            style={{ ...S.btnS, padding:"4px 10px", fontSize:11 }}>Ver</button>
-                          {["juridico","dp","admin"].includes(user.perfil) && s.status === "pendente_juridico" && (
-                            <button onClick={() => {
-                              setModalAnalise(s);
-                              setAnalise({ acao:"aprovar", observacao:"",
-                                nivel_final: s.nivel_sugerido||"LEVE",
-                                penalidade_final: s.penalidade_sugerida||"Advertência Escrita",
-                                dias_final: s.dias_sugeridos||0, texto_juridico:"" });
-                            }} style={{ ...S.btnV, padding:"4px 10px" }}>⚖️ Analisar</button>
-                          )}
-                          {["dp","admin"].includes(user.perfil) && !["cancelado","finalizado"].includes(s.status) && (
-                            <button onClick={async () => {
-                              if (!window.confirm("Cancelar esta solicitação?")) return;
-                              try { await api.cancelarDisciplinar(s.id); carregarTudo(); } catch(e) { setMsg({ tipo:"erro", texto:e.message }); }
-                            }} style={{ ...S.btnR, padding:"4px 8px" }}>🚫</button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </>
-      )}
-
-      {/* ABA CARTILHA */}
-      {aba === "cartilha" && (
-        <>
-          <div style={{ display:"flex", gap:10, marginBottom:12, flexWrap:"wrap" }}>
-            <select value={catFiltro} onChange={e => setCatFiltro(e.target.value)}
-              style={{ padding:"7px 10px", borderRadius:8, border:"1px solid #D1D5DB", fontSize:12 }}>
-              <option value="">Todas as categorias</option>
-              {categorias.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
-            <span style={{ fontSize:11, color:"#6B7280", alignSelf:"center" }}>{cartilhaFiltrada.length} enquadramento(s)</span>
-          </div>
-
-          <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-            {categorias.filter(c => !catFiltro || c === catFiltro).map(cat => {
-              const itens = cartilhaFiltrada.filter(c => c.categoria === cat);
-              if (!itens.length) return null;
-              return (
-                <div key={cat} style={{ background:"#fff", borderRadius:10, border:"1px solid #E5E7EB", overflow:"hidden" }}>
-                  <div style={{ background:"#F0F9FF", padding:"8px 14px", fontWeight:700, fontSize:12, color:"#0369A1", borderBottom:"1px solid #E5E7EB" }}>
-                    📂 {cat} — {itens.length} enquadramentos
-                  </div>
-                  <table style={{ width:"100%", borderCollapse:"collapse" }}>
-                    <thead>
-                      <tr>
-                        {["Descrição","LEVE","MÉDIA","GRAVE","GRAVÍSSIMA"].map(h => (
-                          <th key={h} style={{ ...S.th, background:"#F9FAFB" }}>{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {itens.map(item => (
-                        <tr key={item.id}>
-                          <td style={{ ...S.td, maxWidth:400 }}>{item.descricao}</td>
-                          {["tem_leve","tem_media","tem_grave","tem_gravissima"].map((campo, i) => {
-                            const cores = [NIVEL_COR.LEVE, NIVEL_COR.MEDIA, NIVEL_COR.GRAVE, NIVEL_COR.GRAVISSIMA];
-                            return (
-                              <td key={campo} style={{ ...S.td, textAlign:"center" }}>
-                                {item[campo] ? (
-                                  <span style={{ ...cores[i], padding:"2px 6px", borderRadius:4, fontSize:10, fontWeight:700 }}>✓</span>
-                                ) : <span style={{ color:"#E5E7EB" }}>—</span>}
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              );
-            })}
-          </div>
-        </>
-      )}
-
-      {/* MODAL NOVA SOLICITAÇÃO */}
-      {modalNovo && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.5)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center" }}>
-          <div style={{ background:"#fff", borderRadius:14, width:"100%", maxWidth:600, maxHeight:"90vh", overflowY:"auto", padding:28, boxShadow:"0 20px 60px rgba(0,0,0,.3)" }}>
-            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:20 }}>
-              <h3 style={{ margin:0, fontSize:16, fontWeight:700, color:"#0F2447" }}>⚖️ Nova Solicitação Disciplinar</h3>
-              <button onClick={() => setModalNovo(false)} style={{ background:"none", border:"none", fontSize:20, cursor:"pointer" }}>×</button>
-            </div>
-
-            <div style={{ marginBottom:14 }}>
-              <label style={S.lbl}>Colaborador *</label>
-              <select value={form.colaborador_id} style={S.inp}
-                onChange={e => {
-                  setForm(f => ({...f, colaborador_id: e.target.value}));
-                  if (e.target.value && form.cartilha_id) buscarSugestao(e.target.value, form.cartilha_id);
-                }}>
-                <option value="">Selecione...</option>
-                {colaboradores.filter(c=>c.cod_situacao!=="D").map(c => (
-                  <option key={c.id} value={c.id}>{c.nome} — {c.chapa}</option>
-                ))}
-              </select>
-            </div>
-
-            <div style={{ marginBottom:14 }}>
-              <label style={S.lbl}>Descrição do ocorrido *</label>
-              <textarea value={form.descricao_ocorrido} rows={3}
-                onChange={e => setForm(f=>({...f, descricao_ocorrido:e.target.value}))}
-                style={{ ...S.inp, resize:"vertical" }} placeholder="Descreva detalhadamente o que ocorreu..." />
-            </div>
-
-            <div style={{ marginBottom:14 }}>
-              <label style={S.lbl}>Enquadramento na Cartilha</label>
-              <select value={form.cartilha_id} style={S.inp} disabled={form.sem_enquadramento}
-                onChange={e => {
-                  setForm(f => ({...f, cartilha_id: e.target.value}));
-                  if (e.target.value && form.colaborador_id) buscarSugestao(form.colaborador_id, e.target.value);
-                }}>
-                <option value="">Selecione o enquadramento...</option>
-                {categorias.map(cat => (
-                  <optgroup key={cat} label={cat}>
-                    {cartilha.filter(c=>c.categoria===cat && c.ativo).map(c => (
-                      <option key={c.id} value={c.id}>{c.descricao.substring(0,80)}</option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
-              <label style={{ display:"flex", alignItems:"center", gap:6, marginTop:8, fontSize:12, color:"#F59E0B", cursor:"pointer", fontWeight:600 }}>
-                <input type="checkbox" checked={form.sem_enquadramento}
-                  onChange={e => setForm(f=>({...f, sem_enquadramento:e.target.checked, cartilha_id:""}))} />
-                ⚠️ Não encontrei um enquadramento na cartilha
-              </label>
-            </div>
-
-            {/* Sugestão automática */}
-            {sugestao && !form.sem_enquadramento && (
-              <div style={{ background:"#F0FDF4", border:"1px solid #BBF7D0", borderRadius:8, padding:"12px 14px", marginBottom:14 }}>
-                <div style={{ fontSize:12, fontWeight:700, color:"#065F46", marginBottom:6 }}>🤖 Sugestão automática do sistema</div>
-                <div style={{ fontSize:11, color:"#374151" }}>
-                  <strong>Histórico:</strong> {sugestao.historico_resumo}<br/>
-                  <strong>Nível sugerido:</strong>{" "}
-                  <span style={{ ...NIVEL_COR[sugestao.nivel_sugerido], padding:"1px 8px", borderRadius:4, fontSize:11, fontWeight:700 }}>
-                    {sugestao.nivel_sugerido}
-                  </span>{" "}
-                  — {sugestao.penalidade_sugerida}
-                  {sugestao.dias_sugeridos > 0 && ` (${sugestao.dias_sugeridos} dias)`}
-                </div>
-              </div>
-            )}
-            {buscandoSugestao && <div style={{ fontSize:11, color:"#6B7280", marginBottom:12 }}>⏳ Consultando histórico...</div>}
-
-            <div style={{ display:"flex", gap:10, justifyContent:"flex-end", marginTop:20 }}>
-              <button onClick={() => setModalNovo(false)} style={S.btnS}>Cancelar</button>
-              <button onClick={criarSolicitacao} disabled={salvando} style={S.btnP}>
-                {salvando ? "Enviando..." : "📨 Enviar ao Jurídico"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL DETALHE */}
-      {modalDetalhe && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.5)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center" }}>
-          <div style={{ background:"#fff", borderRadius:14, width:"100%", maxWidth:580, maxHeight:"90vh", overflowY:"auto", padding:28, boxShadow:"0 20px 60px rgba(0,0,0,.3)" }}>
-            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:16 }}>
-              <h3 style={{ margin:0, fontSize:15, fontWeight:700, color:"#0F2447" }}>⚖️ Detalhes da Solicitação #{modalDetalhe.id}</h3>
-              <button onClick={() => setModalDetalhe(null)} style={{ background:"none", border:"none", fontSize:20, cursor:"pointer" }}>×</button>
-            </div>
-            {[
-              ["Colaborador", `${modalDetalhe.nome_colaborador} (${modalDetalhe.chapa})`],
-              ["Gestor solicitante", modalDetalhe.gestor_nome],
-              ["Data", new Date(modalDetalhe.criado_em).toLocaleString("pt-BR")],
-              ["Status", STATUS_COR[modalDetalhe.status]?.label || modalDetalhe.status],
-              ["Ocorrido", modalDetalhe.descricao_ocorrido],
-              ["Enquadramento", modalDetalhe.sem_enquadramento ? "Sem enquadramento" : modalDetalhe.cartilha_descricao],
-              ["Sugestão do sistema", modalDetalhe.nivel_sugerido ? `${modalDetalhe.nivel_sugerido} — ${modalDetalhe.penalidade_sugerida}` : "—"],
-              ["Histórico", modalDetalhe.historico_resumo || "Primeira ocorrência"],
-              modalDetalhe.nivel_final && ["Decisão do Jurídico", `${modalDetalhe.nivel_final} — ${modalDetalhe.penalidade_final}`],
-              modalDetalhe.juridico_nome && ["Analisado por", `${modalDetalhe.juridico_nome} em ${new Date(modalDetalhe.data_analise_juridico).toLocaleString("pt-BR")}`],
-              modalDetalhe.texto_juridico && ["Texto jurídico", modalDetalhe.texto_juridico],
-              modalDetalhe.juridico_observacao && ["Observação jurídica", modalDetalhe.juridico_observacao],
-            ].filter(Boolean).map(([label, valor]) => (
-              <div key={label} style={{ marginBottom:10 }}>
-                <div style={{ fontSize:10, fontWeight:700, color:"#6B7280", textTransform:"uppercase" }}>{label}</div>
-                <div style={{ fontSize:13, color:"#0F2447" }}>{valor}</div>
-              </div>
-            ))}
-            <div style={{ display:"flex", justifyContent:"flex-end", marginTop:16 }}>
-              <button onClick={() => setModalDetalhe(null)} style={S.btnS}>Fechar</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL ANÁLISE JURÍDICO */}
-      {modalAnalise && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.5)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center" }}>
-          <div style={{ background:"#fff", borderRadius:14, width:"100%", maxWidth:580, maxHeight:"90vh", overflowY:"auto", padding:28, boxShadow:"0 20px 60px rgba(0,0,0,.3)" }}>
-            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:16 }}>
-              <h3 style={{ margin:0, fontSize:15, fontWeight:700, color:"#7C3AED" }}>⚖️ Análise Jurídica — #{modalAnalise.id}</h3>
-              <button onClick={() => setModalAnalise(null)} style={{ background:"none", border:"none", fontSize:20, cursor:"pointer" }}>×</button>
-            </div>
-
-            <div style={{ background:"#F5F3FF", borderRadius:8, padding:"10px 14px", marginBottom:16, fontSize:12 }}>
-              <strong>{modalAnalise.nome_colaborador}</strong> — {modalAnalise.chapa}<br/>
-              <span style={{ color:"#6B7280" }}>{modalAnalise.descricao_ocorrido?.substring(0,150)}</span><br/>
-              {modalAnalise.nivel_sugerido && (
-                <span style={{ marginTop:4, display:"block" }}>
-                  Sugestão: <strong>{modalAnalise.nivel_sugerido}</strong> — {modalAnalise.penalidade_sugerida}
-                  {" | "}{modalAnalise.historico_resumo || "Primeira ocorrência"}
-                </span>
-              )}
-            </div>
-
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:12 }}>
-              <div>
-                <label style={S.lbl}>Ação *</label>
-                <select value={analise.acao} onChange={e=>setAnalise(a=>({...a,acao:e.target.value}))} style={S.inp}>
-                  <option value="aprovar">✅ Aprovar</option>
-                  <option value="alterar">✏️ Aprovar com alterações</option>
-                  <option value="reprovar">❌ Reprovar</option>
-                </select>
-              </div>
-              <div>
-                <label style={S.lbl}>Nível final</label>
-                <select value={analise.nivel_final} onChange={e=>setAnalise(a=>({...a,nivel_final:e.target.value}))} style={S.inp} disabled={analise.acao==="reprovar"}>
-                  <option value="LEVE">LEVE — Advertência</option>
-                  <option value="MEDIA">MÉDIA — Suspensão 2 dias</option>
-                  <option value="GRAVE">GRAVE — Suspensão 4 dias</option>
-                  <option value="GRAVISSIMA">GRAVÍSSIMA — Demissão</option>
-                </select>
-              </div>
-            </div>
-
-            <div style={{ marginBottom:12 }}>
-              <label style={S.lbl}>Penalidade final</label>
-              <input value={analise.penalidade_final} onChange={e=>setAnalise(a=>({...a,penalidade_final:e.target.value}))}
-                style={S.inp} placeholder="Ex: Suspensão de 2 dias" disabled={analise.acao==="reprovar"} />
-            </div>
-
-            <div style={{ marginBottom:12 }}>
-              <label style={S.lbl}>Texto jurídico (aparecerá no documento)</label>
-              <textarea value={analise.texto_juridico} rows={3}
-                onChange={e=>setAnalise(a=>({...a,texto_juridico:e.target.value}))}
-                style={{ ...S.inp, resize:"vertical" }} placeholder="Fundamentação jurídica..." />
-            </div>
-
-            <div style={{ marginBottom:16 }}>
-              <label style={S.lbl}>Observação</label>
-              <textarea value={analise.observacao} rows={2}
-                onChange={e=>setAnalise(a=>({...a,observacao:e.target.value}))}
-                style={{ ...S.inp, resize:"vertical" }} placeholder="Observações adicionais..." />
-            </div>
-
-            <div style={{ display:"flex", gap:10, justifyContent:"flex-end" }}>
-              <button onClick={() => setModalAnalise(null)} style={S.btnS}>Cancelar</button>
-              <button onClick={enviarAnalise} disabled={salvando}
-                style={{ ...S.btnP, background: analise.acao==="reprovar" ? "#DC2626" : "#7C3AED" }}>
-                {salvando ? "Salvando..." : analise.acao==="reprovar" ? "❌ Reprovar" : "✅ Confirmar Análise"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-
-
-function App() {
+export default function App() {
   const [user, setUser] = useState(null);
   const [page, setPage] = useState("dashboard");
 
@@ -7967,7 +6810,6 @@ function App() {
     atualizacao_cadastral: { title: "Atualização de Dados Cadastrais", subtitle: "Solicitação de alteração cadastral" },
     ocorrencias:      { title: "Solicitações de Advertências/Suspensões",   subtitle: "Registro de ocorrências disciplinares" },
     autorizacoes:     { title: "Autorização de Desconto",                   subtitle: "Autorização para desconto na folha de pagamento" },
-    disciplinar:      { title: "Medidas Disciplinares",                          subtitle: "Fluxo com análise do Jurídico — Cartilha Educativa" },
   };
 
   if (!user) return <Login onLogin={(u, s) => { setUser(u); setSessao(s); setPage("solicitacoes"); }} />;
@@ -8013,7 +6855,6 @@ function App() {
           {page === "autorizacoes"      && <Autorizacoes user={user} colaboradores={colaboradores} />}
           {page === "atualizacao_cadastral" && <AtualizacaoCadastral user={user} colaboradores={colaboradores} />}
           {page === "plano_saude" && <PlanoSaude user={user} colaboradores={colaboradores} />}
-          {page === "disciplinar" && user && <Disciplinar user={user} colaboradores={colaboradores} api={api} />}
         </div>
       </div>
     </div>
