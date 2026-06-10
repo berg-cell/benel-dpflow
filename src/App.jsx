@@ -5104,7 +5104,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                       {/* 3. Anexar/Substituir — só após aprovação, não pedido_demissão */}
                       {["aprovado","finalizado"].includes(sol.status) && sol.tipo !== "pedido_demissao" && (
                         <label style={{ ...btnBase, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46", display:"inline-block" }}>
-                          📎 {sol.anexo_nome ? "Substituir" : "Anexar"}
+                          📎 {parseInt(sol.qtd_anexos) > 0 ? "Substituir" : "Anexar"}
                           <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display:"none" }}
                             onChange={async (e) => {
                               const file = e.target.files[0]; if (!file) return;
@@ -5122,7 +5122,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                       )}
 
                       {/* 4. Ver anexo — quando há anexo */}
-                      {sol.anexo_nome && (
+                      {parseInt(sol.qtd_anexos) > 0 && (
                         <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalAnexoPedido(r); } catch(e){ setErro(e.message); } }}
                           style={{ ...btnBase, border:"1px solid #6B7280", background:"#F9FAFB", color:"#374151" }}>👁️ Ver</button>
                       )}
@@ -5462,68 +5462,125 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
       {/* Modal PDF Desligamento */}
       {/* Modal Ver Anexo — Pedido de Demissão */}
       {modalAnexoPedido && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.55)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1100 }}>
-          <div style={{ background:"#fff", borderRadius:16, width:"100%", maxWidth:700, maxHeight:"90vh", overflowY:"auto", padding:28 }}>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
-              <h3 style={{ margin:0, fontSize:16, fontWeight:700 }}>📎 Anexos — {modalAnexoPedido.colaborador_nome}</h3>
-              <button onClick={() => setModalAnexoPedido(null)} style={{ background:"none", border:"none", fontSize:22, cursor:"pointer" }}>×</button>
-            </div>
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.7)", zIndex:2000, display:"flex", flexDirection:"column" }}>
+          {/* Barra superior */}
+          <div style={{ background:"#fff", display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 20px", borderBottom:"1px solid #E5E7EB", flexShrink:0 }}>
+            <span style={{ fontWeight:700, fontSize:15 }}>📎 Anexos — {modalAnexoPedido.colaborador_nome}</span>
+            <button onClick={() => setModalAnexoPedido(null)} style={{ background:"none", border:"none", fontSize:22, cursor:"pointer", color:"#374151" }}>×</button>
+          </div>
 
-            {/* Pedido de Demissão assinado */}
-            {(modalAnexoPedido.pedido_anexo_dados || modalAnexoPedido.pedido_anexo_base64) && (
-              <div style={{ marginBottom:20, padding:"14px 16px", background:"#F0FDF4", borderRadius:10, border:"1px solid #BBF7D0" }}>
-                <div style={{ fontSize:12, fontWeight:700, color:"#065F46", marginBottom:10 }}>📄 Pedido de Demissão Assinado</div>
-                <div style={{ fontSize:12, color:"#374151", marginBottom:10 }}>{modalAnexoPedido.pedido_anexo_nome}</div>
-                {(modalAnexoPedido.pedido_anexo_dados || modalAnexoPedido.pedido_anexo_base64).startsWith("data:image") ? (
-                  <img src={modalAnexoPedido.pedido_anexo_dados || modalAnexoPedido.pedido_anexo_base64}
-                    alt="Pedido de Demissão" style={{ maxWidth:"100%", border:"1px solid #E5E7EB", borderRadius:8 }} />
-                ) : (
-                  <a href={modalAnexoPedido.pedido_anexo_dados || modalAnexoPedido.pedido_anexo_base64}
-                    download={modalAnexoPedido.pedido_anexo_nome}
-                    style={{ padding:"8px 18px", background:"#0F2447", color:"#fff", borderRadius:8, fontSize:13, fontWeight:600, textDecoration:"none", display:"inline-block" }}>
-                    ⬇ Baixar PDF
-                  </a>
-                )}
-              </div>
-            )}
+          {/* Conteúdo */}
+          <div style={{ flex:1, overflowY:"auto", padding:24, background:"#F8FAFC" }}>
+            <div style={{ maxWidth:860, margin:"0 auto", display:"flex", flexDirection:"column", gap:16 }}>
 
-            {/* Anexos gerais da solicitação */}
-            {modalAnexoPedido.anexos && modalAnexoPedido.anexos.length > 0 ? (
-              <div>
-                <div style={{ fontSize:12, fontWeight:700, color:"#374151", marginBottom:10 }}>📁 Documentos Anexados</div>
-                {modalAnexoPedido.anexos.map((anx) => (
-                  <div key={anx.id} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"10px 14px", border:"1px solid #E5E7EB", borderRadius:8, marginBottom:8, background:"#FAFAFA" }}>
-                    <div>
-                      <div style={{ fontSize:13, fontWeight:600, color:"#111827" }}>📄 {anx.nome_arquivo}</div>
-                      <div style={{ fontSize:11, color:"#6B7280" }}>{new Date(anx.criado_em).toLocaleDateString("pt-BR")}</div>
+              {/* Pedido de Demissão assinado */}
+              {(modalAnexoPedido.pedido_anexo_dados || modalAnexoPedido.pedido_anexo_base64) && (() => {
+                const src = modalAnexoPedido.pedido_anexo_dados || modalAnexoPedido.pedido_anexo_base64;
+                const nome = modalAnexoPedido.pedido_anexo_nome;
+                const isImg = src.startsWith("data:image");
+                const isPdf = src.startsWith("data:application/pdf") || (nome||"").toLowerCase().endsWith(".pdf");
+                return (
+                  <div style={{ background:"#fff", borderRadius:12, boxShadow:"0 2px 12px rgba(0,0,0,0.08)", overflow:"hidden" }}>
+                    <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 18px", borderBottom:"1px solid #F3F4F6", background:"#F0FDF4" }}>
+                      <span style={{ fontSize:13, fontWeight:700, color:"#065F46" }}>📄 Pedido de Demissão Assinado — {nome}</span>
+                      <div style={{ display:"flex", gap:8 }}>
+                        <button onClick={() => {
+                          const w = window.open("","_blank");
+                          w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${nome}</title><style>body{margin:0;display:flex;justify-content:center;align-items:flex-start;background:#F8FAFC;padding:20px;}img{max-width:100%;border-radius:8px;}iframe{width:100%;height:96vh;border:none;border-radius:8px;}@media print{body{padding:0;}}</style></head><body>${isImg ? `<img src="${src}" />` : `<iframe src="${src}"></iframe>`}</body></html>`);
+                          w.document.close(); w.focus(); setTimeout(()=>w.print(),600);
+                        }} style={{ padding:"6px 14px", background:"#0F2447", color:"#fff", border:"none", borderRadius:8, fontSize:12, fontWeight:600, cursor:"pointer" }}>🖨️ Imprimir / Salvar</button>
+                        <a href={src} download={nome} style={{ padding:"6px 14px", background:"#F3F4F6", color:"#374151", border:"1px solid #D1D5DB", borderRadius:8, fontSize:12, fontWeight:600, textDecoration:"none" }}>⬇ Baixar</a>
+                        {/* Substituir */}
+                        <label style={{ padding:"6px 14px", background:"#FEF3C7", color:"#92400E", border:"1px solid #FCD34D", borderRadius:8, fontSize:12, fontWeight:600, cursor:"pointer" }}>
+                          🔄 Substituir
+                          <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display:"none" }}
+                            onChange={async (e) => {
+                              const file = e.target.files[0]; if (!file) return;
+                              if (file.size > 5*1024*1024) { alert("Arquivo muito grande (max 5MB)"); return; }
+                              const reader = new FileReader();
+                              reader.onload = async (ev) => {
+                                try {
+                                  await api.addAnexoDesligamento(modalAnexoPedido.id, { nome_arquivo: file.name, tipo_arquivo: file.type, dados_base64: ev.target.result });
+                                  const r = await api.buscarDesligamento(modalAnexoPedido.id);
+                                  setModalAnexoPedido(r);
+                                } catch(err) { alert("Erro: " + err.message); }
+                              };
+                              reader.readAsDataURL(file);
+                            }} />
+                        </label>
+                      </div>
                     </div>
-                    <button onClick={async () => {
-                      try {
-                        const r = await api.getAnexoDesligamento(modalAnexoPedido.id, anx.id);
-                        if (!r?.dados_base64) { alert("Arquivo não encontrado."); return; }
-                        const a = document.createElement("a");
-                        a.href = r.dados_base64;
-                        a.download = anx.nome_arquivo;
-                        a.click();
-                      } catch(e) { alert("Erro ao baixar: " + e.message); }
-                    }} style={{ padding:"6px 14px", background:"#0F2447", color:"#fff", border:"none", borderRadius:8, fontSize:12, fontWeight:600, cursor:"pointer" }}>
-                      ⬇ Baixar
-                    </button>
+                    <div style={{ padding:16, textAlign:"center", background:"#fff" }}>
+                      {isImg ? (
+                        <img src={src} alt={nome} style={{ maxWidth:"100%", borderRadius:8, border:"1px solid #E5E7EB" }} />
+                      ) : isPdf ? (
+                        <iframe src={src} style={{ width:"100%", height:"70vh", border:"none", borderRadius:8 }} title={nome} />
+                      ) : (
+                        <div style={{ padding:"30px 0", color:"#6B7280", fontSize:13 }}>
+                          <div style={{ fontSize:48, marginBottom:8 }}>📄</div>
+                          <div>{nome}</div>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                ))}
-              </div>
-            ) : !modalAnexoPedido.pedido_anexo_dados && !modalAnexoPedido.pedido_anexo_base64 && (
-              <div style={{ textAlign:"center", padding:"40px 0", color:"#9CA3AF" }}>
-                <div style={{ fontSize:40, marginBottom:10 }}>📎</div>
-                <div>Nenhum documento anexado nesta solicitação</div>
-              </div>
-            )}
+                );
+              })()}
 
-            <div style={{ display:"flex", justifyContent:"flex-end", paddingTop:16, borderTop:"1px solid #F3F4F6", marginTop:20 }}>
-              <button onClick={() => setModalAnexoPedido(null)}
-                style={{ padding:"9px 20px", borderRadius:8, border:"1px solid #E5E7EB", background:"#fff", fontSize:14, cursor:"pointer" }}>
-                Fechar
-              </button>
+              {/* Anexos gerais */}
+              {modalAnexoPedido.anexos && modalAnexoPedido.anexos.length > 0 && (
+                <div style={{ background:"#fff", borderRadius:12, boxShadow:"0 2px 12px rgba(0,0,0,0.08)", overflow:"hidden" }}>
+                  <div style={{ padding:"12px 18px", borderBottom:"1px solid #F3F4F6", background:"#EFF6FF" }}>
+                    <span style={{ fontSize:13, fontWeight:700, color:"#1D4ED8" }}>📁 Documentos Anexados ({modalAnexoPedido.anexos.length})</span>
+                  </div>
+                  <div style={{ padding:16, display:"flex", flexDirection:"column", gap:10 }}>
+                    {modalAnexoPedido.anexos.map((anx) => {
+                      const src = anx.dados_base64;
+                      const isImg = src?.startsWith("data:image");
+                      const isPdf = src?.startsWith("data:application/pdf") || (anx.nome_arquivo||"").toLowerCase().endsWith(".pdf");
+                      return (
+                        <div key={anx.id} style={{ border:"1px solid #E5E7EB", borderRadius:8, overflow:"hidden" }}>
+                          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"10px 14px", background:"#FAFAFA" }}>
+                            <div>
+                              <div style={{ fontSize:13, fontWeight:600, color:"#111827" }}>📄 {anx.nome_arquivo}</div>
+                              <div style={{ fontSize:11, color:"#6B7280" }}>{new Date(anx.criado_em).toLocaleDateString("pt-BR")}</div>
+                            </div>
+                            <div style={{ display:"flex", gap:8 }}>
+                              {src && (
+                                <button onClick={() => {
+                                  const w = window.open("","_blank");
+                                  w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${anx.nome_arquivo}</title><style>body{margin:0;display:flex;justify-content:center;padding:20px;background:#F8FAFC;}img{max-width:100%;border-radius:8px;}iframe{width:100%;height:96vh;border:none;}@media print{body{padding:0;}}</style></head><body>${isImg ? `<img src="${src}" />` : `<iframe src="${src}"></iframe>`}</body></html>`);
+                                  w.document.close(); w.focus(); setTimeout(()=>w.print(),600);
+                                }} style={{ padding:"5px 12px", background:"#0F2447", color:"#fff", border:"none", borderRadius:7, fontSize:11, fontWeight:600, cursor:"pointer" }}>🖨️ Imprimir</button>
+                              )}
+                              {src && (
+                                <a href={src} download={anx.nome_arquivo} style={{ padding:"5px 12px", background:"#F3F4F6", color:"#374151", border:"1px solid #D1D5DB", borderRadius:7, fontSize:11, fontWeight:600, textDecoration:"none" }}>⬇ Baixar</a>
+                              )}
+                            </div>
+                          </div>
+                          {src && (
+                            <div style={{ padding:"0 14px 14px", background:"#fff" }}>
+                              {isImg ? (
+                                <img src={src} alt={anx.nome_arquivo} style={{ maxWidth:"100%", borderRadius:6, border:"1px solid #E5E7EB" }} />
+                              ) : isPdf ? (
+                                <iframe src={src} style={{ width:"100%", height:"60vh", border:"none", borderRadius:6 }} title={anx.nome_arquivo} />
+                              ) : null}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Nenhum anexo */}
+              {!modalAnexoPedido.pedido_anexo_dados && !modalAnexoPedido.pedido_anexo_base64 &&
+               (!modalAnexoPedido.anexos || modalAnexoPedido.anexos.length === 0) && (
+                <div style={{ textAlign:"center", padding:"60px 0", color:"#9CA3AF", background:"#fff", borderRadius:12 }}>
+                  <div style={{ fontSize:48, marginBottom:10 }}>📎</div>
+                  <div>Nenhum documento anexado nesta solicitação</div>
+                </div>
+              )}
             </div>
           </div>
         </div>
