@@ -415,73 +415,6 @@ const ASSINATURA_BENEL = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAeAB4AAD/2wB
 // ─── CONTEXTO DE AUTH ────────────────────────────────────────────────────────
 const AuthContext = createContext(null);
 
-const MOCK_USERS = [
-  { id: 1, nome: "Carlos Mendes", email: "gestor@dp.com", senha: "123", perfil: "gestor", avatar: "CM" },
-  { id: 2, nome: "Ana Souza", email: "superior@dp.com", senha: "123", perfil: "superior", avatar: "AS" },
-  { id: 3, nome: "Fernanda Lima", email: "dp@dp.com", senha: "123", perfil: "dp", avatar: "FL" },
-  { id: 4, nome: "Admin", email: "admin@dp.com", senha: "123", perfil: "admin", avatar: "AD" },
-];
-
-const MOCK_COLABORADORES = [
-  { id: 1, chapa: "0404", nome: "João Pedro Silva", funcao: "Analista", situacao: "Ativo", centro_custo: "001", desc_cc: "TI" },
-  { id: 2, chapa: "0512", nome: "Maria Fernanda Costa", funcao: "Coordenadora", situacao: "Ativo", centro_custo: "002", desc_cc: "RH" },
-  { id: 3, chapa: "0718", nome: "Roberto Alves", funcao: "Motorista", situacao: "Ativo", centro_custo: "003", desc_cc: "Logística" },
-  { id: 4, chapa: "0321", nome: "Luciana Torres", funcao: "Técnica", situacao: "Ativo", centro_custo: "001", desc_cc: "TI" },
-];
-
-const MOCK_EVENTOS = [
-  { id: 1, codigo: "1148", descricao: "Auxílio Quilometragem", tipo: "provento", forma: "valor" },
-  { id: 2, codigo: "1150", descricao: "Ajuda de Custo", tipo: "provento", forma: "valor" },
-  { id: 3, codigo: "1155", descricao: "Horas Extras 50%", tipo: "provento", forma: "hora" },
-  { id: 4, codigo: "1160", descricao: "Diária de Viagem", tipo: "provento", forma: "referencia" },
-  { id: 5, codigo: "2001", descricao: "Desconto Multa Trânsito", tipo: "desconto", forma: "valor" },
-  { id: 6, codigo: "1175", descricao: "Sobreaviso", tipo: "provento", forma: "hora" },
-];
-
-const MOCK_SOLICITACOES_INIT = [
-  {
-    id: 1, colaborador_id: 1, evento_id: 1, tipo: "Auxílio Quilometragem",
-    data: "2025-09-30", hora: "00:00", referencia: "", valor: "1190.47", valor_original: "1190.47",
-    observacao: "Deslocamento filial sul", status: "aprovado_final", solicitante_id: 1,
-    gestor_id: 1, superior_id: 2, competencia: "092025", criado_em: "2025-09-25",
-    historico: [
-      { acao: "criado", usuario: "Carlos Mendes", data: "2025-09-25 09:00", obs: "" },
-      { acao: "aprovado_gestor", usuario: "Carlos Mendes", data: "2025-09-25 09:05", obs: "" },
-      { acao: "aprovado_superior", usuario: "Ana Souza", data: "2025-09-26 10:00", obs: "" },
-      { acao: "aprovado_dp", usuario: "Fernanda Lima", data: "2025-09-27 14:00", obs: "" },
-    ]
-  },
-  {
-    id: 2, colaborador_id: 3, evento_id: 3, tipo: "Horas Extras 50%",
-    data: "2025-09-28", hora: "04:30", referencia: "", valor: "340.00", valor_original: "340.00",
-    observacao: "Plantão final de semana", status: "pendente_gestor", solicitante_id: 1,
-    gestor_id: 1, superior_id: 2, competencia: "092025", criado_em: "2025-09-28",
-    historico: [
-      { acao: "criado", usuario: "Carlos Mendes", data: "2025-09-28 08:00", obs: "" },
-    ]
-  },
-  {
-    id: 3, colaborador_id: 2, evento_id: 2, tipo: "Ajuda de Custo",
-    data: "2025-09-20", hora: "", referencia: "", valor: "500.00", valor_original: "500.00",
-    observacao: "Curso externo SP", status: "pendente_superior", solicitante_id: 1,
-    gestor_id: 1, superior_id: 2, competencia: "092025", criado_em: "2025-09-20",
-    historico: [
-      { acao: "criado", usuario: "Carlos Mendes", data: "2025-09-20 10:00", obs: "" },
-      { acao: "aprovado_gestor", usuario: "Carlos Mendes", data: "2025-09-20 10:30", obs: "" },
-    ]
-  },
-  {
-    id: 4, colaborador_id: 4, evento_id: 5, tipo: "Desconto Multa Trânsito",
-    data: "2025-09-15", hora: "", referencia: "", valor: "293.47", valor_original: "293.47",
-    observacao: "Multa via expressa", status: "devolvido", solicitante_id: 1,
-    gestor_id: 1, superior_id: 2, competencia: "092025", criado_em: "2025-09-15",
-    historico: [
-      { acao: "criado", usuario: "Carlos Mendes", data: "2025-09-15 11:00", obs: "" },
-      { acao: "devolvido", usuario: "Ana Souza", data: "2025-09-16 09:00", obs: "Falta comprovante da infração" },
-    ]
-  },
-];
-
 // ─── UTILITÁRIOS ─────────────────────────────────────────────────────────────
 // Converte data do banco para YYYY-MM-DD usando UTC (sem conversão de fuso)
 function fmtDateLocal(val) {
@@ -1848,11 +1781,6 @@ function CadEventos({ eventos, setEventos }) {
 }
 
 // ─── CADASTRO: HIERARQUIA ─────────────────────────────────────────────────────
-const MOCK_HIERARQUIA_INIT = [
-  { id: 1, gestor_id: 1, gestor_nome: "Carlos Mendes", superior_id: 2, superior_nome: "Ana Souza", centro_custo: "001", desc_cc: "TI", ativo: true },
-  { id: 2, gestor_id: 1, gestor_nome: "Carlos Mendes", superior_id: 2, superior_nome: "Ana Souza", centro_custo: "003", desc_cc: "Logística", ativo: true },
-];
-
 function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
   const [modalImport, setModalImport] = useState(false);
   const [modalForm, setModalForm] = useState(null);
@@ -2080,13 +2008,6 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
 }
 
 // ─── CADASTRO: ALÇADAS ────────────────────────────────────────────────────────
-const MOCK_ALCADAS_INIT = [
-  { id: 1, evento_id: 1, evento_nome: "Auxílio Quilometragem", num_alcadas: 2, exige_anexo: true, ativo: true },
-  { id: 2, evento_id: 2, evento_nome: "Ajuda de Custo",        num_alcadas: 2, exige_anexo: true, ativo: true },
-  { id: 3, evento_id: 3, evento_nome: "Horas Extras 50%",      num_alcadas: 1, exige_anexo: false, ativo: true },
-  { id: 4, evento_id: 5, evento_nome: "Desconto Multa Trânsito", num_alcadas: 2, exige_anexo: true, ativo: true },
-];
-
 function CadAlcadas({ alcadas, setAlcadas, eventos }) {
   const [modalImport, setModalImport] = useState(false);
   const [modalForm, setModalForm] = useState(null);
@@ -2552,8 +2473,7 @@ function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user, 
     if (!editandoBloco.competencia) { alert("Selecione a Competência."); return; }
 
     // Buscar evento primeiro (necessário para determinar forma)
-    const eventoObj = eventos.find(e => e.id === parseInt(editandoBloco.evento_id))
-                   || MOCK_EVENTOS.find(e => e.id === parseInt(editandoBloco.evento_id));
+    const eventoObj = eventos.find(e => e.id === parseInt(editandoBloco.evento_id));
 
     const forma = eventoObj?.forma || "valor";
     const linhasValidas = editandoBloco.linhas.filter(l => {
@@ -3683,107 +3603,7 @@ function Auditoria({ solicitacoes, blocos, sessao }) {
 }
 
 // ─── USUARIOS (placeholder) ───────────────────────────────────────────────────
-function Usuarios() {
-  return (
-    <div style={{ padding: 28 }}>
-      <Card style={{ padding: 0 }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr style={{ background: "#F9FAFB" }}>
-              {["Avatar", "Nome", "E-mail", "Perfil", "Status", "Ações"].map(h => (
-                <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {MOCK_USERS.map((u, i) => (
-              <tr key={u.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
-                <td style={{ padding: "12px 16px" }}>
-                  <div style={{
-                    width: 32, height: 32, borderRadius: 8,
-                    background: PERFIL_CONFIG[u.perfil]?.color,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: 12, fontWeight: 700, color: "#fff"
-                  }}>{u.avatar}</div>
-                </td>
-                <td style={{ padding: "12px 16px", fontSize: 13, fontWeight: 600, color: "#111827" }}>{u.nome}</td>
-                <td style={{ padding: "12px 16px", fontSize: 12, color: "#374151" }}>{u.email}</td>
-                <td style={{ padding: "12px 16px" }}>
-                  <span style={{
-                    padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600,
-                    background: PERFIL_CONFIG[u.perfil]?.color + "22",
-                    color: PERFIL_CONFIG[u.perfil]?.color
-                  }}>{PERFIL_CONFIG[u.perfil]?.label}</span>
-                </td>
-                <td style={{ padding: "12px 16px" }}>
-                  <span style={{ padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: "#D1FAE5", color: "#065F46" }}>Ativo</span>
-                </td>
-                <td style={{ padding: "12px 16px" }}>
-                  <Button variant="ghost" size="sm">Editar</Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </Card>
-    </div>
-  );
-}
 
-
-const MOCK_BLOCOS_INIT = [
-  {
-    id: 1,
-    descricao: "Variáveis Setembro 2025",
-    competencia: "092025",
-    status: "aprovado_final",
-    solicitante: "Carlos Mendes",
-    solicitante_id: 1,
-    criado_em: "25/09/2025 09:00:00",
-    linhas: [
-      { _id: 1, colaborador_id: 1, evento_id: 1, data: "2025-09-30", hora: "00:00", valor: "1190.47", observacao: "Deslocamento filial sul", colaborador: MOCK_COLABORADORES[0], evento: MOCK_EVENTOS[0] },
-      { _id: 2, colaborador_id: 2, evento_id: 2, data: "2025-09-20", hora: "", valor: "500.00", observacao: "Curso externo SP", colaborador: MOCK_COLABORADORES[1], evento: MOCK_EVENTOS[1] },
-    ],
-    historico: [
-      { acao: "criado", usuario: "Carlos Mendes", data: "25/09/2025 09:00:00", obs: "Bloco enviado para aprovação" },
-      { acao: "aprovado_gestor", usuario: "Carlos Mendes", data: "25/09/2025 09:30:00", obs: "" },
-      { acao: "aprovado_superior", usuario: "Ana Souza", data: "26/09/2025 10:00:00", obs: "" },
-      { acao: "aprovado_dp", usuario: "Fernanda Lima", data: "27/09/2025 14:00:00", obs: "" },
-    ]
-  },
-  {
-    id: 2,
-    descricao: "Horas Extras Operação",
-    competencia: "092025",
-    status: "pendente_gestor",
-    solicitante: "Carlos Mendes",
-    solicitante_id: 1,
-    criado_em: "28/09/2025 08:00:00",
-    linhas: [
-      { _id: 3, colaborador_id: 3, evento_id: 3, data: "2025-09-28", hora: "04:30", valor: "340.00", observacao: "Plantão final de semana", colaborador: MOCK_COLABORADORES[2], evento: MOCK_EVENTOS[2] },
-      { _id: 4, colaborador_id: 4, evento_id: 6, data: "2025-09-29", hora: "02:00", valor: "210.00", observacao: "", colaborador: MOCK_COLABORADORES[3], evento: MOCK_EVENTOS[5] },
-    ],
-    historico: [
-      { acao: "criado", usuario: "Carlos Mendes", data: "28/09/2025 08:00:00", obs: "Bloco enviado para aprovação" },
-    ]
-  },
-  {
-    id: 3,
-    descricao: "Ajudas de Custo Outubro",
-    competencia: "102025",
-    status: "devolvido",
-    solicitante: "Carlos Mendes",
-    solicitante_id: 1,
-    criado_em: "01/10/2025 10:00:00",
-    linhas: [
-      { _id: 5, colaborador_id: 4, evento_id: 5, data: "2025-10-01", hora: "", valor: "293.47", observacao: "Multa via expressa", colaborador: MOCK_COLABORADORES[3], evento: MOCK_EVENTOS[4] },
-    ],
-    historico: [
-      { acao: "criado", usuario: "Carlos Mendes", data: "01/10/2025 10:00:00", obs: "Bloco enviado para aprovação" },
-      { acao: "devolvido", usuario: "Ana Souza", data: "02/10/2025 09:00:00", obs: "Falta comprovante da infração" },
-    ]
-  },
-];
 
 function Aprovacoes({ blocos, setBlocos, user, recarregarDados }) {
   const [justificativa, setJustificativa] = useState("");
