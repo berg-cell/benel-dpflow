@@ -5558,9 +5558,18 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                       <span style={{ fontSize:13, fontWeight:700, color:"#065F46" }}>📄 Pedido de Demissão Assinado — {nome}</span>
                       <div style={{ display:"flex", gap:8 }}>
                         <button onClick={() => {
-                          const w = window.open("","_blank");
-                          w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${nome}</title><style>body{margin:0;display:flex;justify-content:center;align-items:flex-start;background:#F8FAFC;padding:20px;}img{max-width:100%;border-radius:8px;}iframe{width:100%;height:96vh;border:none;border-radius:8px;}@media print{body{padding:0;}}</style></head><body>${isImg ? `<img src="${src}" />` : `<iframe src="${src}"></iframe>`}</body></html>`);
-                          w.document.close(); w.focus(); setTimeout(()=>w.print(),600);
+                          if (isPdf) {
+                            const b64 = src.split(",")[1];
+                            const bin = atob(b64); const arr = new Uint8Array(bin.length);
+                            for (let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
+                            const blobUrl = URL.createObjectURL(new Blob([arr],{type:"application/pdf"}));
+                            const w = window.open(blobUrl, "_blank");
+                            setTimeout(()=>{ w.focus(); w.print(); }, 1000);
+                          } else {
+                            const w = window.open("","_blank");
+                            w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${nome}</title><style>body{margin:0;display:flex;justify-content:center;padding:20px;}img{max-width:100%;}@media print{body{padding:0;}}</style></head><body><img src="${src}" /></body></html>`);
+                            w.document.close(); w.focus(); setTimeout(()=>w.print(),600);
+                          }
                         }} style={{ padding:"6px 14px", background:"#0F2447", color:"#fff", border:"none", borderRadius:8, fontSize:12, fontWeight:600, cursor:"pointer" }}>🖨️ Imprimir / Salvar</button>
                         <a href={src} download={nome} style={{ padding:"6px 14px", background:"#F3F4F6", color:"#374151", border:"1px solid #D1D5DB", borderRadius:8, fontSize:12, fontWeight:600, textDecoration:"none" }}>⬇ Baixar</a>
                         {/* Substituir */}
@@ -5620,9 +5629,18 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                             <div style={{ display:"flex", gap:8 }}>
                               {src && (
                                 <button onClick={() => {
-                                  const w = window.open("","_blank");
-                                  w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${anx.nome_arquivo}</title><style>body{margin:0;display:flex;justify-content:center;padding:20px;background:#F8FAFC;}img{max-width:100%;border-radius:8px;}iframe{width:100%;height:96vh;border:none;}@media print{body{padding:0;}}</style></head><body>${isImg ? `<img src="${src}" />` : `<iframe src="${src}"></iframe>`}</body></html>`);
-                                  w.document.close(); w.focus(); setTimeout(()=>w.print(),600);
+                                  if (isPdf) {
+                                    const b64 = src.split(",")[1];
+                                    const bin = atob(b64); const arr = new Uint8Array(bin.length);
+                                    for (let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
+                                    const blobUrl = URL.createObjectURL(new Blob([arr],{type:"application/pdf"}));
+                                    const w = window.open(blobUrl, "_blank");
+                                    setTimeout(()=>{ w.focus(); w.print(); }, 1000);
+                                  } else {
+                                    const w = window.open("","_blank");
+                                    w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${anx.nome_arquivo}</title><style>body{margin:0;display:flex;justify-content:center;padding:20px;}img{max-width:100%;}@media print{body{padding:0;}}</style></head><body><img src="${src}" /></body></html>`);
+                                    w.document.close(); w.focus(); setTimeout(()=>w.print(),600);
+                                  }
                                 }} style={{ padding:"5px 12px", background:"#0F2447", color:"#fff", border:"none", borderRadius:7, fontSize:11, fontWeight:600, cursor:"pointer" }}>🖨️ Imprimir</button>
                               )}
                               {src && (
