@@ -2,7 +2,7 @@ import { useState, useContext, createContext, useEffect, useCallback, useRef } f
 import { api, setTokens, clearTokens, onSessionExpired } from "./api";
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// SECURITY MODULE — DP Flow | Benel
+// SECURITY MODULE — DP Flow | Benel 
 // ═══════════════════════════════════════════════════════════════════════════════
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -415,73 +415,6 @@ const ASSINATURA_BENEL = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAeAB4AAD/2wB
 // ─── CONTEXTO DE AUTH ────────────────────────────────────────────────────────
 const AuthContext = createContext(null);
 
-const MOCK_USERS = [
-  { id: 1, nome: "Carlos Mendes", email: "gestor@dp.com", senha: "123", perfil: "gestor", avatar: "CM" },
-  { id: 2, nome: "Ana Souza", email: "superior@dp.com", senha: "123", perfil: "superior", avatar: "AS" },
-  { id: 3, nome: "Fernanda Lima", email: "dp@dp.com", senha: "123", perfil: "dp", avatar: "FL" },
-  { id: 4, nome: "Admin", email: "admin@dp.com", senha: "123", perfil: "admin", avatar: "AD" },
-];
-
-const MOCK_COLABORADORES = [
-  { id: 1, chapa: "0404", nome: "João Pedro Silva", funcao: "Analista", situacao: "Ativo", centro_custo: "001", desc_cc: "TI" },
-  { id: 2, chapa: "0512", nome: "Maria Fernanda Costa", funcao: "Coordenadora", situacao: "Ativo", centro_custo: "002", desc_cc: "RH" },
-  { id: 3, chapa: "0718", nome: "Roberto Alves", funcao: "Motorista", situacao: "Ativo", centro_custo: "003", desc_cc: "Logística" },
-  { id: 4, chapa: "0321", nome: "Luciana Torres", funcao: "Técnica", situacao: "Ativo", centro_custo: "001", desc_cc: "TI" },
-];
-
-const MOCK_EVENTOS = [
-  { id: 1, codigo: "1148", descricao: "Auxílio Quilometragem", tipo: "provento", forma: "valor" },
-  { id: 2, codigo: "1150", descricao: "Ajuda de Custo", tipo: "provento", forma: "valor" },
-  { id: 3, codigo: "1155", descricao: "Horas Extras 50%", tipo: "provento", forma: "hora" },
-  { id: 4, codigo: "1160", descricao: "Diária de Viagem", tipo: "provento", forma: "referencia" },
-  { id: 5, codigo: "2001", descricao: "Desconto Multa Trânsito", tipo: "desconto", forma: "valor" },
-  { id: 6, codigo: "1175", descricao: "Sobreaviso", tipo: "provento", forma: "hora" },
-];
-
-const MOCK_SOLICITACOES_INIT = [
-  {
-    id: 1, colaborador_id: 1, evento_id: 1, tipo: "Auxílio Quilometragem",
-    data: "2025-09-30", hora: "00:00", referencia: "", valor: "1190.47", valor_original: "1190.47",
-    observacao: "Deslocamento filial sul", status: "aprovado_final", solicitante_id: 1,
-    gestor_id: 1, superior_id: 2, competencia: "092025", criado_em: "2025-09-25",
-    historico: [
-      { acao: "criado", usuario: "Carlos Mendes", data: "2025-09-25 09:00", obs: "" },
-      { acao: "aprovado_gestor", usuario: "Carlos Mendes", data: "2025-09-25 09:05", obs: "" },
-      { acao: "aprovado_superior", usuario: "Ana Souza", data: "2025-09-26 10:00", obs: "" },
-      { acao: "aprovado_dp", usuario: "Fernanda Lima", data: "2025-09-27 14:00", obs: "" },
-    ]
-  },
-  {
-    id: 2, colaborador_id: 3, evento_id: 3, tipo: "Horas Extras 50%",
-    data: "2025-09-28", hora: "04:30", referencia: "", valor: "340.00", valor_original: "340.00",
-    observacao: "Plantão final de semana", status: "pendente_gestor", solicitante_id: 1,
-    gestor_id: 1, superior_id: 2, competencia: "092025", criado_em: "2025-09-28",
-    historico: [
-      { acao: "criado", usuario: "Carlos Mendes", data: "2025-09-28 08:00", obs: "" },
-    ]
-  },
-  {
-    id: 3, colaborador_id: 2, evento_id: 2, tipo: "Ajuda de Custo",
-    data: "2025-09-20", hora: "", referencia: "", valor: "500.00", valor_original: "500.00",
-    observacao: "Curso externo SP", status: "pendente_superior", solicitante_id: 1,
-    gestor_id: 1, superior_id: 2, competencia: "092025", criado_em: "2025-09-20",
-    historico: [
-      { acao: "criado", usuario: "Carlos Mendes", data: "2025-09-20 10:00", obs: "" },
-      { acao: "aprovado_gestor", usuario: "Carlos Mendes", data: "2025-09-20 10:30", obs: "" },
-    ]
-  },
-  {
-    id: 4, colaborador_id: 4, evento_id: 5, tipo: "Desconto Multa Trânsito",
-    data: "2025-09-15", hora: "", referencia: "", valor: "293.47", valor_original: "293.47",
-    observacao: "Multa via expressa", status: "devolvido", solicitante_id: 1,
-    gestor_id: 1, superior_id: 2, competencia: "092025", criado_em: "2025-09-15",
-    historico: [
-      { acao: "criado", usuario: "Carlos Mendes", data: "2025-09-15 11:00", obs: "" },
-      { acao: "devolvido", usuario: "Ana Souza", data: "2025-09-16 09:00", obs: "Falta comprovante da infração" },
-    ]
-  },
-];
-
 // ─── UTILITÁRIOS ─────────────────────────────────────────────────────────────
 // Converte data do banco para YYYY-MM-DD usando UTC (sem conversão de fuso)
 function fmtDateLocal(val) {
@@ -501,10 +434,11 @@ const STATUS_CONFIG = {
 };
 
 const PERFIL_CONFIG = {
-  gestor:    { label: "Gestor",    color: "#3B82F6" },
-  superior:  { label: "Superior",  color: "#8B5CF6" },
-  dp:        { label: "DP",        color: "#10B981" },
-  admin:     { label: "Admin",     color: "#F59E0B" },
+  gestor:     { label: "Gestor",     color: "#3B82F6" },
+  superior:   { label: "Superior",   color: "#8B5CF6" },
+  dp:         { label: "DP",         color: "#10B981" },
+  presidente: { label: "Presidente", color: "#DC2626" },
+  admin:      { label: "Admin",      color: "#F59E0B" },
 };
 
 // ─── LAYOUT OFICIAL RM LABORE ─────────────────────────────────────────────────
@@ -906,15 +840,16 @@ const BENEFICIOS_SUBMENU = [
 
 const NAV_ITEMS = [
   { id: "cadastros",     label: "Cadastros",                            icon: "🗂",  perfis: ["dp","admin"], submenu: CADASTROS_SUBMENU },
+  { id: "atualizacao_cadastral", label: "Atualização de Dados Cadastrais", icon: "📝", perfis: ["gestor","dp","admin","presidente"] },
   { id: "ocorrencias",      label: "Solicitações de Advertências/Suspensões", icon: "⚠️", perfis: ["gestor","dp","admin"] },
-  { id: "autorizacoes",     label: "Autorização de Desconto",                icon: "📋", perfis: ["gestor","dp","admin"] },
+  { id: "autorizacoes",     label: "Autorização de Desconto",                icon: "📋", perfis: ["gestor","dp","admin","presidente"] },
   { id: "solicitacoes",     label: "Solicitações de Pagamento",               icon: "≡",  perfis: ["gestor","superior","dp","admin"] },
-  { id: "desligamentos", label: "Solicitações de Desligamento",         icon: "🚪", perfis: ["gestor","superior","dp","admin"] },
+  { id: "desligamentos", label: "Solicitações de Desligamento",         icon: "🚪", perfis: ["gestor","superior","dp","admin","presidente"] },
+  { id: "beneficios",    label: "Benefícios",                           icon: "🏥", perfis: ["dp","admin","gestor"], submenu: BENEFICIOS_SUBMENU },
   { id: "aprovacoes",    label: "Aprovações",                           icon: "✓",  perfis: ["superior","dp","admin"] },
   { id: "dashboard",     label: "Dashboard",                            icon: "◉",  perfis: ["gestor","superior","dp","admin"] },
   { id: "exportacao",    label: "Exportação TXT",                       icon: "↓",  perfis: ["dp","admin"] },
   { id: "auditoria",     label: "Auditoria",                            icon: "📜", perfis: ["dp","admin"] },
-  { id: "beneficios", label: "Benefícios", icon: "🏥", perfis: ["dp","admin","gestor"], submenu: BENEFICIOS_SUBMENU },
 ];
 
 
@@ -1027,11 +962,14 @@ function Dashboard({ solicitacoes, blocos, user }) {
 }
 
 function Sidebar({ active, onNav, user }) {
-  const [cadastrosAberto, setCadastrosAberto] = useState(
-    active && active.startsWith("cad_")
-  );
+  const [abertos, setAbertos] = useState(() => {
+    const init = {};
+    if (active && active.startsWith("cad_")) init["cadastros"] = true;
+    if (active === "plano_saude") init["beneficios"] = true;
+    return init;
+  });
 
-  const isCadActive = active && active.startsWith("cad_");
+  const toggleMenu = (id) => setAbertos(o => ({ ...o, [id]: !o[id] }));
 
   const items = NAV_ITEMS.filter(i => i.perfis.includes(user.perfil));
 
@@ -1070,12 +1008,15 @@ function Sidebar({ active, onNav, user }) {
         {items.map(item => {
           if (item.submenu) {
             const subItems = item.submenu.filter(s => s.perfis.includes(user.perfil));
-            const isParentActive = isCadActive || active === "cadastros";
+            const isOpen = !!abertos[item.id];
+            const isParentActive = item.id === "cadastros"
+              ? (active && active.startsWith("cad_"))
+              : subItems.some(s => s.id === active);
             return (
               <div key={item.id}>
                 {/* Botão pai */}
                 <button
-                  onClick={() => setCadastrosAberto(o => !o)}
+                  onClick={() => toggleMenu(item.id)}
                   style={{
                     ...btnStyle(isParentActive),
                     justifyContent: "space-between"
@@ -1087,13 +1028,13 @@ function Sidebar({ active, onNav, user }) {
                   </div>
                   <span style={{
                     fontSize: 10, transition: "transform 0.2s",
-                    transform: cadastrosAberto ? "rotate(180deg)" : "rotate(0deg)",
+                    transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
                     color: "rgba(255,255,255,0.4)"
                   }}>▼</span>
                 </button>
 
                 {/* Submenu */}
-                {cadastrosAberto && (
+                {isOpen && (
                   <div style={{
                     marginLeft: 10, marginTop: 2, marginBottom: 4,
                     borderLeft: "1px solid rgba(255,255,255,0.1)",
@@ -1192,6 +1133,30 @@ function parseCSV(text) {
     "prazo45": "prazo45", "prazo90": "prazo90",
     "data_fim_estabilidade": "data_fim_estabilidade", "data fim estabilidade": "data_fim_estabilidade",
     "descricao_estabilidade": "descricao_estabilidade", "descrição estabilidade": "descricao_estabilidade",
+    // Novos campos pessoais/endereço
+    "rg": "rg",
+    "rg_orgemissor": "rg_orgao", "rg_orgao": "rg_orgao",
+    "rg_uf": "rg_uf",
+    "ctps": "ctps",
+    "ctps_serie": "ctps_serie",
+    "rua_func": "logradouro", "logradouro": "logradouro",
+    "numero_func": "numero", "numero": "numero",
+    "compl_func": "complemento", "complemento": "complemento",
+    "bairro": "bairro",
+    "cidade": "cidade",
+    "uf": "uf",
+    "cep": "cep",
+    "telefone1": "telefone1",
+    "sexo": "sexo",
+    "estado_civil": "estado_civil", "estadocivil": "estado_civil",
+    "nome_mae": "nome_mae",
+    "pis": "pis",
+    "posicao_escala": "posicao_escala",
+    "motorista_lider": "motorista_lider",
+    "munkeiro": "munkeiro",
+    "prancheiro": "prancheiro",
+    "tamanho_macacao": "tamanho_macacao",
+    "tamanho_bota": "tamanho_bota",
   };
 
   const rawHeaders = splitLine(lines[0]);
@@ -1501,6 +1466,31 @@ function CadColaboradores({ colaboradores, setColaboradores }) {
       descricao_estabilidade: r.descricao_estabilidade || null,
       prazo45:                r.prazo45 || null,
       prazo90:                r.prazo90 || null,
+      // Novos campos pessoais/endereço
+      rg:                     r.rg || null,
+      rg_orgao:               r.rg_orgao || r.rg_orgemissor || null,
+      rg_uf:                  r.rg_uf || null,
+      ctps:                   r.ctps || null,
+      ctps_serie:             r.ctps_serie || null,
+      logradouro:             r.logradouro || r.rua_func || null,
+      numero:                 r.numero || r.numero_func || null,
+      complemento:            r.complemento || r.compl_func || null,
+      bairro:                 r.bairro || null,
+      cidade:                 r.cidade || null,
+      uf:                     r.uf || null,
+      cep:                    r.cep || null,
+      telefone1:              r.telefone1 || null,
+      sexo:                   r.sexo || null,
+      estado_civil:           r.estado_civil || null,
+      nome_mae:               r.nome_mae || null,
+      pis:                    r.pis || null,
+      // Campos de atualização cadastral
+      posicao_escala:         r.posicao_escala || null,
+      motorista_lider:        r.motorista_lider || null,
+      munkeiro:               r.munkeiro || null,
+      prancheiro:             r.prancheiro || null,
+      tamanho_macacao:        r.tamanho_macacao || null,
+      tamanho_bota:           r.tamanho_bota || null,
     })).filter(r => r.chapa && r.nome);
 
     await api.importarColaboradores(novos);
@@ -1791,11 +1781,6 @@ function CadEventos({ eventos, setEventos }) {
 }
 
 // ─── CADASTRO: HIERARQUIA ─────────────────────────────────────────────────────
-const MOCK_HIERARQUIA_INIT = [
-  { id: 1, gestor_id: 1, gestor_nome: "Carlos Mendes", superior_id: 2, superior_nome: "Ana Souza", centro_custo: "001", desc_cc: "TI", ativo: true },
-  { id: 2, gestor_id: 1, gestor_nome: "Carlos Mendes", superior_id: 2, superior_nome: "Ana Souza", centro_custo: "003", desc_cc: "Logística", ativo: true },
-];
-
 function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
   const [modalImport, setModalImport] = useState(false);
   const [modalForm, setModalForm] = useState(null);
@@ -2023,13 +2008,6 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
 }
 
 // ─── CADASTRO: ALÇADAS ────────────────────────────────────────────────────────
-const MOCK_ALCADAS_INIT = [
-  { id: 1, evento_id: 1, evento_nome: "Auxílio Quilometragem", num_alcadas: 2, exige_anexo: true, ativo: true },
-  { id: 2, evento_id: 2, evento_nome: "Ajuda de Custo",        num_alcadas: 2, exige_anexo: true, ativo: true },
-  { id: 3, evento_id: 3, evento_nome: "Horas Extras 50%",      num_alcadas: 1, exige_anexo: false, ativo: true },
-  { id: 4, evento_id: 5, evento_nome: "Desconto Multa Trânsito", num_alcadas: 2, exige_anexo: true, ativo: true },
-];
-
 function CadAlcadas({ alcadas, setAlcadas, eventos }) {
   const [modalImport, setModalImport] = useState(false);
   const [modalForm, setModalForm] = useState(null);
@@ -2341,7 +2319,7 @@ function CadUsuarios({ usuarios, setUsuarios }) {
               <th style={{ padding: "5px 8px" }} />
               <th style={{ padding: "5px 8px" }}><input value={fNomeU}  onChange={e=>setFNomeU(e.target.value)}  placeholder="🔍 Nome"   style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
               <th style={{ padding: "5px 8px" }}><input value={fEmailU} onChange={e=>setFEmailU(e.target.value)} placeholder="🔍 E-mail" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
-              <th style={{ padding: "5px 8px" }}><select value={fPerfilU} onChange={e=>setFPerfilU(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="gestor">Gestor</option><option value="superior">Superior</option><option value="dp">DP</option><option value="admin">Admin</option></select></th>
+              <th style={{ padding: "5px 8px" }}><select value={fPerfilU} onChange={e=>setFPerfilU(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="gestor">Gestor</option><option value="superior">Superior</option><option value="dp">DP</option><option value="presidente">Presidente</option><option value="admin">Admin</option></select></th>
               <th style={{ padding: "5px 8px" }}><select value={fStatusU} onChange={e=>setFStatusU(e.target.value)} style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit" }}><option value="">Todos</option><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select></th>
               <th style={{ padding: "5px 8px" }}><button onClick={()=>{setFNomeU("");setFEmailU("");setFPerfilU("");setFStatusU("");}} style={{ fontSize:10, padding:"4px 8px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", color:"#6B7280" }}>✕ Limpar</button></th>
             </tr>
@@ -2393,6 +2371,7 @@ function CadUsuarios({ usuarios, setUsuarios }) {
                 <option value="gestor">Gestor</option>
                 <option value="superior">Superior</option>
                 <option value="dp">DP</option>
+                <option value="presidente">Presidente</option>
                 <option value="admin">Admin</option>
               </select>
             </div>
@@ -2494,8 +2473,7 @@ function Solicitacoes({ solicitacoes, setSolicitacoes, blocos, setBlocos, user, 
     if (!editandoBloco.competencia) { alert("Selecione a Competência."); return; }
 
     // Buscar evento primeiro (necessário para determinar forma)
-    const eventoObj = eventos.find(e => e.id === parseInt(editandoBloco.evento_id))
-                   || MOCK_EVENTOS.find(e => e.id === parseInt(editandoBloco.evento_id));
+    const eventoObj = eventos.find(e => e.id === parseInt(editandoBloco.evento_id));
 
     const forma = eventoObj?.forma || "valor";
     const linhasValidas = editandoBloco.linhas.filter(l => {
@@ -3625,107 +3603,7 @@ function Auditoria({ solicitacoes, blocos, sessao }) {
 }
 
 // ─── USUARIOS (placeholder) ───────────────────────────────────────────────────
-function Usuarios() {
-  return (
-    <div style={{ padding: 28 }}>
-      <Card style={{ padding: 0 }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr style={{ background: "#F9FAFB" }}>
-              {["Avatar", "Nome", "E-mail", "Perfil", "Status", "Ações"].map(h => (
-                <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {MOCK_USERS.map((u, i) => (
-              <tr key={u.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
-                <td style={{ padding: "12px 16px" }}>
-                  <div style={{
-                    width: 32, height: 32, borderRadius: 8,
-                    background: PERFIL_CONFIG[u.perfil]?.color,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: 12, fontWeight: 700, color: "#fff"
-                  }}>{u.avatar}</div>
-                </td>
-                <td style={{ padding: "12px 16px", fontSize: 13, fontWeight: 600, color: "#111827" }}>{u.nome}</td>
-                <td style={{ padding: "12px 16px", fontSize: 12, color: "#374151" }}>{u.email}</td>
-                <td style={{ padding: "12px 16px" }}>
-                  <span style={{
-                    padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600,
-                    background: PERFIL_CONFIG[u.perfil]?.color + "22",
-                    color: PERFIL_CONFIG[u.perfil]?.color
-                  }}>{PERFIL_CONFIG[u.perfil]?.label}</span>
-                </td>
-                <td style={{ padding: "12px 16px" }}>
-                  <span style={{ padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: "#D1FAE5", color: "#065F46" }}>Ativo</span>
-                </td>
-                <td style={{ padding: "12px 16px" }}>
-                  <Button variant="ghost" size="sm">Editar</Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </Card>
-    </div>
-  );
-}
 
-
-const MOCK_BLOCOS_INIT = [
-  {
-    id: 1,
-    descricao: "Variáveis Setembro 2025",
-    competencia: "092025",
-    status: "aprovado_final",
-    solicitante: "Carlos Mendes",
-    solicitante_id: 1,
-    criado_em: "25/09/2025 09:00:00",
-    linhas: [
-      { _id: 1, colaborador_id: 1, evento_id: 1, data: "2025-09-30", hora: "00:00", valor: "1190.47", observacao: "Deslocamento filial sul", colaborador: MOCK_COLABORADORES[0], evento: MOCK_EVENTOS[0] },
-      { _id: 2, colaborador_id: 2, evento_id: 2, data: "2025-09-20", hora: "", valor: "500.00", observacao: "Curso externo SP", colaborador: MOCK_COLABORADORES[1], evento: MOCK_EVENTOS[1] },
-    ],
-    historico: [
-      { acao: "criado", usuario: "Carlos Mendes", data: "25/09/2025 09:00:00", obs: "Bloco enviado para aprovação" },
-      { acao: "aprovado_gestor", usuario: "Carlos Mendes", data: "25/09/2025 09:30:00", obs: "" },
-      { acao: "aprovado_superior", usuario: "Ana Souza", data: "26/09/2025 10:00:00", obs: "" },
-      { acao: "aprovado_dp", usuario: "Fernanda Lima", data: "27/09/2025 14:00:00", obs: "" },
-    ]
-  },
-  {
-    id: 2,
-    descricao: "Horas Extras Operação",
-    competencia: "092025",
-    status: "pendente_gestor",
-    solicitante: "Carlos Mendes",
-    solicitante_id: 1,
-    criado_em: "28/09/2025 08:00:00",
-    linhas: [
-      { _id: 3, colaborador_id: 3, evento_id: 3, data: "2025-09-28", hora: "04:30", valor: "340.00", observacao: "Plantão final de semana", colaborador: MOCK_COLABORADORES[2], evento: MOCK_EVENTOS[2] },
-      { _id: 4, colaborador_id: 4, evento_id: 6, data: "2025-09-29", hora: "02:00", valor: "210.00", observacao: "", colaborador: MOCK_COLABORADORES[3], evento: MOCK_EVENTOS[5] },
-    ],
-    historico: [
-      { acao: "criado", usuario: "Carlos Mendes", data: "28/09/2025 08:00:00", obs: "Bloco enviado para aprovação" },
-    ]
-  },
-  {
-    id: 3,
-    descricao: "Ajudas de Custo Outubro",
-    competencia: "102025",
-    status: "devolvido",
-    solicitante: "Carlos Mendes",
-    solicitante_id: 1,
-    criado_em: "01/10/2025 10:00:00",
-    linhas: [
-      { _id: 5, colaborador_id: 4, evento_id: 5, data: "2025-10-01", hora: "", valor: "293.47", observacao: "Multa via expressa", colaborador: MOCK_COLABORADORES[3], evento: MOCK_EVENTOS[4] },
-    ],
-    historico: [
-      { acao: "criado", usuario: "Carlos Mendes", data: "01/10/2025 10:00:00", obs: "Bloco enviado para aprovação" },
-      { acao: "devolvido", usuario: "Ana Souza", data: "02/10/2025 09:00:00", obs: "Falta comprovante da infração" },
-    ]
-  },
-];
 
 function Aprovacoes({ blocos, setBlocos, user, recarregarDados }) {
   const [justificativa, setJustificativa] = useState("");
@@ -4111,12 +3989,13 @@ function Autorizacoes({ user, colaboradores }) {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
-              {["Colaborador", "Valor / Parcelas", "Início", "Solicitante", "Status", "Ações"].map(h => (
+              {["Colaborador", "Valor / Parcelas", "Data", "Início", "Solicitante", "Status", "Ações"].map(h => (
                 <th key={h} style={{ padding: "10px 14px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
             <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
               <th style={{ padding:"5px 8px" }}><input value={fAColab} onChange={e=>setFAColab(e.target.value)} placeholder="🔍 Colaborador/Chapa" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
+              <th style={{ padding:"5px 8px" }} />
               <th style={{ padding:"5px 8px" }} />
               <th style={{ padding:"5px 8px" }} />
               <th style={{ padding:"5px 8px" }}><input value={fAGestor} onChange={e=>setFAGestor(e.target.value)} placeholder="🔍 Solicitante" style={{ width:"100%", padding:"5px 8px", borderRadius:6, border:"1px solid #D1D5DB", fontSize:11, fontFamily:"inherit", boxSizing:"border-box" }} /></th>
@@ -4132,35 +4011,40 @@ function Autorizacoes({ user, colaboradores }) {
           </thead>
           <tbody>
             {carregando ? (
-              <tr><td colSpan={6} style={{ padding:32, textAlign:"center", color:"#9CA3AF" }}>Carregando...</td></tr>
+              <tr><td colSpan={7} style={{ padding:32, textAlign:"center", color:"#9CA3AF" }}>Carregando...</td></tr>
             ) : listaFiltradaA.length === 0 ? (
-              <tr><td colSpan={6} style={{ padding:40, textAlign:"center", color:"#9CA3AF" }}>
+              <tr><td colSpan={7} style={{ padding:40, textAlign:"center", color:"#9CA3AF" }}>
                 <div style={{ fontSize:32, marginBottom:8 }}>📋</div>Nenhuma autorização encontrada
               </td></tr>
             ) : listaFiltradaA.map((s, i) => {
               const st = STATUS_CORES[s.status] || STATUS_CORES.pendente;
               const nomeColab = s.colaborador?.nome || s.colaborador_nome || "—";
+              const chapaColab = s.colaborador?.chapa || s.colaborador_chapa || "";
               const docData = { ...s, gestor_nome: s.gestor_nome };
               const colabData = s.colaborador || { nome: s.colaborador_nome, cpf: s.colaborador_cpf };
+              const trunc3 = (nome) => (nome || "").split(" ").slice(0, 3).join(" ").toUpperCase();
               return (
                 <tr key={s.id} style={{ borderTop:"1px solid #F3F4F6", background: i%2===0?"#fff":"#FAFAFA" }}>
                   <td style={{ padding:"10px 14px" }}>
-                    <div style={{ fontWeight:600, fontSize:13, color:"#111827" }}>{nomeColab}</div>
-                    <div style={{ fontSize:11, color:"#6B7280" }}>Data: {new Date(s.criado_em).toLocaleDateString("pt-BR")}</div>
+                    <div style={{ fontWeight:600, fontSize:12, color:"#111827" }}>{nomeColab}</div>
+                    {chapaColab && <div style={{ fontSize:11, color:"#6B7280" }}>Chapa: {chapaColab}</div>}
                   </td>
                   <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>
                     R$ {parseFloat(s.valor_total).toFixed(2).replace(".",",")} · {s.num_parcelas}x de R$ {(parseFloat(s.valor_total)/parseInt(s.num_parcelas)).toFixed(2).replace(".",",")}
                   </td>
                   <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>
+                    {new Date(s.criado_em).toLocaleDateString("pt-BR")}
+                  </td>
+                  <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>
                     {MESES_AUTORIZACAO.find(m=>m.value===s.mes_inicio)?.label}/{s.ano_inicio}
                   </td>
-                  <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>{s.gestor_nome}</td>
+                  <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>{trunc3(s.gestor_nome)}</td>
                   <td style={{ padding:"10px 14px" }}>
                     <span style={{ padding:"3px 10px", borderRadius:20, fontSize:11, fontWeight:600, background:st.bg, color:st.color }}>{st.label}</span>
                   </td>
                   <td style={{ padding:"10px 14px" }}>
                     <div style={{ display:"flex", gap:6 }}>
-                      <button onClick={() => setModalDoc({ ...docData, colaborador: colabData })} style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #D1D5DB", background:"#fff", fontSize:12, cursor:"pointer", fontWeight:600 }}>📄 Doc</button>
+                      <button onClick={() => setModalDoc({ ...docData, colaborador: colabData })} style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #D1D5DB", background:"#fff", fontSize:12, cursor:"pointer", fontWeight:600 }}>📄 PDF</button>
                       <label style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46", fontSize:12, cursor:"pointer", fontWeight:600 }}>
                         📎 {s.anexo_nome ? "Substituir" : "Anexar"}
                         <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display:"none" }}
@@ -4270,27 +4154,36 @@ function Autorizacoes({ user, colaboradores }) {
         </div>
       </Modal>
 
-      {/* Modal Visualizar Documento */}
+      {/* Modal Visualizar Documento — tela cheia */}
       {modalDoc && (
-        <Modal open={!!modalDoc} onClose={() => setModalDoc(null)} title="Autorização de Desconto" width={760}>
-          <div style={{ maxHeight: "65vh", overflowY: "auto", border: "1px solid #E5E7EB", borderRadius: 8 }}
-            dangerouslySetInnerHTML={{ __html: gerarHTMLAutorizacao(modalDoc, modalDoc.colaborador, LOGO_BENEL) }}
-          />
-          <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, paddingTop: 16, borderTop: "1px solid #F3F4F6", marginTop: 16 }}>
-            <Button variant="secondary" onClick={() => setModalDoc(null)}>Fechar</Button>
-            <Button onClick={() => {
-              const html = gerarHTMLAutorizacao(modalDoc, modalDoc.colaborador, LOGO_BENEL);
-              const janela = window.open("", "_blank");
-              janela.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8">
-                <title>Autorização de Desconto</title>
-                <style>body{margin:0;padding:0;}@media print{@page{margin:1.5cm;size:A4;}}</style>
-              </head><body>${html}</body></html>`);
-              janela.document.close();
-              janela.focus();
-              setTimeout(() => { janela.print(); }, 500);
-            }}>⬇ Baixar PDF</Button>
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.7)", zIndex:2000, display:"flex", flexDirection:"column" }}>
+          <div style={{ background:"#fff", display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 20px", borderBottom:"1px solid #E5E7EB", flexShrink:0 }}>
+            <span style={{ fontWeight:700, fontSize:15 }}>📄 Autorização de Desconto</span>
+            <div style={{ display:"flex", gap:10 }}>
+              <button onClick={() => {
+                const html = gerarHTMLAutorizacao(modalDoc, modalDoc.colaborador, LOGO_BENEL);
+                const janela = window.open("", "_blank");
+                janela.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8">
+                  <title>Autorização de Desconto</title>
+                  <style>body{margin:0;padding:0;}@media print{@page{margin:1.5cm;size:A4;}}</style>
+                </head><body>${html}</body></html>`);
+                janela.document.close();
+                janela.focus();
+                setTimeout(() => { janela.print(); }, 500);
+              }} style={{ padding:"8px 18px", background:"#0F2447", color:"#fff", border:"none", borderRadius:8, fontWeight:700, fontSize:13, cursor:"pointer" }}>
+                🖨️ Imprimir / Salvar PDF
+              </button>
+              <button onClick={() => setModalDoc(null)} style={{ padding:"8px 16px", background:"#F3F4F6", color:"#374151", border:"1px solid #D1D5DB", borderRadius:8, fontWeight:600, fontSize:13, cursor:"pointer" }}>
+                ✕ Fechar
+              </button>
+            </div>
           </div>
-        </Modal>
+          <div style={{ flex:1, overflowY:"auto", padding:"24px", background:"#F8FAFC" }}>
+            <div style={{ maxWidth:820, margin:"0 auto", background:"#fff", borderRadius:8, boxShadow:"0 2px 12px rgba(0,0,0,0.08)", padding:"0" }}
+              dangerouslySetInnerHTML={{ __html: gerarHTMLAutorizacao(modalDoc, modalDoc.colaborador, LOGO_BENEL) }}
+            />
+          </div>
+        </div>
       )}
     </div>
   );
@@ -4494,6 +4387,7 @@ function Ocorrencias({ user, colaboradores }) {
               <tr><td colSpan={7} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Nenhuma ocorrência encontrada</td></tr>
             ) : listaFiltrada.map((oc, i) => {
               const btnBase = { padding:"5px 10px", borderRadius:6, fontSize:11, fontWeight:600, cursor:"pointer", whiteSpace:"nowrap", fontFamily:"inherit" };
+              const trunc3 = (nome) => (nome || "").split(" ").slice(0, 3).join(" ").toUpperCase();
               return (
               <tr key={oc.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
                 <td style={{ padding: "10px 14px" }}>
@@ -4516,7 +4410,7 @@ function Ocorrencias({ user, colaboradores }) {
                     ? <span>{formatarData(oc.data_inicio)} → {formatarData(oc.data_fim)}<br/><b>{oc.dias_suspensao} dia(s)</b></span>
                     : "—"}
                 </td>
-                <td style={{ padding: "10px 14px", fontSize: 12, color: "#374151" }}>{oc.gestor_nome}</td>
+                <td style={{ padding: "10px 14px", fontSize: 12, color: "#374151" }}>{trunc3(oc.gestor_nome)}</td>
                 <td style={{ padding: "10px 14px" }}>
                   <span style={{
                     padding: "3px 8px", borderRadius: 6, fontSize: 11, fontWeight: 600,
@@ -4528,7 +4422,7 @@ function Ocorrencias({ user, colaboradores }) {
                   <div style={{ display:"flex", gap:4, alignItems:"center", flexWrap:"nowrap" }}>
                     <button onClick={() => gerarPDF(oc)} style={{ ...btnBase, border:"1px solid #D1D5DB", background:"#fff", color:"#374151" }}>📄 PDF</button>
                     <label style={{ ...btnBase, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46", display:"inline-block" }}>
-                      📎 Anexar
+                      📎 {oc.anexo_nome ? "Substituir" : "Anexar"}
                       <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display:"none" }}
                         onChange={async (e) => {
                           const file = e.target.files[0]; if (!file) return;
@@ -4855,11 +4749,11 @@ const STATUS_DESL = {
 };
 
 const ALCADA_DESL = {
-  pendente_superior:  ["superior", "dp", "admin"],
+  pendente_superior:  ["superior", "dp", "admin", "presidente"],
   // 2ª alçada — descomente quando quiser ativar:
   // pendente_dp:     ["dp", "admin"],
-  aprovado:           ["dp", "admin"],
-  ajuste_solicitado:  ["gestor", "dp", "admin"],
+  aprovado:           ["dp", "admin", "presidente"],
+  ajuste_solicitado:  ["gestor", "dp", "admin", "presidente"],
 };
 
 function Desligamentos({ user, colaboradores, api, recarregarDados }) {
@@ -5124,7 +5018,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
 
   const podeAgir = (sol) => {
     if (!ALCADA_DESL[sol.status]?.includes(user.perfil)) return false;
-    if (["dp", "admin"].includes(user.perfil)) return true;
+    if (["dp", "admin", "presidente"].includes(user.perfil)) return true;
     if (user.perfil === "superior") {
       return !sol.superior_id || sol.superior_id === user.id;
     }
@@ -5184,41 +5078,32 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
               const st = STATUS_DESL[sol.status] || STATUS_DESL.rascunho;
               const tipo = TIPOS_DESL.find(t => t.value === sol.tipo);
               const btnBase = { padding:"5px 10px", borderRadius:6, fontSize:11, fontWeight:600, cursor:"pointer", whiteSpace:"nowrap", fontFamily:"inherit" };
+              const trunc3 = (nome) => (nome || "").split(" ").slice(0, 3).join(" ").toUpperCase();
               return (
                 <tr key={sol.id} style={{ borderTop:"1px solid #F3F4F6", background: i%2===0?"#fff":"#FAFAFA" }}>
                   <td style={{ padding:"10px 14px" }}>
-                    <div style={{ fontWeight:600, fontSize:13, color:"#111827" }}>{sol.colaborador_nome}</div>
+                    <div style={{ fontWeight:600, fontSize:12, color:"#111827" }}>{sol.colaborador_nome}</div>
                     <div style={{ fontSize:11, color:"#6B7280" }}>Chapa: {sol.chapa}</div>
                   </td>
                   <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>{tipo?.label || sol.tipo}</td>
                   <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>{sol.data_desligamento ? new Date(sol.data_desligamento).toLocaleDateString("pt-BR", { timeZone:"UTC" }) : "—"}</td>
-                  <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>{sol.gestor_nome}</td>
+                  <td style={{ padding:"10px 14px", fontSize:12, color:"#374151" }}>{trunc3(sol.gestor_nome)}</td>
                   <td style={{ padding:"10px 14px" }}>
                     <span style={{ background: st.color+"22", color: st.color, borderRadius:6, padding:"3px 8px", fontSize:11, fontWeight:600 }}>{st.label}</span>
                   </td>
                   <td style={{ padding:"10px 14px" }}>
                     <div style={{ display:"flex", gap:4, flexWrap:"nowrap", alignItems:"center" }}>
-                      <button onClick={() => abrirDetalhe(sol.id)} style={{ ...btnBase, border:"1px solid #E5E7EB", background:"#fff", color:"#374151" }}>Ver</button>
 
-                      {sol.tipo !== "pedido_demissao" && (
+                      {/* 1. PDF — só após aprovação e não pedido_demissão */}
+                      {["aprovado","finalizado"].includes(sol.status) && sol.tipo !== "pedido_demissao" && (
                         <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalPDF(r); } catch(e){ setErro(e.message); } }}
-                          style={{ ...btnBase, border:"1px solid #D1D5DB", background:"#fff", color:"#374151" }}>📄 Doc</button>
+                          style={{ ...btnBase, border:"1px solid #D1D5DB", background:"#fff", color:"#374151" }}>📄 PDF</button>
                       )}
-                      {sol.tipo === "pedido_demissao" && (
-                        <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalAnexoPedido(r); } catch(e){ setErro(e.message); } }}
-                          style={{ ...btnBase, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46" }}>📎 Anexo</button>
-                      )}
-                      {podeAgir(sol) && sol.tipo !== "pedido_demissao" && (
-                        <button onClick={() => setModalAcao({ id: sol.id, status: sol.status, acao: "aprovar", observacao: "" })}
-                          style={{ ...btnBase, border:"none", background:"#0F2447", color:"#fff" }}>Analisar</button>
-                      )}
-                      {sol.status === "rascunho" && sol.gestor_id === user.id && (
-                        <button onClick={async () => { try { await api.enviarDesligamento(sol.id); await carregar(); } catch(e){setErro(e.message);} }}
-                          style={{ ...btnBase, border:"none", background:"#10B981", color:"#fff" }}>Enviar</button>
-                      )}
+
+                      {/* 2. Anexar/Substituir — após aprovação, não pedido_demissão */}
                       {["aprovado","finalizado"].includes(sol.status) && sol.tipo !== "pedido_demissao" && (
                         <label style={{ ...btnBase, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46", display:"inline-block" }}>
-                          📎 Anexar
+                          📎 {sol.anexo_nome ? "Substituir" : "Anexar"}
                           <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display:"none" }}
                             onChange={async (e) => {
                               const file = e.target.files[0]; if (!file) return;
@@ -5226,14 +5111,37 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                               const reader = new FileReader();
                               reader.onload = async (ev) => {
                                 try {
-                                  await api.post("/desligamentos/"+sol.id+"/anexos", { nome_arquivo: file.name, tipo_arquivo: file.type, dados_base64: ev.target.result });
-                                  alert("Anexo adicionado com sucesso!"); setErro("");
+                                  await api.addAnexoDesligamento(sol.id, { nome_arquivo: file.name, tipo_arquivo: file.type, dados_base64: ev.target.result });
+                                  setErro(""); await carregar();
                                 } catch(err) { setErro(err.message); }
                               };
                               reader.readAsDataURL(file);
                             }} />
                         </label>
                       )}
+
+                      {/* 3. Pedido de demissão — anexo específico */}
+                      {sol.tipo === "pedido_demissao" && (
+                        <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalAnexoPedido(r); } catch(e){ setErro(e.message); } }}
+                          style={{ ...btnBase, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46" }}>📎 Anexo</button>
+                      )}
+
+                      {/* 4. Aprovar/Analisar — verde quando pode agir */}
+                      {podeAgir(sol) && sol.tipo !== "pedido_demissao" && (
+                        <button onClick={() => setModalAcao({ id: sol.id, status: sol.status, acao: "aprovar", observacao: "" })}
+                          style={{ ...btnBase, border:"none", background:"#10B981", color:"#fff" }}>✅ Aprovar</button>
+                      )}
+
+                      {/* 5. Enviar — rascunho do próprio gestor */}
+                      {sol.status === "rascunho" && sol.gestor_id === user.id && (
+                        <button onClick={async () => { try { await api.enviarDesligamento(sol.id); await carregar(); } catch(e){setErro(e.message);} }}
+                          style={{ ...btnBase, border:"none", background:"#0F2447", color:"#fff" }}>Enviar</button>
+                      )}
+
+                      {/* 6. Ver detalhe */}
+                      <button onClick={() => abrirDetalhe(sol.id)} style={{ ...btnBase, border:"1px solid #E5E7EB", background:"#fff", color:"#374151" }}>Ver</button>
+
+                      {/* 7. Cancelar */}
                       {["admin","dp"].includes(user.perfil) && !["cancelado","finalizado"].includes(sol.status) && (
                         <button onClick={async () => {
                           if (!window.confirm(`Cancelar a solicitação de desligamento de ${sol.colaborador_nome}?\n\nEsta ação não pode ser desfeita.`)) return;
@@ -5742,143 +5650,909 @@ function ModalPDFDesligamento({ sol, onClose }) {
   );
 }
 
-// src/controllers/planoSaudeController.js
-"use strict";
-const db = require("../config/database");
-const { ok, fail } = require("../utils/response");
 
-// ── Listar solicitações ───────────────────────────────────────────────────────
-exports.listar = async (req, res) => {
+// ── Helpers PlanoSaude ────────────────────────────────────────────────────────
+function fmtDataPS(v) {
+  if (!v) return "";
   try {
-    const { rows } = await db.query(`
-      SELECT pss.*,
-             c.nome AS colaborador_nome, c.chapa, c.cpf, c.funcao,
-             c.data_admissao, c.centro_custo, c.desc_cc,
-             c.rg, c.rg_orgao, c.rg_uf, c.nome_mae, c.estado_civil,
-             c.pis, c.ctps, c.ctps_serie,
-             c.logradouro, c.complemento, c.bairro, c.cidade, c.uf, c.cep,
-             c.telefone1, c.telefone2, c.telefone3
-      FROM plano_saude_solicitacoes pss
-      JOIN colaboradores c ON pss.colaborador_id = c.id
-      ORDER BY pss.criado_em DESC
-    `);
-    return ok(res, rows);
-  } catch (e) {
-    return fail(res, e.message, 500);
-  }
+    const d = new Date(v.includes("T") ? v : v + "T12:00:00");
+    return isNaN(d.getTime()) ? v : d.toLocaleDateString("pt-BR");
+  } catch { return v; }
+}
+
+function gerarHTMLTitular(colab, movimentacao) {
+  const f = (v) => v || "_______________";
+  const movMap = {
+    INCLUSAO:    "(X) INCLUSÃO &nbsp; ( ) NÃO OPTANTE &nbsp; ( ) ALTERAÇÃO &nbsp; ( ) EXCLUSÃO",
+    NAO_OPTANTE: "( ) INCLUSÃO &nbsp; (X) NÃO OPTANTE &nbsp; ( ) ALTERAÇÃO &nbsp; ( ) EXCLUSÃO",
+    ALTERACAO:   "( ) INCLUSÃO &nbsp; ( ) NÃO OPTANTE &nbsp; (X) ALTERAÇÃO &nbsp; ( ) EXCLUSÃO",
+    EXCLUSAO:    "( ) INCLUSÃO &nbsp; ( ) NÃO OPTANTE &nbsp; ( ) ALTERAÇÃO &nbsp; (X) EXCLUSÃO",
+  };
+  return `
+    <div style="font-family:Arial,sans-serif;font-size:10pt;line-height:1.5;max-width:700px;margin:0 auto;padding:20px 28px;color:#000;">
+      <div style="text-align:center;margin-bottom:6px;"><img src="${LOGO_BENEL}" alt="Benel" style="height:55px;" /></div>
+      <h2 style="text-align:center;font-size:12pt;font-weight:bold;text-transform:uppercase;margin:0 0 2px 0;">PROPOSTA PLANO DE ASSISTÊNCIA MÉDICA</h2>
+      <h3 style="text-align:center;font-size:11pt;font-weight:bold;text-transform:uppercase;margin:0 0 12px 0;">TITULAR</h3>
+      <p style="font-weight:bold;text-align:center;margin:0 0 6px 0;font-size:9pt;">DADOS DA MOVIMENTAÇÃO</p>
+      <div style="border:1px solid #000;padding:6px 14px;margin-bottom:12px;font-size:9.5pt;">${movMap[movimentacao] || movMap.INCLUSAO}</div>
+      <p style="font-weight:bold;text-align:center;margin:0 0 6px 0;font-size:9pt;">DADOS PESSOAIS</p>
+      <div style="border:1px solid #000;padding:10px 14px;margin-bottom:12px;font-size:9.5pt;">
+        <p style="margin:0 0 6px 0;">C.P.F.: <u>${f(colab?.cpf)}</u> &nbsp;&nbsp; DATA DE ADMISSÃO: <u>${fmtDataPS(colab?.data_admissao) || "___/___/______"}</u></p>
+        <p style="margin:0 0 6px 0;">NOME: <u>${f(colab?.nome)}</u> &nbsp;&nbsp; DATA DE NASC.: <u>${fmtDataPS(colab?.data_nascimento) || "___/___/______"}</u></p>
+        <p style="margin:0 0 6px 0;">SEXO: <u>${colab?.sexo || "___________"}</u> &nbsp;&nbsp; RG: <u>${f(colab?.rg)}</u> &nbsp; ÓRGÃO: <u>${f(colab?.rg_orgao)}</u> &nbsp; UF: <u>${f(colab?.rg_uf)}</u></p>
+        <p style="margin:0 0 6px 0;">ESTADO CIVIL: <u>${f(colab?.estado_civil)}</u> &nbsp;&nbsp; NOME DA MÃE: <u>${f(colab?.nome_mae)}</u></p>
+        <p style="margin:0;">MATRÍCULA: <u>${f(colab?.chapa)}</u> &nbsp; PIS: <u>${f(colab?.pis)}</u> &nbsp; CTPS: <u>${f(colab?.ctps)}</u> &nbsp; SÉRIE: <u>${f(colab?.ctps_serie)}</u></p>
+      </div>
+      <p style="font-weight:bold;text-align:center;margin:0 0 6px 0;font-size:9pt;">DADOS DO ENDEREÇO</p>
+      <div style="border:1px solid #000;padding:10px 14px;margin-bottom:12px;font-size:9.5pt;">
+        <p style="margin:0 0 6px 0;">LOGRADOURO: <u>${f(colab?.logradouro)}</u> &nbsp; Nº: <u>${f(colab?.numero)}</u></p>
+        <p style="margin:0 0 6px 0;">COMPLEMENTO: <u>${f(colab?.complemento)}</u> &nbsp; BAIRRO: <u>${f(colab?.bairro)}</u></p>
+        <p style="margin:0 0 6px 0;">CIDADE: <u>${f(colab?.cidade)}</u> &nbsp; UF: <u>${f(colab?.uf)}</u> &nbsp; CEP: <u>${f(colab?.cep)}</u></p>
+        <p style="margin:0;">TELEFONES: ( ) <u>${f(colab?.telefone1)}</u></p>
+      </div>
+      <p style="margin:0 0 40px 0;font-size:9.5pt;">_________________, _____ de ________________ de _________.</p>
+      <div style="border-top:1px solid #000;width:260px;padding-top:5px;font-size:9.5pt;text-align:center;">ASSINATURA DO TITULAR</div>
+    </div>`;
+}
+
+function gerarHTMLDependente(colab, dep, movimentacao) {
+  const movMap = {
+    INCLUSAO: "(X) INCLUSÃO &nbsp; ( ) ALTERAÇÃO &nbsp; ( ) EXCLUSÃO",
+    ALTERACAO: "( ) INCLUSÃO &nbsp; (X) ALTERAÇÃO &nbsp; ( ) EXCLUSÃO",
+    EXCLUSAO:  "( ) INCLUSÃO &nbsp; ( ) ALTERAÇÃO &nbsp; (X) EXCLUSÃO",
+  };
+  const parentescoMap = {
+    CONJUGE:     "(X) CÔNJUGE &nbsp; ( ) FILHO(A) &nbsp; ( ) COMPANHEIRO(A) &nbsp; ( ) OUTROS",
+    FILHO:       "( ) CÔNJUGE &nbsp; (X) FILHO(A) &nbsp; ( ) COMPANHEIRO(A) &nbsp; ( ) OUTROS",
+    COMPANHEIRO: "( ) CÔNJUGE &nbsp; ( ) FILHO(A) &nbsp; (X) COMPANHEIRO(A) &nbsp; ( ) OUTROS",
+    OUTROS:      "( ) CÔNJUGE &nbsp; ( ) FILHO(A) &nbsp; ( ) COMPANHEIRO(A) &nbsp; (X) OUTROS",
+  };
+  return `
+    <div style="font-family:Arial,sans-serif;font-size:10pt;line-height:1.5;max-width:700px;margin:0 auto;padding:20px 28px;color:#000;">
+      <div style="text-align:center;margin-bottom:6px;"><img src="${LOGO_BENEL}" alt="Benel" style="height:55px;" /></div>
+      <h2 style="text-align:center;font-size:12pt;font-weight:bold;text-transform:uppercase;margin:0 0 2px 0;">PROPOSTA PLANO DE ASSISTÊNCIA MÉDICA</h2>
+      <h3 style="text-align:center;font-size:11pt;font-weight:bold;text-transform:uppercase;margin:0 0 12px 0;">DEPENDENTES</h3>
+      <p style="font-weight:bold;text-align:center;margin:0 0 6px 0;font-size:9pt;">DADOS DA MOVIMENTAÇÃO</p>
+      <div style="border:1px solid #000;padding:6px 14px;margin-bottom:12px;font-size:9.5pt;">${movMap[movimentacao] || movMap.INCLUSAO}</div>
+      <p style="font-weight:bold;text-align:center;margin:0 0 6px 0;font-size:9pt;">DADOS PESSOAIS DO DEPENDENTE</p>
+      <div style="border:1px solid #000;padding:10px 14px;margin-bottom:12px;font-size:9.5pt;">
+        <p style="margin:0 0 6px 0;">C.P.F.: <u>${dep?.dep_cpf || "_______________"}</u> &nbsp;&nbsp; NOME: <u>${dep?.dep_nome || "___________________________"}</u></p>
+        <p style="margin:0 0 6px 0;">SEXO: ${dep?.dep_sexo === "M" ? "(X) MASCULINO &nbsp; ( ) FEMININO" : "(  ) MASCULINO &nbsp; (X) FEMININO"} &nbsp;&nbsp; DATA NASC.: <u>${fmtDataPS(dep?.dep_data_nasc) || "___/___/______"}</u> &nbsp; ESTADO CIVIL: <u>${dep?.dep_estado_civil || "_______________"}</u></p>
+        <p style="margin:0 0 6px 0;">DATA DE CASAMENTO: <u>${fmtDataPS(dep?.dep_data_casamento) || "___/___/______"}</u></p>
+        <p style="margin:0 0 4px 0;">GRAU DE PARENTESCO:</p>
+        <p style="margin:0 0 6px 16px;">${parentescoMap[dep?.dep_grau_parentesco] || parentescoMap.CONJUGE}</p>
+        <p style="margin:0;">NOME DA MÃE: <u>${dep?.dep_nome_mae || "___________________________"}</u></p>
+      </div>
+      <p style="font-size:8.5pt;color:#555;margin:0 0 6px 0;">Titular: ${colab?.nome || ""} — Matrícula: ${colab?.chapa || ""}</p>
+      <p style="margin:0 0 40px 0;font-size:9.5pt;">_________________, _____ de ________________ de _________.</p>
+      <div style="border-top:1px solid #000;width:260px;padding-top:5px;font-size:9.5pt;text-align:center;">ASSINATURA DO TITULAR</div>
+    </div>`;
+}
+
+// ── Componente PlanoSaude ─────────────────────────────────────────────────────
+function PlanoSaude({ user, colaboradores }) {
+  const [lista, setLista]         = useState([]);
+  const [loading, setLoading]     = useState(false);
+  const [tipo, setTipo]           = useState(null); // null | "TITULAR" | "DEPENDENTE"
+  const [modalPreview, setModalPreview] = useState(null);
+  const [salvando, setSalvando]   = useState(false);
+  const [msg, setMsg]             = useState(null);
+  const [anexosModal, setAnexosModal] = useState(null);
+
+  const [colabSel, setColabSel]   = useState(null);
+  const [buscaColab, setBuscaColab] = useState("");
+  const [movimentacao, setMovimentacao] = useState("INCLUSAO");
+
+  const [depTitularSel, setDepTitularSel] = useState(null);
+  const [buscaDep, setBuscaDep]   = useState("");
+  const [depMov, setDepMov]       = useState("INCLUSAO");
+  const [dep, setDep]             = useState({ dep_cpf:"", dep_nome:"", dep_sexo:"M", dep_data_nasc:"", dep_estado_civil:"", dep_data_casamento:"", dep_grau_parentesco:"CONJUGE", dep_nome_mae:"" });
+  const [anexos, setAnexos]       = useState([]);
+
+  const norm = s => (s||"").toLowerCase();
+  const colsFilt = colaboradores
+    .filter(c => c.cod_situacao !== "D")
+    .filter(c => !buscaColab || norm(c.nome).includes(norm(buscaColab)) || (c.chapa||"").includes(buscaColab));
+  const colsDepFilt = colaboradores
+    .filter(c => c.cod_situacao !== "D")
+    .filter(c => !buscaDep || norm(c.nome).includes(norm(buscaDep)) || (c.chapa||"").includes(buscaDep));
+
+  const carregar = async () => {
+    setLoading(true);
+    try { const d = await api.listarPlanoSaude(); setLista(Array.isArray(d) ? d : []); }
+    catch (e) { setMsg({ tipo:"erro", texto:"Erro: "+e.message }); }
+    finally { setLoading(false); }
+  };
+  useEffect(() => { carregar(); }, []);
+
+  const reset = () => {
+    setColabSel(null); setBuscaColab(""); setMovimentacao("INCLUSAO");
+    setDepTitularSel(null); setBuscaDep(""); setDepMov("INCLUSAO");
+    setDep({ dep_cpf:"", dep_nome:"", dep_sexo:"M", dep_data_nasc:"", dep_estado_civil:"", dep_data_casamento:"", dep_grau_parentesco:"CONJUGE", dep_nome_mae:"" });
+    setAnexos([]);
+  };
+
+  const onAnexo = (tipo_anexo) => (e) => {
+    const file = e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => setAnexos(prev => [...prev.filter(a=>a.tipo_anexo!==tipo_anexo), { nome_arquivo:file.name, tipo_anexo, dados_base64:ev.target.result.split(",")[1] }]);
+    reader.readAsDataURL(file);
+  };
+
+  const FILIAIS_BLOQUEADAS = ["7"];
+  const checarFilialBloqueada = (colab) => {
+    if (colab && FILIAIS_BLOQUEADAS.includes(String(colab.cod_filial))) {
+      setMsg({ tipo:"erro", texto:"⚠️ O plano Hapvida não atende a filial 7 — São Mateus. Solicitação não permitida." });
+      return true;
+    }
+    return false;
+  };
+
+  const salvarTitular = async () => {
+    if (!colabSel) { setMsg({ tipo:"erro", texto:"Selecione o colaborador." }); return; }
+    if (checarFilialBloqueada(colabSel)) return;
+    setSalvando(true);
+    try {
+      const novo = await api.criarPlanoSaude({ tipo:"TITULAR", movimentacao, colaborador_id:colabSel.id });
+      for (const a of anexos) await api.addAnexoPlanoSaude(novo.id, a);
+      setMsg({ tipo:"ok", texto:"Solicitação criada!" }); setTipo(null); reset(); carregar();
+    } catch(e) { setMsg({ tipo:"erro", texto:e.message }); }
+    finally { setSalvando(false); }
+  };
+
+  const salvarDependente = async () => {
+    if (!depTitularSel) { setMsg({ tipo:"erro", texto:"Selecione o titular." }); return; }
+    if (checarFilialBloqueada(depTitularSel)) return;
+    if (!dep.dep_nome.trim()) { setMsg({ tipo:"erro", texto:"Informe o nome do dependente." }); return; }
+    setSalvando(true);
+    try {
+      const novo = await api.criarPlanoSaude({ tipo:"DEPENDENTE", movimentacao:depMov, colaborador_id:depTitularSel.id, ...dep });
+      for (const a of anexos) await api.addAnexoPlanoSaude(novo.id, a);
+      setMsg({ tipo:"ok", texto:"Dependente registrado!" }); setTipo(null); reset(); carregar();
+    } catch(e) { setMsg({ tipo:"erro", texto:e.message }); }
+    finally { setSalvando(false); }
+  };
+
+  const imprimir = () => {
+    const w = window.open("","_blank");
+    w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Plano de Saúde</title></head><body>${modalPreview}</body></html>`);
+    w.document.close(); setTimeout(()=>{ w.focus(); w.print(); }, 400);
+  };
+
+  // ── Estilos compactos seguindo padrão do sistema ──────────────────────────
+  const S = {
+    page:   { padding:"16px 20px", maxWidth:960, margin:"0 auto" },
+    header: { display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 },
+    title:  { margin:0, fontSize:16, fontWeight:800, color:"#111827" },
+    sub:    { margin:"2px 0 0", fontSize:11, color:"#6B7280" },
+    btnP:   { background:"#0F2447", color:"#fff", border:"none", borderRadius:8, padding:"8px 18px", fontSize:12, fontWeight:700, cursor:"pointer" },
+    btnS:   { background:"#F3F4F6", color:"#374151", border:"1px solid #D1D5DB", borderRadius:8, padding:"8px 14px", fontSize:12, fontWeight:600, cursor:"pointer" },
+    card:   { background:"#fff", borderRadius:10, border:"1px solid #E5E7EB", padding:"10px 16px", marginBottom:8, display:"flex", alignItems:"center", justifyContent:"space-between" },
+    inp:    { width:"100%", padding:"6px 10px", border:"1px solid #D1D5DB", borderRadius:6, fontSize:12, boxSizing:"border-box" },
+    lbl:    { fontSize:11, fontWeight:600, color:"#374151", display:"block", marginBottom:3 },
+    modal:  { position:"fixed", inset:0, background:"rgba(0,0,0,.5)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center" },
+    mbox:   { background:"#fff", borderRadius:14, padding:"24px 28px", width:"100%", maxWidth:680, maxHeight:"90vh", overflowY:"auto", boxShadow:"0 20px 60px rgba(0,0,0,.25)" },
+  };
+
+  // Seletor de tipo igual ao padrão Advertência/Suspensão
+  const SeletorTipo = () => (
+    <div style={S.modal}>
+      <div style={{ ...S.mbox, maxWidth:420 }}>
+        <h3 style={{ margin:"0 0 20px", fontSize:15, fontWeight:800, color:"#0F2447" }}>Nova Solicitação — Plano de Saúde</h3>
+        <div style={{ display:"flex", gap:12, marginBottom:20 }}>
+          <button
+            onClick={() => setTipo("TITULAR")}
+            style={{ flex:1, padding:"18px 12px", borderRadius:10, border:"2px solid #0F2447", background:"#EFF6FF", cursor:"pointer", textAlign:"center" }}>
+            <div style={{ fontSize:22, marginBottom:6 }}>👤</div>
+            <div style={{ fontSize:13, fontWeight:700, color:"#0F2447" }}>Titular</div>
+            <div style={{ fontSize:11, color:"#6B7280", marginTop:2 }}>Inclusão do colaborador</div>
+          </button>
+          <button
+            onClick={() => setTipo("DEPENDENTE")}
+            style={{ flex:1, padding:"18px 12px", borderRadius:10, border:"2px solid #7C3AED", background:"#F5F3FF", cursor:"pointer", textAlign:"center" }}>
+            <div style={{ fontSize:22, marginBottom:6 }}>👨‍👩‍👧</div>
+            <div style={{ fontSize:13, fontWeight:700, color:"#7C3AED" }}>Dependente</div>
+            <div style={{ fontSize:11, color:"#6B7280", marginTop:2 }}>Inclusão de dependente</div>
+          </button>
+        </div>
+        <div style={{ textAlign:"right" }}>
+          <button style={S.btnS} onClick={() => { setTipo(null); reset(); }}>Cancelar</button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const BuscaColab = ({ busca, setBusca, sel, onSel, lista, label }) => (
+    <div style={{ marginBottom:14 }}>
+      <label style={S.lbl}>{label} *</label>
+      {sel ? (
+        <div style={{ padding:"6px 10px", background:"#EFF6FF", borderRadius:6, fontSize:12, color:"#1E40AF", fontWeight:600, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+          ✓ {sel.nome} — {sel.chapa}
+          <button onClick={() => { onSel(null); setBusca(""); }} style={{ background:"none", border:"none", cursor:"pointer", color:"#6B7280", fontSize:14 }}>×</button>
+        </div>
+      ) : (
+        <>
+          <input style={S.inp} placeholder="Digite nome ou matrícula..." value={busca}
+            onChange={e => setBusca(e.target.value)} autoFocus />
+          {busca.length > 0 && lista.length > 0 && (
+            <div style={{ border:"1px solid #E5E7EB", borderRadius:6, maxHeight:160, overflowY:"auto", marginTop:2, background:"#fff", boxShadow:"0 4px 12px rgba(0,0,0,.1)" }}>
+              {lista.slice(0,8).map(c => (
+                <div key={c.id} onClick={() => { onSel(c); setBusca(""); }}
+                  style={{ padding:"7px 10px", cursor:"pointer", fontSize:12, borderBottom:"1px solid #F3F4F6" }}
+                  onMouseEnter={e=>e.currentTarget.style.background="#F3F4F6"}
+                  onMouseLeave={e=>e.currentTarget.style.background=""}>
+                  <strong>{c.nome}</strong> <span style={{ color:"#6B7280" }}>• {c.chapa} • {c.funcao}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          {busca.length > 0 && lista.length === 0 && (
+            <div style={{ padding:"8px 10px", fontSize:12, color:"#9CA3AF", border:"1px solid #E5E7EB", borderRadius:6, marginTop:2 }}>Nenhum resultado.</div>
+          )}
+        </>
+      )}
+    </div>
+  );
+
+  const InfoColab = ({ c }) => c ? (
+    <div style={{ background:"#FFFBEB", border:"1px solid #FDE68A", borderRadius:8, padding:"10px 14px", marginBottom:14 }}>
+      {["7"].includes(String(c.cod_filial)) && (
+        <div style={{ background:"#FEE2E2", border:"1px solid #FECACA", borderRadius:6, padding:"8px 12px", marginBottom:10, fontSize:12, fontWeight:700, color:"#991B1B" }}>
+          ⚠️ Filial 7 — São Mateus: o plano Hapvida não atende esta localidade. Solicitação não permitida.
+        </div>
+      )}
+      <p style={{ margin:"0 0 8px", fontSize:11, fontWeight:700, color:"#92400E" }}>ℹ️ Dados no sistema — campos em vermelho aparecerão em branco no formulário</p>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:6, fontSize:11 }}>
+        {[["CPF",c.cpf],["RG",c.rg],["PIS",c.pis],["CTPS",c.ctps],["Nome da Mãe",c.nome_mae],["Endereço",c.logradouro]].map(([k,v])=>(
+          <div key={k} style={{ background:v?"#F0FDF4":"#FEF2F2", border:`1px solid ${v?"#BBF7D0":"#FECACA"}`, borderRadius:5, padding:"3px 8px" }}>
+            <span style={{ color:"#6B7280" }}>{k}: </span>
+            <strong style={{ color:v?"#065F46":"#991B1B" }}>{v||"Não informado"}</strong>
+          </div>
+        ))}
+      </div>
+    </div>
+  ) : null;
+
+  return (
+    <div style={S.page}>
+      {/* Header */}
+      <div style={S.header}>
+        <div>
+          <h2 style={S.title}>💊 Solicitação de Plano de Saúde</h2>
+          <p style={S.sub}>Proposta de Assistência Médica — Hapvida</p>
+        </div>
+        <button style={S.btnP} onClick={() => { reset(); setTipo("SELECIONAR"); }}>+ Nova Solicitação</button>
+      </div>
+
+      {/* Msg */}
+      {msg && (
+        <div style={{ padding:"8px 14px", borderRadius:7, marginBottom:12, background:msg.tipo==="ok"?"#D1FAE5":"#FEE2E2", color:msg.tipo==="ok"?"#065F46":"#991B1B", fontSize:12, fontWeight:600, display:"flex", justifyContent:"space-between" }}>
+          {msg.texto}
+          <button onClick={()=>setMsg(null)} style={{ background:"none", border:"none", cursor:"pointer", fontSize:14 }}>×</button>
+        </div>
+      )}
+
+      {/* Lista */}
+      {loading ? null : lista.length === 0 ? (
+        <div style={{ textAlign:"center", padding:60, color:"#9CA3AF", fontSize:13 }}>Nenhuma solicitação registrada.</div>
+      ) : lista.map(s => (
+        <div key={s.id} style={S.card}>
+          <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+            <span style={{ fontSize:11, fontWeight:700, padding:"2px 8px", borderRadius:8, background:s.tipo==="TITULAR"?"#DBEAFE":"#EDE9FE", color:s.tipo==="TITULAR"?"#1E40AF":"#5B21B6" }}>{s.tipo}</span>
+            <span style={{ fontSize:12, fontWeight:700, color:"#111827" }}>{s.colaborador_nome}</span>
+            <span style={{ fontSize:11, color:"#6B7280" }}>#{s.chapa}</span>
+            {s.tipo==="DEPENDENTE" && <span style={{ fontSize:11, color:"#7C3AED" }}>→ {s.dep_nome}</span>}
+            <span style={{ fontSize:10, color:"#9CA3AF" }}>• {s.movimentacao} • {new Date(s.criado_em).toLocaleDateString("pt-BR")}</span>
+          </div>
+          <div style={{ display:"flex", gap:6 }}>
+            <button style={{ ...S.btnS, padding:"4px 10px", fontSize:11 }}
+              onClick={() => setModalPreview(s.tipo==="TITULAR" ? gerarHTMLTitular(s,s.movimentacao) : gerarHTMLDependente(s,s,s.movimentacao))}>
+              🖨 Imprimir
+            </button>
+            <button style={{ ...S.btnS, padding:"4px 10px", fontSize:11 }} onClick={() => setAnexosModal(s)}>📎 Anexos</button>
+          </div>
+        </div>
+      ))}
+
+      {/* MODAL SELETOR TIPO */}
+      {tipo === "SELECIONAR" && <SeletorTipo />}
+
+      {/* MODAL TITULAR */}
+      {tipo === "TITULAR" && (
+        <div style={S.modal}>
+          <div style={S.mbox}>
+            <h3 style={{ margin:"0 0 16px", fontSize:15, fontWeight:800, color:"#0F2447" }}>Nova Solicitação — Titular</h3>
+            <BuscaColab busca={buscaColab} setBusca={setBuscaColab} sel={colabSel} onSel={setColabSel} lista={colsFilt} label="Colaborador" />
+            <InfoColab c={colabSel} />
+            <div style={{ marginBottom:14 }}>
+              <label style={S.lbl}>Movimentação *</label>
+              <select style={S.inp} value={movimentacao} onChange={e=>setMovimentacao(e.target.value)}>
+                <option value="INCLUSAO">Inclusão</option>
+                <option value="NAO_OPTANTE">Não Optante</option>
+                <option value="ALTERACAO">Alteração</option>
+                <option value="EXCLUSAO">Exclusão</option>
+              </select>
+            </div>
+            <button style={{ ...S.btnS, width:"100%", marginBottom:4 }}
+              onClick={() => { if (!colabSel) { setMsg({tipo:"erro",texto:"Selecione o colaborador."}); return; } setModalPreview(gerarHTMLTitular(colabSel,movimentacao)); }}>
+              👁 Visualizar / Imprimir Formulário
+            </button>
+            <p style={{ fontSize:10, color:"#6B7280", margin:"0 0 16px" }}>Após imprimir, o titular assina e data manualmente.</p>
+            <div style={{ display:"flex", gap:8, justifyContent:"flex-end" }}>
+              <button style={S.btnS} onClick={() => { setTipo(null); reset(); }}>Cancelar</button>
+              <button style={S.btnP} onClick={salvarTitular} disabled={salvando}>{salvando?"Salvando...":"Registrar Solicitação"}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DEPENDENTE */}
+      {tipo === "DEPENDENTE" && (
+        <div style={S.modal}>
+          <div style={S.mbox}>
+            <h3 style={{ margin:"0 0 16px", fontSize:15, fontWeight:800, color:"#0F2447" }}>Nova Solicitação — Dependente</h3>
+            <BuscaColab busca={buscaDep} setBusca={setBuscaDep} sel={depTitularSel} onSel={setDepTitularSel} lista={colsDepFilt} label="Titular (Colaborador)" />
+            <div style={{ marginBottom:14 }}>
+              <label style={S.lbl}>Movimentação *</label>
+              <select style={S.inp} value={depMov} onChange={e=>setDepMov(e.target.value)}>
+                <option value="INCLUSAO">Inclusão</option>
+                <option value="ALTERACAO">Alteração</option>
+                <option value="EXCLUSAO">Exclusão</option>
+              </select>
+            </div>
+            <div style={{ background:"#F9FAFB", border:"1px solid #E5E7EB", borderRadius:8, padding:"12px 14px", marginBottom:14 }}>
+              <p style={{ margin:"0 0 10px", fontSize:11, fontWeight:700, color:"#374151" }}>DADOS DO DEPENDENTE</p>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+                <div><label style={S.lbl}>CPF</label><input style={S.inp} value={dep.dep_cpf} onChange={e=>setDep(p=>({...p,dep_cpf:e.target.value}))} placeholder="000.000.000-00" /></div>
+                <div><label style={S.lbl}>Nome *</label><input style={S.inp} value={dep.dep_nome} onChange={e=>setDep(p=>({...p,dep_nome:e.target.value}))} /></div>
+                <div><label style={S.lbl}>Sexo</label>
+                  <select style={S.inp} value={dep.dep_sexo} onChange={e=>setDep(p=>({...p,dep_sexo:e.target.value}))}>
+                    <option value="M">Masculino</option><option value="F">Feminino</option>
+                  </select>
+                </div>
+                <div><label style={S.lbl}>Data de Nascimento</label><input type="date" style={S.inp} value={dep.dep_data_nasc} onChange={e=>setDep(p=>({...p,dep_data_nasc:e.target.value}))} /></div>
+                <div><label style={S.lbl}>Estado Civil</label>
+                  <select style={S.inp} value={dep.dep_estado_civil} onChange={e=>setDep(p=>({...p,dep_estado_civil:e.target.value}))}>
+                    <option value="">Selecione</option><option>Solteiro(a)</option><option>Casado(a)</option>
+                    <option>Divorciado(a)</option><option>Viúvo(a)</option><option>União Estável</option>
+                  </select>
+                </div>
+                <div><label style={S.lbl}>Data de Casamento</label><input type="date" style={S.inp} value={dep.dep_data_casamento} onChange={e=>setDep(p=>({...p,dep_data_casamento:e.target.value}))} /></div>
+                <div style={{ gridColumn:"1/-1" }}><label style={S.lbl}>Grau de Parentesco</label>
+                  <select style={S.inp} value={dep.dep_grau_parentesco} onChange={e=>setDep(p=>({...p,dep_grau_parentesco:e.target.value}))}>
+                    <option value="CONJUGE">Cônjuge</option><option value="FILHO">Filho(a)</option>
+                    <option value="COMPANHEIRO">Companheiro(a)</option><option value="OUTROS">Outros</option>
+                  </select>
+                </div>
+                <div style={{ gridColumn:"1/-1" }}><label style={S.lbl}>Nome da Mãe do Dependente</label><input style={S.inp} value={dep.dep_nome_mae} onChange={e=>setDep(p=>({...p,dep_nome_mae:e.target.value}))} /></div>
+              </div>
+            </div>
+            <div style={{ background:"#F9FAFB", border:"1px solid #E5E7EB", borderRadius:8, padding:"12px 14px", marginBottom:14 }}>
+              <p style={{ margin:"0 0 10px", fontSize:11, fontWeight:700, color:"#374151" }}>📎 DOCUMENTOS</p>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8 }}>
+                {[
+                  { key:"FORMULARIO_ASSINADO", label:"Formulário Assinado" },
+                  { key:"RG_DEPENDENTE", label:"RG do Dependente" },
+                  { key:dep.dep_grau_parentesco==="FILHO"?"CERTIDAO_NASCIMENTO":"CERTIDAO_CASAMENTO", label:dep.dep_grau_parentesco==="FILHO"?"Certidão de Nascimento":"Certidão de Casamento" },
+                ].map(({key,label}) => {
+                  const found = anexos.find(a=>a.tipo_anexo===key);
+                  return (
+                    <div key={key} style={{ border:`1px dashed ${found?"#34D399":"#D1D5DB"}`, borderRadius:7, padding:10, textAlign:"center", background:found?"#F0FDF4":"#fff" }}>
+                      <p style={{ margin:"0 0 6px", fontSize:10, fontWeight:600, color:found?"#065F46":"#6B7280" }}>{label}</p>
+                      {found ? (
+                        <div>
+                          <p style={{ margin:"0 0 3px", fontSize:10, color:"#065F46" }}>✓ {found.nome_arquivo}</p>
+                          <button onClick={()=>setAnexos(prev=>prev.filter(a=>a.tipo_anexo!==key))} style={{ fontSize:10, color:"#991B1B", background:"none", border:"none", cursor:"pointer" }}>Remover</button>
+                        </div>
+                      ) : (
+                        <label style={{ cursor:"pointer", fontSize:11, color:"#3B82F6" }}>
+                          📁 Selecionar
+                          <input type="file" style={{ display:"none" }} accept=".pdf,.jpg,.jpeg,.png" onChange={onAnexo(key)} />
+                        </label>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            <button style={{ ...S.btnS, width:"100%", marginBottom:4 }}
+              onClick={() => { if (!depTitularSel) { setMsg({tipo:"erro",texto:"Selecione o titular."}); return; } setModalPreview(gerarHTMLDependente(depTitularSel,dep,depMov)); }}>
+              👁 Visualizar / Imprimir Formulário
+            </button>
+            <p style={{ fontSize:10, color:"#6B7280", margin:"0 0 16px" }}>
+              Imprima, assine e date manualmente. Anexe RG e {dep.dep_grau_parentesco==="FILHO"?"certidão de nascimento":"certidão de casamento"}.
+            </p>
+            <div style={{ display:"flex", gap:8, justifyContent:"flex-end" }}>
+              <button style={S.btnS} onClick={() => { setTipo(null); reset(); }}>Cancelar</button>
+              <button style={S.btnP} onClick={salvarDependente} disabled={salvando}>{salvando?"Salvando...":"Registrar Solicitação"}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL PREVIEW */}
+      {modalPreview && (
+        <div style={{ ...S.modal, zIndex:1100 }}>
+          <div style={{ background:"#fff", borderRadius:12, width:"100%", maxWidth:760, maxHeight:"90vh", overflowY:"auto", boxShadow:"0 20px 60px rgba(0,0,0,.3)" }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 20px", borderBottom:"1px solid #E5E7EB" }}>
+              <h4 style={{ margin:0, fontSize:14, fontWeight:700, color:"#0F2447" }}>📄 Pré-visualização</h4>
+              <div style={{ display:"flex", gap:8 }}>
+                <button style={{ ...S.btnP, padding:"6px 14px" }} onClick={imprimir}>🖨 Imprimir</button>
+                <button style={S.btnS} onClick={()=>setModalPreview(null)}>Fechar</button>
+              </div>
+            </div>
+            <div dangerouslySetInnerHTML={{ __html:modalPreview }} style={{ padding:"12px 20px" }} />
+          </div>
+        </div>
+      )}
+
+      {/* MODAL ANEXOS */}
+      {anexosModal && (
+        <div style={{ ...S.modal, zIndex:1100 }}>
+          <div style={{ background:"#fff", borderRadius:12, padding:"20px 24px", width:"100%", maxWidth:480 }}>
+            <h4 style={{ margin:"0 0 12px", fontSize:14, fontWeight:700, color:"#0F2447" }}>📎 Anexos — #{anexosModal.id} {anexosModal.colaborador_nome}</h4>
+            {[
+              { key:"FORMULARIO_ASSINADO", label:"Formulário Assinado" },
+              { key:"RG_DEPENDENTE", label:"RG do Dependente" },
+              { key:"CERTIDAO_CASAMENTO", label:"Certidão de Casamento/Nascimento" },
+            ].map(({key,label}) => (
+              <div key={key} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"8px 0", borderBottom:"1px solid #F3F4F6" }}>
+                <span style={{ fontSize:12, color:"#374151" }}>{label}</span>
+                <label style={{ cursor:"pointer", fontSize:11, color:"#3B82F6", fontWeight:600 }}>
+                  📁 Enviar
+                  <input type="file" style={{ display:"none" }} accept=".pdf,.jpg,.jpeg,.png"
+                    onChange={async(e) => {
+                      const file = e.target.files[0]; if (!file) return;
+                      const reader = new FileReader();
+                      reader.onload = async(ev) => {
+                        try {
+                          await api.addAnexoPlanoSaude(anexosModal.id, { nome_arquivo:file.name, tipo_anexo:key, dados_base64:ev.target.result.split(",")[1] });
+                          setMsg({tipo:"ok",texto:`${label} enviado!`});
+                        } catch(err) { setMsg({tipo:"erro",texto:err.message}); }
+                      };
+                      reader.readAsDataURL(file);
+                    }}
+                  />
+                </label>
+              </div>
+            ))}
+            <div style={{ marginTop:14, textAlign:"right" }}>
+              <button style={S.btnS} onClick={()=>setAnexosModal(null)}>Fechar</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// COMPONENTE: AtualizacaoCadastral
+// ════════════════════════════════════════════════════════════════════════════
+
+const DOMINIO_POSICAO_ESCALA = [
+  { cod: "FA", desc: "Faltista" },
+  { cod: "FE", desc: "Ferista" },
+  { cod: "FO", desc: "Folguista" },
+  { cod: "NA", desc: "Não Aplica" },
+  { cod: "TI", desc: "Titular" },
+];
+const DOMINIO_SIM_NAO = [{ cod: "T", desc: "Sim" }, { cod: "F", desc: "Não" }];
+const DOMINIO_MACACAO = ["PP","P","M","G","GG","EG","EEG"];
+const DOMINIO_BOTA    = Array.from({ length: 15 }, (_, i) => String(34 + i));
+
+const CAMPOS_CONFIG = {
+  posicao_escala:  { label: "Posição Escala",  dominio: DOMINIO_POSICAO_ESCALA, tipo: "select_obj" },
+  motorista_lider: { label: "Motorista Líder", dominio: DOMINIO_SIM_NAO,        tipo: "select_obj" },
+  munkeiro:        { label: "Munkeiro",         dominio: DOMINIO_SIM_NAO,        tipo: "select_obj" },
+  prancheiro:      { label: "Prancheiro",       dominio: DOMINIO_SIM_NAO,        tipo: "select_obj" },
+  tamanho_macacao: { label: "Tamanho Macacão",  dominio: DOMINIO_MACACAO,        tipo: "select_str" },
+  tamanho_bota:    { label: "Tamanho Bota",     dominio: DOMINIO_BOTA,           tipo: "select_str" },
 };
 
-// ── Buscar por ID ─────────────────────────────────────────────────────────────
-exports.buscarPorId = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { rows } = await db.query(`
-      SELECT pss.*,
-             c.nome AS colaborador_nome, c.chapa, c.cpf, c.funcao,
-             c.data_admissao, c.centro_custo, c.desc_cc,
-             c.rg, c.rg_orgao, c.rg_uf, c.nome_mae, c.estado_civil,
-             c.pis, c.ctps, c.ctps_serie,
-             c.logradouro, c.complemento, c.bairro, c.cidade, c.uf, c.cep,
-             c.telefone1, c.telefone2, c.telefone3
-      FROM plano_saude_solicitacoes pss
-      JOIN colaboradores c ON pss.colaborador_id = c.id
-      WHERE pss.id = $1
-    `, [id]);
-    if (!rows[0]) return fail(res, "Solicitação não encontrada", 404);
-
-    // Buscar anexos
-    const { rows: anexos } = await db.query(
-      `SELECT id, nome_arquivo, tipo_anexo, criado_em FROM plano_saude_anexos WHERE solicitacao_id = $1 ORDER BY criado_em`,
-      [id]
-    );
-    return ok(res, { ...rows[0], anexos });
-  } catch (e) {
-    return fail(res, e.message, 500);
-  }
+const AC_STATUS_CONFIG = {
+  solicitado:  { label: "Solicitado",  bg: "#FEF3C7", color: "#92400E" },
+  em_analise:  { label: "Em Análise", bg: "#DBEAFE", color: "#1E40AF" },
+  aprovado:    { label: "Aprovado",   bg: "#D1FAE5", color: "#065F46" },
+  reprovado:   { label: "Reprovado",  bg: "#FEE2E2", color: "#991B1B" },
+  finalizado:  { label: "Finalizado", bg: "#F3F4F6", color: "#374151" },
 };
 
-// ── Criar solicitação ─────────────────────────────────────────────────────────
-exports.criar = async (req, res) => {
-  try {
-    const {
-      tipo, movimentacao, colaborador_id,
-      dep_cpf, dep_nome, dep_sexo, dep_data_nasc,
-      dep_estado_civil, dep_data_casamento,
-      dep_grau_parentesco, dep_nome_mae,
-    } = req.body;
-
-    if (!tipo || !movimentacao || !colaborador_id)
-      return fail(res, "tipo, movimentacao e colaborador_id são obrigatórios", 400);
-
-    const { rows } = await db.query(`
-      INSERT INTO plano_saude_solicitacoes
-        (tipo, movimentacao, colaborador_id,
-         dep_cpf, dep_nome, dep_sexo, dep_data_nasc,
-         dep_estado_civil, dep_data_casamento,
-         dep_grau_parentesco, dep_nome_mae)
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
-      RETURNING *
-    `, [
-      tipo, movimentacao, colaborador_id,
-      dep_cpf || null, dep_nome || null, dep_sexo || null,
-      dep_data_nasc || null, dep_estado_civil || null,
-      dep_data_casamento || null, dep_grau_parentesco || null, dep_nome_mae || null,
-    ]);
-
-    return ok(res, rows[0], 201);
-  } catch (e) {
-    return fail(res, e.message, 500);
+function labelValor(campo, val) {
+  if (!val) return "—";
+  const cfg = CAMPOS_CONFIG[campo];
+  if (!cfg) return val;
+  if (cfg.tipo === "select_obj") {
+    const found = cfg.dominio.find(d => d.cod === val);
+    return found ? `${found.cod} — ${found.desc}` : val;
   }
-};
+  return val;
+}
 
-// ── Adicionar anexo ───────────────────────────────────────────────────────────
-exports.addAnexo = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { nome_arquivo, tipo_anexo, dados_base64 } = req.body;
+function AtualizacaoCadastral({ user, colaboradores }) {
+  const [aba, setAba]           = useState("colaboradores"); // "colaboradores" | "solicitacoes"
+  const [solicitacoes, setSolicitacoes] = useState([]);
+  const [loadingSols, setLoadingSols]   = useState(false);
+  const [msg, setMsg]           = useState(null);
+  const [salvando, setSalvando] = useState(false);
 
-    if (!nome_arquivo || !dados_base64)
-      return fail(res, "nome_arquivo e dados_base64 são obrigatórios", 400);
+  // Filtros colaboradores
+  const [fNome, setFNome]             = useState("");
+  const [fNomeCompleto, setFNomeCompleto] = useState("");
+  const [fFuncao, setFuncao]          = useState("");
+  const [fFilial, setFFilial]         = useState("");
 
-    const { rows } = await db.query(`
-      INSERT INTO plano_saude_anexos (solicitacao_id, nome_arquivo, tipo_anexo, dados_base64)
-      VALUES ($1, $2, $3, $4) RETURNING id, nome_arquivo, tipo_anexo, criado_em
-    `, [id, nome_arquivo, tipo_anexo || null, dados_base64]);
+  // Filtros solicitações
+  const [fStatus, setFStatus]   = useState("todos");
+  const [fDataIni, setFDataIni] = useState("");
+  const [fDataFim, setFDataFim] = useState("");
+  const [fSolic, setFSolic]     = useState("");
 
-    return ok(res, rows[0], 201);
-  } catch (e) {
-    return fail(res, e.message, 500);
-  }
-};
+  // Modal solicitação
+  const [modalNova, setModalNova]   = useState(null); // colaborador selecionado
+  const [itens, setItens]           = useState({});
+  const [observacao, setObservacao] = useState("");
 
-// ── Buscar anexo (download) ───────────────────────────────────────────────────
-exports.getAnexo = async (req, res) => {
-  try {
-    const { id, anexoId } = req.params;
-    const { rows } = await db.query(
-      `SELECT * FROM plano_saude_anexos WHERE id=$1 AND solicitacao_id=$2`,
-      [anexoId, id]
-    );
-    if (!rows[0]) return fail(res, "Anexo não encontrado", 404);
-    return ok(res, rows[0]);
-  } catch (e) {
-    return fail(res, e.message, 500);
-  }
-};
+  // Modal detalhe
+  const [modalDetalhe, setModalDetalhe] = useState(null);
+  const [obsAprov, setObsAprov]         = useState("");
 
-// ── Cancelar ──────────────────────────────────────────────────────────────────
-exports.cancelar = async (req, res) => {
-  try {
-    const { id } = req.params;
-    await db.query(
-      `UPDATE plano_saude_solicitacoes SET status='cancelado', atualizado_em=NOW() WHERE id=$1`,
-      [id]
-    );
-    return ok(res, { message: "Cancelado com sucesso" });
-  } catch (e) {
-    return fail(res, e.message, 500);
-  }
-};
+  const norm = s => (s || "").toLowerCase();
+  const canAprovar = user?.perfil === "dp" || user?.perfil === "admin" || user?.perfil === "presidente";
+
+  const colabsAtivos = colaboradores.filter(c => c.cod_situacao !== "D");
+  const fmtFilial = (c) => {
+    const f = c.descricao_filial || c.desc_cc || "";
+    return f.replace(/^BENEL TRANSPORTES\s*[-–]\s*/i, "").trim();
+  };
+
+  const colabsFiltrados = colabsAtivos.filter(c =>
+    (!fNome          || (c.chapa||"").toLowerCase().includes(fNome.toLowerCase())) &&
+    (!fNomeCompleto  || norm(c.nome).includes(norm(fNomeCompleto))) &&
+    (!fFuncao        || norm(c.funcao||"").includes(norm(fFuncao))) &&
+    (!fFilial        || norm(fmtFilial(c)).includes(norm(fFilial)) || norm(c.desc_cc||"").includes(norm(fFilial)))
+  );
+
+  const carregarSols = async () => {
+    setLoadingSols(true);
+    try {
+      const params = {};
+      if (fStatus !== "todos") params.status = fStatus;
+      if (fDataIni) params.data_inicio = fDataIni;
+      if (fDataFim) params.data_fim = fDataFim;
+      if (fSolic)   params.solicitante = fSolic;
+      const data = await api.listarAtualizacaoCadastral(params);
+      setSolicitacoes(Array.isArray(data) ? data : []);
+    } catch (e) { setMsg({ tipo: "erro", texto: e.message }); }
+    finally { setLoadingSols(false); }
+  };
+
+  useEffect(() => { if (aba === "solicitacoes") carregarSols(); }, [aba]);
+
+  const salvar = async () => {
+    if (!modalNova) return;
+    const itensList = Object.entries(itens).filter(([,v]) => v).map(([campo, novo_valor]) => ({ campo, novo_valor }));
+    if (itensList.length === 0) { setMsg({ tipo: "erro", texto: "Selecione ao menos um campo para alterar." }); return; }
+    setSalvando(true);
+    try {
+      await api.criarAtualizacaoCadastral({ colaborador_id: modalNova.id, itens: itensList, observacao });
+      setMsg({ tipo: "ok", texto: "Solicitação criada com sucesso!" });
+      setModalNova(null); setItens({}); setObservacao("");
+      if (aba === "solicitacoes") carregarSols();
+    } catch (e) { setMsg({ tipo: "erro", texto: e.message }); }
+    finally { setSalvando(false); }
+  };
+
+  const aprovar = async (acao) => {
+    setSalvando(true);
+    try {
+      await api.aprovarAtualizacaoCadastral(modalDetalhe.id, acao, obsAprov);
+      setMsg({ tipo: "ok", texto: `Solicitação ${acao === "aprovar" ? "aprovada" : "reprovada"}!` });
+      setModalDetalhe(null); setObsAprov(""); carregarSols();
+    } catch (e) { setMsg({ tipo: "erro", texto: e.message }); }
+    finally { setSalvando(false); }
+  };
+
+  const S = {
+    inp:  { width: "100%", padding: "6px 10px", border: "1px solid #D1D5DB", borderRadius: 6, fontSize: 12, boxSizing: "border-box" },
+    lbl:  { fontSize: 11, fontWeight: 600, color: "#374151", display: "block", marginBottom: 3 },
+    btnP: { background: "#0F2447", color: "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontSize: 12, fontWeight: 700, cursor: "pointer" },
+    btnS: { background: "#F3F4F6", color: "#374151", border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer" },
+    btnV: { background: "#059669", color: "#fff", border: "none", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" },
+    btnR: { background: "#DC2626", color: "#fff", border: "none", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" },
+    modal:{ position: "fixed", inset: 0, background: "rgba(0,0,0,.5)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center" },
+    mbox: { background: "#fff", borderRadius: 14, padding: "24px 28px", width: "100%", maxWidth: 700, maxHeight: "90vh", overflowY: "auto", boxShadow: "0 20px 60px rgba(0,0,0,.25)" },
+    th:   { padding: "10px 10px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: 0.5, whiteSpace: "nowrap" },
+    td:   { padding: "9px 10px", fontSize: 11, borderBottom: "1px solid #F3F4F6" },
+  };
+
+  const SimNaoTag = ({ val }) => {
+    if (!val) return <span style={{ color: "#9CA3AF" }}>—</span>;
+    return <span style={{ padding: "2px 8px", borderRadius: 8, fontSize: 10, fontWeight: 700, background: val === "T" ? "#D1FAE5" : "#FEE2E2", color: val === "T" ? "#065F46" : "#991B1B" }}>{val === "T" ? "Sim" : "Não"}</span>;
+  };
+
+  return (
+    <div style={{ padding: "16px 20px", maxWidth: 1200, margin: "0 auto" }}>
+      {/* Header */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+        <div>
+          <h2 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: "#111827" }}>📝 Atualização de Dados Cadastrais</h2>
+          <p style={{ margin: "2px 0 0", fontSize: 11, color: "#6B7280" }}>Solicitação de alteração com aprovação do DP</p>
+        </div>
+      </div>
+
+      {/* Msg */}
+      {msg && (
+        <div style={{ padding: "8px 14px", borderRadius: 7, marginBottom: 12, background: msg.tipo === "ok" ? "#D1FAE5" : "#FEE2E2", color: msg.tipo === "ok" ? "#065F46" : "#991B1B", fontSize: 12, fontWeight: 600, display: "flex", justifyContent: "space-between" }}>
+          {msg.texto}
+          <button onClick={() => setMsg(null)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 14 }}>×</button>
+        </div>
+      )}
+
+      {/* Abas */}
+      <div style={{ display: "flex", gap: 4, marginBottom: 16, borderBottom: "2px solid #E5E7EB" }}>
+        {[["colaboradores","👥 Colaboradores"], ["solicitacoes","📋 Solicitações"]].map(([id, label]) => (
+          <button key={id} onClick={() => setAba(id)} style={{
+            padding: "8px 18px", fontSize: 12, fontWeight: 600, border: "none", cursor: "pointer",
+            background: "none", borderBottom: aba === id ? "2px solid #0F2447" : "2px solid transparent",
+            color: aba === id ? "#0F2447" : "#6B7280", marginBottom: -2
+          }}>{label}</button>
+        ))}
+      </div>
+
+      {/* ABA COLABORADORES */}
+      {aba === "colaboradores" && (
+        <>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff", borderRadius: 10, overflow: "hidden", border: "1px solid #E5E7EB", fontSize: 12 }}>
+              <thead>
+                <tr style={{ background: "#F9FAFB", borderBottom: "1px solid #E5E7EB" }}>
+                  <th style={S.th}>Filial</th>
+                  <th style={S.th}>Matrícula</th>
+                  <th style={S.th}>Nome</th>
+                  <th style={S.th}>Função</th>
+                  <th style={S.th}>Pos. Escala</th>
+                  <th style={S.th}>Mot. Líder</th>
+                  <th style={S.th}>Munkeiro</th>
+                  <th style={S.th}>Prancheiro</th>
+                  <th style={S.th}>Macacão</th>
+                  <th style={S.th}>Bota</th>
+                  <th style={S.th}>Ação</th>
+                </tr>
+                <tr style={{ background: "#F9FAFB", borderBottom: "2px solid #E5E7EB" }}>
+                  <td style={{ padding: "4px 6px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Filial" value={fFilial} onChange={e => setFFilial(e.target.value)} /></td>
+                  <td style={{ padding: "4px 6px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Matrícula" value={fNome} onChange={e => setFNome(e.target.value)} /></td>
+                  <td style={{ padding: "4px 6px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Nome" value={fNomeCompleto} onChange={e => setFNomeCompleto(e.target.value)} /></td>
+                  <td style={{ padding: "4px 6px" }}><input style={{ ...S.inp, fontSize: 11 }} placeholder="🔍 Função" value={fFuncao} onChange={e => setFuncao(e.target.value)} /></td>
+                  <td colSpan={6} style={{ padding: "4px 6px" }}>
+                    <button onClick={() => { setFNome(""); setFNomeCompleto(""); setFuncao(""); setFFilial(""); }}
+                      style={{ padding: "5px 12px", border: "1px solid #D1D5DB", borderRadius: 6, background: "#fff", color: "#374151", fontSize: 11, cursor: "pointer" }}>
+                      × Limpar
+                    </button>
+                    <span style={{ marginLeft: 10, fontSize: 11, color: "#6B7280" }}>{colabsFiltrados.length} colaborador(es)</span>
+                  </td>
+                  <td></td>
+                </tr>
+              </thead>
+              <tbody>
+                {colabsFiltrados.slice(0, 100).map(c => (
+                  <tr key={c.id} onMouseEnter={e => e.currentTarget.style.background = "#F9FAFB"} onMouseLeave={e => e.currentTarget.style.background = ""}>
+                    <td style={S.td}>{fmtFilial(c)}</td>
+                    <td style={{ ...S.td, fontWeight: 700 }}>{c.chapa}</td>
+                    <td style={S.td}>{c.nome}</td>
+                    <td style={{ ...S.td, color: "#6B7280" }}>{c.funcao}</td>
+                    <td style={S.td}>{c.posicao_escala ? labelValor("posicao_escala", c.posicao_escala) : <span style={{ color: "#9CA3AF" }}>—</span>}</td>
+                    <td style={S.td}><SimNaoTag val={c.motorista_lider} /></td>
+                    <td style={S.td}><SimNaoTag val={c.munkeiro} /></td>
+                    <td style={S.td}><SimNaoTag val={c.prancheiro} /></td>
+                    <td style={S.td}>{c.tamanho_macacao || <span style={{ color: "#9CA3AF" }}>—</span>}</td>
+                    <td style={S.td}>{c.tamanho_bota || <span style={{ color: "#9CA3AF" }}>—</span>}</td>
+                    <td style={S.td}>
+                      <button style={{ ...S.btnP, padding: "4px 10px", fontSize: 11 }}
+                        onClick={() => { setModalNova(c); setItens({}); setObservacao(""); }}>
+                        Solicitar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {colabsFiltrados.length > 100 && (
+                  <tr><td colSpan={11} style={{ ...S.td, textAlign: "center", color: "#6B7280" }}>
+                    Mostrando 100 de {colabsFiltrados.length}. Use os filtros para refinar.
+                  </td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+
+      {/* ABA SOLICITAÇÕES */}
+      {aba === "solicitacoes" && (
+        <>
+          <div style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 10, padding: "12px 16px", marginBottom: 12 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr auto", gap: 10, alignItems: "end" }}>
+              <div>
+                <label style={S.lbl}>Status</label>
+                <select style={S.inp} value={fStatus} onChange={e => setFStatus(e.target.value)}>
+                  <option value="todos">Todos</option>
+                  <option value="solicitado">Solicitado</option>
+                  <option value="em_analise">Em Análise</option>
+                  <option value="aprovado">Aprovado</option>
+                  <option value="reprovado">Reprovado</option>
+                  <option value="finalizado">Finalizado</option>
+                </select>
+              </div>
+              <div><label style={S.lbl}>Data início</label><input type="date" style={S.inp} value={fDataIni} onChange={e => setFDataIni(e.target.value)} /></div>
+              <div><label style={S.lbl}>Data fim</label><input type="date" style={S.inp} value={fDataFim} onChange={e => setFDataFim(e.target.value)} /></div>
+              <div><label style={S.lbl}>Solicitante</label><input style={S.inp} placeholder="Nome..." value={fSolic} onChange={e => setFSolic(e.target.value)} /></div>
+              <button style={S.btnP} onClick={carregarSols}>🔍 Filtrar</button>
+            </div>
+          </div>
+
+          {loadingSols ? (
+            <div style={{ textAlign: "center", padding: 40, color: "#9CA3AF" }}>Carregando...</div>
+          ) : solicitacoes.length === 0 ? (
+            <div style={{ textAlign: "center", padding: 60, color: "#9CA3AF" }}>Nenhuma solicitação encontrada.</div>
+          ) : (
+            <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff", borderRadius: 10, overflow: "hidden", border: "1px solid #E5E7EB" }}>
+              <thead>
+                <tr style={{ background: "#F9FAFB", borderBottom: "2px solid #E5E7EB" }}>
+                  {["Matrícula","Nome","Função","Admissão","Solicitante","Data","Status","Ações"].map(h => (
+                    <th key={h} style={S.th}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {solicitacoes.map(s => {
+                  const stCfg = AC_STATUS_CONFIG[s.status] || {};
+                  return (
+                    <tr key={s.id} onMouseEnter={e => e.currentTarget.style.background = "#F9FAFB"} onMouseLeave={e => e.currentTarget.style.background = ""}>
+                      <td style={{ ...S.td, fontWeight: 700 }}>{s.chapa}</td>
+                      <td style={S.td}>{s.colaborador_nome}</td>
+                      <td style={{ ...S.td, color: "#6B7280" }}>{s.funcao}</td>
+                      <td style={{ ...S.td, color: "#6B7280" }}>{s.data_admissao ? new Date(s.data_admissao).toLocaleDateString("pt-BR") : "—"}</td>
+                      <td style={S.td}>{s.usuario_solicitante_nome}</td>
+                      <td style={{ ...S.td, color: "#6B7280" }}>{new Date(s.criado_em).toLocaleDateString("pt-BR")}</td>
+                      <td style={S.td}>
+                        <span style={{ padding: "2px 8px", borderRadius: 8, fontSize: 10, fontWeight: 700, background: stCfg.bg, color: stCfg.color }}>
+                          {stCfg.label || s.status}
+                        </span>
+                      </td>
+                      <td style={S.td}>
+                        <button style={{ ...S.btnS, padding: "4px 10px", fontSize: 11 }} onClick={() => { setModalDetalhe(s); setObsAprov(""); }}>
+                          Ver
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+        </>
+      )}
+
+      {/* MODAL SOLICITAR ALTERAÇÃO */}
+      {modalNova && (
+        <div style={S.modal}>
+          <div style={S.mbox}>
+            <h3 style={{ margin: "0 0 6px", fontSize: 15, fontWeight: 800, color: "#0F2447" }}>Solicitar Alteração Cadastral</h3>
+            <div style={{ padding: "8px 12px", background: "#EFF6FF", borderRadius: 8, marginBottom: 16, fontSize: 12, color: "#1E40AF" }}>
+              <strong>{fmtFilial(modalNova)}</strong> | {modalNova.chapa} | {modalNova.nome} | {modalNova.funcao} | {modalNova.data_admissao ? new Date(modalNova.data_admissao).toLocaleDateString("pt-BR") : "—"}
+            </div>
+
+            <div style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 8, padding: "14px", marginBottom: 14 }}>
+              <p style={{ margin: "0 0 4px", fontSize: 11, fontWeight: 700, color: "#374151" }}>CAMPOS PARA ALTERAR</p>
+              <p style={{ margin: "0 0 12px", fontSize: 11, color: "#6B7280" }}>Selecione apenas os campos que deseja alterar.</p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                {Object.entries(CAMPOS_CONFIG).map(([campo, cfg]) => (
+                  <div key={campo}>
+                    <label style={S.lbl}>{cfg.label}</label>
+                    <div style={{ fontSize: 10, color: "#6B7280", marginBottom: 4 }}>
+                      Atual: <strong style={{ color: modalNova[campo] ? "#374151" : "#9CA3AF" }}>
+                        {modalNova[campo] ? labelValor(campo, modalNova[campo]) : "Não informado"}
+                      </strong>
+                    </div>
+                    <select style={S.inp} value={itens[campo] || ""} onChange={e => setItens(p => ({ ...p, [campo]: e.target.value || undefined }))}>
+                      <option value="">— sem alteração —</option>
+                      {cfg.tipo === "select_obj"
+                        ? cfg.dominio.map(d => <option key={d.cod} value={d.cod}>{d.cod} — {d.desc}</option>)
+                        : cfg.dominio.map(v => <option key={v} value={v}>{v}</option>)
+                      }
+                    </select>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ marginBottom: 16 }}>
+              <label style={S.lbl}>Observação</label>
+              <textarea style={{ ...S.inp, height: 56, resize: "vertical" }} value={observacao} onChange={e => setObservacao(e.target.value)} placeholder="Justificativa ou observação..." />
+            </div>
+
+            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+              <button style={S.btnS} onClick={() => setModalNova(null)}>Cancelar</button>
+              <button style={S.btnP} onClick={salvar} disabled={salvando}>{salvando ? "Salvando..." : "Registrar Solicitação"}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DETALHE */}
+      {modalDetalhe && (
+        <div style={{ ...S.modal, zIndex: 1100 }}>
+          <div style={{ ...S.mbox, maxWidth: 580 }}>
+            <h3 style={{ margin: "0 0 4px", fontSize: 15, fontWeight: 800, color: "#0F2447" }}>Solicitação #{modalDetalhe.id}</h3>
+            <p style={{ margin: "0 0 14px", fontSize: 11, color: "#6B7280" }}>{modalDetalhe.chapa} | {modalDetalhe.colaborador_nome}</p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 14, fontSize: 12 }}>
+              <div style={{ background: "#F9FAFB", borderRadius: 6, padding: "8px 10px" }}>
+                <div style={{ fontSize: 10, color: "#6B7280", marginBottom: 2 }}>SOLICITANTE</div>
+                <strong>{modalDetalhe.usuario_solicitante_nome}</strong>
+              </div>
+              <div style={{ background: "#F9FAFB", borderRadius: 6, padding: "8px 10px" }}>
+                <div style={{ fontSize: 10, color: "#6B7280", marginBottom: 2 }}>DATA</div>
+                <strong>{new Date(modalDetalhe.criado_em).toLocaleDateString("pt-BR")}</strong>
+              </div>
+              <div style={{ background: "#F9FAFB", borderRadius: 6, padding: "8px 10px" }}>
+                <div style={{ fontSize: 10, color: "#6B7280", marginBottom: 2 }}>STATUS</div>
+                <span style={{ padding: "2px 8px", borderRadius: 8, fontSize: 10, fontWeight: 700, background: AC_STATUS_CONFIG[modalDetalhe.status]?.bg, color: AC_STATUS_CONFIG[modalDetalhe.status]?.color }}>
+                  {AC_STATUS_CONFIG[modalDetalhe.status]?.label}
+                </span>
+              </div>
+            </div>
+
+            <div style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 8, padding: "12px 14px", marginBottom: 14 }}>
+              <p style={{ margin: "0 0 8px", fontSize: 11, fontWeight: 700, color: "#374151" }}>ALTERAÇÕES</p>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+                <thead>
+                  <tr style={{ borderBottom: "1px solid #E5E7EB" }}>
+                    <th style={{ padding: "4px 8px", textAlign: "left", fontSize: 10, color: "#6B7280" }}>Campo</th>
+                    <th style={{ padding: "4px 8px", textAlign: "left", fontSize: 10, color: "#6B7280" }}>Antes</th>
+                    <th style={{ padding: "4px 8px", textAlign: "left", fontSize: 10, color: "#6B7280" }}>Depois</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(modalDetalhe.itens || []).map((item, i) => (
+                    <tr key={i} style={{ borderBottom: "1px solid #F3F4F6" }}>
+                      <td style={{ padding: "5px 8px", fontWeight: 600 }}>{CAMPOS_CONFIG[item.campo]?.label || item.campo}</td>
+                      <td style={{ padding: "5px 8px", color: "#991B1B" }}>{labelValor(item.campo, item.valor_anterior)}</td>
+                      <td style={{ padding: "5px 8px", color: "#065F46", fontWeight: 700 }}>{labelValor(item.campo, item.novo_valor)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {modalDetalhe.observacao && (
+              <div style={{ background: "#FFFBEB", border: "1px solid #FDE68A", borderRadius: 6, padding: "8px 12px", marginBottom: 14, fontSize: 12 }}>
+                <strong>Obs:</strong> {modalDetalhe.observacao}
+              </div>
+            )}
+
+            {canAprovar && ["solicitado","em_analise"].includes(modalDetalhe.status) && (
+              <div style={{ marginBottom: 14 }}>
+                <label style={S.lbl}>Observação do aprovador</label>
+                <textarea style={{ ...S.inp, height: 44, resize: "vertical" }} value={obsAprov} onChange={e => setObsAprov(e.target.value)} placeholder="Opcional..." />
+              </div>
+            )}
+
+            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+              <button style={S.btnS} onClick={() => setModalDetalhe(null)}>Fechar</button>
+              {canAprovar && ["solicitado","em_analise"].includes(modalDetalhe.status) && (
+                <>
+                  <button style={S.btnR} onClick={() => aprovar("reprovar")} disabled={salvando}>✗ Reprovar</button>
+                  <button style={S.btnV} onClick={() => aprovar("aprovar")} disabled={salvando}>✓ Aprovar</button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -5981,7 +6655,9 @@ export default function App() {
     cad_alcadas:      { title: "Regras de Alçadas",       subtitle: "Cadastros › Alçadas" },
     cad_usuarios:     { title: "Usuários do Sistema",     subtitle: "Cadastros › Usuários" },
     auditoria:        { title: "Auditoria",               subtitle: "Log completo de ações" },
+    plano_saude:      { title: "Benefícios",               subtitle: "" },
     desligamentos:    { title: "Solicitações de Desligamento",              subtitle: "Gerencie solicitações de desligamento de colaboradores" },
+    atualizacao_cadastral: { title: "Atualização de Dados Cadastrais", subtitle: "Solicitação de alteração cadastral" },
     ocorrencias:      { title: "Solicitações de Advertências/Suspensões",   subtitle: "Registro de ocorrências disciplinares" },
     autorizacoes:     { title: "Autorização de Desconto",                   subtitle: "Autorização para desconto na folha de pagamento" },
   };
@@ -6027,6 +6703,7 @@ export default function App() {
           {page === "auditoria"         && <Auditoria solicitacoes={solicitacoes} blocos={blocos} sessao={sessao} />}
           {page === "ocorrencias"       && <Ocorrencias user={user} colaboradores={colaboradores} />}
           {page === "autorizacoes"      && <Autorizacoes user={user} colaboradores={colaboradores} />}
+          {page === "atualizacao_cadastral" && <AtualizacaoCadastral user={user} colaboradores={colaboradores} />}
           {page === "plano_saude" && <PlanoSaude user={user} colaboradores={colaboradores} />}
         </div>
       </div>
