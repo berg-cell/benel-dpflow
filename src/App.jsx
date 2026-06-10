@@ -4045,7 +4045,7 @@ function Autorizacoes({ user, colaboradores }) {
                   <td style={{ padding:"10px 14px" }}>
                     <div style={{ display:"flex", gap:6 }}>
                       <button onClick={() => setModalDoc({ ...docData, colaborador: colabData })} style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #D1D5DB", background:"#fff", fontSize:12, cursor:"pointer", fontWeight:600 }}>📄 PDF</button>
-                      <label style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46", fontSize:12, cursor:"pointer", fontWeight:600 }}>
+                      <label style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46", fontSize:12, cursor:"pointer", fontWeight:600, display:"inline-flex", alignItems:"center", gap:4, overflow:"hidden", maxWidth:120 }}>
                         📎 {s.anexo_nome ? "Substituir" : "Anexar"}
                         <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display:"none" }}
                           onChange={e => { const f = e.target.files[0]; if (f) anexar(s.id, f); }} />
@@ -4751,7 +4751,6 @@ const ALCADA_DESL = {
   pendente_superior:  ["superior", "dp", "admin", "presidente"],
   // 2ª alçada — descomente quando quiser ativar:
   // pendente_dp:     ["dp", "admin"],
-  aprovado:           ["dp", "admin", "presidente"],
   ajuste_solicitado:  ["gestor", "dp", "admin", "presidente"],
 };
 
@@ -5093,13 +5092,13 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                   <td style={{ padding:"10px 14px" }}>
                     <div style={{ display:"flex", gap:4, flexWrap:"nowrap", alignItems:"center" }}>
 
-                      {/* 1. PDF — só após aprovação e não pedido_demissão */}
+                      {/* 1. PDF — só após aprovação, não pedido_demissão */}
                       {["aprovado","finalizado"].includes(sol.status) && sol.tipo !== "pedido_demissao" && (
                         <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalPDF(r); } catch(e){ setErro(e.message); } }}
                           style={{ ...btnBase, border:"1px solid #D1D5DB", background:"#fff", color:"#374151" }}>📄 PDF</button>
                       )}
 
-                      {/* 2. Anexar/Substituir — após aprovação, não pedido_demissão */}
+                      {/* 2. Anexar/Substituir — só após aprovação, não pedido_demissão */}
                       {["aprovado","finalizado"].includes(sol.status) && sol.tipo !== "pedido_demissao" && (
                         <label style={{ ...btnBase, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46", display:"inline-block" }}>
                           📎 {sol.anexo_nome ? "Substituir" : "Anexar"}
@@ -5119,28 +5118,34 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                         </label>
                       )}
 
-                      {/* 3. Pedido de demissão — anexo específico */}
+                      {/* 3. Ver anexo — quando há anexo */}
+                      {sol.anexo_nome && (
+                        <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalAnexoPedido(r); } catch(e){ setErro(e.message); } }}
+                          style={{ ...btnBase, border:"1px solid #6B7280", background:"#F9FAFB", color:"#374151" }}>👁️ Ver</button>
+                      )}
+
+                      {/* 4. Pedido de demissão — anexo específico */}
                       {sol.tipo === "pedido_demissao" && (
                         <button onClick={async () => { try { const r = await api.buscarDesligamento(sol.id); setModalAnexoPedido(r); } catch(e){ setErro(e.message); } }}
                           style={{ ...btnBase, border:"1px solid #10B981", background:"#F0FDF4", color:"#065F46" }}>📎 Anexo</button>
                       )}
 
-                      {/* 4. Aprovar/Analisar — verde quando pode agir */}
+                      {/* 5. Aprovar — só quando pendente, não quando já aprovado */}
                       {podeAgir(sol) && sol.tipo !== "pedido_demissao" && (
                         <button onClick={() => setModalAcao({ id: sol.id, status: sol.status, acao: "aprovar", observacao: "" })}
                           style={{ ...btnBase, border:"none", background:"#10B981", color:"#fff" }}>✅ Aprovar</button>
                       )}
 
-                      {/* 5. Enviar — rascunho do próprio gestor */}
+                      {/* 6. Enviar — rascunho do próprio gestor */}
                       {sol.status === "rascunho" && sol.gestor_id === user.id && (
                         <button onClick={async () => { try { await api.enviarDesligamento(sol.id); await carregar(); } catch(e){setErro(e.message);} }}
                           style={{ ...btnBase, border:"none", background:"#0F2447", color:"#fff" }}>Enviar</button>
                       )}
 
-                      {/* 6. Ver detalhe */}
+                      {/* 7. Ver detalhe — sempre */}
                       <button onClick={() => abrirDetalhe(sol.id)} style={{ ...btnBase, border:"1px solid #E5E7EB", background:"#fff", color:"#374151" }}>Ver</button>
 
-                      {/* 7. Cancelar */}
+                      {/* 8. Cancelar */}
                       {["admin","dp"].includes(user.perfil) && !["cancelado","finalizado"].includes(sol.status) && (
                         <button onClick={async () => {
                           if (!window.confirm(`Cancelar a solicitação de desligamento de ${sol.colaborador_nome}?\n\nEsta ação não pode ser desfeita.`)) return;
