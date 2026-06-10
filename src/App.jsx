@@ -5513,16 +5513,23 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                     <div style={{ padding:16, textAlign:"center", background:"#fff" }}>
                       {isImg ? (
                         <img src={src} alt={nome} style={{ maxWidth:"100%", borderRadius:8, border:"1px solid #E5E7EB" }} />
-                      ) : isPdf ? (() => {
-                        // Converter base64 para Blob URL para evitar bloqueio do browser
-                        const b64 = src.split(",")[1];
-                        const bin = atob(b64);
-                        const arr = new Uint8Array(bin.length);
-                        for (let i=0; i<bin.length; i++) arr[i] = bin.charCodeAt(i);
-                        const blob = new Blob([arr], { type:"application/pdf" });
-                        const url = URL.createObjectURL(blob);
-                        return <iframe src={url} style={{ width:"100%", height:"70vh", border:"none", borderRadius:8 }} title={nome} />;
-                      })() : (
+                      ) : isPdf ? (
+                        <div style={{ textAlign:"center", padding:"40px 0" }}>
+                          <div style={{ fontSize:56, marginBottom:12 }}>📄</div>
+                          <div style={{ fontSize:14, color:"#374151", marginBottom:20, fontWeight:600 }}>{nome}</div>
+                          <button onClick={() => {
+                            const b64 = src.split(",")[1];
+                            const bin = atob(b64);
+                            const arr = new Uint8Array(bin.length);
+                            for (let i=0; i<bin.length; i++) arr[i] = bin.charCodeAt(i);
+                            const blob = new Blob([arr], { type:"application/pdf" });
+                            const url = URL.createObjectURL(blob);
+                            window.open(url, "_blank");
+                          }} style={{ padding:"10px 24px", background:"#0F2447", color:"#fff", border:"none", borderRadius:8, fontSize:14, fontWeight:600, cursor:"pointer" }}>
+                            🔍 Visualizar PDF em Nova Aba
+                          </button>
+                        </div>
+                      ) : (
                         <div style={{ padding:"30px 0", color:"#6B7280", fontSize:13 }}>
                           <div style={{ fontSize:48, marginBottom:8 }}>📄</div>
                           <div>{nome}</div>
@@ -5568,15 +5575,23 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                             <div style={{ padding:"0 14px 14px", background:"#fff" }}>
                               {isImg ? (
                                 <img src={src} alt={anx.nome_arquivo} style={{ maxWidth:"100%", borderRadius:6, border:"1px solid #E5E7EB" }} />
-                              ) : isPdf ? (() => {
-                                const b64 = src.split(",")[1];
-                                const bin = atob(b64);
-                                const arr = new Uint8Array(bin.length);
-                                for (let i=0; i<bin.length; i++) arr[i] = bin.charCodeAt(i);
-                                const blob = new Blob([arr], { type:"application/pdf" });
-                                const url = URL.createObjectURL(blob);
-                                return <iframe src={url} style={{ width:"100%", height:"60vh", border:"none", borderRadius:6 }} title={anx.nome_arquivo} />;
-                              })() : null}
+                              ) : isPdf ? (
+                                <div style={{ textAlign:"center", padding:"30px 0" }}>
+                                  <div style={{ fontSize:48, marginBottom:10 }}>📄</div>
+                                  <div style={{ fontSize:13, color:"#374151", marginBottom:16, fontWeight:600 }}>{anx.nome_arquivo}</div>
+                                  <button onClick={() => {
+                                    const b64 = src.split(",")[1];
+                                    const bin = atob(b64);
+                                    const arr = new Uint8Array(bin.length);
+                                    for (let i=0; i<bin.length; i++) arr[i] = bin.charCodeAt(i);
+                                    const blob = new Blob([arr], { type:"application/pdf" });
+                                    const url = URL.createObjectURL(blob);
+                                    window.open(url, "_blank");
+                                  }} style={{ padding:"8px 20px", background:"#0F2447", color:"#fff", border:"none", borderRadius:8, fontSize:13, fontWeight:600, cursor:"pointer" }}>
+                                    🔍 Visualizar em Nova Aba
+                                  </button>
+                                </div>
+                              ) : null}
                             </div>
                           )}
                         </div>
