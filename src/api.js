@@ -208,6 +208,9 @@ export const api = {
       method: "POST",
       body: JSON.stringify(dados),
     }),
+
+  getAnexoDesligamento: (solId, anexoId) =>
+    request(`/desligamentos/${solId}/anexos/${anexoId}`),
   
   addAnexoOcorrencia: (id, dados) =>
     request(`/ocorrencias/${id}/anexos`, {
