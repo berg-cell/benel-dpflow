@@ -3860,6 +3860,80 @@ function gerarHTMLAutorizacao(dados, colaborador, logoBase64) {
   `;
 }
 
+
+// ─── PDF VIEWER — renderiza PDF via PDF.js sem depender de iframe/CSP ────────
+function PdfViewer({ src, height = "72vh" }) {
+  const canvasRef = useRef(null);
+  const [numPages, setNumPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [pdfDoc, setPdfDoc] = useState(null);
+
+  useEffect(() => {
+    if (!src) return;
+    // Carregar PDF.js via CDN
+    const loadPdfJs = async () => {
+      if (!window.pdfjsLib) {
+        await new Promise((resolve, reject) => {
+          const s = document.createElement("script");
+          s.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+          s.onload = resolve; s.onerror = reject;
+          document.head.appendChild(s);
+        });
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+          "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+      }
+      try {
+        const b64 = src.includes(",") ? src.split(",")[1] : src;
+        const bin = atob(b64);
+        const arr = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+        const doc = await window.pdfjsLib.getDocument({ data: arr }).promise;
+        setPdfDoc(doc);
+        setNumPages(doc.numPages);
+        setLoading(false);
+      } catch(e) { setLoading(false); console.error("PDF load error", e); }
+    };
+    loadPdfJs();
+  }, [src]);
+
+  useEffect(() => {
+    if (!pdfDoc || !canvasRef.current) return;
+    const renderPage = async () => {
+      const page = await pdfDoc.getPage(currentPage);
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d");
+      const viewport = page.getViewport({ scale: 1.5 });
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      await page.render({ canvasContext: ctx, viewport }).promise;
+    };
+    renderPage();
+  }, [pdfDoc, currentPage]);
+
+  if (loading) return (
+    <div style={{ textAlign:"center", padding:"40px 0", color:"#6B7280" }}>
+      <div style={{ fontSize:32, marginBottom:8 }}>⏳</div>
+      <div>Carregando PDF...</div>
+    </div>
+  );
+
+  return (
+    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:12 }}>
+      <canvas ref={canvasRef} style={{ maxWidth:"100%", borderRadius:6, border:"1px solid #E5E7EB", boxShadow:"0 2px 8px rgba(0,0,0,0.08)" }} />
+      {numPages > 1 && (
+        <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+          <button onClick={() => setCurrentPage(p => Math.max(1, p-1))} disabled={currentPage===1}
+            style={{ padding:"5px 14px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", fontWeight:600, fontSize:13 }}>‹ Anterior</button>
+          <span style={{ fontSize:13, color:"#374151" }}>Página {currentPage} de {numPages}</span>
+          <button onClick={() => setCurrentPage(p => Math.min(numPages, p+1))} disabled={currentPage===numPages}
+            style={{ padding:"5px 14px", borderRadius:6, border:"1px solid #D1D5DB", background:"#fff", cursor:"pointer", fontWeight:600, fontSize:13 }}>Próxima ›</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function Autorizacoes({ user, colaboradores }) {
   const anoAtual = new Date().getFullYear();
   const FORM_VAZIO = {
@@ -5513,17 +5587,9 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                     <div style={{ padding:16, textAlign:"center", background:"#fff" }}>
                       {isImg ? (
                         <img src={src} alt={nome} style={{ maxWidth:"100%", borderRadius:8, border:"1px solid #E5E7EB" }} />
-                      ) : isPdf ? (() => {
-                        const b64 = src.split(",")[1];
-                        const bin = atob(b64); const arr = new Uint8Array(bin.length);
-                        for (let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
-                        const blobUrl = URL.createObjectURL(new Blob([arr],{type:"application/pdf"}));
-                        return (
-                          <object data={blobUrl} type="application/pdf" style={{ width:"100%", height:"72vh", borderRadius:8, border:"1px solid #E5E7EB" }}>
-                            <embed src={blobUrl} type="application/pdf" style={{ width:"100%", height:"72vh", borderRadius:8 }} />
-                          </object>
-                        );
-                      })() : (
+                      ) : isPdf ? (
+                        <PdfViewer src={src} />
+                      ) : (
                         <div style={{ padding:"30px 0", color:"#6B7280", fontSize:13 }}>
                           <div style={{ fontSize:48, marginBottom:8 }}>📄</div>
                           <div>{nome}</div>
@@ -5569,17 +5635,9 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                             <div style={{ padding:"0 14px 14px", background:"#fff" }}>
                               {isImg ? (
                                 <img src={src} alt={anx.nome_arquivo} style={{ maxWidth:"100%", borderRadius:6, border:"1px solid #E5E7EB" }} />
-                              ) : isPdf ? (() => {
-                                const b64 = src.split(",")[1];
-                                const bin = atob(b64); const arr = new Uint8Array(bin.length);
-                                for (let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
-                                const blobUrl = URL.createObjectURL(new Blob([arr],{type:"application/pdf"}));
-                                return (
-                                  <object data={blobUrl} type="application/pdf" style={{ width:"100%", height:"60vh", borderRadius:6, border:"1px solid #E5E7EB" }}>
-                                    <embed src={blobUrl} type="application/pdf" style={{ width:"100%", height:"60vh", borderRadius:6 }} />
-                                  </object>
-                                );
-                              })() : null}
+                              ) : isPdf ? (
+                                <PdfViewer src={src} height="60vh" />
+                              ) : null}
                             </div>
                           )}
                         </div>
