@@ -245,41 +245,4 @@ export const api = {
     request(`/atualizacao-cadastral/${id}/cancelar`, { method: "PUT", body: JSON.stringify({}) }),
 
   getToken: () => _accessToken,
-
-  // ── Sistema Disciplinar ────────────────────────────────────────────────────
-  listarCartilha: (categoria) =>
-    request(`/disciplinar/cartilha${categoria ? "?categoria="+encodeURIComponent(categoria) : ""}`),
-  criarCartilha: (data) =>
-    request("/disciplinar/cartilha", { method: "POST", body: JSON.stringify(data) }),
-  atualizarCartilha: (id, data) =>
-    request(`/disciplinar/cartilha/${id}`, { method: "PUT", body: JSON.stringify(data) }),
-  sugerirPenalidade: (colaborador_id, cartilha_id) =>
-    request(`/disciplinar/sugerir?colaborador_id=${colaborador_id}&cartilha_id=${cartilha_id}`),
-  listarDisciplinar: (params = {}) => {
-    const qs = new URLSearchParams(Object.fromEntries(Object.entries(params).filter(([,v])=>v))).toString();
-    return request(`/disciplinar${qs ? "?"+qs : ""}`);
-  },
-  buscarDisciplinar: (id) => request(`/disciplinar/${id}`),
-  criarDisciplinar: (data) =>
-    request("/disciplinar", { method: "POST", body: JSON.stringify(data) }),
-  analisarDisciplinar: (id, data) =>
-    request(`/disciplinar/${id}/analisar`, { method: "PUT", body: JSON.stringify(data) }),
-  cancelarDisciplinar: (id) =>
-    request(`/disciplinar/${id}/cancelar`, { method: "PUT", body: JSON.stringify({}) }),
-
-  // ── Rescisão Valores ───────────────────────────────────────────────────────
-  listarRescisaoValores: (mes, ano) =>
-    request(`/rescisao-valores?mes=${mes}&ano=${ano}`),
-  lancarRescisaoValor: (data) =>
-    request("/rescisao-valores", { method: "POST", body: JSON.stringify(data) }),
-  excluirRescisaoValor: (id) =>
-    request(`/rescisao-valores/${id}`, { method: "DELETE" }),
-  buscarRescisaoPorDesligamento: (id) =>
-    request(`/rescisao-valores/desligamento/${id}`),
-  importarRescisaoRM: () =>
-    request("/rescisao-valores/importar", { method: "POST", body: JSON.stringify({}) }),
-  importarRescisaoLote: (registros) =>
-    request("/rescisao-valores/importar-lote", { method: "POST", body: JSON.stringify({ registros }) }),
-  testarConexaoRM: () =>
-    request("/rescisao-valores/testar-conexao"),
 };
