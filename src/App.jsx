@@ -4050,7 +4050,6 @@ function Autorizacoes({ user, colaboradores }) {
                         <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display:"none" }}
                           onChange={e => { const f = e.target.files[0]; if (f) anexar(s.id, f); }} />
                       </label>
-                      {s.anexo_nome && <span style={{ fontSize:11, color:"#065F46", alignSelf:"center" }}>✅</span>}
                       {["dp","admin"].includes(user.perfil) && (
                         <button onClick={() => cancelar(s.id)} style={{ padding:"5px 10px", borderRadius:8, border:"1px solid #EF4444", background:"#FEF2F2", color:"#DC2626", fontSize:12, cursor:"pointer", fontWeight:600 }}>🚫</button>
                       )}
