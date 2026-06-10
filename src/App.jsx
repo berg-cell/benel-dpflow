@@ -3876,12 +3876,11 @@ function PdfViewer({ src, height = "72vh" }) {
       if (!window.pdfjsLib) {
         await new Promise((resolve, reject) => {
           const s = document.createElement("script");
-          s.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+          s.src = "/pdf.min.js";
           s.onload = resolve; s.onerror = reject;
           document.head.appendChild(s);
         });
-        window.pdfjsLib.GlobalWorkerOptions.workerSrc =
-          "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.js";
       }
       try {
         const b64 = src.includes(",") ? src.split(",")[1] : src;
