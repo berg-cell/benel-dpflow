@@ -10,6 +10,7 @@ import {
 import { LOGO_BENEL, ASSINATURA_BENEL } from "./lib/assets";
 import { fmtDateLocal, formatReal, generateTXTLine, valorPorExtenso, fmtDataPS } from "./lib/format";
 import { Card, Button, Input, Select, Modal, verificarForcaSenha, IndicadorSenha } from "./components/ui";
+import CardsRescisao from "./components/CardsRescisao";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // SECURITY MODULE — DP Flow | Benel 
@@ -4461,6 +4462,7 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
 
   return (
     <div style={{ padding: 28 }}>
+      <CardsRescisao user={user} />
       <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}>
         {["gestor","dp","admin"].includes(user.perfil) && (
           <button onClick={() => { setModalNovo(true); setErro(""); setForm(FORM_VAZIO); setColaboradorSel(null); setBuscaColab(""); setBloqueioColab(null); }}

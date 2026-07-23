@@ -247,5 +247,14 @@ export const api = {
   cancelarAtualizacaoCadastral: (id) =>
     request(`/atualizacao-cadastral/${id}/cancelar`, { method: "PUT", body: JSON.stringify({}) }),
 
+  // ── Rescisão Valores ──────────────────────────────────────────────────────
+  listarRescisao: () => request("/rescisao-valores"),
+
+  importarRescisaoLote: (registros) =>
+    request("/rescisao-valores/importar-lote", {
+      method: "POST",
+      body: JSON.stringify({ registros }),
+    }),
+
   getToken: () => _accessToken,
 };
