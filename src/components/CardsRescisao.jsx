@@ -48,7 +48,8 @@ function parseCsvRm(texto) {
   const idx = (nome) => header.indexOf(nome);
   const iChapa    = idx("CHAPA");
   const iNome     = idx("NOME");
-  const iFilial   = idx("DES_FILIAL") !== -1 ? idx("DES_FILIAL") : idx("DESC_FILIAL_COMPLETA");
+  const iCodFilial = idx("COD_FILIAL");
+  const iFilial    = idx("DES_FILIAL") !== -1 ? idx("DES_FILIAL") : idx("DESC_FILIAL_COMPLETA");
   const iLiquido  = idx("LIQUIDO");
   const iProv     = idx("PROVENTOS");
   const iDesc     = idx("DESCONTOS");
@@ -73,7 +74,8 @@ function parseCsvRm(texto) {
     registros.push({
       chapa,
       nome:             iNome    !== -1 ? (c[iNome] || "").trim() : "",
-      filial:           iFilial  !== -1 ? (c[iFilial] || "").trim() : "",
+      cod_filial:       iCodFilial !== -1 ? (c[iCodFilial] || "").trim() : "",
+      filial:           iFilial    !== -1 ? (c[iFilial] || "").trim() : "",
       liquido:          iLiquido !== -1 ? parseNum(c[iLiquido]) : 0,
       proventos:        iProv    !== -1 ? parseNum(c[iProv]) : 0,
       descontos:        iDesc    !== -1 ? parseNum(c[iDesc]) : 0,
