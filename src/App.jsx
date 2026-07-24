@@ -4357,9 +4357,10 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
       const admissao = new Date(colaboradorSel.data_admissao.split("T")[0]);
       const d90  = new Date(admissao); d90.setDate(d90.getDate() + 89);
       const d45  = new Date(admissao); d45.setDate(d45.getDate() + 44);
-      const hoje = new Date(); hoje.setHours(0,0,0,0);
+      const dataDeslig = form.data_desligamento
+        ? new Date(form.data_desligamento) : null;
       const fmtBR = (d) => d.toLocaleDateString("pt-BR", { timeZone: "UTC" });
-      if (hoje > d90) {
+      if (dataDeslig && dataDeslig > d90) {
         return (
           "Solicitação não permitida.\n" +
           "O colaborador já ultrapassou a data limite do contrato de experiência.\n\n" +
