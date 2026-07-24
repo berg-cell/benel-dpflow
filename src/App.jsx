@@ -4816,8 +4816,8 @@ function Desligamentos({ user, colaboradores, api, recarregarDados }) {
                 ["Cargo",        modalDetalhe.funcao || "—"],
                 ["Tipo",         TIPOS_DESL.find(t => t.value === modalDetalhe.tipo)?.label],
                 ["Status",       STATUS_DESL[modalDetalhe.status]?.label],
-                ["Desligamento", modalDetalhe.data_desligamento ? new Date(modalDetalhe.data_desligamento).toLocaleDateString("pt-BR") : "—"],
-                ["Data Aviso",   modalDetalhe.data_aviso ? new Date(modalDetalhe.data_aviso).toLocaleDateString("pt-BR") : "—"],
+                ["Desligamento", modalDetalhe.data_desligamento ? new Date(modalDetalhe.data_desligamento).toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "—"],
+                ["Data Aviso",   modalDetalhe.data_aviso ? new Date(modalDetalhe.data_aviso).toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "—"],
                 ["Solicitante",  modalDetalhe.gestor_nome],
                 ["Centro Custo", `${modalDetalhe.centro_custo || "—"} — ${modalDetalhe.desc_cc || "—"}`],
               ].map(([l, v]) => (
