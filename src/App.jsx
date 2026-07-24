@@ -5082,7 +5082,7 @@ function ModalPDFDesligamento({ sol, onClose }) {
 
   const Assinaturas = () => (
     <>
-      <div style={{ marginBottom: 8 }}>Fortaleza</div>
+      <div style={{ marginBottom: 8 }}>{sol.municipio || "Fortaleza"}</div>
       <div style={{ marginBottom: 28, textAlign: "left" }}>
         <img src={ASSINATURA_BENEL} alt="Assinatura" style={{ height: 70, display: "block", margin: "0 auto 4px", objectFit: "contain" }} />
         <div style={{ borderTop: "1px solid #000", width: 320, margin: "0 auto 6px", paddingTop: 4, fontWeight: 700, textAlign: "center" }}>
