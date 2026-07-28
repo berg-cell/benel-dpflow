@@ -1176,7 +1176,7 @@ function CadEventos({ eventos, setEventos }) {
 function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
   const [modalImport, setModalImport] = useState(false);
   const [modalForm, setModalForm] = useState(null);
-  const [form, setForm] = useState({ gestor_id: "", superior_id: "", centro_custo: "", desc_cc: "" });
+  const [form, setForm] = useState({ gestor_id: "", superior_id: "", centro_custo: "", desc_cc: "", descricao_filial: "" });
   const [filtroGestor,   setFiltroGestor]   = useState("");
   const [filtroSuperior, setFiltroSuperior] = useState("");
   const [filtroCC,       setFiltroCC]       = useState("");
@@ -1209,12 +1209,12 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
     }).catch(() => {});
   }, []);
 
-  const abrirNovo = () => { setForm({ gestor_id: "", superior_id: "", centro_custo: "", desc_cc: "" }); setModalForm("novo"); };
+  const abrirNovo = () => { setForm({ gestor_id: "", superior_id: "", centro_custo: "", desc_cc: "", descricao_filial: "" }); setModalForm("novo"); };
   const abrirEditar = (h) => { setForm({ ...h }); setModalForm("editar"); };
 
   const salvar = async () => {
     if (!form.gestor_id || !form.superior_id) { alert("Gestor e Superior são obrigatórios."); return; }
-    const payload = { gestor_id: parseInt(form.gestor_id), superior_id: parseInt(form.superior_id), centro_custo: form.centro_custo, desc_cc: form.desc_cc };
+    const payload = { gestor_id: parseInt(form.gestor_id), superior_id: parseInt(form.superior_id), centro_custo: form.centro_custo, desc_cc: form.desc_cc, descricao_filial: form.descricao_filial };
     try {
       if (modalForm === "novo") {
         const novo = await api.criarHierarquia(payload);
@@ -1271,7 +1271,7 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
-              {["1ª Alçada", "2ª Alçada", "Centro de Custo", "Status", "Ações"].map(h => (
+              {["Filial", "1ª Alçada", "2ª Alçada", "Centro de Custo", "Status", "Ações"].map(h => (
                 <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
@@ -1309,9 +1309,10 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
           </thead>
           <tbody>
             {hierarquiaFiltrada.length === 0 ? (
-              <tr><td colSpan={5} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Nenhuma regra encontrada</td></tr>
+              <tr><td colSpan={6} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Nenhuma regra encontrada</td></tr>
             ) : hierarquiaFiltrada.map((h, i) => (
               <tr key={h.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
+              <td style={{ padding: "11px 16px", fontSize: 12, fontWeight: 600, color: "#0F2447" }}>{h.descricao_filial || "—"}</td>
                 <td style={{ padding: "11px 16px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <div style={{ width: 28, height: 28, borderRadius: 8, background: "#3B82F6", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#fff" }}>
@@ -1352,6 +1353,16 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
       <Modal open={!!modalForm} onClose={() => setModalForm(null)}
         title={modalForm === "novo" ? "Nova Regra de Hierarquia" : "Editar Hierarquia"} width={480}>
         <div style={{ display: "flex", flexDirection: "column", gap: 13 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Filial *</label>
+            <select value={form.descricao_filial || ""} onChange={e => setForm(p => ({ ...p, descricao_filial: e.target.value }))}
+              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 12px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
+              <option value="">Selecione a filial...</option>
+              {["FORTALEZA-CE","POJUCA-BA","MOSSORO-RN","ICAPUI-CE","CARMOPOLIS-SE","PILAR-AL","SAO MATEUS-ES","SAO PAULO-SP","MACAE-RJ"].map(f => (
+                <option key={f} value={f}>{f}</option>
+              ))}
+            </select>
+          </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
             <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>1ª Alçada *</label>
             <select value={form.gestor_id} onChange={e => setForm(p => ({ ...p, gestor_id: e.target.value }))}
