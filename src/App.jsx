@@ -1202,6 +1202,11 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
   const gestores   = usuarios.filter(u => u.ativo !== false);
   const superiores = usuarios.filter(u => u.ativo !== false);
   const presidentes = usuarios.filter(u => u.perfil === "presidente" && u.ativo !== false);
+  const nomeCurto = (nome) => {
+    if (!nome) return "";
+    const p = nome.trim().split(/\s+/);
+    return p.length <= 1 ? p[0] : `${p[0]} ${p[p.length - 1]}`;
+  };
 
   const [centrosCusto, setCentrosCusto] = useState([]);
   useEffect(() => {
@@ -1320,7 +1325,7 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
                     <div style={{ width: 28, height: 28, borderRadius: 8, background: "#3B82F6", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#fff" }}>
                       {h.gestor_nome?.charAt(0)}
                     </div>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>{h.gestor_nome}</span>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>{nomeCurto(h.gestor_nome)}</span>
                   </div>
                 </td>
                 <td style={{ padding: "11px 16px" }}>
@@ -1328,10 +1333,10 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
                     <div style={{ width: 28, height: 28, borderRadius: 8, background: "#8B5CF6", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#fff" }}>
                       {h.superior_nome?.charAt(0)}
                     </div>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>{h.superior_nome}</span>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>{nomeCurto(h.superior_nome)}</span>
                   </div>
                 </td>
-                <td style={{ padding: "11px 16px", fontSize: 12, color: "#6B7280" }}>{presidentes.map(p => p.nome).join(" / ") || "Presidente"}</td>
+                <td style={{ padding: "11px 16px", fontSize: 12, color: "#6B7280" }}>{presidentes.map(p => nomeCurto(p.nome)).join(" / ") || "Presidente"}</td>
                 <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{h.centro_custo ? (h.centro_custo + " — " + h.desc_cc) : "Todos"}</td>
                 <td style={{ padding: "11px 16px" }}>
                   <span style={{ padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: h.ativo ? "#D1FAE5" : "#FEE2E2", color: h.ativo ? "#065F46" : "#991B1B" }}>
