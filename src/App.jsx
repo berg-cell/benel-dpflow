@@ -1272,7 +1272,7 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
-              {["Filial", "Solicitante", "1ª Alçada", "Centro de Custo", "Status", "Ações"].map(h => (
+              {["Filial", "Solicitante", "1ª Alçada", "2ª Alçada", "Centro de Custo", "Status", "Ações"].map(h => (
                 <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
@@ -1287,6 +1287,7 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
                   placeholder="🔍 Buscar 1ª alçada..."
                   style={{ width: "100%", padding: "5px 8px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 11, fontFamily: "inherit", boxSizing: "border-box" }} />
               </th>
+              <th style={{ padding: "6px 10px" }}></th>
               <th style={{ padding: "6px 10px" }}>
                 <input value={filtroCC} onChange={e => setFiltroCC(e.target.value)}
                   placeholder="🔍 Buscar CC..."
@@ -1310,7 +1311,7 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
           </thead>
           <tbody>
             {hierarquiaFiltrada.length === 0 ? (
-              <tr><td colSpan={6} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Nenhuma regra encontrada</td></tr>
+              <tr><td colSpan={7} style={{ padding: 32, textAlign: "center", color: "#9CA3AF" }}>Nenhuma regra encontrada</td></tr>
             ) : hierarquiaFiltrada.map((h, i) => (
               <tr key={h.id} style={{ borderTop: "1px solid #F3F4F6", background: i % 2 === 0 ? "#fff" : "#FAFAFA" }}>
               <td style={{ padding: "11px 16px", fontSize: 12, fontWeight: 600, color: "#0F2447" }}>{h.descricao_filial || "—"}</td>
@@ -1330,6 +1331,7 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
                     <span style={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>{h.superior_nome}</span>
                   </div>
                 </td>
+                <td style={{ padding: "11px 16px", fontSize: 12, color: "#6B7280" }}>{presidentes.map(p => p.nome).join(" / ") || "Presidente"}</td>
                 <td style={{ padding: "11px 16px", fontSize: 12, color: "#374151" }}>{h.centro_custo ? (h.centro_custo + " — " + h.desc_cc) : "Todos"}</td>
                 <td style={{ padding: "11px 16px" }}>
                   <span style={{ padding: "2px 10px", borderRadius: 10, fontSize: 11, fontWeight: 600, background: h.ativo ? "#D1FAE5" : "#FEE2E2", color: h.ativo ? "#065F46" : "#991B1B" }}>
