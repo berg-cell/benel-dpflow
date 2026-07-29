@@ -1272,19 +1272,19 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
-              {["Filial", "1ª Alçada", "2ª Alçada", "Centro de Custo", "Status", "Ações"].map(h => (
+              {["Filial", "Solicitante", "1ª Alçada", "Centro de Custo", "Status", "Ações"].map(h => (
                 <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
             <tr style={{ background: "#F0F4F8", borderBottom: "2px solid #E5E7EB" }}>
               <th style={{ padding: "6px 10px" }}>
                 <input value={filtroGestor} onChange={e => setFiltroGestor(e.target.value)}
-                  placeholder="🔍 Buscar 1ª alçada..."
+                  placeholder="🔍 Buscar solicitante..."
                   style={{ width: "100%", padding: "5px 8px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 11, fontFamily: "inherit", boxSizing: "border-box" }} />
               </th>
               <th style={{ padding: "6px 10px" }}>
                 <input value={filtroSuperior} onChange={e => setFiltroSuperior(e.target.value)}
-                  placeholder="🔍 Buscar 2ª alçada..."
+                  placeholder="🔍 Buscar 1ª alçada..."
                   style={{ width: "100%", padding: "5px 8px", borderRadius: 6, border: "1px solid #D1D5DB", fontSize: 11, fontFamily: "inherit", boxSizing: "border-box" }} />
               </th>
               <th style={{ padding: "6px 10px" }}>
