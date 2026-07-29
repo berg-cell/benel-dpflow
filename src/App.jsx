@@ -1201,6 +1201,7 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
 
   const gestores   = usuarios.filter(u => u.ativo !== false);
   const superiores = usuarios.filter(u => u.ativo !== false);
+  const presidentes = usuarios.filter(u => u.perfil === "presidente" && u.ativo !== false);
 
   const [centrosCusto, setCentrosCusto] = useState([]);
   useEffect(() => {
@@ -1213,7 +1214,7 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
   const abrirEditar = (h) => { setForm({ ...h }); setModalForm("editar"); };
 
   const salvar = async () => {
-    if (!form.gestor_id || !form.superior_id) { alert("Gestor e Superior são obrigatórios."); return; }
+    if (!form.gestor_id || !form.superior_id) { alert("Solicitante e 1ª Alçada são obrigatórios."); return; }
     const payload = { gestor_id: parseInt(form.gestor_id), superior_id: parseInt(form.superior_id), centro_custo: form.centro_custo, desc_cc: form.desc_cc, descricao_filial: form.descricao_filial };
     try {
       if (modalForm === "novo") {
@@ -1364,7 +1365,7 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
             </select>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>1ª Alçada *</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Solicitante *</label>
             <select value={form.gestor_id} onChange={e => setForm(p => ({ ...p, gestor_id: e.target.value }))}
               style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 12px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
               <option value="">Selecione...</option>
@@ -1372,11 +1373,18 @@ function CadHierarquia({ hierarquia, setHierarquia, usuarios }) {
             </select>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>2ª Alçada *</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>1ª Alçada *</label>
             <select value={form.superior_id} onChange={e => setForm(p => ({ ...p, superior_id: e.target.value }))}
               style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 12px", fontSize: 13, fontFamily: "inherit", background: "#FAFAFA" }}>
               <option value="">Selecione...</option>
               {superiores.map(u => <option key={u.id} value={u.id}>{u.nome}</option>)}
+            </select>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>2ª Alçada (Presidente) — qualquer um aprova</label>
+            <select disabled
+              style={{ border: "1px solid #D1D5DB", borderRadius: 8, padding: "8px 12px", fontSize: 13, fontFamily: "inherit", background: "#F3F4F6", color: "#6B7280" }}>
+              <option>{presidentes.map(p => p.nome).join(" ou ") || "Nenhum presidente cadastrado"}</option>
             </select>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 12 }}>
